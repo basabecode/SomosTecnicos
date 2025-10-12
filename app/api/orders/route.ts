@@ -1,0 +1,252 @@
+/**
+ * API de Órdenes de Servicio
+ * CRUD completo para manejo de órdenes
+ */
+
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { withAuth } from '@/lib/auth'
+import {
+  validateAndTransform,
+  createOrderSchema,
+  orderQuerySchema
+} from '@/lib/validations'
+import { ORDER_STATES, generateOrderNumber } from '@/lib/constants'
+import { Prisma } from '@prisma/client'
+
+// =============================================
+// GET /api/orders - Obtener órdenes con filtros
+// =============================================
+
+export const GET = withAuth(async (request: NextRequest) => {
+  try {
+    const { searchParams } = new URL(request.url)
+    const queryParams = Object.fromEntries(searchParams.entries())
+
+    // Validar parámetros de consulta
+    const validation = orderQuerySchema.safeParse(queryParams)
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Parámetros de consulta inválidos',
+          details: validation.error.errors
+        },
+        { status: 400 }
+      )
+    }
+
+    const {
+      page,
+      limit,
+      estado,
+      urgencia,
+      tipoElectrodomestico,
+      fechaDesde,
+      fechaHasta,
+      search,
+    } = validation.data
+
+    // Construir filtros
+    const where: Prisma.OrderWhereInput = {}
+
+    if (estado) where.estado = estado
+    if (urgencia) where.urgencia = urgencia
+    if (tipoElectrodomestico) where.tipoElectrodomestico = tipoElectrodomestico
+
+    if (fechaDesde || fechaHasta) {
+      where.createdAt = {
+        ...(fechaDesde ? { gte: new Date(fechaDesde) } : {}),
+        ...(fechaHasta ? { lte: new Date(fechaHasta) } : {}),
+      }
+    }
+
+    if (search) {
+      where.OR = [
+        { orderNumber: { contains: search, mode: 'insensitive' } },
+        { nombre: { contains: search, mode: 'insensitive' } },
+        { telefono: { contains: search } },
+        { email: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    // Calcular offset
+    const offset = (page - 1) * limit
+
+    // Obtener órdenes con paginación
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        skip: offset,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          assignments: {
+            include: {
+              technician: {
+                select: {
+                  id: true,
+                  nombre: true,
+                  telefono: true,
+                  especialidades: true
+                }
+              }
+            }
+          }
+        }
+      }),
+      prisma.order.count({ where })
+    ])
+
+    // Calcular información de paginación
+    const totalPages = Math.ceil(total / limit)
+    const hasNextPage = page < totalPages
+    const hasPrevPage = page > 1
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        orders,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: total,
+          itemsPerPage: limit,
+          hasNextPage,
+          hasPrevPage
+        }
+      }
+    })
+
+  } catch (error) {
+    console.error('Error obteniendo órdenes:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Error interno del servidor'
+      },
+      { status: 500 }
+    )
+  }
+})
+
+// =============================================
+// POST /api/orders - Crear nueva orden
+// =============================================
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+
+    // Validar datos de entrada
+    const validation = validateAndTransform(createOrderSchema, body)
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Datos inválidos',
+          details: validation.errors.errors
+        },
+        { status: 400 }
+      )
+    }
+
+    const orderData = validation.data
+
+    // Generar número de orden único
+    let numeroOrden: string
+    let isUnique = false
+    let attempts = 0
+    const maxAttempts = 10
+
+    do {
+      numeroOrden = generateOrderNumber()
+      const existingOrder = await prisma.order.findUnique({
+        where: { orderNumber: numeroOrden }
+      })
+      isUnique = !existingOrder
+      attempts++
+    } while (!isUnique && attempts < maxAttempts)
+
+    if (!isUnique) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No se pudo generar un número de orden único'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Crear la orden
+    const order = await prisma.order.create({
+      data: {
+        ...orderData,
+        orderNumber: numeroOrden,
+        estado: ORDER_STATES.PENDIENTE,
+        fechaPreferida: orderData.fechaPreferida ? new Date(orderData.fechaPreferida) : null
+      },
+      include: {
+        assignments: {
+          include: {
+            technician: {
+              select: {
+                id: true,
+                nombre: true,
+                telefono: true,
+                especialidades: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    // Crear registro de historial
+    await prisma.orderHistory.create({
+      data: {
+        orderId: order.id,
+        estadoAnterior: null,
+        estadoNuevo: ORDER_STATES.PENDIENTE,
+        notas: 'Orden creada',
+        changedBy: 'system'
+      }
+    })
+
+    // Enviar notificación por email
+    try {
+      const { sendNewOrderEmail } = await import('@/lib/email')
+      await sendNewOrderEmail({
+        orderNumber: order.orderNumber,
+        customerName: order.nombre,
+        customerEmail: order.email,
+        customerPhone: order.telefono,
+        serviceType: order.tipoServicio,
+        applianceType: order.tipoElectrodomestico,
+        description: order.descripcionProblema || '',
+        address: order.direccion,
+        preferredDate: order.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
+        status: 'Pendiente'
+      })
+    } catch (emailError) {
+      console.error('Error enviando email de confirmación:', emailError)
+      // No fallar la creación de la orden por error de email
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Orden creada exitosamente',
+      data: order
+    }, { status: 201 })
+
+  } catch (error) {
+    console.error('Error creando orden:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Error interno del servidor'
+      },
+      { status: 500 }
+    )
+  }
+}

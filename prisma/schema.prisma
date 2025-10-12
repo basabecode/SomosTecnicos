@@ -1,0 +1,393 @@
+// Esquema de Base de Datos - Servicio Técnico
+// Prisma Schema para PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================
+// MODELO DE ÓRDENES DE SERVICIO
+// =============================================
+
+model Order {
+  id                     String   @id @default(cuid())
+  orderNumber           String   @unique @map("order_number")
+  customerId            Int?     @map("customer_id")
+
+  // Información del Cliente
+  nombre                String
+  telefono              String
+  email                 String
+  direccion             String
+  ciudad                String
+
+  // Información del Electrodoméstico
+  tipoElectrodomestico  String   @map("tipo_electrodomestico")
+  marca                 String?
+  modelo                String?
+  año                   Int?     @map("anio")
+
+  // Información del Servicio
+  tipoServicio          String   @map("tipo_servicio")
+  descripcionProblema   String?  @map("descripcion_problema")
+  urgencia              String   // 'baja', 'media', 'alta'
+
+  // Programación
+  fechaPreferida        DateTime? @map("fecha_preferida")
+  horario               String?
+  comentarios           String?
+
+  // Control del Sistema
+  estado                String   @default("pendiente") // Estados definidos en constantes
+  prioridad             Int      @default(1) // 1=baja, 2=media, 3=alta
+  costoEstimado         Decimal? @map("costo_estimado") @db.Decimal(10,2)
+  costoFinal            Decimal? @map("costo_final") @db.Decimal(10,2)
+
+  // Timestamps
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  fechaCompletado       DateTime? @map("fecha_completado")
+
+  // Relaciones
+  assignments           Assignment[]
+  history               OrderHistory[]
+  notifications         Notification[]
+  customer              Customer?         @relation(fields: [customerId], references: [id])
+
+  // Índices
+  @@index([estado])
+  @@index([createdAt])
+  @@index([email])
+  @@index([tipoElectrodomestico])
+  @@index([customerId])
+  @@map("orders")
+}
+
+// =============================================
+// MODELO DE TÉCNICOS
+// =============================================
+
+model Technician {
+  id                    Int      @id @default(autoincrement())
+  nombre                String
+  telefono              String   @unique
+  email                 String   @unique
+  cedula                String   @unique
+
+  // Especialidades y Ubicación
+  especialidades        Json     // Array de especialidades: ["nevera", "lavadora"]
+  zonaTrabajoArea       String?  @map("zona_trabajo")
+  activo                Boolean  @default(true)
+  disponible            Boolean  @default(true)
+
+  // Métricas de Rendimiento
+  ordenesCompletadas    Int      @default(0) @map("ordenes_completadas")
+  calificacionPromedio  Decimal  @default(5.00) @map("calificacion_promedio") @db.Decimal(3,2)
+  tiempoPromedioServicio Int?    @map("tiempo_promedio_servicio") // en minutos
+
+  // Información Adicional
+  fechaIngreso          DateTime @default(now()) @map("fecha_ingreso")
+  ultimaActividad       DateTime @default(now()) @map("ultima_actividad")
+
+  // Timestamps
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  assignments           Assignment[]
+
+  // Índices
+  @@index([activo])
+  @@index([disponible])
+  @@index([zonaTrabajoArea])
+  @@map("technicians")
+}
+
+// =============================================
+// MODELO DE ASIGNACIONES
+// =============================================
+
+model Assignment {
+  id                    Int       @id @default(autoincrement())
+  orderId               String    @map("order_id")
+  technicianId          Int       @map("technician_id")
+
+  // Programación
+  fechaAsignacion       DateTime  @default(now()) @map("fecha_asignacion")
+  fechaProgramada       DateTime? @map("fecha_programada")
+  fechaInicio           DateTime? @map("fecha_inicio")
+  fechaCompletada       DateTime? @map("fecha_completada")
+
+  // Notas y Seguimiento
+  notasAsignacion       String?   @map("notas_asignacion")
+  notasTecnico          String?   @map("notas_tecnico")
+  tiempoEstimado        Int?      @map("tiempo_estimado") // minutos
+  tiempoReal            Int?      @map("tiempo_real") // minutos
+
+  // Estado de la Asignación
+  estado                String    @default("asignado") // asignado, en_camino, en_proceso, completado
+  razonCancelacion      String?   @map("razon_cancelacion")
+
+  // Costos
+  costoManoObra         Decimal?  @map("costo_mano_obra") @db.Decimal(10,2)
+  costoRepuestos        Decimal?  @map("costo_repuestos") @db.Decimal(10,2)
+
+  // Timestamps
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  order                 Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  technician            Technician @relation(fields: [technicianId], references: [id])
+
+  // Índices
+  @@index([orderId])
+  @@index([technicianId])
+  @@index([fechaProgramada])
+  @@index([estado])
+  @@map("assignments")
+}
+
+// =============================================
+// MODELO DE HISTORIAL DE ÓRDENES
+// =============================================
+
+model OrderHistory {
+  id              Int      @id @default(autoincrement())
+  orderId         String   @map("order_id")
+
+  // Cambio de Estado
+  estadoAnterior  String?  @map("estado_anterior")
+  estadoNuevo     String   @map("estado_nuevo")
+
+  // Información del Cambio
+  changedBy       String   @map("changed_by") // 'system', 'admin', 'technician'
+  changedById     String?  @map("changed_by_id") // ID del usuario que hizo el cambio
+  notas           String?
+  razon           String?  // Razón del cambio
+
+  // Datos Adicionales
+  metadata        Json?    // Información adicional en formato JSON
+
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relaciones
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Índices
+  @@index([orderId])
+  @@index([createdAt])
+  @@index([changedBy])
+  @@map("order_history")
+}
+
+// =============================================
+// MODELO DE CLIENTES
+// =============================================
+
+model Customer {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  nombre       String
+  apellido     String?
+  telefono     String
+  direccion    String?
+  ciudad       String?
+  activo       Boolean   @default(true)
+  preferencias Json?
+  lastLogin    DateTime? @map("last_login")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  orders       Order[]
+
+  @@map("customers")
+}
+
+// =============================================
+// MODELO DE NOTIFICACIONES
+// =============================================
+
+model Notification {
+  id              Int       @id @default(autoincrement())
+  orderId         String?   @map("order_id") // Puede ser null para notificaciones generales
+
+  // Información de la Notificación
+  tipo            String    // 'email', 'sms', 'push', 'system'
+  canal           String    @default("email") // canal específico usado
+  destinatario    String    // email, teléfono, etc.
+  asunto          String?
+  mensaje         String
+  plantilla       String?   // template usado
+
+  // Estado del Envío
+  enviado         Boolean   @default(false)
+  fechaEnvio      DateTime? @map("fecha_envio")
+  entregado       Boolean   @default(false)
+  fechaEntrega    DateTime? @map("fecha_entrega")
+
+  // Manejo de Errores
+  intentos        Int       @default(0)
+  maxIntentos     Int       @default(3) @map("max_intentos")
+  errorMensaje    String?   @map("error_mensaje")
+  ultimoError     DateTime? @map("ultimo_error")
+
+  // Programación
+  programadaPara  DateTime? @map("programada_para")
+  prioridad       Int       @default(1) // 1=baja, 2=media, 3=alta
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  order           Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // Índices
+  @@index([orderId])
+  @@index([tipo])
+  @@index([enviado])
+  @@index([programadaPara])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// =============================================
+// MODELO DE USUARIOS ADMINISTRADORES
+// =============================================
+
+model AdminUser {
+  id              Int       @id @default(autoincrement())
+  username        String    @unique
+  email           String    @unique
+  passwordHash    String    @map("password_hash")
+
+  // Información Personal
+  nombre          String
+  apellido        String?
+  telefono        String?
+
+  // Roles y Permisos
+  role            String    @default("admin") // 'super_admin', 'admin', 'viewer', 'technician_manager'
+  permisos        Json?     // Permisos específicos en formato JSON
+  activo          Boolean   @default(true)
+
+  // Información de Sesión
+  lastLogin       DateTime? @map("last_login")
+  loginAttempts   Int       @default(0) @map("login_attempts")
+  accountLocked   Boolean   @default(false) @map("account_locked")
+  lockUntil       DateTime? @map("lock_until")
+
+  // Configuraciones Personales
+  preferencias    Json?     // Configuraciones de UI, notificaciones, etc.
+  zona            String?   // Zona horaria preferida
+  idioma          String    @default("es") // Idioma de la interfaz
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Índices
+  @@index([username])
+  @@index([email])
+  @@index([role])
+  @@index([activo])
+  @@map("admin_users")
+}
+
+// =============================================
+// MODELO DE CONFIGURACIONES DEL SISTEMA
+// =============================================
+
+model SystemSetting {
+  id              Int       @id @default(autoincrement())
+  key             String    @unique
+  value           String
+
+  // Metadatos
+  descripcion     String?
+  tipo            String    @default("string") // 'string', 'number', 'boolean', 'json'
+  categoria       String?   // 'email', 'sms', 'system', 'ui'
+  esPublico       Boolean   @default(false) @map("es_publico") // Si es visible en frontend
+
+  // Control de Cambios
+  updatedBy       String?   @map("updated_by") // username del admin que actualizó
+  validationRule  String?   @map("validation_rule") // Regla de validación
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Índices
+  @@index([categoria])
+  @@index([esPublico])
+  @@map("system_settings")
+}
+
+// =============================================
+// MODELO DE TIPOS DE SERVICIOS
+// =============================================
+
+model ServiceType {
+  id              Int       @id @default(autoincrement())
+  nombre          String    @unique
+  descripcion     String?
+
+  // Configuración
+  activo          Boolean   @default(true)
+  icono           String?   // Nombre del icono a usar
+  color           String?   // Color hex para UI
+  orden           Int       @default(0) // Para ordenamiento
+
+  // Costos
+  costoBase       Decimal?  @map("costo_base") @db.Decimal(10,2)
+  tiempoEstimado  Int?      @map("tiempo_estimado") // en minutos
+
+  // Especialidades Requeridas
+  especialidadesRequeridas Json? @map("especialidades_requeridas")
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Índices
+  @@index([activo])
+  @@index([orden])
+  @@map("service_types")
+}
+
+// =============================================
+// MODELO DE ZONAS DE TRABAJO
+// =============================================
+
+model WorkZone {
+  id              Int       @id @default(autoincrement())
+  nombre          String    @unique
+  descripcion     String?
+
+  // Configuración Geográfica
+  coordenadas     Json?     // Polígono de la zona en formato GeoJSON
+  cobertura       String?   // Descripción textual de la cobertura
+
+  // Configuración de Servicio
+  activo          Boolean   @default(true)
+  costoAdicional  Decimal?  @map("costo_adicional") @db.Decimal(10,2)
+  tiempoAdicional Int?      @map("tiempo_adicional") // minutos adicionales
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Índices
+  @@index([activo])
+  @@map("work_zones")
+}
