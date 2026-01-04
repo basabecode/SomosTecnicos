@@ -205,7 +205,7 @@ export default function TechniciansPage() {
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <span key={i} className="text-yellow-400">
+        <span key={`star-full-${i}`} className="text-yellow-400">
           ★
         </span>
       )
@@ -213,7 +213,7 @@ export default function TechniciansPage() {
 
     if (hasHalfStar) {
       stars.push(
-        <span key="half" className="text-yellow-400">
+        <span key="star-half" className="text-yellow-400">
           ☆
         </span>
       )
@@ -222,7 +222,7 @@ export default function TechniciansPage() {
     const emptyStars = 5 - Math.ceil(validRating)
     for (let i = 0; i < emptyStars; i++) {
       stars.push(
-        <span key={`empty-${i}`} className="text-gray-300">
+        <span key={`star-empty-${i}`} className="text-gray-300">
           ★
         </span>
       )
@@ -352,7 +352,7 @@ export default function TechniciansPage() {
                 <SelectContent>
                   <SelectItem value="all">Todas las ciudades</SelectItem>
                   {cities.map(city => (
-                    <SelectItem key={city} value={city}>
+                    <SelectItem key={`city-${city}`} value={city}>
                       {city}
                     </SelectItem>
                   ))}
@@ -387,7 +387,7 @@ export default function TechniciansPage() {
             {loading ? (
               <div className="space-y-4">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4 p-4">
+                  <div key={`param-skeleton-${i}`} className="flex items-center space-x-4 p-4">
                     <div className="w-32 h-4 bg-muted animate-pulse rounded"></div>
                     <div className="w-28 h-4 bg-muted animate-pulse rounded"></div>
                     <div className="w-24 h-4 bg-muted animate-pulse rounded"></div>
@@ -421,7 +421,7 @@ export default function TechniciansPage() {
                       const EstadoIcon =
                         estadoIcons[technician.estado] || CheckCircle
                       return (
-                        <TableRow key={technician.id}>
+                        <TableRow key={`tech-row-${technician.id}`}>
                           <TableCell>
                             <div>
                               <div className="font-medium">
@@ -464,7 +464,7 @@ export default function TechniciansPage() {
                                 .slice(0, 3)
                                 .map((especialidad, index) => (
                                   <Badge
-                                    key={`${technician.id}-${especialidad}-${index}`}
+                                    key={`badge-spec-${technician.id}-${especialidad}-${index}`}
                                     variant="secondary"
                                     className={`text-xs capitalize ${
                                       especialidadColors[

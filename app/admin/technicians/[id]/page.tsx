@@ -387,7 +387,9 @@ export default function TechnicianDetailPage() {
                   <Star className="h-8 w-8 text-yellow-600" />
                   <div>
                     <p className="text-2xl font-bold">
-                      {technician.calificacionPromedio?.toFixed(1) || 'N/A'}
+                      {technician.calificacionPromedio != null
+                        ? Number(technician.calificacionPromedio).toFixed(1)
+                        : 'N/A'}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Calificación

@@ -5,20 +5,20 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { withAuth } from '@/lib/auth'
+import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import {
   validateAndTransform,
   createOrderSchema,
   orderQuerySchema
 } from '@/lib/validations'
-import { ORDER_STATES, generateOrderNumber } from '@/lib/constants'
+import { ORDER_STATES, generateOrderNumber, USER_ROLES } from '@/lib/constants'
 import { Prisma } from '@prisma/client'
 
 // =============================================
 // GET /api/orders - Obtener órdenes con filtros
 // =============================================
 
-export const GET = withAuth(async (request: NextRequest) => {
+export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser) => {
   try {
     const { searchParams } = new URL(request.url)
     const queryParams = Object.fromEntries(searchParams.entries())
@@ -49,6 +49,25 @@ export const GET = withAuth(async (request: NextRequest) => {
 
     // Construir filtros
     const where: Prisma.OrderWhereInput = {}
+
+    // 🔒 RBAC: Filtrado por Rol
+    if (user.role === USER_ROLES.CUSTOMER) {
+      where.customerId = user.id
+    } else {
+      // Verificar si es técnico (buscando por email ya que el rol específico no está en enum principales)
+      const technician = await prisma.technician.findUnique({
+        where: { email: user.email }
+      })
+
+      if (technician && user.role !== USER_ROLES.ADMIN && user.role !== USER_ROLES.SUPER_ADMIN && user.role !== USER_ROLES.TECHNICIAN_MANAGER) {
+        // Es un técnico, solo ver sus asignaciones
+        where.assignments = {
+          some: {
+            technicianId: technician.id
+          }
+        }
+      }
+    }
 
     if (estado) where.estado = estado
     if (urgencia) where.urgencia = urgencia
@@ -134,7 +153,7 @@ export const GET = withAuth(async (request: NextRequest) => {
 // POST /api/orders - Crear nueva orden
 // =============================================
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUser) => {
   try {
     const body = await request.json()
 
@@ -178,10 +197,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Crear la orden
+    // Crear la orden vinculada al usuario
     const order = await prisma.order.create({
       data: {
         ...orderData,
+        customerId: user.role === USER_ROLES.CUSTOMER ? user.id : undefined,
         orderNumber: numeroOrden,
         estado: ORDER_STATES.PENDIENTE,
         fechaPreferida: orderData.fechaPreferida ? new Date(orderData.fechaPreferida) : null
@@ -247,6 +267,6 @@ export async function POST(request: NextRequest) {
         error: 'Error interno del servidor'
       },
       { status: 500 }
-    )
-  }
-}
+      )
+    }
+  })

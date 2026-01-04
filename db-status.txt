@@ -1,0 +1,28 @@
+­ƒöì Verificando conexi├│n a la base de datos...
+
+Ô£à Conexi├│n exitosa a PostgreSQL
+
+­ƒôè Resumen de Tablas:
+   - Customers: 3
+   - AdminUsers: 4
+   - Technicians: 5
+   - Orders: 6
+
+­ƒæÑ Usuarios Demo:
+   Clientes: [
+  {
+    id: 1,
+    email: 'cliente.demo@tecnocity.com',
+    nombre: 'Camila',
+    activo: true
+  }
+]
+   Admins: ÔØî No hay admins demo
+   T├®cnicos: ÔØî No hay t├®cnicos demo
+
+­ƒôª ├Ültimas 5 ├ôrdenes:
+   - AUDIT-BOOK-2-1767035530235 | Audit Booking 2 | pendiente | 2025-12-29T19:12:10.236Z
+   - AUDIT-BOOK-1767035529644 | Audit Booking | asignado | 2025-12-29T19:12:09.645Z
+   - ORD-MJRJBUTK-R92 | Test Audit Client | cancelado | 2025-12-29T19:12:07.143Z
+   - ORD-CL-2001 | Esteban Mej├¡a | completado | 2025-10-12T00:36:58.221Z
+   - ORD-CL-1002 | Camila Su├írez | pendiente | 2025-10-12T00:36:58.202Z

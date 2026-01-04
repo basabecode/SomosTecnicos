@@ -21,17 +21,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Validar datos de entrada básicos
-    const { email, password } = body
-    if (!email || !password) {
+    // Validar datos de entrada con Zod
+    const validation = validateAndTransform(loginSchema, body)
+    if (!validation.success) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email y contraseña son requeridos'
+          error: 'Datos de inicio de sesión inválidos',
+          details: validation.errors.errors
         },
         { status: 400 }
       )
     }
+
+    const { email, password } = validation.data
 
     // Intentar autenticar primero como usuario del sistema (admin/manager/technician)
     let user = await authenticateUser(email, password)

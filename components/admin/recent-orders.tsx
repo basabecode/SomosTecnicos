@@ -102,54 +102,8 @@ export function RecentOrders() {
           setOrders(data.data.orders)
         } else {
           // Datos mock si la API no responde
-          setOrders([
-            {
-              id: '1',
-              numeroOrden: 'ORD-001',
-              nombre: 'María García',
-              telefono: '+573001234567',
-              ciudad: 'Bogotá',
-              tipoElectrodomestico: 'nevera',
-              tipoServicio: 'reparacion',
-              estado: 'pendiente',
-              urgencia: 'alta',
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: '2',
-              numeroOrden: 'ORD-002',
-              nombre: 'Carlos López',
-              telefono: '+573007654321',
-              ciudad: 'Medellín',
-              tipoElectrodomestico: 'lavadora',
-              tipoServicio: 'mantenimiento',
-              estado: 'en_proceso',
-              urgencia: 'media',
-              createdAt: new Date(Date.now() - 3600000).toISOString(),
-              assignment: {
-                technician: {
-                  nombre: 'Juan Pérez',
-                },
-              },
-            },
-            {
-              id: '3',
-              numeroOrden: 'ORD-003',
-              nombre: 'Ana Rodríguez',
-              telefono: '+573009876543',
-              ciudad: 'Cali',
-              tipoElectrodomestico: 'estufa',
-              tipoServicio: 'reparacion',
-              estado: 'completado',
-              urgencia: 'baja',
-              createdAt: new Date(Date.now() - 7200000).toISOString(),
-              assignment: {
-                technician: {
-                  nombre: 'María García',
-                },
-              },
-            },
-          ])
+          // Datos vacíos si la API no responde
+          setOrders([])
         }
       } catch (error) {
         console.error('Error fetching orders:', error)

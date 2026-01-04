@@ -72,67 +72,22 @@ export function DashboardStats() {
           const data = await response.json()
           setStats(data.data)
         } else {
-          // Si la API no existe aún, usar datos mock
+          // Si falla, iniciar en ceros
           setStats({
-            ordenes: {
-              total: 145,
-              pendientes: 12,
-              asignadas: 5,
-              enProceso: 8,
-              completadasHoy: 7,
-              completadasMes: 125,
-              vencidas: 3,
-              urgentes: 2,
-            },
-            tecnicos: {
-              total: 15,
-              activos: 12,
-              disponibles: 8,
-              ocupados: 4,
-            },
-            negocio: {
-              ingresosMes: 2850000,
-              tasaCompletacion: 86.2,
-              tiempoPromedioResolucion: 3.2,
-              satisfaccionPromedio: 4.8,
-            },
-            alertas: {
-              ordenesVencidas: 3,
-              ordenesUrgentes: 2,
-            },
+            ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
+            tecnicos: { total: 0, activos: 0, disponibles: 0, ocupados: 0 },
+            negocio: { ingresosMes: 0, tasaCompletacion: 0, tiempoPromedioResolucion: 0, satisfaccionPromedio: 0 },
+            alertas: { ordenesVencidas: 0, ordenesUrgentes: 0 },
           })
         }
       } catch (error) {
         console.error('Error fetching stats:', error)
-        // Fallback a datos mock
-        setStats({
-          ordenes: {
-            total: 145,
-            pendientes: 12,
-            asignadas: 5,
-            enProceso: 8,
-            completadasHoy: 7,
-            completadasMes: 125,
-            vencidas: 3,
-            urgentes: 2,
-          },
-          tecnicos: {
-            total: 15,
-            activos: 12,
-            disponibles: 8,
-            ocupados: 4,
-          },
-          negocio: {
-            ingresosMes: 2850000,
-            tasaCompletacion: 86.2,
-            tiempoPromedioResolucion: 3.2,
-            satisfaccionPromedio: 4.8,
-          },
-          alertas: {
-            ordenesVencidas: 3,
-            ordenesUrgentes: 2,
-          },
-        })
+         setStats({
+            ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
+            tecnicos: { total: 0, activos: 0, disponibles: 0, ocupados: 0 },
+            negocio: { ingresosMes: 0, tasaCompletacion: 0, tiempoPromedioResolucion: 0, satisfaccionPromedio: 0 },
+            alertas: { ordenesVencidas: 0, ordenesUrgentes: 0 },
+          })
       } finally {
         setLoading(false)
       }
@@ -160,15 +115,7 @@ export function DashboardStats() {
     )
   }
 
-  if (!stats) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">
-          Error al cargar las estadísticas
-        </p>
-      </div>
-    )
-  }
+  if (!stats) return null // Shouldn't happen due to default init
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -189,7 +136,7 @@ export function DashboardStats() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.ordenes.total}</div>
           <p className="text-xs text-muted-foreground">
-            +12% desde el mes pasado
+             Histórico total
           </p>
         </CardContent>
       </Card>
@@ -260,7 +207,7 @@ export function DashboardStats() {
           <div className="text-2xl font-bold">
             {stats.ordenes.completadasHoy}
           </div>
-          <p className="text-xs text-muted-foreground">Órdenes nuevas hoy</p>
+          <p className="text-xs text-muted-foreground">Nuevas hoy</p>
         </CardContent>
       </Card>
 
@@ -279,7 +226,7 @@ export function DashboardStats() {
       </Card>
 
       {/* Tiempo Promedio */}
-      <Card>
+      <Card key="avg-time">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Tiempo Promedio</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />

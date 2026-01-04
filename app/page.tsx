@@ -2,7 +2,7 @@ import Header from '@/components/header'
 import HeroSection from '@/components/hero-section'
 import BrandsSlider from '@/components/brands-slider'
 import ServiceTypes from '@/components/service-types'
-import OptimizedServiceForm from '@/components/optimized-service-form'
+import ServiceForm from '@/components/service-form'
 import FAQ from '@/components/faq'
 import Footer from '@/components/footer'
 import AIChat from '@/components/ai-chat'
@@ -19,7 +19,7 @@ export default function HomePage() {
         {/* Slider de marcas integrado */}
         <BrandsSlider />
         <ServiceTypes />
-        <OptimizedServiceForm />
+        <ServiceForm />
         {/* Sección Uber-Técnico */}
         <UberTechnicianSection />
         <FAQ />

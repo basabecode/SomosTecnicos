@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ClientAuthProvider } from '@/components/client-auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
-import { NotificationProvider } from '@/components/notifications/notification-system-simple'
+import { NotificationProvider as InternalToastProvider } from '@/components/notifications/notification-system-simple'
+import { NotificationProvider } from '@/contexts/notification-context'
 import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 
@@ -22,11 +23,14 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="font-sans" suppressHydrationWarning={true}>
-        <NotificationProvider>
-          <ClientAuthProvider>
-            <Suspense fallback={null}>{children}</Suspense>
-          </ClientAuthProvider>
-        </NotificationProvider>
+        <ClientAuthProvider>
+          <NotificationProvider>
+            <InternalToastProvider>
+              <Suspense fallback={null}>{children}</Suspense>
+            </InternalToastProvider>
+          </NotificationProvider>
+        </ClientAuthProvider>
+        <Toaster />
       </body>
     </html>
   )

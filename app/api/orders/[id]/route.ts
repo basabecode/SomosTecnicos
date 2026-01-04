@@ -8,6 +8,8 @@ import { prisma } from '@/lib/prisma'
 import { withAuth, requireTechnicianManager, AuthenticatedUser } from '@/lib/auth'
 import { validateAndTransform, updateOrderSchema } from '@/lib/validations'
 import { ORDER_STATES } from '@/lib/constants'
+import { isValidTransition } from '@/lib/state-machine'
+import { notifyOrderStateChange } from '@/lib/services/notification.service'
 
 // =============================================
 // GET /api/orders/[id] - Obtener orden por ID
@@ -141,8 +143,18 @@ export async function PUT(
         }
       })
 
-      // Si cambió el estado, crear registro de historial
+      // Si cambió el estado, verificar validez y crear registro de historial
       if (updateData.estado && updateData.estado !== existingOrder.estado) {
+        if (!isValidTransition(existingOrder.estado, updateData.estado)) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: `Transición de estado inválida: de ${existingOrder.estado} a ${updateData.estado}`
+            },
+            { status: 400 }
+          )
+        }
+
         await prisma.orderHistory.create({
           data: {
             orderId: id,
@@ -156,25 +168,13 @@ export async function PUT(
 
         // Enviar notificación al cliente sobre cambio de estado
         try {
-          const { sendStatusUpdateEmail } = await import('@/lib/email')
-          await sendStatusUpdateEmail({
-            orderNumber: updatedOrder.orderNumber,
-            customerName: updatedOrder.nombre,
-            customerEmail: updatedOrder.email,
-            customerPhone: updatedOrder.telefono,
-            serviceType: updatedOrder.tipoServicio,
-            applianceType: updatedOrder.tipoElectrodomestico,
-            description: updatedOrder.descripcionProblema || '',
-            address: updatedOrder.direccion,
-            preferredDate: updatedOrder.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
-            status: updateData.estado,
-            technicianName: updatedOrder.assignments?.[0]?.technician?.nombre,
-            technicianPhone: updatedOrder.assignments?.[0]?.technician?.telefono,
-            notes: `Estado actualizado por ${user.nombre}`
-          })
+          await notifyOrderStateChange(
+             updatedOrder,
+             existingOrder.estado,
+             updateData.estado
+          )
         } catch (emailError) {
-          console.error('Error enviando email de actualización:', emailError)
-          // No fallar la actualización por error de email
+          console.error('Error enviando notificación de actualización:', emailError)
         }
       }
 

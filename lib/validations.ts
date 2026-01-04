@@ -100,8 +100,7 @@ export const createOrderSchema = z.object({
     .optional()
     .or(z.date().optional()),
 
-  horario: z.enum(Object.values(TIME_SLOTS) as [string, ...string[]])
-    .optional(),
+  horario: z.string().optional(),
 
   comentarios: z.string()
     .max(500, 'Los comentarios no pueden tener más de 500 caracteres')

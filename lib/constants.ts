@@ -11,8 +11,12 @@ export const ORDER_STATES = {
   PENDIENTE: 'pendiente',
   ASIGNADO: 'asignado',
   EN_CAMINO: 'en_camino',
+  REVISADO: 'revisado',
+  COTIZADO: 'cotizado',
   EN_PROCESO: 'en_proceso',
   ESPERANDO_REPUESTOS: 'esperando_repuestos',
+  REPARADO: 'reparado',
+  ENTREGADO: 'entregado',
   COMPLETADO: 'completado',
   CANCELADO: 'cancelado',
   REAGENDADO: 'reagendado'
@@ -199,6 +203,18 @@ export const STATUS_COLORS = {
     border: 'border-indigo-200',
     icon: '🚗'
   },
+  [ORDER_STATES.REVISADO]: {
+    bg: 'bg-teal-100',
+    text: 'text-teal-800',
+    border: 'border-teal-200',
+    icon: '🔍'
+  },
+  [ORDER_STATES.COTIZADO]: {
+    bg: 'bg-cyan-100',
+    text: 'text-cyan-800',
+    border: 'border-cyan-200',
+    icon: '📝'
+  },
   [ORDER_STATES.EN_PROCESO]: {
     bg: 'bg-purple-100',
     text: 'text-purple-800',
@@ -211,10 +227,22 @@ export const STATUS_COLORS = {
     border: 'border-orange-200',
     icon: '⏳'
   },
-  [ORDER_STATES.COMPLETADO]: {
+  [ORDER_STATES.REPARADO]: {
+    bg: 'bg-lime-100',
+    text: 'text-lime-800',
+    border: 'border-lime-200',
+    icon: '🔧'
+  },
+  [ORDER_STATES.ENTREGADO]: {
     bg: 'bg-green-100',
     text: 'text-green-800',
     border: 'border-green-200',
+    icon: '📦'
+  },
+  [ORDER_STATES.COMPLETADO]: {
+    bg: 'bg-emerald-100',
+    text: 'text-emerald-800',
+    border: 'border-emerald-200',
     icon: '✅'
   },
   [ORDER_STATES.CANCELADO]: {
@@ -340,8 +368,12 @@ export function getOrderStateText(state: OrderState): string {
     [ORDER_STATES.PENDIENTE]: 'Pendiente de asignación',
     [ORDER_STATES.ASIGNADO]: 'Técnico asignado',
     [ORDER_STATES.EN_CAMINO]: 'Técnico en camino',
+    [ORDER_STATES.REVISADO]: 'Revisado / Diagnóstico',
+    [ORDER_STATES.COTIZADO]: 'Cotizado',
     [ORDER_STATES.EN_PROCESO]: 'Servicio en proceso',
     [ORDER_STATES.ESPERANDO_REPUESTOS]: 'Esperando repuestos',
+    [ORDER_STATES.REPARADO]: 'Reparado',
+    [ORDER_STATES.ENTREGADO]: 'Entregado',
     [ORDER_STATES.COMPLETADO]: 'Completado',
     [ORDER_STATES.CANCELADO]: 'Cancelado',
     [ORDER_STATES.REAGENDADO]: 'Reagendado'

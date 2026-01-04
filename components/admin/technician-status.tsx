@@ -85,62 +85,8 @@ export function TechnicianStatus() {
           setTechnicians(Array.isArray(data.data) ? data.data : [])
         } else {
           // Datos mock si la API no responde
-          setTechnicians([
-            {
-              id: 1,
-              nombre: 'Juan Pérez',
-              telefono: '+573001234567',
-              especialidades: ['nevera', 'lavadora'],
-              activo: true,
-              disponible: false,
-              ordenesCompletadas: 45,
-              calificacionPromedio: 4.8,
-              currentAssignment: {
-                order: {
-                  numeroOrden: 'ORD-123',
-                  tipoElectrodomestico: 'nevera',
-                  ciudad: 'Bogotá',
-                },
-              },
-            },
-            {
-              id: 2,
-              nombre: 'María García',
-              telefono: '+573007654321',
-              especialidades: ['estufa', 'horno'],
-              activo: true,
-              disponible: true,
-              ordenesCompletadas: 38,
-              calificacionPromedio: 4.9,
-            },
-            {
-              id: 3,
-              nombre: 'Carlos López',
-              telefono: '+573009876543',
-              especialidades: ['aire_acondicionado'],
-              activo: true,
-              disponible: false,
-              ordenesCompletadas: 52,
-              calificacionPromedio: 4.7,
-              currentAssignment: {
-                order: {
-                  numeroOrden: 'ORD-124',
-                  tipoElectrodomestico: 'aire_acondicionado',
-                  ciudad: 'Medellín',
-                },
-              },
-            },
-            {
-              id: 4,
-              nombre: 'Ana Rodríguez',
-              telefono: '+573005432109',
-              especialidades: ['lavadora', 'secadora'],
-              activo: true,
-              disponible: true,
-              ordenesCompletadas: 29,
-              calificacionPromedio: 4.6,
-            },
-          ])
+          // Datos vacíos si la API no responde
+          setTechnicians([])
         }
       } catch (error) {
         console.error('Error fetching technicians:', error)

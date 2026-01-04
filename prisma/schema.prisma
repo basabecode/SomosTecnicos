@@ -59,6 +59,7 @@ model Order {
   history               OrderHistory[]
   notifications         Notification[]
   customer              Customer?         @relation(fields: [customerId], references: [id])
+  invoices              Invoice[]
 
   // Índices
   @@index([estado])
@@ -219,15 +220,21 @@ model Customer {
 
 model Notification {
   id              Int       @id @default(autoincrement())
-  orderId         String?   @map("order_id") // Puede ser null para notificaciones generales
+  orderId         String?   @map("order_id")
+
+  // Identificación del Usuario (In-App)
+  userId          String    @map("user_id") // ID del usuario destinatario (String para soportar CUIDs o IDs)
+  userType        String    @map("user_type") // 'admin', 'customer', 'technician'
+  read            Boolean   @default(false)
 
   // Información de la Notificación
-  tipo            String    // 'email', 'sms', 'push', 'system'
-  canal           String    @default("email") // canal específico usado
-  destinatario    String    // email, teléfono, etc.
+  tipo            String    // 'email', 'sms', 'push', 'system', 'assignment'
+  canal           String    @default("system") // canal usado: 'system' para in-app
+  destinatario    String    // email o identificador
   asunto          String?
   mensaje         String
-  plantilla       String?   // template usado
+  metadata        Json?     // Datos adicionales para navegación { link: '/orders/123' }
+  plantilla       String?
 
   // Estado del Envío
   enviado         Boolean   @default(false)
@@ -243,7 +250,7 @@ model Notification {
 
   // Programación
   programadaPara  DateTime? @map("programada_para")
-  prioridad       Int       @default(1) // 1=baja, 2=media, 3=alta
+  prioridad       Int       @default(1)
 
   // Timestamps
   createdAt       DateTime  @default(now()) @map("created_at")
@@ -253,10 +260,11 @@ model Notification {
   order           Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   // Índices
+  @@index([userId, userType])
+  @@index([read])
   @@index([orderId])
   @@index([tipo])
   @@index([enviado])
-  @@index([programadaPara])
   @@index([createdAt])
   @@map("notifications")
 }
@@ -391,3 +399,76 @@ model WorkZone {
   @@index([activo])
   @@map("work_zones")
 }
+
+// =============================================
+// MODELO DE FACTURAS ELECTRÓNICAS
+// =============================================
+
+model Invoice {
+  id                String   @id @default(cuid())
+  invoiceNumber     String   @unique @map("invoice_number") // Ej: FAC-2024-01-0001
+  orderId           String   @map("order_id")
+
+  // Información del Cliente
+  clientName        String   @map("client_name")
+  clientEmail       String   @map("client_email")
+  clientPhone       String   @map("client_phone")
+  clientAddress     String   @map("client_address")
+  clientCity        String   @map("client_city")
+  clientDocument    String?  @map("client_document") // NIT o Cédula
+
+  // Detalles del Servicio
+  serviceType       String   @map("service_type")
+  serviceDescription String  @map("service_description")
+  applianceType     String   @map("appliance_type")
+
+  // Costos
+  subtotal          Decimal  @db.Decimal(10,2)
+  iva               Decimal  @db.Decimal(10,2) // 19% en Colombia
+  total             Decimal  @db.Decimal(10,2)
+
+  // Desglose de Costos
+  laborCost         Decimal? @map("labor_cost") @db.Decimal(10,2)
+  partsCost         Decimal? @map("parts_cost") @db.Decimal(10,2)
+  transportCost     Decimal? @map("transport_cost") @db.Decimal(10,2)
+
+  // Método de Pago
+  paymentMethod     String   @map("payment_method") // efectivo, transferencia, nequi, daviplata
+  paymentStatus     String   @default("pending") @map("payment_status") // pending, paid, cancelled
+  paymentDate       DateTime? @map("payment_date")
+  paymentReference  String?  @map("payment_reference") // Número de transacción
+
+  // Archivos
+  pdfUrl            String?  @map("pdf_url") // URL del PDF generado
+  pdfPath           String?  @map("pdf_path") // Ruta local del PDF
+
+  // Estado de Envío
+  emailSent         Boolean  @default(false) @map("email_sent")
+  emailSentAt       DateTime? @map("email_sent_at")
+  whatsappSent      Boolean  @default(false) @map("whatsapp_sent")
+  whatsappSentAt    DateTime? @map("whatsapp_sent_at")
+
+  // Información Fiscal
+  fiscalYear        Int      @map("fiscal_year")
+  fiscalMonth       Int      @map("fiscal_month")
+
+  // Notas
+  notes             String?
+  internalNotes     String?  @map("internal_notes")
+
+  // Timestamps
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Índices
+  @@index([orderId])
+  @@index([invoiceNumber])
+  @@index([clientEmail])
+  @@index([fiscalYear, fiscalMonth])
+  @@index([paymentStatus])
+  @@map("invoices")
+}
+

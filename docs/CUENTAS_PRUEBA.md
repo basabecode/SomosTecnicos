@@ -1,189 +1,367 @@
-# 🔐 Cuentas de Prueba - Sistema de Servicio Técnico
+# 🔐 Cuentas de Prueba - TecnoCity
 
-Este documento contiene las credenciales de las cuentas de prueba creadas automáticamente al ejecutar `pnpm db:seed`.
-
-## 👨‍💼 Cuenta de Administrador
-
-### Super Administrador
-
-- **Email:** `admin@servicio-tecnico.com`
-- **Contraseña:** `Admin123!`
-- **Usuario:** `admin`
-- **Nombre:** Administrador Principal
-- **Rol:** `super_admin`
-- **Acceso:** Panel completo de administración
-
-**Panel de acceso:** `/admin/dashboard`
+**Última actualización:** 2 de enero de 2026
+**Propósito:** Testing y demostración del sistema
 
 ---
 
-## 👥 Cuentas de Clientes
+## 📋 INFORMACIÓN IMPORTANTE
 
-### Cliente 1 - Camila Suárez
+⚠️ **ESTAS SON CUENTAS DE PRUEBA ÚNICAMENTE**
 
-- **Email:** `cliente.demo@tecnocity.com`
-- **Contraseña:** `Cliente123!`
-- **Usuario:** `cliente.demo`
+- Las credenciales son públicas y **NO deben usarse en producción**
+- Los datos se recrean cada vez que se ejecuta `pnpm db:seed`
+- Todas las contraseñas deben cambiarse en un entorno de producción
+- El sistema incluye datos de ejemplo (órdenes, técnicos, clientes)
+
+---
+
+## 👥 CUENTAS DISPONIBLES
+
+### 🛡️ **1. ADMINISTRADOR**
+
+**Acceso completo al sistema**
+
+```
+Email:     admin.demo@tecnocity.com
+Password:  123456
+Rol:       super_admin
+Panel:     /admin/dashboard
+```
+
+**Permisos:**
+- ✅ Gestión completa de órdenes
+- ✅ Gestión de técnicos
+- ✅ Reportes y estadísticas
+- ✅ Configuraciones del sistema
+- ✅ Asignación de servicios
+- ✅ Visualización de métricas
+
+---
+
+### 🔧 **2. TÉCNICO**
+
+**Portal para técnicos de campo**
+
+```
+Email:     tecnico.demo@tecnocity.com
+Password:  123456
+Rol:       technician
+Panel:     /technician/dashboard
+```
+
+**Permisos:**
+- ✅ Ver asignaciones propias
+- ✅ Actualizar estado de órdenes
+- ✅ Registrar servicios completados
+- ✅ Ver historial de trabajos
+- ✅ Gestionar disponibilidad
+- ✅ Recibir notificaciones de nuevas asignaciones
+
+---
+
+### 👤 **3. CLIENTE**
+
+**Portal para clientes finales**
+
+```
+Email:     cliente.demo@tecnocity.com
+Password:  123456
+Rol:       customer
+Panel:     /customer/dashboard
+```
+
+**Información del Cliente:**
 - **Nombre:** Camila Suárez
-- **Teléfono:** 3005557788
+- **Teléfono:** +57 300 555 7788
 - **Ciudad:** Bogotá
 - **Dirección:** Carrera 45 #12-34
 
-### Cliente 2 - Esteban Mejía (VIP)
-
-- **Email:** `cliente.vip@tecnocity.com`
-- **Contraseña:** `Cliente123!`
-- **Usuario:** `cliente.vip`
-- **Nombre:** Esteban Mejía
-- **Teléfono:** 3106668899
-- **Ciudad:** Medellín
-- **Dirección:** Calle 98 #23-45
-
-### Cliente 3 - Daniela Gómez
-
-- **Email:** `cliente.norte@tecnocity.com`
-- **Contraseña:** `Cliente123!`
-- **Usuario:** `cliente.norte`
-- **Nombre:** Daniela Gómez
-- **Teléfono:** 3207779900
-- **Ciudad:** Barranquilla
-- **Dirección:** Transversal 25 #45-12
-
-**Panel de acceso:** `/customer/dashboard`
+**Permisos:**
+- ✅ Solicitar nuevos servicios
+- ✅ Ver historial de servicios
+- ✅ Seguimiento de órdenes activas
+- ✅ Gestión de garantías
+- ✅ Mensajería con soporte
+- ✅ Configuración de perfil
 
 ---
 
-## 🚀 Cómo Probar el Sistema
+### 👤 **4. CLIENTE VIP** (Opcional)
 
-### 1. Asegurar que la Base de Datos esté Inicializada
+**Cliente con historial extenso**
+
+```
+Email:     cliente.vip@tecnocity.com
+Password:  123456
+Rol:       customer
+Panel:     /customer/dashboard
+```
+
+**Información del Cliente:**
+- **Nombre:** Esteban Mejía
+- **Teléfono:** +57 310 666 8899
+- **Ciudad:** Medellín
+- **Dirección:** Calle 98 #23-45
+- **Nivel:** VIP (cliente frecuente)
+
+---
+
+### 👤 **5. CLIENTE ADICIONAL** (Opcional)
+
+**Cliente de otra ciudad**
+
+```
+Email:     cliente.norte@tecnocity.com
+Password:  123456
+Rol:       customer
+Panel:     /customer/dashboard
+```
+
+**Información del Cliente:**
+- **Nombre:** Daniela Gómez
+- **Teléfono:** +57 320 777 9900
+- **Ciudad:** Barranquilla
+- **Dirección:** Transversal 25 #45-12
+
+---
+
+## 🚀 GUÍA DE INICIO RÁPIDO
+
+### **Paso 1: Preparar la Base de Datos**
 
 ```bash
-# Si es la primera vez, ejecutar:
+# Primera vez (incluye Docker, DB y seed)
 pnpm setup
 
-# O si ya existe, solo regenerar datos:
+# O solo regenerar datos de prueba
 pnpm db:seed
 ```
 
-### 2. Iniciar el Servidor de Desarrollo
+### **Paso 2: Iniciar el Servidor**
 
 ```bash
 pnpm dev
 ```
 
-### 3. Acceder a los Diferentes Portales
+El servidor estará disponible en: `http://localhost:3000`
 
-#### Portal de Administración
+### **Paso 3: Acceder al Sistema**
 
-1. Ir a: `http://localhost:3000/admin/login`
-2. Usar credenciales de administrador
-3. Explorar: Dashboard, Órdenes, Técnicos, Reportes, etc.
+#### **Login Unificado (Recomendado)**
+```
+URL: http://localhost:3000/login
+```
+- Ingresa cualquiera de las credenciales de arriba
+- El sistema detectará automáticamente tu rol
+- Serás redirigido al panel correspondiente
 
-#### Portal de Cliente
-
-1. Ir a: `http://localhost:3000/customer/login`
-2. Usar cualquiera de las credenciales de cliente
-3. Explorar: Dashboard, Solicitar servicio, Historial, Mensajes, etc.
-
-#### Página Principal
-
-1. Ir a: `http://localhost:3000`
-2. Ver la landing page y formulario de solicitud de servicio
+#### **Acceso Directo por Rol**
+- **Admin:** `http://localhost:3000/admin/dashboard`
+- **Técnico:** `http://localhost:3000/technician/dashboard`
+- **Cliente:** `http://localhost:3000/customer/dashboard`
 
 ---
 
-## 🔍 Funcionalidades a Validar
+## 🧪 ESCENARIOS DE PRUEBA
 
-### Como Administrador:
+### **Como Administrador:**
 
-- ✅ Login/logout
-- ✅ Dashboard con métricas
-- ✅ Gestión de órdenes
-- ✅ Gestión de técnicos
-- ✅ Reportes y estadísticas
-- ✅ Configuraciones del sistema
+1. **Gestión de Órdenes**
+   - Ver todas las órdenes del sistema
+   - Crear órdenes manualmente
+   - Asignar técnicos a órdenes
+   - Actualizar estados
 
-### Como Cliente:
+2. **Gestión de Técnicos**
+   - Ver lista de técnicos
+   - Crear nuevos técnicos
+   - Ver disponibilidad y carga de trabajo
+   - Asignar zonas de trabajo
 
-- ✅ Login/logout
-- ✅ Dashboard personalizado
-- ✅ Solicitar nuevo servicio
-- ✅ Ver historial de servicios
-- ✅ Seguimiento de órdenes activas
-- ✅ Configuraciones de perfil
+3. **Reportes**
+   - Dashboard con métricas en tiempo real
+   - Reportes de rendimiento
+   - Análisis de servicios
+   - Estadísticas de satisfacción
 
-### Funcionalidades Generales:
+### **Como Técnico:**
 
-- ✅ Navegación entre secciones
-- ✅ Diseño responsive
-- ✅ Sistema de notificaciones
-- ✅ Formularios de solicitud
+1. **Mis Asignaciones**
+   - Ver órdenes asignadas
+   - Actualizar estado de servicio
+   - Marcar como completado
+   - Agregar notas técnicas
+
+2. **Calendario**
+   - Ver agenda del día/semana
+   - Gestionar disponibilidad
+   - Ver próximas citas
+
+3. **Historial**
+   - Servicios completados
+   - Estadísticas personales
+   - Evaluaciones recibidas
+
+### **Como Cliente:**
+
+1. **Solicitar Servicio**
+   - Formulario de solicitud
+   - Selección de tipo de servicio
+   - Programación de cita
+   - Subir fotos del problema
+
+2. **Seguimiento**
+   - Ver estado de servicios activos
+   - Historial completo
+   - Detalles de garantías
+   - Facturas y pagos
+
+3. **Comunicación**
+   - Centro de mensajes
+   - Notificaciones en tiempo real
+   - Soporte técnico
 
 ---
 
-## 🎯 Rutas de Navegación Principales
+## 🔍 VALIDACIÓN DE FUNCIONALIDADES
 
-### Administración
+### **✅ Autenticación y Seguridad**
+- [ ] Login con credenciales correctas
+- [ ] Rechazo de credenciales incorrectas
+- [ ] Redirección según rol
+- [ ] Logout correcto
+- [ ] Protección de rutas
+- [ ] Tokens JWT funcionando
 
-- `/admin` - Página principal admin
-- `/admin/login` - Login administrativo
+### **✅ Gestión de Órdenes**
+- [ ] Crear nueva orden
+- [ ] Ver lista de órdenes
+- [ ] Filtrar órdenes por estado
+- [ ] Actualizar estado de orden
+- [ ] Asignar técnico
+- [ ] Ver detalles completos
+
+### **✅ Notificaciones**
+- [ ] Notificaciones in-app
+- [ ] Badge de contador
+- [ ] Marcar como leída
+- [ ] Enlaces dinámicos
+- [ ] Polling automático
+
+### **✅ UI/UX**
+- [ ] Diseño responsive
+- [ ] Navegación intuitiva
+- [ ] Feedback visual
+- [ ] Estados de carga
+- [ ] Manejo de errores
+
+---
+
+## 🛠️ COMANDOS ÚTILES
+
+```bash
+# Ver base de datos en navegador
+pnpm db:studio
+
+# Reiniciar base de datos completa
+pnpm reset
+
+# Generar cliente Prisma
+pnpm db:generate
+
+# Push cambios de schema a DB
+pnpm db:push
+
+# Construir para producción
+pnpm build
+
+# Iniciar en modo producción
+pnpm start
+```
+
+---
+
+## 📱 DISPOSITIVOS DE PRUEBA RECOMENDADOS
+
+| Dispositivo | Resolución | Navegador |
+|-------------|------------|-----------|
+| Desktop | 1920x1080+ | Chrome, Firefox, Edge |
+| Laptop | 1366x768+ | Chrome, Safari |
+| Tablet | 768x1024 | Safari, Chrome |
+| Mobile | 375x667+ | Safari iOS, Chrome Android |
+
+---
+
+## 🎯 RUTAS PRINCIPALES DEL SISTEMA
+
+### **Públicas**
+- `/` - Landing page
+- `/login` - Login unificado
+
+### **Administración**
 - `/admin/dashboard` - Dashboard principal
 - `/admin/orders` - Gestión de órdenes
 - `/admin/technicians` - Gestión de técnicos
 - `/admin/reports` - Reportes y análisis
+- `/admin/settings` - Configuraciones
 
-### Cliente
+### **Técnico**
+- `/technician/dashboard` - Dashboard técnico
+- `/technician/assignments` - Mis asignaciones
+- `/technician/schedule` - Calendario
+- `/technician/history` - Historial
+- `/technician/notifications` - Notificaciones
 
-- `/customer/login` - Login de cliente
-- `/customer/dashboard` - Dashboard de cliente
+### **Cliente**
+- `/customer/dashboard` - Dashboard cliente
 - `/customer/request` - Solicitar servicio
-- `/customer/history` - Historial de servicios
-- `/customer/messages` - Centro de mensajes
-- `/customer/settings` - Configuraciones
-
-### Públicas
-
-- `/` - Landing page
-- `/login` - Redirección de login
+- `/customer/services` - Mis servicios
+- `/customer/history` - Historial
+- `/customer/warranty` - Garantías
+- `/customer/messages` - Mensajes
+- `/customer/notifications` - Notificaciones
 
 ---
 
-## 📱 Dispositivos de Prueba
+## 🔒 SEGURIDAD EN PRODUCCIÓN
 
-El sistema está optimizado para:
+### **⚠️ ANTES DE DESPLEGAR:**
 
-- **Desktop:** 1920x1080+
-- **Tablet:** 768x1024
-- **Mobile:** 375x667+
+1. **Cambiar todas las contraseñas**
+   - Usar contraseñas fuertes (mínimo 12 caracteres)
+   - Incluir mayúsculas, minúsculas, números y símbolos
+   - No reutilizar contraseñas
 
----
+2. **Configurar variables de entorno**
+   ```bash
+   DATABASE_URL=postgresql://...
+   JWT_SECRET=<secreto-aleatorio-fuerte>
+   JWT_REFRESH_SECRET=<otro-secreto-diferente>
+   ```
 
-## 🔧 Comandos Útiles
+3. **Habilitar 2FA** (cuando esté implementado)
+   - Para cuentas de administrador
+   - Para cuentas de gerente
 
-```bash
-# Reiniciar base de datos completa
-pnpm reset
-
-# Ver base de datos en navegador
-pnpm db:studio
-
-# Logs del servidor
-pnpm dev
-
-# Construir para producción
-pnpm build
-```
-
----
-
-## ⚠️ Notas Importantes
-
-1. **Estas son cuentas de PRUEBA solamente**
-2. Las contraseñas son públicas y deben cambiarse en producción
-3. Los datos se recrean cada vez que se ejecuta `pnpm db:seed`
-4. En producción, usar variables de entorno para credenciales
-5. El sistema incluye datos de ejemplo (órdenes, técnicos, etc.)
+4. **Revisar permisos**
+   - Validar RBAC
+   - Verificar protección de rutas
+   - Auditar logs de acceso
 
 ---
 
-_Última actualización: Octubre 2025_
+## 📞 SOPORTE
+
+**¿Problemas con las cuentas de prueba?**
+
+1. Verifica que Docker esté corriendo
+2. Ejecuta `pnpm reset` para reiniciar todo
+3. Revisa los logs en la consola
+4. Consulta la documentación en `/docs`
+
+---
+
+**Generado por:** TecnoCity Development Team
+**Versión:** 1.2.0
+**Fecha:** 2 de enero de 2026

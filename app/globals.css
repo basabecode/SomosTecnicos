@@ -171,4 +171,36 @@
       transform: translateY(0);
     }
   }
+
+  /* Safe area padding para móviles con notch/indicador */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top) !important;
+  }
+
+  /* Efecto de toque nativo */
+  .active-tap:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  /* Card estilo Apple/Material */
+  .native-card {
+    @apply rounded-xl border-none shadow-sm;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Ocultar scrollbar pero permitir scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

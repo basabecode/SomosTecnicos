@@ -29,6 +29,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useSearchParams } from 'next/navigation'
 
 interface Message {
   id: string
@@ -112,13 +113,25 @@ const mockMessages: Message[] = [
   },
 ]
 
+
 export default function CustomerMessages() {
+  const searchParams = useSearchParams()
+  const initialServiceId = searchParams.get('serviceId')
+  const initialTechnician = searchParams.get('technician')
+
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<
     'all' | 'read' | 'unread' | 'replied'
   >('all')
   const [newMessage, setNewMessage] = useState('')
+
+  // Simular inicio de conversación si vienen parámetros
+  if (initialServiceId && !selectedMessage && !newMessage) {
+     // En una implementación real, esto abriría un modal de composición o buscaría el hilo existente
+     // Por ahora, podemos pre-llenar el filtro o mostrar un indicador visual
+     // console.log(`Starting chat with ${initialTechnician} for service ${initialServiceId}`)
+  }
 
   const filteredMessages = mockMessages.filter(message => {
     const matchesSearch =

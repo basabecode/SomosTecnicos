@@ -1,0 +1,70 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - heading "🔧 TecnoCity" [level=1] [ref=e6]
+        - paragraph [ref=e7]: "**Sistema Inteligente de Login**"
+        - paragraph [ref=e8]: Ingresa tu email y automáticamente detectaremos tu rol
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - img [ref=e12]
+          - generic [ref=e14]:
+            - heading "Administrador" [level=3] [ref=e15]
+            - paragraph [ref=e16]: Panel completo de administración
+        - generic [ref=e17]:
+          - img [ref=e19]
+          - generic [ref=e22]:
+            - heading "Gerente" [level=3] [ref=e23]
+            - paragraph [ref=e24]: Gestión de operaciones
+        - generic [ref=e25]:
+          - img [ref=e27]
+          - generic [ref=e29]:
+            - heading "Técnico" [level=3] [ref=e30]
+            - paragraph [ref=e31]: Órdenes de trabajo asignadas
+        - generic [ref=e32]:
+          - img [ref=e34]
+          - generic [ref=e37]:
+            - heading "Cliente" [level=3] [ref=e38]
+            - paragraph [ref=e39]: Seguimiento de servicios
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]: Iniciar Sesión
+          - generic [ref=e44]: Detectamos automáticamente tu tipo de cuenta
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: Email
+            - textbox "Email" [ref=e49]:
+              - /placeholder: tu@email.com
+          - generic [ref=e50]:
+            - generic [ref=e51]: Contraseña
+            - generic [ref=e52]:
+              - textbox "Contraseña" [ref=e53]:
+                - /placeholder: Tu contraseña
+              - button [ref=e54]:
+                - img
+          - button "Iniciar Sesión" [ref=e55]
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e58]: 🧪 Cuentas de Prueba
+          - generic [ref=e59]: Haz clic para usar credenciales de prueba
+        - generic [ref=e61]:
+          - button "Administrador admin.demo@tecnocity.com" [ref=e62]:
+            - generic [ref=e63]:
+              - img
+              - generic [ref=e64]:
+                - generic [ref=e65]: Administrador
+                - generic [ref=e66]: admin.demo@tecnocity.com
+          - button "Cliente Demo cliente.demo@tecnocity.com" [ref=e67]:
+            - generic [ref=e68]:
+              - img
+              - generic [ref=e69]:
+                - generic [ref=e70]: Cliente Demo
+                - generic [ref=e71]: cliente.demo@tecnocity.com
+  - button "Open Next.js Dev Tools" [ref=e77] [cursor=pointer]:
+    - img [ref=e78]
+  - alert [ref=e81]
+```

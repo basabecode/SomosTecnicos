@@ -271,7 +271,9 @@ export default function TechnicianAssignmentsPage() {
           return (
             <Card
               key={assignment.id}
-              className={`${isToday ? 'border-primary' : ''}`}
+              className={`native-card overflow-hidden transition-all duration-300 ${
+                isToday ? 'ring-1 ring-primary/20 bg-primary/5' : ''
+              }`}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -348,45 +350,57 @@ export default function TechnicianAssignmentsPage() {
                     </div>
                   )}
 
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100/50 mt-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1 min-w-[120px] active-tap bg-white/50"
+                      onClick={() => openDetailDialog(assignment)}
+                    >
+                      <FileText className="w-4 h-4 mr-1.5" />
+                      Detalles
+                    </Button>
+
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => openDetailDialog(assignment)}
+                      className="flex-1 min-w-[120px] active-tap border-green-200 text-green-700 hover:bg-green-50"
+                      asChild
                     >
-                      <FileText className="w-4 h-4 mr-1" />
-                      Ver Detalles
+                      <a href={`tel:${assignment.clientPhone.replace(/\s+/g, '')}`}>
+                        <Phone className="w-4 h-4 mr-1.5" />
+                        Llamar
+                      </a>
                     </Button>
 
-                    <Button variant="outline" size="sm">
-                      <Phone className="w-4 h-4 mr-1" />
-                      Llamar Cliente
-                    </Button>
-
-                    <Button variant="outline" size="sm">
-                      <Navigation className="w-4 h-4 mr-1" />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 min-w-[120px] active-tap"
+                    >
+                      <Navigation className="w-4 h-4 mr-1.5" />
                       Navegar
                     </Button>
 
                     {assignment.status === 'assigned' && (
                       <Button
                         size="sm"
+                        className="w-full active-tap bg-green-600 hover:bg-green-700 mt-2"
                         onClick={() => startJob(assignment.id)}
-                        className="bg-green-500 hover:bg-green-600"
                       >
-                        <PlayCircle className="w-4 h-4 mr-1" />
-                        Iniciar Trabajo
+                        <PlayCircle className="w-4 h-4 mr-1.5" />
+                        Iniciar Servicio
                       </Button>
                     )}
 
                     {assignment.status === 'in_progress' && (
                       <Button
                         size="sm"
+                        className="w-full active-tap bg-[#A50034] hover:bg-[#8B002B] mt-2"
                         onClick={() => completeJob(assignment.id)}
-                        className="bg-blue-500 hover:bg-blue-600"
                       >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        Completar
+                        <CheckCircle className="w-4 h-4 mr-1.5" />
+                        Finalizar Trabajo
                       </Button>
                     )}
                   </div>

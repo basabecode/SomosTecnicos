@@ -9,12 +9,14 @@ import { prisma } from '@/lib/prisma'
 import { withAuth, requireTechnicianManager, AuthenticatedUser } from '@/lib/auth'
 import { validateAndTransform, createAssignmentSchema } from '@/lib/validations'
 import { Prisma } from '@prisma/client'
+import { USER_ROLES } from '@/lib/constants'
+import { notifyAssignment } from '@/lib/services/notification.service'
 
 // =============================================
 // GET /api/assignments - Listar asignaciones
 // =============================================
 
-export const GET = withAuth(async (request: NextRequest) => {
+export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser) => {
   try {
     const { searchParams } = new URL(request.url)
 
@@ -25,15 +27,36 @@ export const GET = withAuth(async (request: NextRequest) => {
     const technicianId = searchParams.get('technicianId')
     const orderId = searchParams.get('orderId')
 
-  // Construir filtros
-  const where: Prisma.AssignmentWhereInput = {}
+    // Construir filtros
+    const where: Prisma.AssignmentWhereInput = {}
+
+    // 🔒 RBAC: Filtrado por Rol
+    if (user.role === USER_ROLES.CUSTOMER) {
+      // Clientes solo ven asignaciones relacionadas con sus órdenes
+      where.order = {
+        customerId: user.id
+      }
+    } else {
+      // Verificar si es técnico
+      const technician = await prisma.technician.findUnique({
+        where: { email: user.email }
+      })
+
+      if (technician && user.role !== USER_ROLES.ADMIN && user.role !== USER_ROLES.SUPER_ADMIN && user.role !== USER_ROLES.TECHNICIAN_MANAGER) {
+        // Técnicos solo ven sus propias asignaciones
+        where.technicianId = technician.id
+      }
+    }
 
     if (estado) {
       where.estado = estado
     }
 
-    if (technicianId) {
-      where.technicianId = parseInt(technicianId)
+    if (technicianId && user.role !== USER_ROLES.CUSTOMER) { // Cliente no debería filtrar por técnico arbitrario, ya filtrado arriba implícitamente pero añadimos seguridad
+       // Si el usuario es admin/manager puede filtrar. Si es técnico, ya se forzó arriba su ID.
+       if (!where.technicianId) {
+          where.technicianId = parseInt(technicianId)
+       }
     }
 
     if (orderId) {
@@ -213,11 +236,33 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
       )
     }
 
-    if (technician.assignments.length > 0) {
+    // Validar Cruces de Horario (Booking System)
+    const newStart = assignmentData.fechaProgramada ? new Date(assignmentData.fechaProgramada) : new Date()
+    const durationMinutes = assignmentData.tiempoEstimado || 60
+    const newEnd = new Date(newStart.getTime() + durationMinutes * 60000)
+
+    const activeAssignments = await prisma.assignment.findMany({
+      where: {
+        technicianId: assignmentData.technicianId,
+        estado: { in: ['asignado', 'en_proceso'] }, // Solo validar contra asignaciones activas
+        fechaProgramada: { not: null }
+      }
+    })
+
+    const hasOverlap = activeAssignments.some(assignment => {
+      const start = new Date(assignment.fechaProgramada!)
+      const duration = assignment.tiempoEstimado || 60
+      const end = new Date(start.getTime() + duration * 60000)
+
+      // Fórmula de superposición: StartA < EndB && EndA > StartB
+      return newStart < end && newEnd > start
+    })
+
+    if (hasOverlap) {
       return NextResponse.json(
         {
           success: false,
-          error: 'El técnico ya tiene una asignación activa'
+          error: 'El técnico tiene un cruce de horario con otra asignación existente'
         },
         { status: 409 }
       )
@@ -286,13 +331,25 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
         }
       })
 
-      return assignment
+      // Enviar notificación (fuera de la transacción para no bloquear)
+      // Se hará después del return
+      return { assignment, technician, order: existingOrder }
     })
+
+    // Ejecutar notificación asíncrona
+    try {
+      await notifyAssignment(
+        result.technician,
+        result.order
+      )
+    } catch (error) {
+      console.error('Error enviando notificación de asignación:', error)
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Asignación creada exitosamente',
-      data: result
+      data: result.assignment
     }, { status: 201 })
 
   } catch (error) {

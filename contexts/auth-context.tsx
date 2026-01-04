@@ -21,8 +21,8 @@ interface User {
   apellido?: string
   role: string
   activo: boolean
-  phone?: string
-  address?: string
+  telefono?: string
+  direccion?: string
 }
 
 interface AuthContextType {
@@ -267,11 +267,15 @@ export function ProtectedRoute({
 
   useEffect(() => {
     if (user && requiredRoles.length > 0) {
-      if (!requiredRoles.includes(user.role)) {
+      const requiredRolesNormalized = requiredRoles.map(r => r.toLowerCase().trim())
+      const userRoleNormalized = user.role.toLowerCase().trim()
+
+      if (!requiredRolesNormalized.includes(userRoleNormalized)) {
         // Redireccionar según el rol del usuario
-        if (user.role === 'customer') {
+        if (userRoleNormalized === 'customer') {
           router.push('/customer/dashboard')
         } else {
+          console.warn(`Redirecting unauthorized user. Role: ${userRoleNormalized}, Required: ${requiredRolesNormalized}`)
           router.push('/admin/dashboard')
         }
       }
@@ -290,7 +294,10 @@ export function ProtectedRoute({
     return null
   }
 
-  if (requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
+  const requiredRolesNormalized = requiredRoles.map(r => r.toLowerCase().trim())
+  const userRoleNormalized = user.role.toLowerCase().trim()
+
+  if (requiredRoles.length > 0 && !requiredRolesNormalized.includes(userRoleNormalized)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -299,6 +306,10 @@ export function ProtectedRoute({
           </h1>
           <p className="text-gray-600">
             No tienes permisos para acceder a esta página.
+            <br/>
+            <span className="text-xs text-red-400 mt-2 block">
+              Debug: Tu rol actual es '{user.role}' pero se requiere uno de: [{requiredRoles.join(', ')}]
+            </span>
           </p>
         </div>
       </div>

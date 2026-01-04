@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, User, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { OrderTrackingModal } from '@/components/order-tracking-modal'
 
 interface HeaderUser {
   id: number | string
@@ -28,6 +29,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<HeaderUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,6 +75,15 @@ export default function Header() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
       setIsMobileMenuOpen(false)
+    }
+  }
+
+  const handleNavClick = (id: string) => {
+    if (id === 'seguimiento') {
+      setIsTrackingModalOpen(true)
+      setIsMobileMenuOpen(false)
+    } else {
+      scrollToSection(id)
     }
   }
 
@@ -146,113 +157,120 @@ export default function Header() {
   ]
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
-        isScrolled ? 'shadow-md' : ''
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <button
-            onClick={() => scrollToSection('hero')}
-            className="text-2xl font-bold text-[#A50034] hover:text-[#E74C3C] transition-colors"
-          >
-            TecnoCity
-          </button>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map(link => (
-              <button
-                key={link.id}
-                onClick={() => scrollToSection(link.id)}
-                className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium"
-              >
-                {link.label}
-              </button>
-            ))}
-            <Button
-              onClick={() => scrollToSection('formulario')}
-              className="bg-[#27AE60] hover:bg-[#229954] text-white"
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
+          isScrolled ? 'shadow-md' : ''
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
+            <button
+              onClick={() => scrollToSection('hero')}
+              className="text-2xl font-bold text-[#A50034] hover:text-[#E74C3C] transition-colors"
             >
-              Solicitar Servicio
-            </Button>
-            {renderAuthSection()}
-          </nav>
+              TecnoCity
+            </button>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-[#2C3E50]"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-[#E0E0E0] animate-fade-in">
-            <div className="flex flex-col gap-4">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
               {navLinks.map(link => (
                 <button
                   key={link.id}
-                  onClick={() => scrollToSection(link.id)}
-                  className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium text-left py-2"
+                  onClick={() => handleNavClick(link.id)}
+                  className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium"
                 >
                   {link.label}
                 </button>
               ))}
               <Button
                 onClick={() => scrollToSection('formulario')}
-                className="bg-[#27AE60] hover:bg-[#229954] text-white w-full"
+                className="bg-[#27AE60] hover:bg-[#229954] text-white"
               >
                 Solicitar Servicio
               </Button>
+              {renderAuthSection()}
+            </nav>
 
-              {/* Mobile Auth Section */}
-              <div className="pt-4 border-t border-gray-200">
-                {isLoading ? (
-                  <div className="w-full h-10 bg-gray-200 animate-pulse rounded"></div>
-                ) : user ? (
-                  <div className="flex flex-col gap-3">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 text-[#2C3E50]"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <nav className="md:hidden py-4 border-t border-[#E0E0E0] animate-fade-in">
+              <div className="flex flex-col gap-4">
+                {navLinks.map(link => (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id)}
+                    className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium text-left py-2"
+                  >
+                    {link.label}
+                  </button>
+                ))}
+                <Button
+                  onClick={() => scrollToSection('formulario')}
+                  className="bg-[#27AE60] hover:bg-[#229954] text-white w-full"
+                >
+                  Solicitar Servicio
+                </Button>
+
+                {/* Mobile Auth Section */}
+                <div className="pt-4 border-t border-gray-200">
+                  {isLoading ? (
+                    <div className="w-full h-10 bg-gray-200 animate-pulse rounded"></div>
+                  ) : user ? (
+                    <div className="flex flex-col gap-3">
+                      <Link
+                        href={getDashboardUrl()}
+                        className="flex items-center gap-3 text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium py-2"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <User size={20} />
+                        <div>
+                          <div>{user.nombre}</div>
+                          <div className="text-xs text-gray-500 capitalize">
+                            {user.role}
+                          </div>
+                        </div>
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors py-2"
+                      >
+                        <LogOut size={20} />
+                        Cerrar Sesión
+                      </button>
+                    </div>
+                  ) : (
                     <Link
-                      href={getDashboardUrl()}
-                      className="flex items-center gap-3 text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium py-2"
+                      href="/login"
+                      className="flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white py-3 rounded-md transition-colors font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <User size={20} />
-                      <div>
-                        <div>{user.nombre}</div>
-                        <div className="text-xs text-gray-500 capitalize">
-                          {user.role}
-                        </div>
-                      </div>
+                      Iniciar Sesión
                     </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors py-2"
-                    >
-                      <LogOut size={20} />
-                      Cerrar Sesión
-                    </button>
-                  </div>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white py-3 rounded-md transition-colors font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <User size={20} />
-                    Iniciar Sesión
-                  </Link>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </nav>
-        )}
-      </div>
-    </header>
+            </nav>
+          )}
+        </div>
+      </header>
+
+      <OrderTrackingModal
+        isOpen={isTrackingModalOpen}
+        onClose={() => setIsTrackingModalOpen(false)}
+      />
+    </>
   )
 }

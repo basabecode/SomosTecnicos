@@ -1,78 +1,37 @@
-# 📚 DOCUMENTACIÓN DEL SISTEMA - VERSIÓN CONSOLIDADA
+# 📚 DOCUMENTACIÓN DEL SISTEMA - ÚNICA FUENTE DE VERDAD
 
-## 📋 Índice de Documentación
+## 📖 **Fuente Principal**
 
-### 📖 **Documentos Principales (ACTUALES)**
-
-- **`README.md`** - Guía principal del proyecto
-- **`ARQUITECTURA_SOFTWARE.md`** - Auditoría completa y arquitectura
-- **`RESUMEN_OPTIMIZACIONES_COMPLETADAS.md`** - Estado actual de optimizaciones
-- **`ROADMAP_MEJORAS_2025.md`** - Plan de desarrollo futuro
-- **`CUENTAS_PRUEBA.md`** - Credenciales para testing
-
-### 🔧 **Documentos Técnicos Específicos**
-
-- **`REPORTE_LIMPIEZA_LOGIN_UNIFICADO.md`** - Login unificado implementado
-- **`OPTIMIZACIONES_RENDIMIENTO_FASE_2_COMPLETADA.md`** - Optimizaciones N+1 completadas
-- **`ACCESO_PANEL_ADMIN.md`** - Guía de acceso administrativo
-
-### 📊 **Archivos de Estado (CONSOLIDADOS)**
-
-Estos archivos han sido consolidados en documentos principales:
-
-- `backend_estado.md` → Integrado en `RESUMEN_OPTIMIZACIONES_COMPLETADAS.md`
-- `frontend_estado.md` → Integrado en `RESUMEN_OPTIMIZACIONES_COMPLETADAS.md`
-- `progreso_pendiente.md` → Integrado en TODO list del sistema
-
-### 🗑️ **Archivos Obsoletos (PARA ELIMINAR)**
-
-Los siguientes archivos están desactualizados y serán eliminados:
-
-#### **Análisis y Planificación Obsoletos:**
-
-- `ANALISIS_OPTIMIZACION.md` - Reemplazado por implementaciones completadas
-- `ANALISIS_PAGINAS_DASHBOARDS.md` - Dashboards ya implementados
-- `PLAN_IMPLEMENTACION_OPTIMIZACION.md` - Plan ya ejecutado
-- `OPTIMIZACION_BASE_DATOS.md` - Optimizaciones ya implementadas
-
-#### **Estados Obsoletos:**
-
-- `OPTIMIZACIONES_BACKEND_COMPLETAS.md` - Consolidado
-- `OPTIMIZACIONES_FRONTEND_COMPLETAS.md` - Consolidado
-- `OPTIMIZACIONES_IMPLEMENTADAS.md` - Consolidado
-- `OPTIMIZACIONES_FASE_2_COMPLETA.md` - Reemplazado por versión final
-
-#### **Documentos de Proceso:**
-
-- `resumenes.md` - Información fragmentada
-- `RESUMEN_TRABAJO_7_OCT.md` - Fecha específica obsoleta
-- `ESTRUCTURA_BACKEND.md` - Información integrada
-- `PORTAL_CLIENTE_COMPLETO.md` - Ya implementado
-- `SOLUCION_ERROR_MESSAGE_CHANNEL.md` - Error ya resuelto
-- `WIREFRAMES_ADMIN.md` - Wireframes ya implementados
+- **[`SYSTEM_CONSOLIDATED.md`](./SYSTEM_CONSOLIDATED.md)** - **Única Fuente de Verdad (SSOT)**. Estado actual, arquitectura confirmada e inventario de funcionalidades.
 
 ---
 
-## 📁 **Estructura de Documentación Actualizada**
+## 📋 Índice de Documentos Activos
+
+### 🏗️ **Arquitectura y Auditoría**
+- **[`ARQUITECTURA_SOFTWARE.md`](./ARQUITECTURA_SOFTWARE.md)** - Diagramas y estructura detallada de carpetas.
+- **[`AUDITORIA_COMPLETA_SOFTWARE.md`](./AUDITORIA_COMPLETA_SOFTWARE.md)** - Auditoría profunda y reporte de deuda técnica.
+
+### 🚀 **Planificación**
+- **[`ROADMAP_MEJORAS_2025.md`](./ROADMAP_MEJORAS_2025.md)** - Visión estratégica y expansión a largo plazo.
+
+### 🧪 **Testing y Acceso**
+- **[`CUENTAS_PRUEBA.md`](./CUENTAS_PRUEBA.md)** - Credenciales actualizadas para todos los roles.
+
+---
+
+## 📁 **Estructura de Trabajo**
 
 ```
 docs/
-├── 📖 PRINCIPALES/
-│   ├── README.md ✅
-│   ├── ARQUITECTURA_SOFTWARE.md ✅
-│   ├── RESUMEN_OPTIMIZACIONES_COMPLETADAS.md ✅
-│   └── ROADMAP_MEJORAS_2025.md ✅
-├── 🔧 TÉCNICOS/
-│   ├── REPORTE_LIMPIEZA_LOGIN_UNIFICADO.md ✅
-│   ├── OPTIMIZACIONES_RENDIMIENTO_FASE_2_COMPLETADA.md ✅
-│   └── ACCESO_PANEL_ADMIN.md ✅
-└── 🧪 TESTING/
-    └── CUENTAS_PRUEBA.md ✅
+├── SYSTEM_CONSOLIDATED.md ⭐ (Léeme primero)
+├── ARQUITECTURA_SOFTWARE.md
+├── AUDITORIA_COMPLETA_SOFTWARE.md
+├── ROADMAP_MEJORAS_2025.md
+├── CUENTAS_PRUEBA.md
+├── README.md
+└── archive/ 📂 (Archivos históricos y redundantess)
 ```
 
-**Total archivos consolidados:** 8 (vs 26 originales)
-**Reducción:** 69% menos archivos de documentación
-
 ---
-
-_Generado: ${new Date().toISOString()}_
+_Consolidado: Enero 2026_

@@ -3,11 +3,14 @@
  * Vista general con estadísticas, órdenes recientes y estado de técnicos
  */
 
-import { Suspense } from 'react'
+'use client'
+
+import { Suspense, useState, useEffect } from 'react'
 import { ProtectedRoute } from '@/contexts/auth-context'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { RecentOrders } from '@/components/admin/recent-orders'
 import { TechnicianStatus } from '@/components/admin/technician-status'
+import Link from 'next/link'
 import {
   Card,
   CardContent,
@@ -82,21 +85,29 @@ function QuickActions() {
         <CardDescription>Tareas comunes del sistema</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2">
-        <Button className="h-20 flex-col gap-2" variant="outline">
-          <ShoppingCart className="h-6 w-6" />
-          <span>Nueva Orden</span>
+        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+          <Link href="/admin/orders">
+            <ShoppingCart className="h-6 w-6" />
+            <span>Nueva Orden</span>
+          </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline">
-          <Users className="h-6 w-6" />
-          <span>Asignar Técnico</span>
+        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+            <Link href="/admin/technicians">
+                <Users className="h-6 w-6" />
+                <span>Asignar Técnico</span>
+            </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline">
-          <Calendar className="h-6 w-6" />
-          <span>Programar Servicio</span>
+        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+            <Link href="/admin/orders?view=calendar">
+                <Calendar className="h-6 w-6" />
+                <span>Programar Servicio</span>
+            </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline">
-          <TrendingUp className="h-6 w-6" />
-          <span>Ver Reportes</span>
+        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+            <Link href="/admin/reports">
+                <TrendingUp className="h-6 w-6" />
+                <span>Ver Reportes</span>
+            </Link>
         </Button>
       </CardContent>
     </Card>
@@ -105,34 +116,100 @@ function QuickActions() {
 
 // Alertas del sistema
 function SystemAlerts() {
+  const [alertsData, setAlertsData] = useState<{
+    pendientes: number
+    asignadas: number
+    urgentes: number
+    vencidas: number
+  } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const token = localStorage.getItem('accessToken')
+        const response = await fetch('/api/dashboard/stats', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setAlertsData({
+            pendientes: data.data.ordenes.pendientes,
+            asignadas: data.data.ordenes.asignadas, // Usamos asignadas como proxy de "programados"
+            urgentes: data.data.alertas.ordenesUrgentes,
+            vencidas: data.data.alertas.ordenesVencidas
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching alerts:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAlerts()
+  }, [])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Alertas del Sistema</CardTitle>
+          <CardDescription>Cargando notificaciones...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+             {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-16 bg-muted animate-pulse rounded-lg"></div>
+             ))}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Si no hay datos, mostrar estado vacío o datos por defecto seguros
+  const data = alertsData || { pendientes: 0, asignadas: 0, urgentes: 0, vencidas: 0 }
+
   const alerts = [
     {
       type: 'warning',
       icon: AlertTriangle,
       title: 'Órdenes Pendientes',
-      message: '12 órdenes esperando asignación de técnico',
+      message: `${data.pendientes} órdenes esperando asignación de técnico`,
       action: 'Asignar Técnicos',
+      href: '/admin/orders?status=pendiente',
+      show: data.pendientes > 0
+    },
+    {
+      type: 'critical',
+      icon: AlertTriangle,
+      title: 'Órdenes Urgentes/Vencidas',
+      message: `${data.urgentes} urgentes y ${data.vencidas} vencidas`,
+      action: 'Atender Ahora',
+      href: '/admin/orders?urgency=alta',
+      show: data.urgentes > 0 || data.vencidas > 0
     },
     {
       type: 'info',
       icon: Clock,
-      title: 'Servicios Programados',
-      message: '8 servicios programados para hoy',
+      title: 'Servicios Asignados',
+      message: `${data.asignadas} servicios en cola de atención`,
       action: 'Ver Calendario',
+      href: '/admin/orders?status=asignado',
+      show: true
     },
-    {
-      type: 'success',
-      icon: CheckCircle,
-      title: 'Objetivo Mensual',
-      message: '85% del objetivo de ingresos alcanzado',
-      action: 'Ver Detalles',
-    },
-  ]
+  ].filter(a => a.show)
 
   const getAlertColor = (type: string) => {
     switch (type) {
       case 'warning':
         return 'border-orange-200 bg-orange-50'
+      case 'critical':
+        return 'border-red-200 bg-red-50'
       case 'info':
         return 'border-blue-200 bg-blue-50'
       case 'success':
@@ -146,6 +223,8 @@ function SystemAlerts() {
     switch (type) {
       case 'warning':
         return 'text-orange-600'
+      case 'critical':
+        return 'text-red-600'
       case 'info':
         return 'text-blue-600'
       case 'success':
@@ -159,36 +238,44 @@ function SystemAlerts() {
     <Card>
       <CardHeader>
         <CardTitle>Alertas del Sistema</CardTitle>
-        <CardDescription>Notificaciones importantes</CardDescription>
+        <CardDescription>Notificaciones importantes en tiempo real</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {alerts.map((alert, index) => {
-            const Icon = alert.icon
-            return (
-              <div
-                key={index}
-                className={`p-3 rounded-lg border ${getAlertColor(alert.type)}`}
-              >
-                <div className="flex items-start space-x-3">
-                  <Icon
-                    className={`h-5 w-5 mt-0.5 ${getIconColor(alert.type)}`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-900">
-                      {alert.title}
-                    </h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {alert.message}
-                    </p>
+          {alerts.length === 0 ? (
+             <div className="text-center py-4 text-muted-foreground text-sm">
+                No hay alertas críticas en este momento.
+             </div>
+          ) : (
+            alerts.map((alert, index) => {
+              const Icon = alert.icon
+              return (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border ${getAlertColor(alert.type)}`}
+                >
+                  <div className="flex items-start space-x-3">
+                    <Icon
+                      className={`h-5 w-5 mt-0.5 ${getIconColor(alert.type)}`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {alert.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {alert.message}
+                      </p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-xs" asChild>
+                      <Link href={alert.href}>
+                        {alert.action}
+                      </Link>
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-xs">
-                    {alert.action}
-                  </Button>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
         </div>
       </CardContent>
     </Card>

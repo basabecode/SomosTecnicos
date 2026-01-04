@@ -52,6 +52,7 @@ import {
   User,
   Phone,
   MapPin,
+  Calendar,
 } from 'lucide-react'
 
 interface Order {
@@ -295,12 +296,12 @@ export default function OrdersPage() {
                     placeholder="Buscar por número, cliente, teléfono..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-12 md:h-10 text-base md:text-sm" // Larger touch target
                   />
                 </div>
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -313,7 +314,7 @@ export default function OrdersPage() {
                 </SelectContent>
               </Select>
               <Select value={urgencyFilter} onValueChange={setUrgencyFilter}>
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
                   <SelectValue placeholder="Urgencia" />
                 </SelectTrigger>
                 <SelectContent>
@@ -327,24 +328,20 @@ export default function OrdersPage() {
           </CardContent>
         </Card>
 
-        {/* Tabla de Órdenes */}
-        <Card>
-          <CardHeader>
+        {/* Content Area */}
+        <Card className="border-0 md:border">
+           <CardHeader className="hidden md:block">
             <CardTitle>Órdenes ({totalItems})</CardTitle>
             <CardDescription>
               Lista de todas las órdenes del sistema
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 md:p-6">
             {loading ? (
-              <div className="space-y-4">
+              <div className="space-y-4 p-4">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4 p-4">
-                    <div className="w-20 h-4 bg-muted animate-pulse rounded"></div>
-                    <div className="w-32 h-4 bg-muted animate-pulse rounded"></div>
-                    <div className="w-28 h-4 bg-muted animate-pulse rounded"></div>
-                    <div className="w-24 h-4 bg-muted animate-pulse rounded"></div>
-                    <div className="w-20 h-4 bg-muted animate-pulse rounded"></div>
+                  <div key={i} className="flex items-center space-x-4">
+                    <div className="w-full h-24 bg-muted animate-pulse rounded-lg"></div>
                   </div>
                 ))}
               </div>
@@ -355,167 +352,254 @@ export default function OrdersPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Orden</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Servicio</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Técnico</TableHead>
-                      <TableHead>Fecha</TableHead>
-                      <TableHead>Costo</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {orders.map(order => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          <div>
-                            <div className="font-semibold">
-                              {order.numeroOrden}
-                            </div>
-                            <Badge
-                              variant="outline"
-                              className={`text-xs ${
-                                urgencyColors[
-                                  order.urgencia as keyof typeof urgencyColors
-                                ]
-                              }`}
-                            >
-                              {
-                                urgencyLabels[
-                                  order.urgencia as keyof typeof urgencyLabels
-                                ]
-                              }
-                            </Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{order.nombre}</div>
-                            <div className="text-sm text-muted-foreground flex items-center">
-                              <Phone className="mr-1 h-3 w-3" />
-                              {order.telefono}
-                            </div>
-                            <div className="text-sm text-muted-foreground flex items-center">
-                              <MapPin className="mr-1 h-3 w-3" />
-                              {order.ciudad}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium capitalize">
-                              {order.tipoElectrodomestico}
-                            </div>
-                            <div className="text-sm text-muted-foreground capitalize">
-                              {order.tipoServicio}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              statusColors[
-                                order.estado as keyof typeof statusColors
-                              ]
-                            }
-                          >
-                            {
-                              statusLabels[
-                                order.estado as keyof typeof statusLabels
-                              ]
-                            }
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {order.assignment ? (
-                            <div className="flex items-center">
-                              <User className="mr-1 h-3 w-3" />
-                              <span className="text-sm">
-                                {order.assignment.technician.nombre}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-sm text-muted-foreground">
-                              Sin asignar
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            {formatDate(order.createdAt)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            {order.costoFinal ? (
-                              <div className="font-medium text-green-600">
-                                {formatCurrency(order.costoFinal)}
+                <>
+                {/* Desktop View: Table */}
+                <div className="hidden md:block overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Orden</TableHead>
+                          <TableHead>Cliente</TableHead>
+                          <TableHead>Servicio</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead>Técnico</TableHead>
+                          <TableHead>Fecha</TableHead>
+                          <TableHead>Costo</TableHead>
+                          <TableHead className="text-right">Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {orders.map(order => (
+                          <TableRow key={order.id}>
+                            <TableCell className="font-medium">
+                              <div>
+                                <div className="font-semibold">
+                                  {order.numeroOrden}
+                                </div>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${
+                                    urgencyColors[
+                                      order.urgencia as keyof typeof urgencyColors
+                                    ]
+                                  }`}
+                                >
+                                  {
+                                    urgencyLabels[
+                                      order.urgencia as keyof typeof urgencyLabels
+                                    ]
+                                  }
+                                </Badge>
                               </div>
-                            ) : order.costoEstimado ? (
-                              <div className="text-sm text-muted-foreground">
-                                Est: {formatCurrency(order.costoEstimado)}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{order.nombre}</div>
+                                <div className="text-sm text-muted-foreground flex items-center">
+                                  <Phone className="mr-1 h-3 w-3" />
+                                  {order.telefono}
+                                </div>
+                                <div className="text-sm text-muted-foreground flex items-center">
+                                  <MapPin className="mr-1 h-3 w-3" />
+                                  {order.ciudad}
+                                </div>
                               </div>
-                            ) : (
-                              <span className="text-sm text-muted-foreground">
-                                -
-                              </span>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Abrir menú</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/orders/${order.id}`}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  Ver detalles
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/orders/${order.id}/edit`}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </Link>
-                              </DropdownMenuItem>
-                              {order.estado === 'pendiente' && (
-                                <>
-                                  <DropdownMenuSeparator />
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium capitalize">
+                                  {order.tipoElectrodomestico}
+                                </div>
+                                <div className="text-sm text-muted-foreground capitalize">
+                                  {order.tipoServicio}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className={
+                                  statusColors[
+                                    order.estado as keyof typeof statusColors
+                                  ]
+                                }
+                              >
+                                {
+                                  statusLabels[
+                                    order.estado as keyof typeof statusLabels
+                                  ]
+                                }
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {order.assignment ? (
+                                <div className="flex items-center">
+                                  <User className="mr-1 h-3 w-3" />
+                                  <span className="text-sm">
+                                    {order.assignment.technician.nombre}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-sm text-muted-foreground">
+                                  Sin asignar
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                {formatDate(order.createdAt)}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                {order.costoFinal ? (
+                                  <div className="font-medium text-green-600">
+                                    {formatCurrency(order.costoFinal)}
+                                  </div>
+                                ) : order.costoEstimado ? (
+                                  <div className="text-sm text-muted-foreground">
+                                    Est: {formatCurrency(order.costoEstimado)}
+                                  </div>
+                                ) : (
+                                  <span className="text-sm text-muted-foreground">
+                                    -
+                                  </span>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Abrir menú</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                                   <DropdownMenuItem asChild>
-                                    <Link
-                                      href={`/admin/orders/${order.id}/assign`}
-                                    >
-                                      <User className="mr-2 h-4 w-4" />
-                                      Asignar Técnico
+                                    <Link href={`/admin/orders/${order.id}`}>
+                                      <Eye className="mr-2 h-4 w-4" />
+                                      Ver detalles
                                     </Link>
                                   </DropdownMenuItem>
-                                </>
-                              )}
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Eliminar
-                              </DropdownMenuItem>
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/admin/orders/${order.id}/edit`}>
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      Editar
+                                    </Link>
+                                  </DropdownMenuItem>
+                                  {order.estado === 'pendiente' && (
+                                    <>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem asChild>
+                                        <Link
+                                          href={`/admin/orders/${order.id}/assign`}
+                                        >
+                                          <User className="mr-2 h-4 w-4" />
+                                          Asignar Técnico
+                                        </Link>
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="text-red-600">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Eliminar
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                </div>
+
+                {/* Mobile View: Cards */}
+                <div className="md:hidden space-y-4">
+                  {orders.map(order => (
+                    <div key={order.id} className="border rounded-lg p-4 space-y-3 bg-white shadow-sm">
+                      <div className="flex justify-between items-start">
+                         <div>
+                            <span className="text-xs font-bold text-gray-500 uppercase flex items-center gap-2">
+                                {order.numeroOrden}
+                                <Badge
+                                    variant="outline"
+                                    className={`text-[10px] h-5 ${
+                                    urgencyColors[
+                                        order.urgencia as keyof typeof urgencyColors
+                                    ]
+                                    }`}
+                                >
+                                    {urgencyLabels[order.urgencia as keyof typeof urgencyLabels]}
+                                </Badge>
+                            </span>
+                            <h4 className="font-semibold text-base mt-1 text-[#A50034]">{order.nombre}</h4>
+                         </div>
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Menu</span>
+                                <MoreHorizontal className="h-5 w-5" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                <Link href={`/admin/orders/${order.id}`}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Ver detalles
+                                </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                <Link href={`/admin/orders/${order.id}/edit`}>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Editar
+                                </Link>
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                         </DropdownMenu>
+                      </div>
+
+                      <div className="flex items-center justify-between text-sm">
+                         <Badge
+                           variant="outline"
+                           className={statusColors[order.estado as keyof typeof statusColors]}
+                         >
+                            {statusLabels[order.estado as keyof typeof statusLabels]}
+                         </Badge>
+                         <span className="text-gray-500 text-xs flex items-center gap-1">
+                             <Calendar className="w-3 h-3" />
+                             {formatDate(order.createdAt)}
+                         </span>
+                      </div>
+
+                      <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 space-y-2">
+                          <div className="flex items-center gap-2">
+                             <div className="w-5 h-5 flex items-center justify-center bg-gray-200 rounded-full text-xs">🔧</div>
+                             <span className="capitalize font-medium">{order.tipoElectrodomestico} - {order.tipoServicio}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                             <MapPin className="w-4 h-4 ml-0.5" />
+                             <span className="text-xs">{order.direccion}, {order.ciudad}</span>
+                          </div>
+                          {order.assignment && (
+                              <div className="flex items-center gap-2 text-blue-600 pt-1 border-t border-gray-100 mt-2">
+                                  <User className="w-4 h-4 ml-0.5" />
+                                  <span className="text-xs font-medium">Téc: {order.assignment.technician.nombre}</span>
+                              </div>
+                          )}
+                      </div>
+
+                      <Button asChild className="w-full bg-[#A50034] hover:bg-[#8B0028] text-white" size="default">
+                         <Link href={`/admin/orders/${order.id}`}>
+                            Ver Detalles Completos
+                         </Link>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                </>
             )}
           </CardContent>
         </Card>
@@ -523,21 +607,22 @@ export default function OrdersPage() {
         {/* Paginación */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground hidden md:block">
               Mostrando {(currentPage - 1) * 10 + 1} a{' '}
-              {Math.min(currentPage * 10, totalItems)} de {totalItems} órdenes
+              {Math.min(currentPage * 10, totalItems)} de {totalItems} ordenes
             </p>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 w-full md:w-auto justify-center">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                className="h-10 px-4"
               >
                 Anterior
               </Button>
-              <span className="text-sm">
-                Página {currentPage} de {totalPages}
+              <span className="text-sm mx-2">
+                 {currentPage} / {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -546,6 +631,7 @@ export default function OrdersPage() {
                   setCurrentPage(prev => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
+                className="h-10 px-4"
               >
                 Siguiente
               </Button>

@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useAuth } from '@/contexts/auth-context'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -53,60 +54,74 @@ import { useToast } from '@/hooks/use-toast'
 
 const serviceTypes = [
   {
-    id: 'lavadora',
+    id: 'reparacion_lavadora', // Changed ID to be more unique
     name: 'Reparación Lavadora',
     icon: Droplets,
     description: 'Problemas de lavado, centrifugado, drenaje',
     estimatedTime: '2-3 horas',
     basePrice: 80000,
+    applianceType: 'lavadora',
+    serviceType: 'reparacion'
   },
   {
-    id: 'refrigerador',
+    id: 'reparacion_refrigerador',
     name: 'Reparación Refrigerador',
     icon: Snowflake,
     description: 'No enfría, ruidos extraños, fugas',
     estimatedTime: '2-4 horas',
     basePrice: 120000,
+    applianceType: 'nevera',
+    serviceType: 'reparacion'
   },
   {
-    id: 'aire_acondicionado',
+    id: 'mantenimiento_aire',
     name: 'Aire Acondicionado',
     icon: Snowflake,
     description: 'Mantenimiento, reparación, instalación',
     estimatedTime: '1.5-3 horas',
     basePrice: 100000,
+    applianceType: 'aire_acondicionado',
+    serviceType: 'mantenimiento'
   },
   {
-    id: 'horno',
+    id: 'reparacion_horno',
     name: 'Reparación Horno',
     icon: Flame,
     description: 'Problemas de calentamiento, timer',
     estimatedTime: '1.5-2.5 horas',
     basePrice: 90000,
+    applianceType: 'horno',
+    serviceType: 'reparacion'
   },
   {
-    id: 'microondas',
+    id: 'reparacion_microondas',
     name: 'Reparación Microondas',
     icon: Zap,
     description: 'No calienta, problemas eléctricos',
     estimatedTime: '1-2 horas',
     basePrice: 70000,
+    applianceType: 'microondas',
+    serviceType: 'reparacion'
   },
   {
-    id: 'lavaplatos',
+    id: 'instalacion_lavaplatos',
     name: 'Lavaplatos',
     icon: Droplets,
     description: 'Instalación, reparación, mantenimiento',
     estimatedTime: '2-3 horas',
     basePrice: 85000,
+    applianceType: 'lavavajillas',
+    serviceType: 'instalacion'
   },
   {
-    id: 'otros',
+    id: 'otros_servicios',
     name: 'Otros Electrodomésticos',
     icon: Settings,
     description: 'Otros aparatos del hogar',
     estimatedTime: '1.5-3 horas',
     basePrice: 75000,
+    applianceType: 'otros',
+    serviceType: 'diagnostico'
   },
 ]
 
@@ -119,28 +134,24 @@ const timeSlots = [
 ]
 
 const priorities = [
-  { id: 'low', label: 'Baja', description: 'No es urgente', surcharge: 0 },
+  { id: 'baja', label: 'Baja', description: 'No es urgente', surcharge: 0 },
   {
-    id: 'medium',
+    id: 'media',
     label: 'Media',
     description: 'Moderadamente urgente',
     surcharge: 0,
   },
-  { id: 'high', label: 'Alta', description: 'Urgente', surcharge: 20000 },
-  {
-    id: 'urgent',
-    label: 'Crítica',
-    description: 'Muy urgente (mismo día)',
-    surcharge: 50000,
-  },
+  { id: 'alta', label: 'Alta', description: 'Urgente', surcharge: 25000 },
 ]
 
 export default function RequestServicePage() {
+  const { user } = useAuth()
   const { toast } = useToast()
   const [selectedService, setSelectedService] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [selectedTime, setSelectedTime] = useState('')
-  const [selectedPriority, setSelectedPriority] = useState('medium')
+  const [selectedPriority, setSelectedPriority] = useState('media') // Default updated to spanish
+
   const [description, setDescription] = useState('')
   const [images, setImages] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -185,12 +196,40 @@ export default function RequestServicePage() {
 
     setIsSubmitting(true)
 
-    // Simular envío del formulario
-    setTimeout(() => {
-      const requestNumber =
-        'SRV-' + Math.random().toString(36).substr(2, 6).toUpperCase()
-      setServiceRequestNumber(requestNumber)
-      setIsSubmitting(false)
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          // Información del Cliente
+          nombre: user?.nombre || 'Cliente',
+          telefono: user?.telefono || '',
+          email: user?.email || '',
+          direccion: user?.direccion || '',
+          ciudad: 'Bogotá', // Assuming a default city or getting from user
+          customerId: user?.id,
+
+          // Información del Electrodoméstico y Servicio
+          tipoElectrodomestico: selectedServiceData?.applianceType || 'otros',
+          tipoServicio: selectedServiceData?.serviceType || 'diagnostico',
+          descripcionProblema: description,
+          urgencia: selectedPriority,
+
+          // Programación
+          fechaPreferida: selectedDate?.toISOString(),
+          horario: selectedTime,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al crear la solicitud')
+      }
+
+      setServiceRequestNumber(data.data.orderNumber)
       setIsSuccessModalOpen(true)
 
       // Reset form
@@ -200,7 +239,17 @@ export default function RequestServicePage() {
       setSelectedPriority('medium')
       setDescription('')
       setImages([])
-    }, 2000)
+
+    } catch (error) {
+      console.error('Error submitting order:', error)
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'No se pudo enviar la solicitud. Intenta nuevamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -234,29 +283,33 @@ export default function RequestServicePage() {
                   return (
                     <div
                       key={service.id}
-                      className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                      className={`native-card p-5 cursor-pointer transition-all duration-200 active-tap ${
                         selectedService === service.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
+                          ? 'ring-2 ring-primary bg-primary/5 shadow-md scale-[1.02]'
+                          : 'border border-gray-100 hover:border-primary/30'
                       }`}
                       onClick={() => setSelectedService(service.id)}
                     >
-                      <div className="flex items-start space-x-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <ServiceIcon className="w-5 h-5 text-primary" />
+                      <div className="flex items-start space-x-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                             selectedService === service.id ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                        }`}>
+                          <ServiceIcon className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-medium">{service.name}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <h3 className={`font-bold transition-colors ${selectedService === service.id ? 'text-primary' : 'text-gray-900'}`}>
+                              {service.name}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                             {service.description}
                           </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs text-muted-foreground">
-                              <Clock className="w-3 h-3 inline mr-1" />
+                          <div className="flex items-center justify-between mt-3">
+                            <Badge variant="secondary" className="bg-gray-50 text-[10px] h-5">
+                              <Clock className="w-3 h-3 mr-1" />
                               {service.estimatedTime}
-                            </span>
-                            <span className="text-sm font-medium">
-                              Desde ${service.basePrice.toLocaleString()}
+                            </Badge>
+                            <span className="text-sm font-bold text-[#A50034]">
+                              ${service.basePrice.toLocaleString()}
                             </span>
                           </div>
                         </div>
@@ -518,16 +571,16 @@ export default function RequestServicePage() {
             <CardContent className="space-y-3">
               <div>
                 <Label>Nombre</Label>
-                <p className="text-sm font-medium mt-1">María García</p>
+                <p className="text-sm font-medium mt-1">{user?.nombre} {user?.apellido}</p>
               </div>
               <div>
                 <Label>Teléfono</Label>
-                <p className="text-sm font-medium mt-1">+57 300 123 4567</p>
+                <p className="text-sm font-medium mt-1">{user?.telefono || 'No registrado'}</p>
               </div>
               <div>
                 <Label>Dirección</Label>
                 <p className="text-sm font-medium mt-1">
-                  Calle 123 #45-67, Bogotá Norte
+                  {user?.direccion || 'No registrada'}
                 </p>
               </div>
               <Button variant="outline" size="sm" className="w-full">
@@ -540,20 +593,20 @@ export default function RequestServicePage() {
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full"
+            className="w-full h-14 text-lg font-bold rounded-2xl active-tap bg-[#A50034] hover:bg-[#8B002B] shadow-xl shadow-primary/20"
             disabled={
               isSubmitting || !selectedService || !selectedDate || !selectedTime
             }
           >
             {isSubmitting ? (
               <>
-                <Clock className="w-4 h-4 mr-2 animate-spin" />
-                Enviando Solicitud...
+                <Clock className="w-5 h-5 mr-3 animate-spin" />
+                Enviando...
               </>
             ) : (
               <>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Solicitar Servicio
+                <CheckCircle className="w-5 h-5 mr-3" />
+                Solicitar Visita Ahora
               </>
             )}
           </Button>

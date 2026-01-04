@@ -1,6 +1,6 @@
 ﻿/**
  * Login Unificado - TecnoCity
- * Sistema de login que detecta automáticamente el rol del usuario
+ * Sistema de login profesional con detección automática de rol
  */
 
 'use client'
@@ -18,52 +18,17 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import {
   Eye,
   EyeOff,
-  User,
-  Lock,
   Wrench,
   Shield,
-  Settings,
-  Users,
-  CheckCircle,
-  ArrowRight,
+  Zap,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react'
 import Link from 'next/link'
-
-// Tipos de usuario y sus configuraciones
-const USER_TYPES = {
-  admin: {
-    icon: Shield,
-    name: 'Administrador',
-    color: 'bg-red-100 text-red-800 border-red-200',
-    dashboard: '/admin/dashboard',
-    description: 'Panel completo de administración',
-  },
-  manager: {
-    icon: Settings,
-    name: 'Gerente',
-    color: 'bg-purple-100 text-purple-800 border-purple-200',
-    dashboard: '/manager/dashboard',
-    description: 'Gestión de operaciones',
-  },
-  technician: {
-    icon: Wrench,
-    name: 'Técnico',
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
-    dashboard: '/technician/dashboard',
-    description: 'Órdenes de trabajo asignadas',
-  },
-  customer: {
-    icon: User,
-    name: 'Cliente',
-    color: 'bg-green-100 text-green-800 border-green-200',
-    dashboard: '/customer/dashboard',
-    description: 'Seguimiento de servicios',
-  },
-}
 
 export default function UnifiedLogin() {
   const [email, setEmail] = useState('')
@@ -71,30 +36,7 @@ export default function UnifiedLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [detectedUserType, setDetectedUserType] = useState<string | null>(null)
   const router = useRouter()
-
-  // Detectar tipo de usuario basado en el email (preview)
-  const detectUserType = (email: string) => {
-    if (!email) return null
-
-    const emailLower = email.toLowerCase()
-
-    if (emailLower.includes('admin')) return 'admin'
-    if (emailLower.includes('manager') || emailLower.includes('gerente'))
-      return 'manager'
-    if (emailLower.includes('tecnico') || emailLower.includes('technician'))
-      return 'technician'
-
-    // Por defecto, si no coincide con patrones admin/manager/technician, es customer
-    return 'customer'
-  }
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value
-    setEmail(newEmail)
-    setDetectedUserType(detectUserType(newEmail))
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -119,18 +61,8 @@ export default function UnifiedLogin() {
           localStorage.setItem('refreshToken', data.refreshToken)
         }
 
-        // Determinar dashboard según rol del servidor (prioritario)
-        const userRole = data.user?.role || detectedUserType || 'admin'
-
-        // Debugging en desarrollo
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔐 Login exitoso:', {
-            userRole,
-            serverRole: data.user?.role,
-            detectedType: detectedUserType,
-            email: data.user?.email,
-          })
-        }
+        // Determinar dashboard según rol del servidor
+        const userRole = data.user?.role || 'admin'
 
         // Mapear roles correctamente
         let dashboardUrl = '/admin/dashboard' // Default fallback
@@ -146,6 +78,7 @@ export default function UnifiedLogin() {
             break
           case 'technician':
           case 'tecnico':
+          case 'technician_manager':
             dashboardUrl = '/technician/dashboard'
             break
           case 'customer':
@@ -153,14 +86,8 @@ export default function UnifiedLogin() {
             dashboardUrl = '/customer/dashboard'
             break
           default:
-            // Para usuarios admin por defecto
             dashboardUrl = '/admin/dashboard'
         }
-
-        console.log('🎯 Redirigiendo a:', dashboardUrl)
-
-        // Limpiar error y redirigir
-        setError('')
 
         // Forzar redirección completa
         window.location.href = dashboardUrl
@@ -175,215 +102,262 @@ export default function UnifiedLogin() {
     }
   }
 
-  // Función para llenar credenciales de prueba
-  const fillTestCredentials = (userType: 'admin' | 'customer') => {
-    if (userType === 'admin') {
-      setEmail('admin@servicio-tecnico.com')
-      setPassword('Admin123!')
-    } else {
-      setEmail('cliente.demo@tecnocity.com')
-      setPassword('Cliente123!')
-    }
-    setDetectedUserType(userType)
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
-        {/* Lado izquierdo - Información */}
-        <div className="space-y-6 text-center md:text-left">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              🔧 TecnoCity
-            </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              **Sistema Inteligente de Login**
-            </p>
-            <p className="text-lg text-gray-500 mt-2">
-              Ingresa tu email y automáticamente detectaremos tu rol
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries(USER_TYPES).map(([key, type]) => {
-              const Icon = type.icon
-              return (
-                <div
-                  key={key}
-                  className="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm border"
-                >
-                  <div className={`p-2 rounded-lg ${type.color}`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">{type.name}</h3>
-                    <p className="text-xs text-gray-600">{type.description}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Vista previa del tipo de usuario detectado */}
-          {detectedUserType && (
-            <div className="p-4 bg-white rounded-lg border-2 border-blue-200">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium text-gray-900">
-                  Tipo de usuario detectado:
-                </span>
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center relative z-10">
+        {/* Lado izquierdo - Branding e información */}
+        <div className="hidden lg:block space-y-8">
+          <div className="space-y-4">
+            {/* Logo y título */}
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                <Wrench className="h-10 w-10 text-white" />
               </div>
-              <div className="flex items-center gap-3 mt-2">
-                {(() => {
-                  const Icon =
-                    USER_TYPES[detectedUserType as keyof typeof USER_TYPES]
-                      ?.icon
-                  return Icon ? <Icon className="h-4 w-4" /> : null
-                })()}
-                <Badge
-                  className={
-                    USER_TYPES[detectedUserType as keyof typeof USER_TYPES]
-                      ?.color
-                  }
-                >
-                  {
-                    USER_TYPES[detectedUserType as keyof typeof USER_TYPES]
-                      ?.name
-                  }
-                </Badge>
-                <ArrowRight className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-600">
-                  {
-                    USER_TYPES[detectedUserType as keyof typeof USER_TYPES]
-                      ?.dashboard
-                  }
-                </span>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  TecnoCity
+                </h1>
+                <p className="text-sm text-gray-600 font-medium">
+                  Servicio Técnico Profesional
+                </p>
               </div>
             </div>
-          )}
+
+            {/* Descripción */}
+            <div className="space-y-3 mt-8">
+              <h2 className="text-3xl font-bold text-gray-900 leading-tight">
+                Bienvenido de vuelta
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Accede a tu panel de control y gestiona tus servicios de manera eficiente.
+              </p>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
+              <div className="p-2 bg-green-100 rounded-xl">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Acceso Seguro</h3>
+                <p className="text-sm text-gray-600">
+                  Autenticación encriptada y protección de datos
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
+              <div className="p-2 bg-blue-100 rounded-xl">
+                <Zap className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Detección Automática</h3>
+                <p className="text-sm text-gray-600">
+                  El sistema identifica tu rol automáticamente
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
+              <div className="p-2 bg-purple-100 rounded-xl">
+                <Shield className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Multi-Rol</h3>
+                <p className="text-sm text-gray-600">
+                  Soporte para admin, técnicos y clientes
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Lado derecho - Formulario de login */}
-        <div className="space-y-6">
-          <Card className="shadow-2xl border-0">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900">
+        <div className="w-full max-w-md mx-auto">
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
+            <CardHeader className="space-y-1 pb-6">
+              {/* Logo móvil */}
+              <div className="flex lg:hidden items-center justify-center gap-3 mb-4">
+                <div className="p-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg">
+                  <Wrench className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    TecnoCity
+                  </h1>
+                </div>
+              </div>
+
+              <CardTitle className="text-2xl font-bold text-center text-gray-900">
                 Iniciar Sesión
               </CardTitle>
-              <CardDescription>
-                Detectamos automáticamente tu tipo de cuenta
+              <CardDescription className="text-center text-gray-600">
+                Ingresa tus credenciales para acceder
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
+
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    Correo Electrónico
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="tu@email.com"
                     value={email}
-                    onChange={handleEmailChange}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    disabled={loading}
                   />
                 </div>
 
+                {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                      Contraseña
+                    </Label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Tu contraseña"
+                      placeholder="••••••••"
                       value={password}
-                      onChange={e => setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="h-12 pr-10"
+                      className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 pr-12"
+                      disabled={loading}
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={loading}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="h-4 w-4 text-gray-400" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4 text-gray-400" />
                       )}
                     </Button>
                   </div>
                 </div>
 
+                {/* Error message */}
                 {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
+                  <Alert variant="destructive" className="bg-red-50 border-red-200">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-sm">{error}</AlertDescription>
                   </Alert>
                 )}
 
+                {/* Submit button */}
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-lg font-medium"
+                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all duration-200"
                   disabled={loading}
                 >
-                  {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Iniciando sesión...
+                    </>
+                  ) : (
+                    'Iniciar Sesión'
+                  )}
                 </Button>
               </form>
-            </CardContent>
-          </Card>
 
-          {/* Botones de prueba */}
-          <Card className="bg-yellow-50 border-yellow-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-yellow-800 flex items-center gap-2">
-                🧪 Cuentas de Prueba
-              </CardTitle>
-              <CardDescription className="text-yellow-700">
-                Haz clic para usar credenciales de prueba
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="grid grid-cols-1 gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fillTestCredentials('admin')}
-                  className="justify-start h-auto p-3 border-red-200 hover:bg-red-50"
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <Shield className="h-4 w-4 text-red-600" />
-                    <div className="text-left">
-                      <div className="font-semibold text-sm">Administrador</div>
-                      <div className="text-xs text-gray-600">
-                        admin@servicio-tecnico.com
-                      </div>
-                    </div>
-                  </div>
-                </Button>
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-gray-500">Información</span>
+                </div>
+              </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fillTestCredentials('customer')}
-                  className="justify-start h-auto p-3 border-green-200 hover:bg-green-50"
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <User className="h-4 w-4 text-green-600" />
-                    <div className="text-left">
-                      <div className="font-semibold text-sm">Cliente Demo</div>
-                      <div className="text-xs text-gray-600">
-                        cliente.demo@tecnocity.com
-                      </div>
-                    </div>
-                  </div>
-                </Button>
+              {/* Info adicional */}
+              <div className="space-y-3">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-xs text-blue-800 text-center">
+                    <Shield className="inline h-3 w-3 mr-1" />
+                    Conexión segura y encriptada
+                  </p>
+                </div>
+
+                <p className="text-xs text-center text-gray-500">
+                  ¿Necesitas ayuda?{' '}
+                  <Link href="/support" className="text-blue-600 hover:text-blue-700 font-medium">
+                    Contacta soporte
+                  </Link>
+                </p>
               </div>
             </CardContent>
           </Card>
+
+          {/* Footer info */}
+          <p className="text-center text-xs text-gray-500 mt-6">
+            Al iniciar sesión, aceptas nuestros{' '}
+            <Link href="/terms" className="text-blue-600 hover:text-blue-700">
+              Términos de Servicio
+            </Link>{' '}
+            y{' '}
+            <Link href="/privacy" className="text-blue-600 hover:text-blue-700">
+              Política de Privacidad
+            </Link>
+          </p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   )
 }
