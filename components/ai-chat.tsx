@@ -33,6 +33,11 @@ interface ServiceSuggestion {
   description: string
 }
 
+interface AIChatProps {
+  hideTrigger?: boolean
+  className?: string
+}
+
 /**
  * Chat IA Inteligente para Hero Section
  * - Conversación natural sobre problemas de electrodomésticos
@@ -40,7 +45,7 @@ interface ServiceSuggestion {
  * - Respuestas contextuales y sugerencias
  * - Interfaz minimizable y responsive
  */
-export default function AIChat() {
+export default function AIChat({ hideTrigger = false, className }: AIChatProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -330,6 +335,8 @@ export default function AIChat() {
 
   // Chat minimizado - solo botón flotante
   if (!isOpen) {
+    if (hideTrigger) return null
+
     return (
       <div className="fixed bottom-6 right-6 z-50">
         <Button
@@ -343,7 +350,7 @@ export default function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-16 right-6 z-50">
+    <div className={className || "fixed bottom-16 right-6 z-50"}>
       <Card
         className={`w-96 shadow-2xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${
           isMinimized ? 'h-16' : 'h-[420px]'

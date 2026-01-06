@@ -1,12 +1,15 @@
 import type React from 'react'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
+import { Inter } from 'next/font/google'
 import { ClientAuthProvider } from '@/components/client-auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { NotificationProvider as InternalToastProvider } from '@/components/notifications/notification-system-simple'
 import { NotificationProvider } from '@/contexts/notification-context'
 import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'TecnoCity - Servicio Técnico de Electrodomésticos a Domicilio',
@@ -22,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className="font-sans" suppressHydrationWarning={true}>
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning={true}>
         <ClientAuthProvider>
           <NotificationProvider>
             <InternalToastProvider>

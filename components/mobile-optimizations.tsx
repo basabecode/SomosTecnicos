@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Phone, MessageCircle, X } from 'lucide-react'
+import { Phone, MessageCircle, X, Bot } from 'lucide-react'
 
 /**
  * Componentes Mobile Optimizados
@@ -96,6 +96,19 @@ export function MobileChatWidget() {
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Solicitar Servicio
+            </Button>
+
+            <Button
+              onClick={() => {
+                const event = new CustomEvent('openAIChat', { detail: { fromHero: false } })
+                window.dispatchEvent(event)
+                setIsOpen(false)
+              }}
+              variant="outline"
+              className="w-full border-cyan-500 text-cyan-600 hover:bg-cyan-50 justify-start"
+            >
+              <Bot className="w-4 h-4 mr-2" />
+              Asistente IA
             </Button>
 
             <Button

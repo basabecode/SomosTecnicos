@@ -270,8 +270,7 @@ export default function ServiceForm() {
             Agenda tu Técnico
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Diagnóstico preciso y reparación garantizada.
-          </p>
+            Sección para la solicitud de tu servicio, para ello debes completar los siguientes campos:          </p>
 
           {/* Progress Bar */}
           <div className="max-w-md mx-auto mt-8">
@@ -300,7 +299,7 @@ export default function ServiceForm() {
                         <div className="animate-in fade-in zoom-in-95 duration-500">
                              <div className="text-center mb-8">
                                 <h3 className="text-2xl font-bold text-[#2C3E50] mb-2">
-                                    ¿Qué equipo necesitas reparar?
+                                    ¿Qué equipo necesitas reparar, instalar o hacer mantenimiento?
                                 </h3>
                                 <p className="text-gray-500">Selecciona una opción para continuar</p>
                              </div>

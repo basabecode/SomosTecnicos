@@ -1,15 +1,11 @@
 'use client'
 
+import React from 'react'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
-import { Wrench, Settings, PenTool as Tool } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { ArrowRight } from 'lucide-react'
 
-/**
- * Tipos de Servicio Optimizados - UX/UI 2025
- * - Diferenciación visual por colores
- * - CTAs que llevan al formulario
- * - Badges con tiempos y garantías
- * - Hover mejorado con escalado
- */
 export default function ServiceTypes() {
   const scrollToForm = () => {
     const element = document.getElementById('formulario')
@@ -20,109 +16,97 @@ export default function ServiceTypes() {
 
   const services = [
     {
-      icon: Wrench,
-      title: 'Reparación',
-      description: 'Diagnóstico y reparación a domicilio',
-      badge: 'solicitud 2 min',
-      color: '#A50034', // Rojo principal del hero
-      bgColor: 'bg-[#A50034]',
-      bgLight: 'bg-red-50',
-      borderColor: 'border-red-200',
-      textColor: 'text-[#A50034]',
+      title: 'Reparación Especializada',
+      description: 'Diagnóstico y solución de fallas. Recuperamos su equipo.',
+      badgeLabel: 'Inmediata',
+      accentColor: 'border-l-[#A50034]',
+      badgeColor: 'text-[#A50034] border-[#A50034]',
     },
     {
-      icon: Settings,
-      title: 'Instalación',
-      description: 'Instalación profesional garantizada',
-      badge: 'Pro',
-      color: '#2C3E50', // Azul oscuro del hero
-      bgColor: 'bg-[#2C3E50]',
-      bgLight: 'bg-slate-50',
-      borderColor: 'border-slate-200',
-      textColor: 'text-[#2C3E50]',
+      title: 'Instalación Certificada',
+      description: 'Montaje seguro de equipos nuevos o en caso de traslados y reconexión.',
+      badgeLabel: 'Certificado',
+      accentColor: 'border-l-[#2C3E50]',
+      badgeColor: 'text-[#2C3E50] border-[#2C3E50]',
     },
     {
-      icon: Tool,
-      title: 'Mantenimiento',
-      description: 'Previene futuras averías',
-      badge: 'Preventivo',
-      color: '#27AE60', // Verde de confianza
-      bgColor: 'bg-[#27AE60]',
-      bgLight: 'bg-green-50',
-      borderColor: 'border-green-200',
-      textColor: 'text-[#27AE60]',
+      title: 'Mantenimiento Preventivo',
+      description: 'Limpieza y ajustes para extender la vida útil de tu equipo y mejorar su eficiencia.',
+      badgeLabel: 'Calidad',
+      accentColor: 'border-l-[#27AE60]',
+      badgeColor: 'text-[#27AE60] border-[#27AE60]',
     },
   ]
 
   return (
-    <section id="servicios" className="py-12 md:py-16 bg-white">
+    <section id="servicios" className="py-20 bg-gray-50 overflow-hidden font-sans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-3">
-            Nuestros Servicios
-          </h2>
-          <p className="text-base text-[#7F8C8D] max-w-xl mx-auto">
-            Soluciones completas para todos tus electrodomésticos
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {services.map((service, index) => {
-            const Icon = service.icon
-            return (
+        {/* Contenedor Principal Adaptable */}
+        <div className="flex flex-col md:block md:relative md:h-[480px] items-center">
+
+          {/* Imagen: Full width en mobile (250px alto), 85% width en desktop (full alto) */}
+          <div className="relative w-full h-[250px] md:absolute md:left-0 md:top-0 md:bottom-0 md:h-full md:w-[85%] rounded-3xl overflow-hidden shadow-xl z-10 order-1 md:order-none">
+            <Image
+              src="/img_3d/portada_tecnico_cocina.PNG"
+              alt="Servicio técnico profesional"
+              fill
+              className="object-cover object-center"
+              quality={95}
+              priority
+            />
+            {/* Gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+
+            {/* Texto dentro de la imagen, alineado abajo a la izquierda */}
+            <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 max-w-sm z-20">
+               <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-md">
+                 Expertos en su Hogar
+               </h2>
+               <p className="text-white/90 text-sm font-medium drop-shadow-sm">
+                 Soluciones técnicas integrales
+               </p>
+            </div>
+          </div>
+
+          {/* Columna de Tarjetas: Grid en mobile, Columna absoluta en desktop */}
+          <div className="w-full px-2 mt-4 md:mt-0 md:absolute md:right-0 md:top-0 md:bottom-0 md:w-[28%] z-20 flex flex-col gap-3 md:justify-between md:gap-0 md:py-6 md:pr-2 order-2 md:order-none">
+            {services.map((service, index) => (
               <Card
                 key={index}
-                className={`${service.borderColor} border-2 hover:shadow-2xl hover:shadow-black/10 transition-all duration-300 hover:-translate-y-2 cursor-pointer group ${service.bgLight}`}
                 onClick={scrollToForm}
+                className={`
+                  cursor-pointer border-0 shadow-md md:shadow-lg bg-white/95 backdrop-blur-md
+                  transition-all duration-300 hover:scale-[1.02] md:hover:scale-100 md:hover:-translate-x-2 md:hover:shadow-xl
+                  border-l-[5px] ${service.accentColor}
+                  rounded-xl md:rounded-r-xl md:rounded-l-sm overflow-hidden
+                  md:h-full md:max-h-[140px]
+                  flex flex-col justify-center
+                `}
               >
-                <CardContent className="p-4 text-center relative">
-                  {/* Badge superior */}
-                  <div
-                    className={`absolute -top-1 -right-1 ${service.bgColor} text-white px-2 py-1 text-xs font-bold rounded-bl-lg`}
-                  >
-                    {service.badge}
+                <CardContent className="p-4 flex flex-col justify-between h-full gap-2 md:gap-0">
+                  <div>
+                    <h3 className="text-base font-bold text-[#2C3E50] mb-1 leading-tight group-hover:text-black transition-colors">
+                       {service.title}
+                    </h3>
+                    <p className="text-gray-500 text-xs leading-snug line-clamp-2">
+                      {service.description}
+                    </p>
                   </div>
 
-                  {/* Icono con animación */}
-                  <div
-                    className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${service.bgColor} group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}
-                  >
-                    <Icon size={24} className="text-white" />
-                  </div>
-
-                  {/* Título */}
-                  <h3
-                    className={`text-lg font-bold mb-2 ${service.textColor} group-hover:text-[#2C3E50] transition-colors`}
-                  >
-                    {service.title}
-                  </h3>
-
-                  {/* Descripción */}
-                  <p className="text-[#7F8C8D] text-sm leading-relaxed mb-3 group-hover:text-[#2C3E50] transition-colors">
-                    {service.description}
-                  </p>
-
-                  {/* CTA Button */}
-                  <div
-                    className={`inline-flex items-center ${service.textColor} font-semibold text-xs group-hover:text-[#A50034] transition-colors`}
-                  >
-                    Solicitar ahora
-                    <svg
-                      className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                  <div className="flex items-center justify-between mt-0 md:mt-2">
+                     <Badge variant="outline" className={`${service.badgeColor} bg-white text-[10px] px-2 h-5`}>
+                        {service.badgeLabel}
+                     </Badge>
+                     <span className="text-[10px] font-bold text-gray-400 group-hover:text-[#2C3E50] flex items-center gap-1 transition-colors uppercase tracking-wider">
+                        Ver <ArrowRight className="w-3 h-3" />
+                     </span>
                   </div>
                 </CardContent>
               </Card>
-            )
-          })}
+            ))}
+          </div>
+
         </div>
       </div>
     </section>
