@@ -204,6 +204,7 @@ model Customer {
   direccion    String?
   ciudad       String?
   activo       Boolean   @default(true)
+  isOnboarded  Boolean   @default(false) @map("is_onboarded") // Control de onboarding
   preferencias Json?
   lastLogin    DateTime? @map("last_login")
   createdAt    DateTime  @default(now()) @map("created_at")
@@ -470,5 +471,47 @@ model Invoice {
   @@index([fiscalYear, fiscalMonth])
   @@index([paymentStatus])
   @@map("invoices")
+}
+
+// =============================================
+// MODELO DE SOLICITUDES DE TÉCNICOS
+// =============================================
+
+model TechnicianApplication {
+  id                    String   @id @default(cuid())
+
+  // Datos Personales
+  nombre                String
+  apellido              String
+  cedula                String   @unique
+  email                 String   @unique
+  telefono              String
+  direccion             String
+  ciudad                String
+
+  // Datos Profesionales
+  especialidades        Json     // ["nevera", "lavadora", "aire_acondicionado"]
+  zonaPreferida         String   @map("zona_preferida")
+  experienciaAnios      Int?     @map("experiencia_anios")
+
+  // Estado de la Solicitud
+  estado                String   @default("pendiente") // pendiente, aprobado, rechazado
+  motivoRechazo         String?  @map("motivo_rechazo")
+
+  // Revisión
+  revisadoPor           Int?     @map("revisado_por") // ID del admin que revisó
+  fechaRevision         DateTime? @map("fecha_revision")
+  notasAdmin            String?  @map("notas_admin")
+
+  // Timestamps
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Índices
+  @@index([estado])
+  @@index([createdAt])
+  @@index([email])
+  @@index([cedula])
+  @@map("technician_applications")
 }
 

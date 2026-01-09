@@ -54,6 +54,20 @@ export default function UnifiedLogin() {
 
       const data = await response.json()
 
+      // Manejar estado de técnico pendiente
+      if (data.status === 'pending_approval') {
+        setError(data.message || 'Tu solicitud está siendo revisada')
+        setLoading(false)
+        return
+      }
+
+      // Manejar estado de técnico rechazado
+      if (data.status === 'rejected') {
+        setError(data.message || 'Tu solicitud fue rechazada')
+        setLoading(false)
+        return
+      }
+
       if (response.ok && data.success) {
         // Guardar tokens
         localStorage.setItem('accessToken', data.accessToken)
@@ -92,7 +106,7 @@ export default function UnifiedLogin() {
         // Forzar redirección completa
         window.location.href = dashboardUrl
       } else {
-        setError(data.message || 'Email o contraseña incorrectos')
+        setError(data.message || data.error || 'Email o contraseña incorrectos')
       }
     } catch (err) {
       console.error('Login error:', err)

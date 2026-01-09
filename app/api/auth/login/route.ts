@@ -12,6 +12,7 @@ import {
 } from '@/lib/auth'
 import { validateAndTransform } from '@/lib/validations'
 import { loginSchema } from '@/lib/validations'
+import { prisma } from '@/lib/prisma'
 
 // =============================================
 // POST /api/auth/login
@@ -35,6 +36,42 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = validation.data
+
+    // Verificar si es una solicitud de técnico pendiente
+    const technicianApplication = await prisma.technicianApplication.findUnique({
+      where: { email },
+      select: {
+        estado: true,
+        nombre: true,
+        apellido: true,
+      },
+    })
+
+    // Si existe una solicitud pendiente, bloquear el acceso
+    if (technicianApplication && technicianApplication.estado === 'pendiente') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Tu solicitud está siendo revisada',
+          message: `Hola ${technicianApplication.nombre}, tu solicitud de técnico está pendiente de aprobación. Te notificaremos por email cuando sea aprobada.`,
+          status: 'pending_approval',
+        },
+        { status: 403 }
+      )
+    }
+
+    // Si la solicitud fue rechazada
+    if (technicianApplication && technicianApplication.estado === 'rechazado') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Solicitud rechazada',
+          message: 'Tu solicitud de técnico fue rechazada. Por favor, contacta al administrador para más información.',
+          status: 'rejected',
+        },
+        { status: 403 }
+      )
+    }
 
     // Intentar autenticar primero como usuario del sistema (admin/manager/technician)
     let user = await authenticateUser(email, password)

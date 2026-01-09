@@ -75,6 +75,7 @@ const sidebarItems: SidebarItem[] = [
     icon: Users,
     children: [
       { title: 'Todos los Técnicos', href: '/admin/technicians', icon: Users },
+      { title: 'Solicitudes', href: '/admin/applications', icon: FileText },
       { title: 'Asignaciones', href: '/admin/assignments', icon: Calendar },
     ],
   },

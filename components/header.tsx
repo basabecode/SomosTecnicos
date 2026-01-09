@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu, X, User, LogOut } from 'lucide-react'
+import { Menu, X, User, LogOut, UserPlus, Users, Wrench, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { OrderTrackingModal } from '@/components/order-tracking-modal'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 
 interface HeaderUser {
   id: number | string
@@ -139,13 +146,68 @@ export default function Header() {
     }
 
     return (
-      <Link
-        href="/login"
-        className="flex items-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white px-4 py-2 rounded-md transition-colors font-medium"
-      >
-        <User size={18} />
-        Iniciar Sesión
-      </Link>
+      <div className="flex items-center gap-3">
+        {/* Menú Desplegable de Registro */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 border-[#A50034] text-[#A50034] hover:bg-[#A50034] hover:text-white transition-colors"
+            >
+              <UserPlus size={18} />
+              <span className="hidden sm:inline">Registrarse</span>
+              <ChevronDown size={16} className="hidden sm:inline" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5 text-sm font-semibold text-gray-700">
+              Crear una cuenta
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link
+                href="/register/customer"
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Users size={18} className="text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">Soy Cliente</div>
+                  <div className="text-xs text-gray-500">
+                    Solicita servicios técnicos
+                  </div>
+                </div>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/register/technician"
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="p-2 bg-amber-100 rounded-lg">
+                  <Wrench size={18} className="text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-gray-900">Soy Técnico</div>
+                  <div className="text-xs text-gray-500">
+                    Únete a nuestro equipo
+                  </div>
+                </div>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Botón de Login */}
+        <Link
+          href="/login"
+          className="flex items-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white px-4 py-2 rounded-md transition-colors font-medium"
+        >
+          <User size={18} />
+          <span className="hidden sm:inline">Iniciar Sesión</span>
+        </Link>
+      </div>
     )
   }
 
@@ -251,14 +313,68 @@ export default function Header() {
                       </button>
                     </div>
                   ) : (
-                    <Link
-                      href="/login"
-                      className="flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white py-3 rounded-md transition-colors font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <User size={20} />
-                      Iniciar Sesión
-                    </Link>
+                    <div className="flex flex-col gap-3">
+                      {/* Opciones de Registro */}
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold text-gray-700 mb-2">
+                          Crear una cuenta
+                        </p>
+
+                        {/* Registro Cliente */}
+                        <Link
+                          href="/register/customer"
+                          className="flex items-center gap-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <Users size={20} className="text-blue-600" />
+                          </div>
+                          <div className="flex-1 text-left">
+                            <div className="font-medium text-gray-900">Soy Cliente</div>
+                            <div className="text-xs text-gray-600">
+                              Solicita servicios técnicos
+                            </div>
+                          </div>
+                        </Link>
+
+                        {/* Registro Técnico */}
+                        <Link
+                          href="/register/technician"
+                          className="flex items-center gap-3 p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors border border-amber-200"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <div className="p-2 bg-amber-100 rounded-lg">
+                            <Wrench size={20} className="text-amber-600" />
+                          </div>
+                          <div className="flex-1 text-left">
+                            <div className="font-medium text-gray-900">Soy Técnico</div>
+                            <div className="text-xs text-gray-600">
+                              Únete a nuestro equipo
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+
+                      {/* Separador */}
+                      <div className="relative my-2">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-white px-2 text-gray-500">o</span>
+                        </div>
+                      </div>
+
+                      {/* Login */}
+                      <Link
+                        href="/login"
+                        className="flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#E74C3C] text-white py-3 rounded-md transition-colors font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <User size={20} />
+                        Iniciar Sesión
+                      </Link>
+                    </div>
                   )}
                 </div>
               </div>

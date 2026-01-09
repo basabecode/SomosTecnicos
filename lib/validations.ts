@@ -198,6 +198,54 @@ export const updateTechnicianSchema = createTechnicianSchema.partial().extend({
 })
 
 // =============================================
+// VALIDACIÓN DE SOLICITUDES DE TÉCNICOS
+// =============================================
+
+export const technicianApplicationSchema = z.object({
+  // Datos Personales
+  nombre: z.string()
+    .min(2, 'El nombre debe tener al menos 2 caracteres')
+    .max(100, 'El nombre no puede tener más de 100 caracteres')
+    .regex(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/, 'El nombre solo puede contener letras y espacios'),
+
+  apellido: z.string()
+    .min(2, 'El apellido debe tener al menos 2 caracteres')
+    .max(100, 'El apellido no puede tener más de 100 caracteres')
+    .regex(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/, 'El apellido solo puede contener letras y espacios'),
+
+  cedula: cedulaSchema,
+
+  email: emailSchema,
+
+  telefono: phoneSchema,
+
+  direccion: z.string()
+    .min(10, 'La dirección debe tener al menos 10 caracteres')
+    .max(200, 'La dirección no puede tener más de 200 caracteres'),
+
+  ciudad: z.string()
+    .min(2, 'La ciudad debe tener al menos 2 caracteres')
+    .max(50, 'La ciudad no puede tener más de 50 caracteres'),
+
+  // Datos Profesionales
+  especialidades: z.array(
+    z.enum(Object.values(TECHNICIAN_SPECIALTIES) as [string, ...string[]])
+  )
+    .min(1, 'Debe seleccionar al menos una especialidad')
+    .max(10, 'No puede tener más de 10 especialidades'),
+
+  zonaPreferida: z.string()
+    .min(2, 'La zona preferida debe tener al menos 2 caracteres')
+    .max(100, 'La zona preferida no puede tener más de 100 caracteres'),
+
+  experienciaAnios: z.number()
+    .int('Los años de experiencia deben ser un número entero')
+    .min(0, 'Los años de experiencia no pueden ser negativos')
+    .max(50, 'Los años de experiencia no pueden ser más de 50')
+    .optional()
+})
+
+// =============================================
 // VALIDACIÓN DE ASIGNACIONES
 // =============================================
 
@@ -472,3 +520,4 @@ export type ChangePasswordData = z.infer<typeof changePasswordSchema>
 
 export type CreateNotificationData = z.infer<typeof createNotificationSchema>
 export type SystemSettingData = z.infer<typeof systemSettingSchema>
+export type TechnicianApplicationData = z.infer<typeof technicianApplicationSchema>
