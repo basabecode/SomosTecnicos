@@ -7,8 +7,8 @@ import { Users, Star } from 'lucide-react'
 
 /**
  * Panel de Disponibilidad de Técnicos (Admin View)
- * - Muestra técnicos disponibles en tiempo real (simulado o real)
- * - Utilizado para asignación de servicios
+ * - Muestra técnicos disponibles para asignación de servicios
+ * - Utilizado para gestión y asignación de órdenes
  */
 
 export default function UberTechnicianSection() {
@@ -39,7 +39,7 @@ export default function UberTechnicianSection() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-xl font-bold text-[#2C3E50]">
-              Disponibilidad en Tiempo Real
+              Disponibilidad de Técnicos
             </CardTitle>
             <CardDescription className="text-sm text-gray-500">
               Vista general de la flota de técnicos para asignación

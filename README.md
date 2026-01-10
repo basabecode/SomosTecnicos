@@ -6,7 +6,7 @@
 [![Prisma](https://img.shields.io/badge/Prisma-6.17.0-2D3748)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> 🏠 **Plataforma web moderna para servicios técnicos de electrodomésticos tipo "Uber for Repairs"**
+> 🏠 **Plataforma web moderna para servicios técnicos de electrodomésticos a domicilio**
 
 ## 🚀 Características Principales
 
@@ -29,7 +29,7 @@
 - 👨‍💼 **Administradores**: Gestión completa, reportes, analytics
 
 ### 📊 **Panel de Administración**
-- ✅ Dashboard con métricas en tiempo real
+- ✅ Dashboard con métricas y estadísticas
 - ✅ Gestión de órdenes y asignaciones
 - ✅ Reportes visuales y analytics
 - ✅ Sistema de notificaciones
@@ -61,7 +61,7 @@
 ## 🚀 Instalación y Configuración
 
 ### **Prerrequisitos**
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recomendado) o npm
 - Docker y Docker Compose
 - PostgreSQL (o usar Docker)
@@ -164,12 +164,12 @@ La aplicación estará disponible en `http://localhost:3000`
 
 ### **Servicios Detectados**
 - **Reparaciones**: Diagnóstico de fallas y reparación
-- **Mantenimiento**: Servicios preventivos 
+- **Mantenimiento**: Servicios preventivos
 - **Instalación**: Instalación profesional de equipos
 
 ### **Electrodomésticos Compatibles**
 - 🧊 Neveras y refrigeradores
-- 🧺 Lavadoras y secadoras  
+- 🧺 Lavadoras y secadoras
 - ❄️ Aires acondicionados
 - 🔥 Estufas y hornos
 - 📡 Microondas
@@ -196,7 +196,7 @@ La aplicación estará disponible en `http://localhost:3000`
 - **Contraseña**: `admin123`
 
 ### **Técnico**
-- **Usuario**: `tecnico@tecnocity.com`  
+- **Usuario**: `tecnico@tecnocity.com`
 - **Contraseña**: `tecnico123`
 
 ### **Cliente**
@@ -225,7 +225,7 @@ docker run -p 3000:3000 tecnocity
 ## 📚 Documentación Adicional
 
 - 📖 [Arquitectura del Software](docs/ARQUITECTURA_SOFTWARE.md)
-- 🔍 [Auditoría Completa](docs/AUDITORIA_COMPLETA_SOFTWARE.md)  
+- 🔍 [Auditoría Completa](docs/AUDITORIA_COMPLETA_SOFTWARE.md)
 - 🎯 [Mejoras UX/UI](docs/REPORTE_MEJORAS_FRONTEND_COMPLETO.md)
 - 🛣️ [Roadmap 2025](docs/ROADMAP_MEJORAS_2025.md)
 

@@ -58,10 +58,6 @@ export default function TechnicianSettingsPage() {
     darkMode: false,
     autoSync: true,
     offlineMode: false,
-
-    // Privacy
-    shareLocation: true,
-    allowTracking: true,
   })
 
   const handleSave = (section: string) => {
@@ -476,43 +472,7 @@ export default function TechnicianSettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Compartir ubicación</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Permitir que el sistema rastree tu ubicación para optimizar
-                    asignaciones
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.shareLocation}
-                  onCheckedChange={checked =>
-                    setSettings(prev => ({
-                      ...prev,
-                      shareLocation: checked,
-                    }))
-                  }
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Permitir seguimiento</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Permitir el seguimiento de actividad para mejorar el
-                    servicio
-                  </p>
-                </div>
-                <Switch
-                  checked={settings.allowTracking}
-                  onCheckedChange={checked =>
-                    setSettings(prev => ({
-                      ...prev,
-                      allowTracking: checked,
-                    }))
-                  }
-                />
-              </div>
+              {/* Opciones de ubicación y tracking eliminadas - no se usarán en el proyecto */}
             </div>
 
             <div className="border-t pt-4">
