@@ -33,6 +33,7 @@ import {
   Loader2,
   ArrowRight,
   ArrowLeft,
+  HomeIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -243,14 +244,27 @@ export default function CustomerRegistrationPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-white to-[#E3F2FD] py-12 px-4">
       <div className="max-w-4xl mx-auto">
+        {/* Botón Volver al Inicio */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button
+              variant="outline"
+              className="border-[#2C3E50] text-[#2C3E50] hover:bg-[#2C3E50] hover:text-white transition-all"
+            >
+              <HomeIcon className="mr-2 h-4 w-4" />
+              Volver al Inicio
+            </Button>
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#2C3E50] leading-[1.15] tracking-tight mb-2">
             Registro de Cliente
           </h1>
-          <p className="text-gray-600">
+          <p className="text-lg text-[#64748B]">
             Completa tu perfil en 3 sencillos pasos
           </p>
         </div>
@@ -264,22 +278,24 @@ export default function CustomerRegistrationPage() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                       currentStep >= s.num
-                        ? 'bg-blue-600 border-blue-600 text-white'
+                        ? 'bg-[#A50034] border-[#A50034] text-white'
                         : 'bg-white border-gray-300 text-gray-400'
                     }`}
                   >
                     <s.icon className="h-6 w-6" />
                   </div>
-                  <span className={`text-xs mt-2 font-medium ${currentStep >= s.num ? 'text-blue-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-2 font-medium ${currentStep >= s.num ? 'text-[#A50034]' : 'text-gray-400'}`}>
                     {s.label}
                   </span>
                 </div>
                 {idx < steps.length - 1 && (
-                  <div
-                    className={`h-0.5 flex-1 mx-2 transition-all ${
-                      currentStep > s.num ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                  />
+                  <div className="flex-1 h-0.5 mx-2 -mt-6">
+                    <div
+                      className={`h-full transition-all ${
+                        currentStep > s.num ? 'bg-[#A50034]' : 'bg-gray-300'
+                      }`}
+                    />
+                  </div>
                 )}
               </div>
             ))}
@@ -289,12 +305,12 @@ export default function CustomerRegistrationPage() {
         {/* Form Card */}
         <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-xl">
+            <CardTitle className="text-2xl font-bold text-[#2C3E50]">
               {currentStep === 1 && 'Paso 1: Datos Básicos'}
               {currentStep === 2 && 'Paso 2: Ubicación'}
               {currentStep === 3 && 'Paso 3: Preferencias'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-[#64748B]">
               {currentStep === 1 && 'Ingresa tu información personal'}
               {currentStep === 2 && 'Cuéntanos dónde te encuentras'}
               {currentStep === 3 && '¿Qué electrodomésticos tienes en casa?'}
@@ -403,7 +419,7 @@ export default function CustomerRegistrationPage() {
                   <div className="flex justify-end pt-4">
                     <Button
                       type="submit"
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       Siguiente
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -481,7 +497,7 @@ export default function CustomerRegistrationPage() {
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       Siguiente
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -555,7 +571,7 @@ export default function CustomerRegistrationPage() {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      className="bg-[#27AE60] hover:bg-[#219150] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       {loading ? (
                         <>
@@ -577,10 +593,10 @@ export default function CustomerRegistrationPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-600">
+        <div className="text-center mt-8 text-sm text-[#64748B]">
           <p>
             ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-[#A50034] hover:text-[#c9003f] font-medium transition-colors">
               Inicia sesión aquí
             </Link>
           </p>

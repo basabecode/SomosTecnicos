@@ -169,11 +169,11 @@ export default function Header() {
                 href="/register/customer"
                 className="flex items-center gap-3 cursor-pointer"
               >
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users size={18} className="text-blue-600" />
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Users size={18} className="text-red-600" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-gray-900">Soy Cliente</div>
+                  <div className="font-medium text-gray-900">Solo Clientes</div>
                   <div className="text-xs text-gray-500">
                     Solicita servicios técnicos
                   </div>
@@ -185,11 +185,11 @@ export default function Header() {
                 href="/register/technician"
                 className="flex items-center gap-3 cursor-pointer"
               >
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <Wrench size={18} className="text-amber-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Wrench size={18} className="text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-gray-900">Soy Técnico</div>
+                  <div className="font-medium text-gray-900">Solo Técnicos</div>
                   <div className="text-xs text-gray-500">
                     Únete a nuestro equipo
                   </div>

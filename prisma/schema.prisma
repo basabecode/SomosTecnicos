@@ -493,6 +493,7 @@ model TechnicianApplication {
   especialidades        Json     // ["nevera", "lavadora", "aire_acondicionado"]
   zonaPreferida         String   @map("zona_preferida")
   experienciaAnios      Int?     @map("experiencia_anios")
+  documentosUrl         String?  @map("documentos_url") // Ruta del PDF con cédula y certificados
 
   // Estado de la Solicitud
   estado                String   @default("pendiente") // pendiente, aprobado, rechazado

@@ -5,7 +5,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateAndTransform, technicianApplicationSchema } from '@/lib/validations'
+import { writeFile, mkdir } from 'fs/promises'
+import { join } from 'path'
+import { existsSync } from 'fs'
 import {
   sendTechnicianApplicationReceivedEmail,
   sendNewTechnicianApplicationNotification
@@ -16,27 +18,70 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin.demo@tecnocity.com'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const formData = await request.formData()
 
-    // Validar datos de entrada
-    const validation = validateAndTransform(technicianApplicationSchema, body)
+    // Extraer datos del formulario
+    const nombre = formData.get('nombre') as string
+    const apellido = formData.get('apellido') as string
+    const cedula = formData.get('cedula') as string
+    const email = formData.get('email') as string
+    const telefono = formData.get('telefono') as string
+    const direccion = formData.get('direccion') as string
+    const ciudad = formData.get('ciudad') as string
+    const especialidadesStr = formData.get('especialidades') as string
+    const zonaPreferida = formData.get('zonaPreferida') as string
+    const experienciaAniosStr = formData.get('experienciaAnios') as string | null
+    const documentosFile = formData.get('documentos') as File | null
 
-    if (!validation.success) {
+    // Validaciones básicas
+    if (!nombre || !apellido || !cedula || !email || !telefono || !direccion || !ciudad || !especialidadesStr || !zonaPreferida) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Datos de solicitud inválidos',
-          details: validation.errors.errors
+          error: 'Todos los campos obligatorios deben ser completados'
         },
         { status: 400 }
       )
     }
 
-    const data = validation.data
+    if (!documentosFile) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Debe cargar el archivo de documentos (cédula y certificados)'
+        },
+        { status: 400 }
+      )
+    }
+
+    // Validar que sea PDF
+    if (documentosFile.type !== 'application/pdf') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'El archivo debe ser un PDF'
+        },
+        { status: 400 }
+      )
+    }
+
+    // Validar tamaño (1MB)
+    if (documentosFile.size > 1048576) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'El archivo debe pesar menos de 1MB'
+        },
+        { status: 400 }
+      )
+    }
+
+    const especialidades = JSON.parse(especialidadesStr)
+    const experienciaAnios = experienciaAniosStr ? parseInt(experienciaAniosStr) : undefined
 
     // Verificar si ya existe una solicitud con la misma cédula
     const existingByCedula = await prisma.technicianApplication.findUnique({
-      where: { cedula: data.cedula }
+      where: { cedula }
     })
 
     if (existingByCedula) {
@@ -51,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar si ya existe una solicitud con el mismo email
     const existingByEmail = await prisma.technicianApplication.findUnique({
-      where: { email: data.email }
+      where: { email }
     })
 
     if (existingByEmail) {
@@ -64,27 +109,46 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Guardar el archivo
+    const bytes = await documentosFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    // Crear directorio si no existe
+    const uploadDir = join(process.cwd(), 'public', 'uploads', 'technician-docs')
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true })
+    }
+
+    // Nombre único para el archivo
+    const timestamp = Date.now()
+    const fileName = `${cedula}_${timestamp}.pdf`
+    const filePath = join(uploadDir, fileName)
+    const publicPath = `/uploads/technician-docs/${fileName}`
+
+    await writeFile(filePath, buffer)
+
     // Crear la solicitud en la base de datos
     const application = await prisma.technicianApplication.create({
       data: {
-        nombre: data.nombre,
-        apellido: data.apellido,
-        cedula: data.cedula,
-        email: data.email,
-        telefono: data.telefono,
-        direccion: data.direccion,
-        ciudad: data.ciudad,
-        especialidades: data.especialidades,
-        zonaPreferida: data.zonaPreferida,
-        experienciaAnios: data.experienciaAnios,
+        nombre,
+        apellido,
+        cedula,
+        email,
+        telefono,
+        direccion,
+        ciudad,
+        especialidades,
+        zonaPreferida,
+        experienciaAnios,
+        documentosUrl: publicPath, // Guardar la ruta del archivo
         estado: 'pendiente'
       }
     })
 
     // Enviar email de confirmación al solicitante
     const confirmationEmail = await sendTechnicianApplicationReceivedEmail(
-      data.email,
-      data.nombre
+      email,
+      nombre
     )
 
     if (!confirmationEmail.success) {
@@ -95,15 +159,15 @@ export async function POST(request: NextRequest) {
     const adminNotification = await sendNewTechnicianApplicationNotification(
       ADMIN_EMAIL,
       {
-        nombre: data.nombre,
-        apellido: data.apellido,
-        email: data.email,
-        telefono: data.telefono,
-        cedula: data.cedula,
-        ciudad: data.ciudad,
-        especialidades: data.especialidades,
-        zonaPreferida: data.zonaPreferida,
-        experienciaAnios: data.experienciaAnios
+        nombre,
+        apellido,
+        email,
+        telefono,
+        cedula,
+        ciudad,
+        especialidades,
+        zonaPreferida,
+        experienciaAnios
       }
     )
 

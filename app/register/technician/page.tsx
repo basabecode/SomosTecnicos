@@ -36,6 +36,7 @@ import {
   UserCheck,
   Briefcase,
   FileText,
+  HomeIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { TECHNICIAN_SPECIALTIES } from '@/lib/constants'
@@ -100,6 +101,7 @@ interface FormData {
   especialidades: string[]
   zonaPreferida: string
   experienciaAnios: string
+  documentos: File | null  // Archivo PDF con cédula y certificados
 }
 
 export default function TechnicianRegistrationPage() {
@@ -119,7 +121,8 @@ export default function TechnicianRegistrationPage() {
     ciudad: '',
     especialidades: [],
     zonaPreferida: '',
-    experienciaAnios: ''
+    experienciaAnios: '',
+    documentos: null,
   })
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -190,6 +193,20 @@ export default function TechnicianRegistrationPage() {
       setError('Debe seleccionar una zona de trabajo')
       return false
     }
+    if (!formData.documentos) {
+      setError('Debe cargar el archivo con su cédula y certificados')
+      return false
+    }
+    // Validar que sea PDF
+    if (formData.documentos && formData.documentos.type !== 'application/pdf') {
+      setError('El archivo debe ser un PDF')
+      return false
+    }
+    // Validar tamaño (1MB = 1048576 bytes)
+    if (formData.documentos && formData.documentos.size > 1048576) {
+      setError('El archivo debe pesar menos de 1MB')
+      return false
+    }
     return true
   }
 
@@ -213,15 +230,27 @@ export default function TechnicianRegistrationPage() {
     setLoading(true)
 
     try {
+      // Crear FormData para enviar archivo
+      const submitData = new FormData()
+      submitData.append('nombre', formData.nombre)
+      submitData.append('apellido', formData.apellido)
+      submitData.append('cedula', formData.cedula)
+      submitData.append('email', formData.email)
+      submitData.append('telefono', formData.telefono)
+      submitData.append('direccion', formData.direccion)
+      submitData.append('ciudad', formData.ciudad)
+      submitData.append('especialidades', JSON.stringify(formData.especialidades))
+      submitData.append('zonaPreferida', formData.zonaPreferida)
+      if (formData.experienciaAnios) {
+        submitData.append('experienciaAnios', formData.experienciaAnios)
+      }
+      if (formData.documentos) {
+        submitData.append('documentos', formData.documentos)
+      }
+
       const response = await fetch('/api/technician/apply', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          experienciaAnios: formData.experienciaAnios ? parseInt(formData.experienciaAnios) : undefined
-        }),
+        body: submitData, // No incluir Content-Type, el navegador lo establece automáticamente
       })
 
       const data = await response.json()
@@ -241,16 +270,16 @@ export default function TechnicianRegistrationPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-white to-[#E3F2FD] flex items-center justify-center p-4">
         <Card className="w-full max-w-2xl shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto mb-4 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <CardTitle className="text-3xl font-bold text-gray-900">
+            <CardTitle className="text-3xl font-bold text-[#2C3E50]">
               ¡Solicitud Enviada!
             </CardTitle>
-            <CardDescription className="text-lg mt-2">
+            <CardDescription className="text-lg mt-2 text-[#64748B]">
               Tu solicitud ha sido recibida exitosamente
             </CardDescription>
           </CardHeader>
@@ -275,7 +304,7 @@ export default function TechnicianRegistrationPage() {
 
             <div className="text-center pt-4">
               <Link href="/">
-                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                <Button className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
                   Volver al Inicio
                 </Button>
               </Link>
@@ -287,22 +316,27 @@ export default function TechnicianRegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-white to-[#E3F2FD] py-12 px-4">
       <div className="max-w-4xl mx-auto">
+        {/* Botón Volver al Inicio */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button
+              variant="outline"
+              className="border-[#2C3E50] text-[#2C3E50] hover:bg-[#2C3E50] hover:text-white transition-all"
+            >
+              <HomeIcon className="mr-2 h-4 w-4" />
+              Volver al Inicio
+            </Button>
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-              <Wrench className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              TecnoCity
-            </h1>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#2C3E50] leading-[1.15] tracking-tight mb-2">
             Únete a Nuestro Equipo de Técnicos
-          </h2>
-          <p className="text-gray-600">
+          </h1>
+          <p className="text-lg text-[#64748B]">
             Completa el formulario para enviar tu solicitud
           </p>
         </div>
@@ -320,22 +354,24 @@ export default function TechnicianRegistrationPage() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                       step >= s.num
-                        ? 'bg-blue-600 border-blue-600 text-white'
+                        ? 'bg-[#A50034] border-[#A50034] text-white'
                         : 'bg-white border-gray-300 text-gray-400'
                     }`}
                   >
                     <s.icon className="h-6 w-6" />
                   </div>
-                  <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-blue-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-[#A50034]' : 'text-gray-400'}`}>
                     {s.label}
                   </span>
                 </div>
                 {idx < 2 && (
-                  <div
-                    className={`h-0.5 flex-1 mx-2 transition-all ${
-                      step > s.num ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                  />
+                  <div className="flex-1 h-0.5 mx-2 -mt-6">
+                    <div
+                      className={`h-full transition-all ${
+                        step > s.num ? 'bg-[#A50034]' : 'bg-gray-300'
+                      }`}
+                    />
+                  </div>
                 )}
               </div>
             ))}
@@ -345,12 +381,12 @@ export default function TechnicianRegistrationPage() {
         {/* Form Card */}
         <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-xl">
+            <CardTitle className="text-2xl font-bold text-[#2C3E50]">
               {step === 1 && 'Paso 1: Datos Personales'}
               {step === 2 && 'Paso 2: Experiencia Profesional'}
               {step === 3 && 'Paso 3: Revisión y Envío'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-[#64748B]">
               {step === 1 && 'Ingresa tu información personal'}
               {step === 2 && 'Cuéntanos sobre tu experiencia'}
               {step === 3 && 'Revisa tu información antes de enviar'}
@@ -520,6 +556,42 @@ export default function TechnicianRegistrationPage() {
                       disabled={loading}
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="documentos" className="flex items-center gap-2">
+                      Documentos *
+                      <span className="text-xs text-gray-500 font-normal">(PDF, máx 1MB)</span>
+                    </Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-[#A50034] transition-colors">
+                      <Input
+                        id="documentos"
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null
+                          setFormData(prev => ({ ...prev, documentos: file }))
+                          setError('')
+                        }}
+                        disabled={loading}
+                        className="cursor-pointer"
+                      />
+                      <p className="text-xs text-gray-600 mt-2">
+                        📄 Sube un solo archivo PDF que incluya:
+                      </p>
+                      <ul className="text-xs text-gray-600 mt-1 ml-4 list-disc">
+                        <li>Copia de tu cédula de ciudadanía</li>
+                        <li>Certificados de cursos o estudios realizados</li>
+                      </ul>
+                      {formData.documentos && (
+                        <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-800">
+                            {formData.documentos.name} ({(formData.documentos.size / 1024).toFixed(0)} KB)
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -617,7 +689,7 @@ export default function TechnicianRegistrationPage() {
                     type="button"
                     onClick={handleNext}
                     disabled={loading}
-                    className="ml-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                    className="ml-auto bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                   >
                     Siguiente
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -626,7 +698,7 @@ export default function TechnicianRegistrationPage() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="ml-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    className="ml-auto bg-[#27AE60] hover:bg-[#219150] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                   >
                     {loading ? (
                       <>
@@ -647,10 +719,10 @@ export default function TechnicianRegistrationPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-600">
+        <div className="text-center mt-8 text-sm text-[#64748B]">
           <p>
             ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-[#A50034] hover:text-[#c9003f] font-medium transition-colors">
               Inicia sesión aquí
             </Link>
           </p>
