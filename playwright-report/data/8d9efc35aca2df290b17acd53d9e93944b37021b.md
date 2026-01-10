@@ -1,0 +1,105 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Registro de Cliente" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Completa tu perfil en 3 sencillos pasos
+    - generic [ref=e8]:
+      - generic [ref=e10]:
+        - img [ref=e12]
+        - generic [ref=e15]: Datos Básicos
+      - generic [ref=e18]:
+        - img [ref=e20]
+        - generic [ref=e23]: Ubicación
+      - generic [ref=e26]:
+        - img [ref=e28]
+        - generic [ref=e31]: Preferencias
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]: "Paso 3: Preferencias"
+        - generic [ref=e35]: ¿Qué electrodomésticos tienes en casa?
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: ¿Qué electrodomésticos tienes en casa? *
+          - paragraph [ref=e40]: Esto nos ayudará a ofrecerte un mejor servicio
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - checkbox "❄️ Nevera / Refrigerador" [ref=e43]
+              - checkbox
+              - generic [ref=e44] [cursor=pointer]:
+                - generic [ref=e45]: ❄️
+                - text: Nevera / Refrigerador
+            - generic [ref=e46]:
+              - checkbox "🧺 Lavadora" [ref=e47]
+              - checkbox
+              - generic [ref=e48] [cursor=pointer]:
+                - generic [ref=e49]: 🧺
+                - text: Lavadora
+            - generic [ref=e50]:
+              - checkbox "🔥 Estufa" [ref=e51]
+              - checkbox
+              - generic [ref=e52] [cursor=pointer]:
+                - generic [ref=e53]: 🔥
+                - text: Estufa
+            - generic [ref=e54]:
+              - checkbox "📻 Microondas" [ref=e55]
+              - checkbox
+              - generic [ref=e56] [cursor=pointer]:
+                - generic [ref=e57]: 📻
+                - text: Microondas
+            - generic [ref=e58]:
+              - checkbox "❄️ Aire Acondicionado" [ref=e59]
+              - checkbox
+              - generic [ref=e60] [cursor=pointer]:
+                - generic [ref=e61]: ❄️
+                - text: Aire Acondicionado
+            - generic [ref=e62]:
+              - checkbox "🚿 Calentador" [ref=e63]
+              - checkbox
+              - generic [ref=e64] [cursor=pointer]:
+                - generic [ref=e65]: 🚿
+                - text: Calentador
+            - generic [ref=e66]:
+              - checkbox "🌀 Secadora" [ref=e67]
+              - checkbox
+              - generic [ref=e68] [cursor=pointer]:
+                - generic [ref=e69]: 🌀
+                - text: Secadora
+            - generic [ref=e70]:
+              - checkbox "🍕 Horno" [ref=e71]
+              - checkbox
+              - generic [ref=e72] [cursor=pointer]:
+                - generic [ref=e73]: 🍕
+                - text: Horno
+            - generic [ref=e74]:
+              - checkbox "🍽️ Lavavajillas" [ref=e75]
+              - checkbox
+              - generic [ref=e76] [cursor=pointer]:
+                - generic [ref=e77]: 🍽️
+                - text: Lavavajillas
+            - generic [ref=e78]:
+              - checkbox "📺 Televisor" [ref=e79]
+              - checkbox
+              - generic [ref=e80] [cursor=pointer]:
+                - generic [ref=e81]: 📺
+                - text: Televisor
+          - paragraph [ref=e82]: Selecciona al menos un electrodoméstico
+        - generic [ref=e83]:
+          - button "Anterior" [ref=e84]:
+            - img
+            - text: Anterior
+          - button "Completar Registro" [active] [ref=e85]:
+            - img
+            - text: Completar Registro
+    - paragraph [ref=e87]:
+      - text: ¿Ya tienes una cuenta?
+      - link "Inicia sesión aquí" [ref=e88] [cursor=pointer]:
+        - /url: /login
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e94] [cursor=pointer]:
+    - img [ref=e95]
+  - alert [ref=e98]
+```

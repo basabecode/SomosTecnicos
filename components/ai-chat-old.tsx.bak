@@ -18,19 +18,17 @@
  * - Shadcn/ui components para UI consistente
  * - Tailwind CSS para estilos responsivos
  * - Lucide React para iconografía
- * - Custom Events para comunicación entre componentes
  *
  * CARACTERÍSTICAS:
  * - Sistema de reconocimiento de patrones basado en palabras clave
  * - 10 tipos de electrodomésticos soportados
  * - Diagnóstico de urgencia (baja, media, alta)
- * - Detección de Instalación y Mantenimiento
- * - Comunicación con ServiceForm mediante eventos personalizados
+ * - Auto-completado de formularios mediante manipulación del DOM
  * - Indicador visual de progreso
  * - Respuestas contextuales según el estado de la conversación
  *
  * @author TecnoCity Dev Team
- * @version 2.1
+ * @version 2.0
  */
 
 'use client'
@@ -148,7 +146,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
     },
     {
       id: '2',
-      text: 'Te ayudo a solicitar tu servicio en 3 pasos:\n\n1️⃣ Identifico tu electrodoméstico\n2️⃣ Entiendo el problema\n3️⃣ Creo tu solicitud\n\n**¿Qué electrodoméstico necesitas reparar, instalar o darle mantenimiento?**\n(Lavadora, nevera, aire, estufa, microondas, secadora, lavavajillas, horno eléctrico, calentador, televisor...)',
+      text: 'Te ayudo a solicitar tu servicio en 3 pasos:\n\n1️⃣ Identifico tu electrodoméstico\n2️⃣ Entiendo el problema\n3️⃣ Creo tu solicitud\n\n**¿Qué electrodoméstico necesitas reparar?**\n(Lavadora, nevera, aire, estufa, microondas, secadora, lavavajillas, horno eléctrico, calentador, televisor...)',
       isBot: true,
       timestamp: new Date(),
     },
@@ -249,61 +247,61 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
       // LAVADORA
       if (lower.includes('lavadora') || lower.includes('lavado')) {
         appliance = 'Lavadora'
-        followUp = '**¿Cuál es el problema?**\n\n• No enciende\n• Hace ruido\n• No centrifuga\n• Bota agua\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Cuál es el problema?**\n\n• No enciende\n• Hace ruido\n• No centrifuga\n• Bota agua'
       }
 
       // NEVERA/REFRIGERADOR
       else if (lower.includes('nevera') || lower.includes('refri') || lower.includes('frigo')) {
         appliance = 'Nevera'
-        followUp = '**¿Qué está pasando?**\n\n• No enfría\n• Hace ruido\n• Bota agua\n• Se congela todo\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Qué está pasando?**\n\n• No enfría\n• Hace ruido\n• Bota agua\n• Se congela todo'
       }
 
       // AIRE ACONDICIONADO
       else if (lower.includes('aire') || lower.includes('clima')) {
         appliance = 'Aire Acondicionado'
-        followUp = '**¿Cuál es la falla?**\n\n• No enfría\n• No enciende\n• Gotea\n• Hace ruido\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Cuál es la falla?**\n\n• No enfría\n• No enciende\n• Gotea\n• Hace ruido'
       }
 
       // ESTUFA/COCINA
       else if (lower.includes('estufa') || lower.includes('cocina')) {
         appliance = 'Estufa'
-        followUp = '**¿Qué no funciona?**\n\n• Quemadores\n• Horno\n• Encendido\n• Regulador\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Qué no funciona?**\n\n• Quemadores\n• Horno\n• Encendido\n• Regulador'
       }
 
       // MICROONDAS
       else if (lower.includes('microondas') || lower.includes('micro')) {
         appliance = 'Microondas'
-        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• No enciende\n• Hace chispas\n• Plato no gira\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• No enciende\n• Hace chispas\n• Plato no gira'
       }
 
       // SECADORA
       else if (lower.includes('secadora') || lower.includes('secado')) {
         appliance = 'Secadora'
-        followUp = '**¿Qué está fallando?**\n\n• No seca\n• No enciende\n• Hace ruido\n• Se sobrecalienta\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Qué está fallando?**\n\n• No seca\n• No enciende\n• Hace ruido\n• Se sobrecalienta'
       }
 
       // LAVAVAJILLAS
       else if (lower.includes('lavavajillas') || lower.includes('lava platos') || lower.includes('lavaplatos')) {
         appliance = 'Lavavajillas'
-        followUp = '**¿Cuál es la falla?**\n\n• No lava bien\n• No enciende\n• Bota agua\n• No desagua\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Cuál es la falla?**\n\n• No lava bien\n• No enciende\n• Bota agua\n• No desagua'
       }
 
       // HORNO ELÉCTRICO
       else if (lower.includes('horno eléctrico') || lower.includes('horno electrico') || (lower.includes('horno') && lower.includes('eléctrico'))) {
         appliance = 'Horno Eléctrico'
-        followUp = '**¿Qué no funciona?**\n\n• No calienta\n• No enciende\n• Temperatura irregular\n• Puerta no cierra\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Qué no funciona?**\n\n• No calienta\n• No enciende\n• Temperatura irregular\n• Puerta no cierra'
       }
 
       // CALENTADOR
       else if (lower.includes('calentador') || lower.includes('termo') || lower.includes('boiler')) {
         appliance = 'Calentador'
-        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• Gotea\n• Temperatura baja\n• No enciende piloto\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• Gotea\n• Temperatura baja\n• No enciende piloto'
       }
 
       // TELEVISOR
       else if (lower.includes('televisor') || lower.includes('tv') || lower.includes('tele')) {
         appliance = 'Televisor'
-        followUp = '**¿Qué está pasando?**\n\n• No enciende\n• No da imagen\n• No hay sonido\n• Pantalla dañada\n• Instalación\n• Mantenimiento'
+        followUp = '**¿Qué está pasando?**\n\n• No enciende\n• No da imagen\n• No hay sonido\n• Pantalla dañada'
       }
 
       // NO SE IDENTIFICÓ EL ELECTRODOMÉSTICO
@@ -584,68 +582,72 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
   }
 
   // ========================================================================
-  // FUNCIÓN: Crear solicitud de servicio
+  // FUNCIÓN: Auto-completar formulario externo
   // ========================================================================
 
   /**
-   * Crea una solicitud de servicio con los datos del diagnóstico del chat
+   * Llena automáticamente el formulario de servicio con la información
+   * recopilada durante la conversación
    *
    * PROCESO:
-   * 1. Prepara los datos del diagnóstico (electrodoméstico, problema, urgencia)
-   * 2. Dispara un evento personalizado 'openServiceForm' con los datos
-   * 3. El ServiceForm escuchará este evento y pre-llenará el formulario
-   * 4. Hace scroll al formulario y muestra mensaje de confirmación
+   * 1. Busca el formulario en el DOM (id="formulario")
+   * 2. Hace scroll suave hasta el formulario
+   * 3. Mapea el tipo de electrodoméstico al valor del select
+   * 4. Llena el textarea de descripción con el diagnóstico
+   * 5. Dispara eventos para activar validaciones de React
+   * 6. Muestra mensaje de confirmación
    */
   const createServiceRequest = () => {
-    // Mapeo de nombres del chat a valores del formulario
-    const typeMap: Record<string, string> = {
-      'Lavadora': 'lavadora',
-      'Nevera': 'nevera',
-      'Aire Acondicionado': 'aire',
-      'Estufa': 'estufa',
-      'Microondas': 'microondas',
-      'Secadora': 'secadora',
-      'Lavavajillas': 'lavavajillas',
-      'Horno Eléctrico': 'horno',
-      'Calentador': 'calentador',
-      'Televisor': 'televisor'
-    }
+    const formElement = document.getElementById('formulario')
+    if (formElement) {
+      // Scroll suave al formulario
+      formElement.scrollIntoView({ behavior: 'smooth' })
 
-    const mappedType = typeMap[conversationState.appliance || '']
+      setTimeout(() => {
+        // Buscar campos del formulario
+        const tipoElectro = document.querySelector('select[name="tipoElectrodomestico"]') as HTMLSelectElement
+        const descripcion = document.querySelector('textarea[name="descripcionProblema"]') as HTMLTextAreaElement
 
-    // Disparar evento personalizado con los datos del diagnóstico
-    window.dispatchEvent(
-      new CustomEvent('openServiceForm', {
-        detail: {
-          tipoElectrodomestico: mappedType || '',
-          descripcionProblema: `${conversationState.appliance} - ${conversationState.problem}\n\nDiagnosticado por Asistente IA de TecnoCity`,
-          urgencia: conversationState.urgency || 'media',
-          fromAI: true
+        // Llenar campo de tipo de electrodoméstico
+        if (tipoElectro && conversationState.appliance) {
+          // Mapeo de nombres del chat a valores del formulario
+          const typeMap: Record<string, string> = {
+            'Lavadora': 'lavadora',
+            'Nevera': 'nevera',
+            'Aire Acondicionado': 'aire',
+            'Estufa': 'estufa',
+            'Microondas': 'microondas',
+            'Secadora': 'secadora',
+            'Lavavajillas': 'lavavajillas',
+            'Horno Eléctrico': 'horno',
+            'Calentador': 'calentador',
+            'Televisor': 'televisor'
+          }
+          const mappedType = typeMap[conversationState.appliance]
+          if (mappedType) {
+            tipoElectro.value = mappedType
+            // Disparar evento para que React detecte el cambio
+            tipoElectro.dispatchEvent(new Event('change', { bubbles: true }))
+          }
         }
-      })
-    )
 
-    // Scroll suave al formulario
-    setTimeout(() => {
-      const formElement = document.getElementById('formulario')
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth' })
-      }
-    }, 300)
+        // Llenar campo de descripción del problema
+        if (descripcion && conversationState.problem) {
+          descripcion.value = `${conversationState.appliance} - ${conversationState.problem}\n\nDiagnosticado por Asistente IA de TecnoCity`
+          // Disparar evento para que React detecte el cambio
+          descripcion.dispatchEvent(new Event('input', { bubbles: true }))
+        }
 
-    // Agregar mensaje de confirmación al chat
-    const successMsg: Message = {
-      id: Date.now().toString(),
-      text: '✅ **¡Datos transferidos!**\n\nAhora completa tus datos personales en el formulario y envía la solicitud.',
-      isBot: true,
-      timestamp: new Date(),
+        // Agregar mensaje de confirmación al chat
+        const successMsg: Message = {
+          id: Date.now().toString(),
+          text: '✅ **¡Formulario llenado!**\n\nAhora completa tus datos personales y envía la solicitud.',
+          isBot: true,
+          timestamp: new Date(),
+        }
+        setMessages(prev => [...prev, successMsg])
+      }, 1000)
     }
-    setMessages(prev => [...prev, successMsg])
-
-    // Cerrar el chat después de 2 segundos
-    setTimeout(() => {
-      setIsOpen(false)
-    }, 2000)
   }
 
   // ========================================================================

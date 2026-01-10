@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -93,7 +93,8 @@ const problemasSugeridos: Record<string, string[]> = {
     'Hace mucho ruido',
     'Se apaga sola',
     'No enciende',
-    'Mantenimiento preventivo'
+    'Mantenimiento preventivo',
+    'Instalación'
   ],
   estufa: [
     'Llama muy baja',
@@ -101,7 +102,8 @@ const problemasSugeridos: Record<string, string[]> = {
     'Olor a gas',
     'Horno no calienta',
     'Chispa no funciona',
-    'Mantenimiento general'
+    'Mantenimiento general',
+    'Instalación'
   ],
   calentador: [
     'No calienta el agua',
@@ -109,7 +111,8 @@ const problemasSugeridos: Record<string, string[]> = {
     'Fuga de agua',
     'Explosiones al encender',
     'Poca presión',
-    'Mantenimiento anual'
+    'Mantenimiento anual',
+    'Instalación'
   ],
   televisor: [
     'Pantalla negra con sonido',
@@ -117,7 +120,8 @@ const problemasSugeridos: Record<string, string[]> = {
     'Imagen distorsionada',
     'Sin conexión Wifi',
     'Puertos HDMI no funcionan',
-    'Pantalla rota'
+    'Pantalla rota',
+    'Instalación'
   ]
 }
 
@@ -136,6 +140,31 @@ export default function ServiceForm() {
     email: '',
     urgencia: 'normal',
   })
+
+  // Escuchar evento del AIChat para pre-llenar el formulario
+  useEffect(() => {
+    const handleOpenServiceForm = (event: any) => {
+      const { tipoElectrodomestico, descripcionProblema, urgencia, fromAI } = event.detail || {}
+
+      if (fromAI) {
+        // Pre-llenar el formulario con los datos del AIChat
+        setFormData(prev => ({
+          ...prev,
+          tipoElectrodomestico: tipoElectrodomestico || prev.tipoElectrodomestico,
+          descripcionProblema: descripcionProblema || prev.descripcionProblema,
+          urgencia: urgencia || prev.urgencia,
+        }))
+
+        // Avanzar al paso 3 (datos de contacto) si ya tenemos electrodoméstico y problema
+        if (tipoElectrodomestico && descripcionProblema) {
+          setCurrentStep(3)
+        }
+      }
+    }
+
+    window.addEventListener('openServiceForm', handleOpenServiceForm)
+    return () => window.removeEventListener('openServiceForm', handleOpenServiceForm)
+  }, [])
 
   const updateField = (field: keyof OptimizedFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))

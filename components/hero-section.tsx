@@ -43,8 +43,7 @@ export default function HeroSection() {
 
             {/* Badge Premium */}
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-white border border-[#E3F2FD] shadow-sm text-blue-700 text-sm font-semibold mx-auto lg:mx-0">
-               <Sparkles className="w-4 h-4 mr-2 text-[#A50034]" />
-               <span>Experiencia de Servicio Premium</span>
+                <span>Tecnología al servicio</span>
             </div>
 
             <div className="space-y-4">
@@ -56,9 +55,9 @@ export default function HeroSection() {
               </h1>
 
               <p className="text-lg sm:text-xl text-[#64748B] max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                Conectamos tu necesidad con técnicos expertos certificados en tiempo real.
+                Reparamos tus electrodomésticos con expertos de confianza y respuesta inmediata.
                 <span className="block mt-2 font-medium text-[#2C3E50]">
-                  Garantía, seguridad y rapidez en un solo lugar.
+                  Garantía, seguridad y conocimiento en un solo lugar.
                 </span>
               </p>
             </div>
@@ -75,13 +74,13 @@ export default function HeroSection() {
                     <div className="p-1 bg-green-100 rounded-full">
                          <Shield className="w-4 h-4 text-green-600" />
                     </div>
-                    <span className="font-semibold text-slate-700">Garantía Asegurada</span>
+                    <span className="font-semibold text-slate-700">Garantía</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-100 shadow-sm">
                     <div className="p-1 bg-blue-100 rounded-full">
                         <Clock className="w-4 h-4 text-blue-600" />
                     </div>
-                    <span className="font-semibold text-slate-700">Soporte 24/7</span>
+                    <span className="font-semibold text-slate-700">Atención lun/sab</span>
                 </div>
             </div>
 

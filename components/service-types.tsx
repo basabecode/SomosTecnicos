@@ -64,7 +64,7 @@ export default function ServiceTypes() {
                  Expertos en su Hogar
                </h2>
                <p className="text-white/90 text-sm font-medium drop-shadow-sm">
-                 Soluciones técnicas integrales
+                 Soluciones técnicas integrales en lavadoras, neveras, calentadores, estufas y televisores.
                </p>
             </div>
           </div>

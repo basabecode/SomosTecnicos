@@ -463,25 +463,27 @@ export default function TechnicianRegistrationPage() {
                   <div className="space-y-3">
                     <Label>Especialidades * (Selecciona al menos una)</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {ESPECIALIDADES.map((esp) => (
-                        <div
-                          key={esp.value}
-                          className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                          onClick={() => handleSpecialtyToggle(esp.value)}
-                        >
-                          <Checkbox
-                            id={esp.value}
-                            checked={formData.especialidades.includes(esp.value)}
-                            onCheckedChange={() => handleSpecialtyToggle(esp.value)}
-                          />
-                          <label
-                            htmlFor={esp.value}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                      {ESPECIALIDADES.map((esp) => {
+                        const isChecked = formData.especialidades.includes(esp.value)
+                        return (
+                          <div
+                            key={esp.value}
+                            className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                           >
-                            {esp.label}
-                          </label>
-                        </div>
-                      ))}
+                            <Checkbox
+                              id={esp.value}
+                              checked={isChecked}
+                              onCheckedChange={() => handleSpecialtyToggle(esp.value)}
+                            />
+                            <label
+                              htmlFor={esp.value}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                            >
+                              {esp.label}
+                            </label>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 

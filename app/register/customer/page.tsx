@@ -507,26 +507,28 @@ export default function CustomerRegistrationPage() {
                       Esto nos ayudará a ofrecerte un mejor servicio
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {ELECTRODOMESTICOS.map((electro) => (
-                        <div
-                          key={electro.value}
-                          className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                          onClick={() => toggleElectrodomestico(electro.value)}
-                        >
-                          <Checkbox
-                            id={electro.value}
-                            checked={form3.watch('electrodomesticos').includes(electro.value)}
-                            onCheckedChange={() => toggleElectrodomestico(electro.value)}
-                          />
-                          <label
-                            htmlFor={electro.value}
-                            className="text-sm font-medium leading-none cursor-pointer flex-1 flex items-center gap-2"
+                      {ELECTRODOMESTICOS.map((electro) => {
+                        const isChecked = form3.watch('electrodomesticos').includes(electro.value)
+                        return (
+                          <div
+                            key={electro.value}
+                            className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                           >
-                            <span>{electro.icon}</span>
-                            {electro.label}
-                          </label>
-                        </div>
-                      ))}
+                            <Checkbox
+                              id={electro.value}
+                              checked={isChecked}
+                              onCheckedChange={() => toggleElectrodomestico(electro.value)}
+                            />
+                            <label
+                              htmlFor={electro.value}
+                              className="text-sm font-medium leading-none cursor-pointer flex-1 flex items-center gap-2"
+                            >
+                              <span>{electro.icon}</span>
+                              {electro.label}
+                            </label>
+                          </div>
+                        )
+                      })}
                     </div>
                     {form3.formState.errors.electrodomesticos && (
                       <p className="text-sm text-red-600">{form3.formState.errors.electrodomesticos.message}</p>
