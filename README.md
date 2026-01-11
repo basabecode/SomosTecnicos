@@ -13,26 +13,31 @@
 ### 🎨 **Frontend Optimizado (UX/UI 2025)**
 - ✅ Landing page responsive con diseño mobile-first
 - ✅ Formulario optimizado de 3 pasos para máxima conversión
-- ✅ Chat IA integrado para diagnóstico automático
+- ✅ Chat IA integrado para diagnóstico automático (v2.1)
+- ✅ Sección interactiva del proceso de servicio
 - ✅ Componentes UI modernos con shadcn/ui y Tailwind CSS
-- ✅ Animaciones fluidas y microinteracciones
+- ✅ Animaciones fluidas con Framer Motion
+- ✅ Diseño consistente con colores corporativos (#A50034, #2C3E50)
 
-### 🤖 **Asistente IA TecnoCity**
+### 🤖 **Asistente IA TecnoCity v2.1**
 - ✅ Diagnóstico inteligente de problemas de electrodomésticos
-- ✅ Cotización automática basada en IA
-- ✅ Auto-llenado de formularios
+- ✅ Detección de Instalación y Mantenimiento
+- ✅ Auto-llenado de formularios mediante eventos personalizados
+- ✅ Comunicación mejorada con ServiceForm
 - ✅ Respuestas contextuales y sugerencias técnicas
+- ✅ Cierre automático después de transferir datos
 
 ### 👥 **Sistema Multi-Usuario**
-- 🏠 **Clientes**: Solicitar servicios, seguimiento de órdenes
-- 🔧 **Técnicos**: Dashboard, asignaciones, historial
-- 👨‍💼 **Administradores**: Gestión completa, reportes, analytics
+- 🏠 **Clientes**: Registro simplificado, solicitar servicios, seguimiento de órdenes
+- 🔧 **Técnicos**: Registro con validación de documentos, dashboard, asignaciones, historial
+- 👨‍💼 **Administradores**: Gestión completa, reportes, analytics, revisión de aplicaciones
 
 ### 📊 **Panel de Administración**
 - ✅ Dashboard con métricas y estadísticas
 - ✅ Gestión de órdenes y asignaciones
 - ✅ Reportes visuales y analytics
 - ✅ Sistema de notificaciones
+- ✅ Revisión de documentos de técnicos
 
 ## 🛠️ Stack Tecnológico
 

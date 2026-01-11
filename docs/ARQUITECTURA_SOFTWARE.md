@@ -609,4 +609,149 @@ servicio_tecnico/
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Esta arquitectura del software proporciona una visión completa y estructurada de cómo se organizará todo el proyecto, desde la estructura de carpetas hasta los flujos de datos y la seguridad. ¿Te gustaría que profundice en algún aspecto específico o que empecemos con la implementación de alguna parte?
+Esta arquitectura del software proporciona una visión completa y estructurada de cómo se organizará todo el proyecto, desde la estructura de carpetas hasta los flujos de datos y la seguridad.
+
+---
+
+## 🆕 Actualizaciones Recientes (Enero 2026)
+
+### **Nuevos Componentes Frontend**
+
+#### `components/service-process.tsx`
+- **Propósito**: Explicar el proceso de solicitud de servicio en 6 pasos
+- **Tecnologías**: React, Framer Motion, Next.js Image
+- **Características**:
+  - Grid responsivo de pasos del proceso
+  - Animaciones con Framer Motion
+  - Integración de imágenes de técnicos
+  - Call-to-action con scroll suave
+  - Diseño consistente con colores corporativos
+
+#### `components/ai-chat.tsx` (v2.1)
+- **Actualizaciones**:
+  - Detección de servicios de "Instalación" y "Mantenimiento"
+  - Comunicación mediante eventos personalizados (`openServiceForm`)
+  - Auto-llenado del ServiceForm
+  - Cierre automático después de transferir datos
+  - Salto automático al paso 3 del formulario
+
+### **Páginas de Registro Actualizadas**
+
+#### `app/register/customer/page.tsx`
+- **Mejoras**:
+  - Diseño actualizado con colores corporativos
+  - Botón "Volver al Inicio"
+  - Alineación corregida de indicadores de progreso
+  - Tipografía consistente con la página principal
+
+#### `app/register/technician/page.tsx`
+- **Nuevas Características**:
+  - Campo de carga de archivo PDF obligatorio
+  - Validación de tipo (solo PDF) y tamaño (máx 1MB)
+  - Indicador visual del archivo cargado
+  - Diseño actualizado con colores corporativos
+  - Botón "Volver al Inicio"
+
+### **API Endpoints Actualizados**
+
+#### `app/api/technician/apply/route.ts`
+- **Cambios**:
+  - Manejo de FormData multipart para archivos
+  - Validaciones del lado del servidor para PDFs
+  - Almacenamiento en `/public/uploads/technician-docs/`
+  - Nombres únicos: `{cedula}_{timestamp}.pdf`
+  - Campo `documentosUrl` guardado en base de datos
+
+### **Modelo de Base de Datos**
+
+#### `TechnicianApplication` (Actualizado)
+```prisma
+model TechnicianApplication {
+  // ... campos existentes
+  documentosUrl         String?  @map("documentos_url") // Ruta del PDF con cédula y certificados
+  // ... resto del modelo
+}
+```
+
+### **Sistema de Colores Corporativos**
+
+```css
+/* Colores Principales */
+--primary: #A50034;        /* Rojo corporativo */
+--secondary: #2C3E50;      /* Gris oscuro */
+--text: #64748B;           /* Gris medio */
+--success: #27AE60;        /* Verde */
+--background: linear-gradient(to bottom right, #F8F9FA, white, #E3F2FD);
+```
+
+### **Flujo de Registro de Técnicos (Actualizado)**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│           FLUJO DE REGISTRO DE TÉCNICOS v2.0                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [Paso 1: Datos Personales]                                │
+│    ├─ Nombre, Apellido, Cédula                             │
+│    ├─ Email, Teléfono                                      │
+│    └─ Dirección, Ciudad                                    │
+│                    │                                        │
+│                    ▼                                        │
+│  [Paso 2: Experiencia Profesional]                         │
+│    ├─ Especialidades (múltiples)                           │
+│    ├─ Zona de trabajo preferida                            │
+│    ├─ Años de experiencia (opcional)                       │
+│    └─ 📄 Documentos PDF (NUEVO)                            │
+│         ├─ Cédula de ciudadanía                            │
+│         └─ Certificados de estudios                        │
+│                    │                                        │
+│                    ▼                                        │
+│  [Paso 3: Revisión]                                        │
+│    ├─ Resumen de datos                                     │
+│    └─ Confirmación de envío                                │
+│                    │                                        │
+│                    ▼                                        │
+│  [Procesamiento Backend]                                   │
+│    ├─ Validar datos                                        │
+│    ├─ Guardar archivo PDF                                  │
+│    ├─ Crear registro en BD                                 │
+│    ├─ Enviar email de confirmación                         │
+│    └─ Notificar al administrador                           │
+│                    │                                        │
+│                    ▼                                        │
+│  [Estado: PENDIENTE]                                        │
+│    └─ Espera revisión del administrador                    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### **Estructura de Archivos Actualizada**
+
+```
+public/
+└── uploads/
+    └── technician-docs/          # [NUEVO] Documentos de técnicos
+        ├── {cedula}_{timestamp}.pdf
+        └── ...
+
+components/
+├── service-process.tsx           # [NUEVO] Proceso de servicio
+├── ai-chat.tsx                   # [ACTUALIZADO] v2.1
+├── service-form.tsx              # [ACTUALIZADO] Event listener
+└── ...
+
+app/
+├── register/
+│   ├── customer/
+│   │   └── page.tsx              # [ACTUALIZADO] Diseño mejorado
+│   └── technician/
+│       └── page.tsx              # [ACTUALIZADO] + Carga de archivos
+└── api/
+    └── technician/
+        └── apply/
+            └── route.ts          # [ACTUALIZADO] Manejo de archivos
+```
+
+---
+
+**Última actualización de arquitectura**: 10 de enero de 2026

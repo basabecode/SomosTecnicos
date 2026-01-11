@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { CheckCircle2, Clock, MapPin, Wrench, FileText, DollarSign } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 /**
@@ -14,43 +14,31 @@ const steps = [
     number: '01',
     title: 'Solicita el Servicio',
     description: 'Completa el formulario con los detalles de tu electrodoméstico y el problema que presenta.',
-    icon: FileText,
-    color: 'from-[#A50034] to-[#c9003f]',
   },
   {
     number: '02',
     title: 'Asignación de Técnico',
     description: 'Nuestro sistema asigna automáticamente el técnico más cercano y especializado para tu caso.',
-    icon: Wrench,
-    color: 'from-[#2C3E50] to-[#34495E]',
   },
   {
     number: '03',
     title: 'Confirmación de Visita',
     description: 'El técnico valida la dirección, hora y fecha más conveniente para ti.',
-    icon: MapPin,
-    color: 'from-[#3498DB] to-[#2980B9]',
   },
   {
     number: '04',
     title: 'Revisión y Diagnóstico',
     description: 'El técnico realiza una inspección detallada y determina el problema exacto.',
-    icon: CheckCircle2,
-    color: 'from-[#27AE60] to-[#219150]',
   },
   {
     number: '05',
     title: 'Cotización',
     description: 'Recibes una cotización clara y detallada antes de cualquier reparación.',
-    icon: DollarSign,
-    color: 'from-[#F39C12] to-[#E67E22]',
   },
   {
     number: '06',
     title: 'Reparación',
     description: 'Una vez aprobada la cotización, el técnico procede con la reparación profesional.',
-    icon: Clock,
-    color: 'from-[#9B59B6] to-[#8E44AD]',
   },
 ]
 
@@ -96,13 +84,8 @@ export default function ServiceProcess() {
                   <span className="text-white font-bold text-lg">{step.number}</span>
                 </div>
 
-                {/* Icono */}
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <step.icon className="w-8 h-8 text-white" />
-                </div>
-
                 {/* Contenido */}
-                <h3 className="text-xl font-bold text-[#2C3E50] mb-3">
+                <h3 className="text-xl font-bold text-[#2C3E50] mb-3 mt-2">
                   {step.title}
                 </h3>
                 <p className="text-[#64748B] leading-relaxed">
@@ -125,7 +108,7 @@ export default function ServiceProcess() {
             {/* Columna de texto */}
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#A50034]/10 border border-[#A50034]/20">
-                <span className="text-[#A50034] font-semibold text-sm">✓ Servicio a Domicilio</span>
+                <span className="text-[#A50034] font-semibold text-sm">Servicio a Domicilio</span>
               </div>
 
               <h3 className="text-3xl md:text-4xl font-extrabold text-[#2C3E50] leading-tight">
@@ -228,9 +211,8 @@ export default function ServiceProcess() {
                 element.scrollIntoView({ behavior: 'smooth' })
               }
             }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#A50034] hover:bg-[#c9003f] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            className="px-8 py-4 bg-[#A50034] hover:bg-[#c9003f] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
           >
-            <FileText className="w-5 h-5" />
             Solicitar Servicio Ahora
           </button>
         </motion.div>
