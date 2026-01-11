@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
         especialidades,
         zonaPreferida,
         experienciaAnios,
-        documentosUrl: publicPath, // Guardar la ruta del archivo
+        ...(publicPath && { documentosUrl: publicPath }), // Agregar solo si existe
         estado: 'pendiente'
       }
     })
