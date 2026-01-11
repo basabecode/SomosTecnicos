@@ -13,32 +13,32 @@ const steps = [
   {
     number: '01',
     title: 'Solicita el Servicio',
-    description: 'Completa el formulario con los detalles de tu electrodoméstico y el problema que presenta.',
+    description: 'Completa el formulario con los detalles de la falla de tu electrodoméstico y datos personales.',
   },
   {
     number: '02',
     title: 'Asignación de Técnico',
-    description: 'Nuestro sistema asigna automáticamente el técnico más cercano y especializado para tu caso.',
+    description: 'Nuestro sistema asigna el técnico más cercano y especializado para tu caso.',
   },
   {
     number: '03',
     title: 'Confirmación de Visita',
-    description: 'El técnico valida la dirección, hora y fecha más conveniente para ti.',
+    description: 'El técnico se comunica para validar la dirección, hora y fecha más conveniente para ti.',
   },
   {
     number: '04',
     title: 'Revisión y Diagnóstico',
-    description: 'El técnico realiza una inspección detallada y determina el problema exacto.',
+    description: 'El técnico realiza una inspección detallada y determina el problema exacto. Esta visita tiene costo.',
   },
   {
     number: '05',
     title: 'Cotización',
-    description: 'Recibes una cotización clara y detallada antes de cualquier reparación.',
+    description: 'Recibes una cotización detallada antes de cualquier arreglo, y el costo de la visita se añade a la reparación.',
   },
   {
     number: '06',
     title: 'Reparación',
-    description: 'Una vez aprobada la cotización, el técnico procede con la reparación profesional.',
+    description: 'Una vez aprobada la cotización, el técnico procede con la reparación, en algunos casos se requiere abono del arreglo.',
   },
 ]
 
@@ -104,7 +104,7 @@ export default function ServiceProcess() {
           transition={{ duration: 0.7 }}
           className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100"
         >
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
             {/* Columna de texto */}
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#A50034]/10 border border-[#A50034]/20">
@@ -112,11 +112,11 @@ export default function ServiceProcess() {
               </div>
 
               <h3 className="text-3xl md:text-4xl font-extrabold text-[#2C3E50] leading-tight">
-                Nuestros Técnicos Van Hasta Ti
+                Nuestros técnicos van hasta tu hogar
               </h3>
 
               <p className="text-lg text-[#64748B] leading-relaxed">
-                No necesitas llevar tu electrodoméstico a ningún lado. Nuestros técnicos certificados se desplazan a tu domicilio con todas las herramientas y repuestos necesarios.
+                No necesitas llevar tu electrodoméstico a ningún lado (solo en casos excepcionales). Nuestros técnicos certificados se desplazan a tu domicilio con todas las herramientas y repuestos necesarios, es lo que normalmente sucede en la mayoría de servicios.
               </p>
 
               <div className="space-y-4">
@@ -136,7 +136,7 @@ export default function ServiceProcess() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-[#2C3E50] mb-1">Movilidad Garantizada</h4>
-                    <p className="text-sm text-[#64748B]">Motos y vans equipadas para llegar a cualquier zona</p>
+                    <p className="text-sm text-[#64748B]">Motos o vehiculos equipadas para llegar a cualquier zona</p>
                   </div>
                 </div>
 
@@ -153,26 +153,26 @@ export default function ServiceProcess() {
             </div>
 
             {/* Columna de imágenes */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-2">
               <motion.div
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-64 rounded-2xl overflow-hidden shadow-lg"
+                className="relative h-96 md:h-[600px] rounded-3xl overflow-hidden shadow-lg"
               >
                 <Image
-                  src="/img_3d/tecnico_moto.png"
+                  src="/img_3d/moto_roja_tecnico.jpg"
                   alt="Técnico en moto"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <p className="text-white font-semibold text-sm">Servicio Rápido</p>
-                  <p className="text-white/80 text-xs">Técnico en moto</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p className="text-white font-semibold text-lg drop-shadow-lg">Servicio Rápido</p>
+                  <p className="text-white/90 text-sm drop-shadow-md">Técnico en moto</p>
                 </div>
               </motion.div>
 
-              <motion.div
+              {/*<motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
                 className="relative h-64 rounded-2xl overflow-hidden shadow-lg"
@@ -188,7 +188,7 @@ export default function ServiceProcess() {
                   <p className="text-white font-semibold text-sm">Equipamiento Completo</p>
                   <p className="text-white/80 text-xs">Van con herramientas</p>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </div>
           </div>
         </motion.div>

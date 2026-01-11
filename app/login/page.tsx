@@ -1,6 +1,6 @@
 ﻿/**
- * Login Unificado - TecnoCity
- * Sistema de login profesional con detección automática de rol
+ * Login - TecnoCity
+ * Diseño moderno 50/50 con UX optimizada mobile-first
  */
 
 'use client'
@@ -10,368 +10,402 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Eye,
   EyeOff,
   Wrench,
-  Shield,
-  Zap,
-  CheckCircle2,
   AlertCircle,
   Loader2,
+  Home,
+  Mail,
+  Lock,
+  ArrowRight,
+  CheckCircle2,
+  Edit2,
+  XCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
-export default function UnifiedLogin() {
+export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isEditingEmail, setIsEditingEmail] = useState(false)
   const router = useRouter()
+
+  const validateForm = () => {
+    let isValid = true
+    setEmailError('')
+    setPasswordError('')
+
+    if (!email) {
+      setEmailError('El correo electrónico es requerido')
+      isValid = false
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Por favor ingresa un correo válido')
+      isValid = false
+    }
+
+    if (!password) {
+      setPasswordError('La contraseña es requerida')
+      isValid = false
+    } else if (password.length < 6) {
+      setPasswordError('La contraseña debe tener al menos 6 caracteres')
+      isValid = false
+    }
+
+    return isValid
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!validateForm()) return
+
     setLoading(true)
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
 
       const data = await response.json()
 
-      // Manejar estado de técnico pendiente
       if (data.status === 'pending_approval') {
-        setError(data.message || 'Tu solicitud está siendo revisada')
+        setError('Tu cuenta está en proceso de aprobación.')
         setLoading(false)
         return
       }
 
-      // Manejar estado de técnico rechazado
       if (data.status === 'rejected') {
-        setError(data.message || 'Tu solicitud fue rechazada')
+        setError('Tu solicitud de registro ha sido rechazada.')
         setLoading(false)
         return
       }
 
       if (response.ok && data.success) {
-        // Guardar tokens
         localStorage.setItem('accessToken', data.accessToken)
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken)
-        }
+        if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken)
 
-        // Determinar dashboard según rol del servidor
         const userRole = data.user?.role || 'admin'
-
-        // Mapear roles correctamente
-        let dashboardUrl = '/admin/dashboard' // Default fallback
+        let dashboardUrl = '/admin/dashboard'
 
         switch (userRole) {
           case 'admin':
-          case 'super_admin':
-            dashboardUrl = '/admin/dashboard'
-            break
+          case 'super_admin': dashboardUrl = '/admin/dashboard'; break
           case 'manager':
-          case 'gerente':
-            dashboardUrl = '/manager/dashboard'
-            break
+          case 'gerente': dashboardUrl = '/manager/dashboard'; break
           case 'technician':
           case 'tecnico':
-          case 'technician_manager':
-            dashboardUrl = '/technician/dashboard'
-            break
+          case 'technician_manager': dashboardUrl = '/technician/dashboard'; break
           case 'customer':
-          case 'cliente':
-            dashboardUrl = '/customer/dashboard'
-            break
-          default:
-            dashboardUrl = '/admin/dashboard'
+          case 'cliente': dashboardUrl = '/customer/dashboard'; break
+          default: dashboardUrl = '/admin/dashboard'
         }
 
-        // Forzar redirección completa
         window.location.href = dashboardUrl
       } else {
-        setError(data.message || data.error || 'Email o contraseña incorrectos')
+        setError(data.message || 'Credenciales incorrectas. Verifica tu correo y contraseña.')
       }
     } catch (err) {
       console.error('Login error:', err)
-      setError('Error de conexión. Por favor, intenta nuevamente.')
+      setError('Problemas de conexión. Intenta nuevamente más tarde.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
+    <div className="min-h-screen grid md:grid-cols-2 relative bg-white">
+      {/* Botón Volver al Inicio - Desktop/Tablet (Flotante en esquina derecha) */}
+      <Link href="/" className="hidden md:flex absolute top-6 right-6 z-50 group">
+        <Button
+          variant="ghost"
+          className="text-[#2C3E50] hover:text-[#A50034] hover:bg-gray-50 transition-all border border-gray-200 hover:border-[#A50034]/30 shadow-sm"
+        >
+          <Home className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+          Volver al Inicio
+        </Button>
+      </Link>
 
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center relative z-10">
-        {/* Lado izquierdo - Branding e información */}
-        <div className="hidden lg:block space-y-8">
-          <div className="space-y-4">
-            {/* Logo y título */}
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                <Wrench className="h-10 w-10 text-white" />
+      {/* Botón Volver al Inicio - Móvil (En header esquina derecha) */}
+      <Link href="/" className="md:hidden absolute top-4 right-4 z-50">
+         <div className="p-2 bg-white/10 backdrop-blur-sm rounded-full active:bg-white/20 transition-colors">
+            <Home className="h-5 w-5 text-white" />
+         </div>
+      </Link>
+
+      {/* ========================================
+          LADO IZQUIERDO - BRANDING (50%)
+          Visible en md (768px+)
+      ======================================== */}
+      <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-[#A50034] to-[#2C3E50] overflow-hidden">
+        {/* Decoración de fondo */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+
+        <div className="relative z-10 flex flex-col h-full px-8 lg:px-16 py-12 justify-between">
+
+          {/* Header */}
+          <div className="space-y-8">
+            <div className="flex items-center gap-4">
+              <div className="p-3 lg:p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
+                <Wrench className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
               </div>
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  TecnoCity
-                </h1>
-                <p className="text-sm text-gray-600 font-medium">
-                  Servicio Técnico Profesional
-                </p>
-              </div>
+              <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                TecnoCity
+              </h1>
             </div>
 
-            {/* Descripción */}
-            <div className="space-y-3 mt-8">
-              <h2 className="text-3xl font-bold text-gray-900 leading-tight">
-                Bienvenido de vuelta
+            <div className="space-y-4 max-w-xl">
+              <h2 className="text-3xl lg:text-5xl font-bold text-white leading-tight">
+                Hola, ¡Qué gusto verte!
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Accede a tu panel de control y gestiona tus servicios de manera eficiente.
+              <p className="text-lg lg:text-xl text-blue-100 font-medium leading-relaxed">
+                Accede para gestionar tus servicios técnicos.
               </p>
             </div>
+
+            {/* Bullet Points */}
+            <div className="space-y-4 max-w-xl pt-4">
+              {[
+                "Gestiona todas tus solicitudes de servicio en un solo lugar",
+                "Seguimiento en tiempo real del estado de tus reparaciones",
+                "Técnicos certificados y calificados a tu servicio"
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3">
+                   <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-white/90 text-sm lg:text-base">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Features */}
-          <div className="space-y-4">
-            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
-              <div className="p-2 bg-green-100 rounded-xl">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Acceso Seguro</h3>
-                <p className="text-sm text-gray-600">
-                  Autenticación encriptada y protección de datos
-                </p>
+          {/* Imagen Desktop */}
+          <div className="flex-1 flex items-center justify-center py-8">
+            <div className="relative w-full max-w-sm lg:max-w-lg aspect-[3/4] rounded-[2rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white/10 group transform transition-transform hover:scale-[1.02] duration-500">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
+              <Image
+                src="/img_3d/tecnico_saludando_cliente.jpeg"
+                alt="Confianza y Calidad"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <p className="text-white font-bold text-2xl lg:text-3xl mb-2 drop-shadow-lg">Confianza y Calidad</p>
+                <p className="text-white/95 text-base lg:text-lg drop-shadow-md">Tu satisfacción es nuestra prioridad.</p>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
-              <div className="p-2 bg-blue-100 rounded-xl">
-                <Zap className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Detección Automática</h3>
-                <p className="text-sm text-gray-600">
-                  El sistema identifica tu rol automáticamente
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm">
-              <div className="p-2 bg-purple-100 rounded-xl">
-                <Shield className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Multi-Rol</h3>
-                <p className="text-sm text-gray-600">
-                  Soporte para admin, técnicos y clientes
-                </p>
-              </div>
-            </div>
+          <div className="text-center text-white/50 text-xs lg:text-sm font-medium">
+            © 2026 TecnoCity. Calidad Certificada.
           </div>
         </div>
+      </div>
 
-        {/* Lado derecho - Formulario de login */}
-        <div className="w-full max-w-md mx-auto">
-          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-xl">
-            <CardHeader className="space-y-1 pb-6">
-              {/* Logo móvil */}
-              <div className="flex lg:hidden items-center justify-center gap-3 mb-4">
-                <div className="p-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg">
-                  <Wrench className="h-7 w-7 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    TecnoCity
-                  </h1>
-                </div>
+      {/* ========================================
+          LADO DERECHO / MÓVIL MAIN (50% / 100%)
+      ======================================== */}
+      <div className="flex flex-col bg-white overflow-y-auto">
+
+        {/* HEADER MÓVIL COMPACTO (Solo < md) */}
+        <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
+           <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                <Wrench className="h-6 w-6 text-white" />
               </div>
+              <h1 className="text-2xl font-bold text-white tracking-tight">TecnoCity</h1>
+           </div>
+           <p className="text-white/90 text-base font-medium">¡Bienvenido de nuevo!</p>
+        </div>
 
-              <CardTitle className="text-2xl font-bold text-center text-gray-900">
+        {/* CONTENEDOR FORMULARIO */}
+        <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 w-full">
+          <div className="w-full max-w-[400px] lg:max-w-[450px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* Header Formulario */}
+            <div className="mb-8 lg:mb-10 text-center md:text-left">
+              <h2 className="text-2xl lg:text-3xl font-bold text-[#111827] mb-2">
                 Iniciar Sesión
-              </CardTitle>
-              <CardDescription className="text-center text-gray-600">
-                Ingresa tus credenciales para acceder
-              </CardDescription>
-            </CardHeader>
+              </h2>
+              <p className="text-[#6B7280] text-sm lg:text-base">
+                Ingresa tus datos para continuar
+              </p>
+            </div>
 
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <form onSubmit={handleSubmit} className="space-y-6">
+
+              {/* Email */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                   <Label htmlFor="email" className="text-sm font-medium text-[#374151]">
                     Correo Electrónico
-                  </Label>
+                   </Label>
+                   {email && !isEditingEmail && (
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingEmail(true)}
+                        className="text-xs text-[#A50034] font-medium flex items-center gap-1 hover:underline"
+                      >
+                        <Edit2 className="w-3 h-3" /> Cambiar
+                      </button>
+                   )}
+                </div>
+
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Mail className={`h-5 w-5 ${emailError ? 'text-red-500' : ''}`} />
+                  </div>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="ejemplo@correo.com"
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value)
+                      setIsEditingEmail(true)
+                      if (emailError) setEmailError('')
+                    }}
                     required
-                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     disabled={loading}
+                    className={`h-[52px] pl-12 bg-white border rounded-xl text-base focus:ring-2 transition-all ${
+                      emailError
+                        ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                        : 'border-[#E5E7EB] focus:ring-[#A50034]/20 focus:border-[#A50034]'
+                    }`}
                   />
                 </div>
+                {emailError && (
+                  <p className="text-xs text-red-500 flex items-center gap-1 mt-1 animate-in slide-in-from-left-1">
+                    <XCircle className="w-3 h-3" /> {emailError}
+                  </p>
+                )}
+              </div>
 
-                {/* Password */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                      Contraseña
-                    </Label>
-                    <Link
-                      href="/forgot-password"
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </Link>
-                  </div>
-                  <div className="relative">
+              {/* Password */}
+              <div className="space-y-2">
+                 <Label htmlFor="password" className="text-sm font-medium text-[#374151]">
+                    Contraseña
+                 </Label>
+                 <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                      <Lock className={`h-5 w-5 ${passwordError ? 'text-red-500' : ''}`} />
+                    </div>
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
+                      autoComplete="current-password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value)
+                        if (passwordError) setPasswordError('')
+                      }}
                       required
-                      className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 pr-12"
                       disabled={loading}
+                      className={`h-[52px] pl-12 pr-12 bg-white border rounded-xl text-base focus:ring-2 transition-all ${
+                        passwordError
+                          ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                          : 'border-[#E5E7EB] focus:ring-[#A50034]/20 focus:border-[#A50034]'
+                      }`}
                     />
-                    <Button
+                    <button
                       type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
-                      disabled={loading}
+                      className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                      aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Error message */}
-                {error && (
-                  <Alert variant="destructive" className="bg-red-50 border-red-200">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-sm">{error}</AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Submit button */}
-                <Button
-                  type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all duration-200"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Iniciando sesión...
-                    </>
-                  ) : (
-                    'Iniciar Sesión'
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                 </div>
+                 {passwordError && (
+                    <p className="text-xs text-red-500 flex items-center gap-1 mt-1 animate-in slide-in-from-left-1">
+                      <XCircle className="w-3 h-3" /> {passwordError}
+                    </p>
                   )}
-                </Button>
-              </form>
-
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Información</span>
-                </div>
+                 <div className="flex justify-end pt-1">
+                    <Link
+                      href="/forgot-password"
+                      className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8]"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                 </div>
               </div>
 
-              {/* Info adicional */}
-              <div className="space-y-3">
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <p className="text-xs text-blue-800 text-center">
-                    <Shield className="inline h-3 w-3 mr-1" />
-                    Conexión segura y encriptada
-                  </p>
-                </div>
+              {/* General Error Message */}
+              {error && (
+                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-700 rounded-xl">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="ml-2 font-medium">
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
 
-                <p className="text-xs text-center text-gray-500">
-                  ¿Necesitas ayuda?{' '}
-                  <Link href="/support" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Contacta soporte
-                  </Link>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Ingresando...
+                  </>
+                ) : (
+                  <>
+                    Ingresar <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
+            </form>
 
-          {/* Footer info */}
-          <p className="text-center text-xs text-gray-500 mt-6">
-            Al iniciar sesión, aceptas nuestros{' '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-700">
-              Términos de Servicio
-            </Link>{' '}
-            y{' '}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-700">
-              Política de Privacidad
-            </Link>
-          </p>
+            {/* Register Link */}
+            <div className="mt-8 text-center">
+              <p className="text-[#4B5563] text-[15px]">
+                ¿Aún no tienes cuenta?{' '}
+                <Link
+                  href="/register"
+                  className="text-[#A50034] font-bold hover:underline"
+                >
+                  Regístrate Gratis
+                </Link>
+              </p>
+            </div>
+
+            {/* Mobile Footer Legal */}
+            <div className="mt-12 text-center">
+               <div className="flex justify-center gap-4 text-xs text-[#6B7280]">
+                  <Link href="/terms" className="hover:text-[#A50034]">Términos</Link>
+                  <span>•</span>
+                  <Link href="/privacy" className="hover:text-[#A50034]">Privacidad</Link>
+               </div>
+               <p className="mt-4 text-[11px] text-[#9CA3AF]">
+                 © 2026 TecnoCity. Calidad Certificada.
+               </p>
+            </div>
+
+          </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
     </div>
   )
 }

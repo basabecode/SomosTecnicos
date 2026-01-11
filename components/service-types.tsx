@@ -1,12 +1,51 @@
 'use client'
 
-import React from 'react'
-import Image from 'next/image'
+import React, { useRef, useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from 'lucide-react'
 
 export default function ServiceTypes() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+
+  useEffect(() => {
+    const videoElement = videoRef.current
+    if (!videoElement) return
+
+    let hasPlayed = false // Control para reproducir solo una vez
+
+    // Intersection Observer para reproducir una sola vez cuando sea visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasPlayed) {
+            // Cargar el video si aún no se ha cargado
+            if (!isVideoLoaded) {
+              videoElement.load()
+              setIsVideoLoaded(true)
+            }
+            // Reproducir solo una vez cuando la sección sea visible
+            videoElement.play().catch(() => {
+              // Silenciar errores de autoplay
+            })
+            hasPlayed = true
+          }
+        })
+      },
+      {
+        threshold: 0.3, // Activar cuando el 30% del video sea visible
+        rootMargin: '0px'
+      }
+    )
+
+    observer.observe(videoElement)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [isVideoLoaded])
+
   const scrollToForm = () => {
     const element = document.getElementById('formulario')
     if (element) {
@@ -45,25 +84,34 @@ export default function ServiceTypes() {
         {/* Contenedor Principal Adaptable */}
         <div className="flex flex-col md:block md:relative md:h-[480px] items-center">
 
-          {/* Imagen: Full width en mobile (250px alto), 85% width en desktop (full alto) */}
+          {/* Video: Full width en mobile (250px alto), 85% width en desktop (full alto) */}
           <div className="relative w-full h-[250px] md:absolute md:left-0 md:top-0 md:bottom-0 md:h-full md:w-[85%] rounded-3xl overflow-hidden shadow-xl z-10 order-1 md:order-none">
-            <Image
-              src="/img_3d/portada_tecnico_cocina.PNG"
-              alt="Servicio técnico profesional"
-              fill
-              className="object-cover object-center"
-              quality={95}
-              priority
-            />
-            {/* Gradiente */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              preload="none"
+              className="w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+              style={{ opacity: isVideoLoaded ? 1 : 0 }}
+            >
+              <source src="/video/video_reparacion_ok.mp4" type="video/mp4" />
+              Tu navegador no soporta videos HTML5.
+            </video>
 
-            {/* Texto dentro de la imagen, alineado abajo a la izquierda */}
+            {/* Placeholder mientras carga el video */}
+            {!isVideoLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
+            )}
+
+            {/* Gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
+
+            {/* Texto dentro del video, alineado abajo a la izquierda */}
             <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 max-w-sm z-20">
-               <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-md">
+               <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-lg">
                  Expertos en su Hogar
                </h2>
-               <p className="text-white/90 text-sm font-medium drop-shadow-sm">
+               <p className="text-white/95 text-sm font-medium drop-shadow-md">
                  Soluciones técnicas integrales en lavadoras, neveras, calentadores, estufas y televisores.
                </p>
             </div>
