@@ -23,7 +23,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Columna 1: Logo y descripción */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">TecnoCity</h3>
+            <h3 className="text-2xl font-bold mb-4">SomosTécnicos</h3>
             <p className="text-gray-300 leading-relaxed">
               Servicio técnico profesional desde 2020. Reparación, instalación y
               mantenimiento de electrodomésticos a domicilio.
@@ -73,11 +73,11 @@ export default function Footer() {
                 <span>+57 300 309 48 54</span>
               </a>
               <a
-                href="mailto:info@tecnocity.co"
+                href="mailto:info@somostecnicos.co"
                 className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Mail size={20} />
-                <span>info@tecnocity.co</span>
+                <span>info@somostecnicos.co</span>
               </a>
               <div className="flex items-center gap-3 text-gray-300">
                 <Clock size={20} />
@@ -90,7 +90,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="border-t border-gray-600 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-            <p>© 2025 TecnoCity. Todos los derechos reservados.</p>
+            <p>© 2025 SomosTécnicos. Todos los derechos reservados.</p>
             <a
               href="/admin-info"
               className="mt-2 md:mt-0 text-gray-500 hover:text-gray-300 transition-colors duration-200 text-xs"

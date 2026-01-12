@@ -11,7 +11,7 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@tecnocity.com'
+const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@somostecnicos.com'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 // =============================================
@@ -54,7 +54,7 @@ function getNewOrderTemplate(data: OrderEmailData): string {
     <html>
     <head>
         <meta charset="utf-8">
-        <title>Nueva Orden de Servicio - TecnoCity</title>
+        <title>Nueva Orden de Servicio - SomosTécnicos</title>
         <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -68,7 +68,7 @@ function getNewOrderTemplate(data: OrderEmailData): string {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔧 TecnoCity</h1>
+                <h1>🔧 SomosTécnicos</h1>
                 <h2>Confirmación de Servicio</h2>
             </div>
 
@@ -95,11 +95,11 @@ function getNewOrderTemplate(data: OrderEmailData): string {
 
                 <p><strong>📞 ¿Necesitas ayuda?</strong><br>
                 Llámanos al: <strong>(+57) 300 123 4567</strong><br>
-                Email: <strong>soporte@tecnocity.com</strong></p>
+                Email: <strong>soporte@somostecnicos.com</strong></p>
             </div>
 
             <div class="footer">
-                <p>© 2025 TecnoCity - Servicio Técnico de Electrodomésticos</p>
+                <p>© 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
                 <p>Este es un email automático, no responder directamente.</p>
             </div>
         </div>
@@ -127,7 +127,7 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
     <html>
     <head>
         <meta charset="utf-8">
-        <title>Actualización de Orden - TecnoCity</title>
+        <title>Actualización de Orden - SomosTécnicos</title>
         <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -142,7 +142,7 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔧 TecnoCity</h1>
+                <h1>🔧 SomosTécnicos</h1>
                 <h2>Actualización de tu Servicio</h2>
             </div>
 
@@ -175,7 +175,7 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
             </div>
 
             <div class="footer">
-                <p>© 2025 TecnoCity - Servicio Técnico de Electrodomésticos</p>
+                <p>© 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
             </div>
         </div>
     </body>
@@ -252,11 +252,11 @@ export async function sendSimpleEmail(
       subject,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2 style="color: #A50034;">🔧 TecnoCity</h2>
+          <h2 style="color: #A50034;">🔧 SomosTécnicos</h2>
           <p>${message}</p>
           <hr style="margin: 20px 0;">
           <p style="font-size: 12px; color: #666;">
-            © 2025 TecnoCity - Servicio Técnico de Electrodomésticos
+            © 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos
           </p>
         </div>
       `
@@ -286,13 +286,13 @@ export async function sendTechnicianApplicationReceivedEmail(
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: applicantEmail,
-      subject: '✅ Solicitud Recibida - TecnoCity',
+      subject: '✅ Solicitud Recibida - SomosTécnicos',
       html: `
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Solicitud Recibida - TecnoCity</title>
+            <title>Solicitud Recibida - SomosTécnicos</title>
             <style>
                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -307,7 +307,7 @@ export async function sendTechnicianApplicationReceivedEmail(
             <div class="container">
                 <div class="header">
                     <div class="icon">🔧</div>
-                    <h1 style="margin: 0;">TecnoCity</h1>
+                    <h1 style="margin: 0;">SomosTécnicos</h1>
                     <p style="margin: 10px 0 0 0;">Servicio Técnico Profesional</p>
                 </div>
 
@@ -332,16 +332,16 @@ export async function sendTechnicianApplicationReceivedEmail(
 
                     <p><strong>📞 ¿Preguntas?</strong><br>
                     Si tienes alguna duda, contáctanos:<br>
-                    Email: <strong>rrhh@tecnocity.com</strong><br>
+                    Email: <strong>rrhh@somostecnicos.com</strong><br>
                     Teléfono: <strong>(+57) 300 123 4567</strong></p>
 
                     <p style="color: #666; font-size: 14px; margin-top: 30px;">
-                        Gracias por tu interés en formar parte de TecnoCity.
+                        Gracias por tu interés en formar parte de SomosTécnicos.
                     </p>
                 </div>
 
                 <div class="footer">
-                    <p>© 2026 TecnoCity - Servicio Técnico de Electrodomésticos</p>
+                    <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
                     <p>Este es un email automático, no responder directamente.</p>
                 </div>
             </div>
@@ -477,7 +477,7 @@ export async function sendNewTechnicianApplicationNotification(
                 </div>
 
                 <div class="footer">
-                    <p>© 2026 TecnoCity - Sistema de Gestión de Técnicos</p>
+                    <p>© 2026 SomosTécnicos - Sistema de Gestión de Técnicos</p>
                 </div>
             </div>
         </body>

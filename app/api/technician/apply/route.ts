@@ -14,7 +14,7 @@ import {
 } from '@/lib/email'
 
 // Email del administrador (puedes moverlo a variables de entorno)
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin.demo@tecnocity.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin.demo@somostecnicos.com'
 
 export async function POST(request: NextRequest) {
   try {

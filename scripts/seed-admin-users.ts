@@ -19,15 +19,15 @@ async function seedAdminUsers() {
     // Crear usuarios de prueba si no existen
     const users = [
       {
-        email: 'admin@tecnocity.com',
-        username: 'admin_tecnocity',
+        email: 'admin@somostecnicos.com',
+        username: 'admin_somostecnicos',
         password: 'admin123',
         nombre: 'Administrador',
-        apellido: 'TecnoCity',
+        apellido: 'SomosTécnicos',
         role: 'super_admin'
       },
       {
-        email: 'tecnico@tecnocity.com',
+        email: 'tecnico@somostecnicos.com',
         username: 'tecnico_juan',
         password: 'tecnico123',
         nombre: 'Juan',
@@ -35,7 +35,7 @@ async function seedAdminUsers() {
         role: 'technician_manager'
       },
       {
-        email: 'manager@tecnocity.com',
+        email: 'manager@somostecnicos.com',
         username: 'manager_maria',
         password: 'manager123',
         nombre: 'María',

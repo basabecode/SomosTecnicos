@@ -284,7 +284,7 @@ export const InvoiceTemplate: React.FC<{ invoice: InvoiceData }> = ({
       <Page size="A4" style={styles.page}>
         {/* Header - Información de la Empresa */}
         <View style={styles.header}>
-          <Text style={styles.companyName}>TecnoCity</Text>
+          <Text style={styles.companyName}>SomosTécnicos</Text>
           <Text style={styles.companyInfo}>
             Servicio Técnico Especializado en Electrodomésticos
           </Text>
@@ -293,7 +293,7 @@ export const InvoiceTemplate: React.FC<{ invoice: InvoiceData }> = ({
             Dirección: Calle 123 #45-67, Bogotá, Colombia
           </Text>
           <Text style={styles.companyInfo}>
-            Tel: +57 300 123 4567 | Email: contacto@tecnocity.com
+            Tel: +57 300 123 4567 | Email: contacto@somostecnicos.com
           </Text>
         </View>
 
@@ -468,10 +468,10 @@ export const InvoiceTemplate: React.FC<{ invoice: InvoiceData }> = ({
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Gracias por confiar en TecnoCity - Su satisfacción es nuestra prioridad
+            Gracias por confiar en SomosTécnicos - Su satisfacción es nuestra prioridad
           </Text>
           <Text style={styles.footerText}>
-            www.tecnocity.com | WhatsApp: +57 300 123 4567
+            www.somostecnicos.com | WhatsApp: +57 300 123 4567
           </Text>
           <Text style={styles.footerText}>
             Este documento es una representación impresa de una factura electrónica

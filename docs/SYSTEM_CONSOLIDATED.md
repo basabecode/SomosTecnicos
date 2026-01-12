@@ -1,6 +1,6 @@
 # 🎯 SYSTEM CONSOLIDATED - Single Source of Truth (SSOT)
 
-**Proyecto:** TecnoCity - Sistema de Gestión de Servicios Técnicos
+**Proyecto:** SomosTécnicos - Sistema de Gestión de Servicios Técnicos
 **Última Versión Consolidada:** Enero 2026 (Reflejando estado de Octubre 2025)
 **Estado General:** 90% Completado ✅
 
@@ -8,7 +8,7 @@
 
 ## 1. Resumen Ejecutivo (Sistema FSM)
 
-**TecnoCity** es una plataforma integral de **Field Service Management (FSM)** diseñada para un entorno de servicio técnico gestionado. Su objetivo es centralizar la recepción de solicitudes y permitir que un administrador coordine al equipo técnico de manera manual y eficiente.
+**SomosTécnicos** es una plataforma integral de **Field Service Management (FSM)** diseñada para un entorno de servicio técnico gestionado. Su objetivo es centralizar la recepción de solicitudes y permitir que un administrador coordine al equipo técnico de manera manual y eficiente.
 
 El sistema optimiza la logística mediante:
 - **Asignación Manual Directa:** El administrador tiene el control total sobre a quién asigna cada servicio según disponibilidad.

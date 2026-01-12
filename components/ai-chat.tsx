@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * COMPONENTE: AIChat - Asistente Virtual Inteligente para TecnoCity
+ * COMPONENTE: AIChat - Asistente Virtual Inteligente para SomosTécnicos
  * ============================================================================
  *
  * PROPÓSITO:
@@ -142,7 +142,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
   const initialMessages: Message[] = [
     {
       id: '1',
-      text: '¡Hola! 👋 Soy tu asistente de TecnoCity.',
+      text: '¡Hola! 👋 Soy tu asistente de SomosTécnicos.',
       isBot: true,
       timestamp: new Date(),
     },
@@ -618,7 +618,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
       new CustomEvent('openServiceForm', {
         detail: {
           tipoElectrodomestico: mappedType || '',
-          descripcionProblema: `${conversationState.appliance} - ${conversationState.problem}\n\nDiagnosticado por Asistente IA de TecnoCity`,
+          descripcionProblema: `${conversationState.appliance} - ${conversationState.problem}\n\nDiagnosticado por Asistente IA de SomosTécnicos`,
           urgencia: conversationState.urgency || 'media',
           fromAI: true
         }
@@ -710,7 +710,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
               <Bot className="h-5 w-5" />
               <div>
                 <CardTitle className="text-sm font-medium">
-                  Asistente IA TecnoCity
+                  Asistente IA SomosTécnicos
                 </CardTitle>
                 {!isMinimized && (
                   <p className="text-xs opacity-90">

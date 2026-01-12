@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, User, LogOut, UserPlus, Users, Wrench, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { OrderTrackingModal } from '@/components/order-tracking-modal'
 import {
   DropdownMenu,
@@ -230,9 +231,16 @@ export default function Header() {
             {/* Logo */}
             <button
               onClick={() => scrollToSection('hero')}
-              className="text-2xl font-bold text-[#A50034] hover:text-[#E74C3C] transition-colors"
+              className="flex items-center hover:opacity-80 transition-opacity"
             >
-              TecnoCity
+              <Image
+                src="/img_3d/somos_tecnicos.png"
+                alt="SomosTécnicos"
+                width={100}
+                height={25}
+                className="h-6 w-auto object-contain"
+                priority
+              />
             </button>
 
             {/* Desktop Navigation */}

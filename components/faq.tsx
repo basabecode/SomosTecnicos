@@ -31,7 +31,7 @@ export default function FAQ() {
     },
     {
       question: "¿Cómo puedo pagar?",
-      answer: "Efectivo, transferencia o tarjeta de crédito/débito.",
+      answer: "Efectivo y transferencias banacarias.",
     },
   ]
 

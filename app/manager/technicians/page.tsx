@@ -60,7 +60,7 @@ const mockTechnicians: Technician[] = [
   {
     id: '1',
     name: 'Juan Pérez',
-    email: 'juan@tecnocity.com',
+    email: 'juan@somostecnicos.com',
     phone: '+57 300 123 4567',
     specialties: ['Electrodomésticos', 'Aires Acondicionados'],
     location: 'Norte de Bogotá',
@@ -75,7 +75,7 @@ const mockTechnicians: Technician[] = [
   {
     id: '2',
     name: 'Ana López',
-    email: 'ana@tecnocity.com',
+    email: 'ana@somostecnicos.com',
     phone: '+57 300 234 5678',
     specialties: ['Lavadoras', 'Refrigeradores'],
     location: 'Sur de Bogotá',
@@ -90,7 +90,7 @@ const mockTechnicians: Technician[] = [
   {
     id: '3',
     name: 'Carlos Ruiz',
-    email: 'carlos@tecnocity.com',
+    email: 'carlos@somostecnicos.com',
     phone: '+57 300 345 6789',
     specialties: ['Hornos', 'Microondas'],
     location: 'Centro de Bogotá',

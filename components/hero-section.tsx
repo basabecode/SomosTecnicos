@@ -43,7 +43,7 @@ export default function HeroSection() {
 
             {/* Badge Premium */}
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-white border border-[#E3F2FD] shadow-sm text-blue-700 text-sm font-semibold mx-auto lg:mx-0">
-                <span>Tecnología al servicio</span>
+                <span>Servicio Web</span>
             </div>
 
             <div className="space-y-4">
@@ -55,7 +55,7 @@ export default function HeroSection() {
               </h1>
 
               <p className="text-lg sm:text-xl text-[#64748B] max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                Reparamos tus electrodomésticos con expertos de confianza y respuesta inmediata.
+                Plataforma digital para solicitar reparaciones de electrodomésticos con técnicos certificados.
                 <span className="block mt-2 font-medium text-[#2C3E50]">
                   Garantía, seguridad y conocimiento en un solo lugar.
                 </span>

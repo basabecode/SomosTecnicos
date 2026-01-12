@@ -1,5 +1,5 @@
 /**
- * 📊 TecnoCity - Tarjetas de Estadísticas Resumidas
+ * 📊 SomosTécnicos - Tarjetas de Estadísticas Resumidas
  * ===============================================
  *
  * Componente para mostrar métricas clave en formato de tarjetas

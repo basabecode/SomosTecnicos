@@ -1,4 +1,4 @@
-# 🔧 TecnoCity - Sistema de Reparación de Electrodomésticos
+# 🔧 SomosTécnicos - Sistema de Reparación de Electrodomésticos
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
@@ -11,7 +11,7 @@
 ## 🚀 Características Principales
 
 ### 🎨 **Frontend Optimizado (UX/UI 2025)**
-- ✅ Landing page responsive con diseño mobile-first
+- ✅ Title: 'SomosTécnicos - Servicio Técnico de Electrodomésticos a Domicilio'
 - ✅ Formulario optimizado de 3 pasos para máxima conversión
 - ✅ Chat IA integrado para diagnóstico automático (v2.1)
 - ✅ Sección interactiva del proceso de servicio
@@ -19,7 +19,7 @@
 - ✅ Animaciones fluidas con Framer Motion
 - ✅ Diseño consistente con colores corporativos (#A50034, #2C3E50)
 
-### 🤖 **Asistente IA TecnoCity v2.1**
+### 🤖 **Asistente IA SomosTécnicos v2.1**
 - ✅ Diagnóstico inteligente de problemas de electrodomésticos
 - ✅ Detección de Instalación y Mantenimiento
 - ✅ Auto-llenado de formularios mediante eventos personalizados
@@ -74,7 +74,7 @@
 ### **1. Clonar el Repositorio**
 ```bash
 git clone https://github.com/basabecode/TecnoCity.git
-cd TecnoCity
+cd SomosTécnicos
 ```
 
 ### **2. Instalar Dependencias**
@@ -86,7 +86,7 @@ pnpm install
 Crea un archivo `.env.local`:
 ```env
 # Base de datos
-DATABASE_URL="postgresql://usuario:password@localhost:5432/tecnocity"
+DATABASE_URL="postgresql://usuario:password@localhost:5432/somostecnicos"
 
 # JWT
 JWT_SECRET="tu-secreto-jwt-super-seguro"
@@ -197,11 +197,11 @@ La aplicación estará disponible en `http://localhost:3000`
 ## 🔒 Cuentas de Prueba
 
 ### **Administrador**
-- **Usuario**: `admin@tecnocity.com`
+- **Usuario**: `admin@somostecnicos.com`
 - **Contraseña**: `admin123`
 
 ### **Técnico**
-- **Usuario**: `tecnico@tecnocity.com`
+- **Usuario**: `tecnico@somostecnicos.com`
 - **Contraseña**: `tecnico123`
 
 ### **Cliente**
@@ -221,10 +221,10 @@ vercel --prod
 ### **Docker**
 ```bash
 # Construir imagen
-docker build -t tecnocity .
+docker build -t somostecnicos .
 
 # Ejecutar contenedor
-docker run -p 3000:3000 tecnocity
+docker run -p 3000:3000 somostecnicos
 ```
 
 ## 📚 Documentación Adicional
@@ -254,4 +254,4 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ⭐ **¡Si te gusta el proyecto, dale una estrella!** ⭐
 
-🔗 **Demo en vivo**: [TecnoCity](https://tu-dominio.vercel.app)
+🔗 **Demo en vivo**: [SomosTécnicos](https://tu-dominio.vercel.app)

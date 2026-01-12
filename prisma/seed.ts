@@ -62,7 +62,7 @@ async function main() {
     const customersData = [
       {
         username: 'cliente.demo',
-        email: 'cliente.demo@tecnocity.com',
+        email: 'cliente.demo@somostecnicos.com',
         nombre: 'Camila',
         apellido: 'Suárez',
         telefono: '3005557788',
@@ -72,7 +72,7 @@ async function main() {
       },
       {
         username: 'cliente.vip',
-        email: 'cliente.vip@tecnocity.com',
+        email: 'cliente.vip@somostecnicos.com',
         nombre: 'Esteban',
         apellido: 'Mejía',
         telefono: '3106668899',
@@ -82,7 +82,7 @@ async function main() {
       },
       {
         username: 'cliente.norte',
-        email: 'cliente.norte@tecnocity.com',
+        email: 'cliente.norte@somostecnicos.com',
         nombre: 'Daniela',
         apellido: 'Gómez',
         telefono: '3207779900',
@@ -104,8 +104,14 @@ async function main() {
     }> = []
 
     for (const customer of customersData) {
-      const existingCustomer = await prisma.customer.findUnique({
-        where: { email: customer.email }
+      // Verificar si ya existe por email O username
+      const existingCustomer = await prisma.customer.findFirst({
+        where: {
+          OR: [
+            { email: customer.email },
+            { username: customer.username }
+          ]
+        }
       })
 
       if (!existingCustomer) {
@@ -115,10 +121,10 @@ async function main() {
             username: customer.username,
             email: customer.email,
             nombre: customer.nombre,
-            apellido: customer.apellido,
+            apellido: customer.apellido || null,
             telefono: customer.telefono,
-            direccion: customer.direccion,
-            ciudad: customer.ciudad,
+            direccion: customer.direccion || null,
+            ciudad: customer.ciudad || null,
             passwordHash: hashedPassword,
             preferencias: {
               tema: 'light',
@@ -139,7 +145,7 @@ async function main() {
           ciudad: created.ciudad ?? undefined
         })
       } else {
-        console.log(`ℹ️ Cliente ya existe: ${customer.email}`)
+        console.log(`ℹ️ Cliente ya existe: ${customer.email} (username: ${customer.username})`)
         seededCustomers.push({
           id: existingCustomer.id,
           username: existingCustomer.username,
@@ -436,7 +442,7 @@ async function main() {
 
     const customerOrders = [
       {
-        email: 'cliente.demo@tecnocity.com',
+        email: 'cliente.demo@somostecnicos.com',
         orderNumber: 'ORD-CL-1001',
         tipoElectrodomestico: 'lavadora',
         tipoServicio: 'reparacion',
@@ -447,7 +453,7 @@ async function main() {
         horario: 'mañana'
       },
       {
-        email: 'cliente.demo@tecnocity.com',
+        email: 'cliente.demo@somostecnicos.com',
         orderNumber: 'ORD-CL-1002',
         tipoElectrodomestico: 'nevera',
         tipoServicio: 'mantenimiento',
@@ -458,7 +464,7 @@ async function main() {
         horario: 'tarde'
       },
       {
-        email: 'cliente.vip@tecnocity.com',
+        email: 'cliente.vip@somostecnicos.com',
         orderNumber: 'ORD-CL-2001',
         tipoElectrodomestico: 'microondas',
         tipoServicio: 'diagnostico',

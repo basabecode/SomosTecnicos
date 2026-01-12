@@ -18,6 +18,7 @@ const PROTECTED_PATHS = [
   '/admin',
   '/manager',
   '/technician',
+  '/customer',
   '/customer/dashboard',
   '/customer/services',
   '/customer/profile',
@@ -38,7 +39,8 @@ const PROTECTED_PATHS = [
 const PUBLIC_PATHS = [
   '/login',          // Página de login unificado debe ser pública
   '/admin-info',     // Página de información del admin debe ser pública
-  '/customer/register', // Página de registro del cliente debe ser pública
+  '/register/customer', // Página de registro del cliente debe ser pública
+  '/register/technician', // Página de registro de técnicos debe ser pública
   '/customer/forgot-password', // Página de recuperar contraseña debe ser pública
   '/api/auth/login',
   '/api/health',

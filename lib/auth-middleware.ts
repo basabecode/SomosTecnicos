@@ -1,5 +1,5 @@
 /**
- * 🛡️ TecnoCity - Middleware de Autenticación JWT Robusto
+ * 🛡️ SomosTécnicos - Middleware de Autenticación JWT Robusto
  * =====================================================
  *
  * Proporciona validación JWT centralizada y segura para endpoints API
