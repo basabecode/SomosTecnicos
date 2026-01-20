@@ -1,37 +1,31 @@
 # 📚 DOCUMENTACIÓN DEL SISTEMA - ÚNICA FUENTE DE VERDAD
 
-## 📖 **Fuente Principal**
+Este es el punto de entrada central para toda la documentación técnica y operativa del proyecto.
 
-- **[`SYSTEM_CONSOLIDATED.md`](./SYSTEM_CONSOLIDATED.md)** - **Única Fuente de Verdad (SSOT)**. Estado actual, arquitectura confirmada e inventario de funcionalidades.
+## 📋 Documentos Activos (Consolidados)
 
----
-
-## 📋 Índice de Documentos Activos
-
-### 🏗️ **Arquitectura y Auditoría**
-- **[`ARQUITECTURA_SOFTWARE.md`](./ARQUITECTURA_SOFTWARE.md)** - Diagramas y estructura detallada de carpetas.
-- **[`AUDITORIA_COMPLETA_SOFTWARE.md`](./AUDITORIA_COMPLETA_SOFTWARE.md)** - Auditoría profunda y reporte de deuda técnica.
-
-### 🚀 **Planificación**
-- **[`ROADMAP_MEJORAS_2025.md`](./ROADMAP_MEJORAS_2025.md)** - Visión estratégica y expansión a largo plazo.
-
-### 🧪 **Testing y Acceso**
-- **[`CUENTAS_PRUEBA.md`](./CUENTAS_PRUEBA.md)** - Credenciales actualizadas para todos los roles.
+1.  **[01-SISTEMA-Y-ARQUITECTURA.md](./01-SISTEMA-Y-ARQUITECTURA.md)** ⭐
+    - Resumen Ejecutivo, Arquitectura, Stack Tecnológico y Estructura de Proyecto.
+2.  **[02-TESTING-Y-ACCESO.md](./02-TESTING-Y-ACCESO.md)** 🧪
+    - Cuentas de Prueba, Guías de QA, Checklist de Validación y Comandos Útiles.
+3.  **[03-ROADMAP-Y-PENDIENTES.md](./03-ROADMAP-Y-PENDIENTES.md)** 🚀
+    - Visión estratégica 2026, Tareas de Facturación y Deuda Técnica.
+4.  **[04-AUDITORIA-E-HISTORIAL.md](./04-AUDITORIA-E-HISTORIAL.md)** 📜
+    - Reportes de Auditoría, Logs de Implementación y Hitos del Proyecto.
 
 ---
 
-## 📁 **Estructura de Trabajo**
-
+## 📁 Estructura General
 ```
 docs/
-├── SYSTEM_CONSOLIDATED.md ⭐ (Léeme primero)
-├── ARQUITECTURA_SOFTWARE.md
-├── AUDITORIA_COMPLETA_SOFTWARE.md
-├── ROADMAP_MEJORAS_2025.md
-├── CUENTAS_PRUEBA.md
-├── README.md
-└── archive/ 📂 (Archivos históricos y redundantess)
+├── 01-SISTEMA-Y-ARQUITECTURA.md
+├── 02-TESTING-Y-ACCESO.md
+├── 03-ROADMAP-Y-PENDIENTES.md
+├── 04-AUDITORIA-E-HISTORIAL.md
+├── INDICE_DOCUMENTACION.md
+└── archive/ 📂 (Archivos históricos)
 ```
 
 ---
-_Consolidado: Enero 2026_
+_Consolidación: Enero 2026_
+

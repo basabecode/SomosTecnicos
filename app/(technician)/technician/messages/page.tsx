@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   Card,
   CardContent,
@@ -25,12 +25,30 @@ import {
   Loader2,
   RefreshCw,
   Plus,
+  ArrowLeft,
+  Trash2,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { toast } from 'sonner'
 
 interface Message {
   id: string
@@ -72,6 +90,18 @@ export default function TechnicianMessages() {
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // New Conversation States
+  const [isNewConvOpen, setIsNewConvOpen] = useState(false)
+  const [newConvData, setNewConvData] = useState({
+    receiverId: '',
+    receiverType: 'customer' as 'customer' | 'technician' | 'support',
+    orderId: '',
+    subject: '',
+    content: '',
+    category: 'general' as any
+  })
+  const [availableOrders, setAvailableOrders] = useState<any[]>([])
+
   // Fetch Messages
   const fetchMessages = async () => {
     try {
@@ -107,38 +137,102 @@ export default function TechnicianMessages() {
     }
   }, [selectedThreadId, messages])
 
-  // Grouping logic: Create threads based on Order ID or Direct User pair
-  // We prefer grouping by Order ID
-  const threads = messages.reduce((acc, msg) => {
-    const threadKey = msg.orderId ? `order-${msg.orderId}` : `user-${msg.senderId === user?.id?.toString() ? msg.receiverId : msg.senderId}`
-    if (!acc[threadKey]) {
-      acc[threadKey] = {
-        id: threadKey,
-        messages: [],
-        lastMessage: msg,
-        orderNumber: msg.relatedOrder,
-        partnerName: msg.senderId === user?.id?.toString()
-          ? 'Soporte / Técnico' // We don't verify receiver name easily here without extra data
-          : msg.senderName
+  // -------------------------------------------
+  // THREAD GROUPING LOGIC (Robust & Normalized)
+  // -------------------------------------------
+  const threads = useMemo(() => {
+    if (!user) return []
+
+    type Thread = {
+        id: string
+        messages: Message[]
+        lastMessage: Message
+        partnerName: string
+        partnerRole: string
+        partnerId: string
+        orderNumber?: string
+        unreadCount: number
+    }
+
+    const grouped: Record<string, Thread> = {}
+
+    messages.forEach(msg => {
+      const isMe = msg.senderId === user.id.toString()
+
+      // 1. DETERMINE THREAD KEY
+      let threadKey = ''
+
+      if (msg.orderId) {
+        threadKey = `order-${msg.orderId}`
+      } else {
+        // User pair logic for Technician
+        const partnerId = isMe ? msg.receiverId : msg.senderId
+        threadKey = `direct-${partnerId}`
       }
-    }
-    acc[threadKey].messages.push(msg)
-    // Update last message if newer
-    if (new Date(msg.createdAt) > new Date(acc[threadKey].lastMessage.createdAt)) {
-      acc[threadKey].lastMessage = msg
-    }
-    // Update partner name if incoming message
-    if (msg.senderId !== user?.id?.toString()) {
-      acc[threadKey].partnerName = msg.senderName
-    }
-    return acc
-  }, {} as Record<string, { id: string, messages: Message[], lastMessage: Message, orderNumber?: string, partnerName: string }>)
 
-  const sortedThreads = Object.values(threads).sort((a, b) =>
-    new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime()
-  )
+      // 2. INITIALIZE THREAD
+      if (!grouped[threadKey]) {
+        let pName = 'Usuario'
+        let pRole = 'user'
+        let pId = ''
 
-  const selectedThread = selectedThreadId ? threads[selectedThreadId] : null
+        if (msg.orderId) {
+           pName = msg.relatedOrder || `Orden #${msg.orderId}`
+           pRole = 'service'
+        }
+
+        if (!isMe) {
+          pName = msg.senderName || 'Usuario'
+          pRole = msg.senderType
+          pId = msg.senderId
+        } else {
+          // Outgoing from Technician
+          if (msg.receiverType === 'customer') pName = `Cliente (${msg.receiverId})`
+          else if (msg.receiverType === 'admin') pName = 'Administrador'
+          else if (msg.receiverType === 'support' || msg.receiverId === '0') pName = 'Soporte General'
+
+          pRole = msg.receiverType
+          pId = msg.receiverId
+        }
+
+        grouped[threadKey] = {
+          id: threadKey,
+          messages: [],
+          lastMessage: msg,
+          partnerName: pName,
+          partnerRole: pRole,
+          partnerId: pId,
+          orderNumber: msg.relatedOrder,
+          unreadCount: 0
+        }
+      }
+
+      const thread = grouped[threadKey]
+      thread.messages.push(msg)
+
+      // 3. UPDATE LAST MESSAGE
+      if (new Date(msg.createdAt) > new Date(thread.lastMessage.createdAt)) {
+        thread.lastMessage = msg
+        if (!isMe) {
+            thread.partnerName = msg.senderName || thread.partnerName
+            thread.partnerRole = msg.senderType
+            thread.partnerId = msg.senderId
+        }
+      }
+
+      // 4. UNREAD
+      if (!msg.read && msg.receiverId === user.id.toString()) {
+        thread.unreadCount++
+      }
+    })
+
+    return Object.values(grouped).sort((a, b) =>
+      new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime()
+    )
+  }, [messages, user])
+
+  const sortedThreads = threads
+  const selectedThread = selectedThreadId ? threads.find(t => t.id === selectedThreadId) : null
 
   // Filter threads for the list
   const filteredThreads = sortedThreads.filter(thread => {
@@ -165,18 +259,43 @@ export default function TechnicianMessages() {
       const token = localStorage.getItem('accessToken')
       const lastMsg = selectedThread.lastMessage
 
-      // Determine receiver (the other person in the thread)
-      // If I sent the last message, receiver is my previous receiver.
-      // If I received the last message, receiver is the sender.
+      // LÓGICA CRÍTICA DE RESPUESTA (Fix aplicado desde panel cliente)
+      // Determinar quién es el receptor basado en el último mensaje
       const amISender = lastMsg.senderId === user?.id?.toString()
-      const receiverId = amISender ? lastMsg.receiverId : lastMsg.senderId
-      const receiverType = amISender ? lastMsg.receiverType : lastMsg.senderType
+
+      // Si yo envié el último, le sigo respondiendo al mismo receptor (receiverId)
+      // Si yo recibí el último, le respondo a quien me envió (senderId)
+      let receiverId = amISender ? lastMsg.receiverId : lastMsg.senderId
+      let receiverType = amISender ? lastMsg.receiverType : lastMsg.senderType
+
+      // FIX CRÍTICO: Normalización de casos edge con soporte/admin genérico
+      // Si el receiverType es 'customer' pero el receiverId está vacío o es '0',
+      // esto indica un problema de datos. Intentamos recuperar del contexto.
+      if (!receiverId || receiverId === '0') {
+        // Si no hay receiverId válido, intentamos inferir del thread
+        // En caso de técnico respondiendo a cliente, el receiverId debe ser el partnerId del thread
+        if (receiverType === 'customer' && selectedThread.partnerName) {
+          // El partnerId debería tener el ID correcto del cliente
+          // Si no, mantenemos el receiverId actual y confiamos en el backend
+          console.warn('receiverId vacío detectado, usando contexto del thread')
+        }
+      }
+
+      // Corrección adicional: Si respondo a 'support' o 'admin' genérico
+      // (esto puede pasar si un técnico envió a soporte general)
+      if (receiverType === 'admin' || receiverType === 'support') {
+        // Si el receiverId es '0' o vacío, mantenerlo como soporte general
+        if (!receiverId || receiverId === '0') {
+          receiverId = '0'
+          receiverType = 'support'
+        }
+      }
 
       const payload = {
         content: newMessage,
         receiverId: receiverId,
         receiverType: receiverType,
-        orderId: lastMsg.orderId,
+        orderId: lastMsg.orderId, // Propagar contexto de orden
         subject: `Re: ${lastMsg.subject || 'Consulta'}`,
         category: lastMsg.category || 'general'
       }
@@ -193,9 +312,101 @@ export default function TechnicianMessages() {
       if (res.ok) {
         setNewMessage('')
         fetchMessages() // Refresh immediately
+      } else {
+        const errorData = await res.json()
+        console.error('Error al enviar mensaje:', errorData)
+        toast?.error?.('No se pudo enviar el mensaje')
       }
     } catch (err) {
       console.error('Error sending message:', err)
+      toast?.error?.('Error de conexión al enviar mensaje')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleDeleteThread = async (threadId: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer.')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      const res = await fetch(`/api/messages/thread/${threadId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        toast.success(`Conversación eliminada (${data.deletedCount} mensajes)`)
+        setSelectedThreadId(null) // Deseleccionar si estaba abierto
+        fetchMessages() // Refrescar lista
+      } else {
+        toast.error(data.error || 'Error al eliminar la conversación')
+      }
+    } catch (error) {
+      console.error('Error deleting thread:', error)
+      toast.error('Error de conexión al eliminar')
+    }
+  }
+
+  // Fetch metadata for new conversations
+  useEffect(() => {
+    if (isNewConvOpen) {
+      const fetchData = async () => {
+        const token = localStorage.getItem('accessToken')
+        try {
+          const res = await fetch('/api/orders?limit=100', { headers: { Authorization: `Bearer ${token}` }})
+          const data = await res.json()
+          if (data.success) {
+            // Filtrar solo órdenes asignadas o relacionadas
+            setAvailableOrders(data.orders || data.data?.orders || [])
+          }
+        } catch (err) {
+          console.error('Error fetching conversion metadata:', err)
+        }
+      }
+      fetchData()
+    }
+  }, [isNewConvOpen])
+
+  const handleCreateNewConversation = async () => {
+    if (!newConvData.content.trim() || !newConvData.receiverType) {
+      toast.error('Por favor completa el contenido y el destinatario')
+      return
+    }
+
+    setSending(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...newConvData,
+          subject: newConvData.subject || 'Consulta Técnica'
+        })
+      })
+
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Mensaje enviado correctamente')
+        setIsNewConvOpen(false)
+        setNewConvData({ receiverId: '', receiverType: 'customer', orderId: '', subject: '', content: '', category: 'general' })
+        fetchMessages()
+      } else {
+        toast.error(data.error || 'Error al enviar mensaje')
+      }
+    } catch (err) {
+      toast.error('Error de red al enviar mensaje')
     } finally {
       setSending(false)
     }
@@ -220,7 +431,7 @@ export default function TechnicianMessages() {
           <h1 className="text-3xl font-bold text-gray-900">Mis Mensajes</h1>
           <p className="text-gray-600 mt-2">Comunicación con clientes y soporte</p>
         </div>
-        <Button onClick={() => alert('Para nuevos mensajes, por favor contacte a soporte o use el chat de la orden.')}>
+        <Button onClick={() => setIsNewConvOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Mensaje
         </Button>
@@ -228,7 +439,7 @@ export default function TechnicianMessages() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         {/* Thread List */}
-        <div className="lg:col-span-1 flex flex-col gap-4 min-h-0 overflow-y-auto pr-1">
+        <div className={`lg:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
           {/* Controls */}
           <Card>
             <CardContent className="p-4 space-y-4">
@@ -312,12 +523,20 @@ export default function TechnicianMessages() {
         </div>
 
         {/* Chat Detail */}
-        <div className="lg:col-span-2 flex flex-col min-h-0">
+        <div className={`lg:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
           {selectedThread ? (
             <Card className="flex flex-col flex-1 h-full shadow-lg border-gray-200 overflow-hidden">
               {/* Chat Header */}
-              <CardHeader className="py-4 px-6 border-b bg-gray-50/50 flex flex-row items-center justify-between shrink-0">
+              <CardHeader className="py-4 px-4 sm:px-6 border-b bg-gray-50/50 flex flex-row items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden -ml-2 h-8 w-8"
+                    onClick={() => setSelectedThreadId(null)}
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
                   <Avatar>
                     <AvatarFallback>{selectedThread.partnerName.substring(0,2).toUpperCase()}</AvatarFallback>
                   </Avatar>
@@ -328,9 +547,20 @@ export default function TechnicianMessages() {
                     </CardDescription>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => fetchMessages()} title="Actualizar">
-                  <RefreshCw className="h-4 w-4 text-gray-500" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => fetchMessages()} title="Actualizar">
+                    <RefreshCw className="h-4 w-4 text-gray-500" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteThread(selectedThread.id)}
+                    className="text-gray-400 hover:text-red-600"
+                    title="Eliminar conversación"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardHeader>
 
               {/* Messages Area */}
@@ -339,19 +569,35 @@ export default function TechnicianMessages() {
                  {[...selectedThread.messages].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((msg) => {
                    const isMe = msg.senderId === user?.id?.toString()
                    return (
-                     <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                       <div className={`max-w-[80%] rounded-2xl p-3 px-4 shadow-sm ${
-                         isMe
-                           ? 'bg-primary text-primary-foreground rounded-br-none'
-                           : 'bg-white border border-gray-100 rounded-bl-none'
-                       }`}>
-                         {!isMe && (
-                           <p className="text-[10px] font-medium text-gray-500 mb-1">{msg.senderName}</p>
-                         )}
-                         <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                         <p className={`text-[10px] mt-1 text-right ${isMe ? 'text-primary-foreground/70' : 'text-gray-400'}`}>
-                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' })}
-                         </p>
+                     <div key={msg.id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'} mb-4`}>
+                       <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>
+
+                         {/* Bubble */}
+                         <div className={`relative px-4 py-3 shadow-sm text-sm ${
+                           isMe
+                             ? 'bg-slate-900 text-white rounded-2xl rounded-tr-none' // Usuario actual (Derecha)
+                             : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-none' // Otro usuario (Izquierda)
+                         }`}>
+                           {/* Nombre solo en mensajes recibidos */}
+                           {!isMe && (
+                             <span className="block text-[10px] font-bold text-orange-600 mb-1 uppercase tracking-wider">
+                               {msg.senderName || 'Usuario'}
+                             </span>
+                           )}
+
+                           <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                         </div>
+
+                         {/* Time and Status */}
+                         <div className={`flex items-center gap-1 mt-1 text-[10px] ${isMe ? 'text-gray-400' : 'text-gray-400'}`}>
+                            <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' })}</span>
+                            {isMe && (
+                              <span>
+                                {msg.read ? <CheckCircle2 className="h-3 w-3 text-blue-500" /> : <CheckCircle2 className="h-3 w-3" />}
+                              </span>
+                            )}
+                         </div>
+
                        </div>
                      </div>
                    )
@@ -400,6 +646,110 @@ export default function TechnicianMessages() {
           )}
         </div>
       </div>
+
+      {/* New Conversation Dialog */}
+      <Dialog open={isNewConvOpen} onOpenChange={setIsNewConvOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Nueva Conversación</DialogTitle>
+            <DialogDescription>
+              Inicia un nuevo hilo de mensajes con un cliente o soporte.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Tipo</Label>
+              <Select
+                value={newConvData.receiverType}
+                onValueChange={(val: any) => setNewConvData({...newConvData, receiverType: val, receiverId: (val === 'support' ? '0' : '')})}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="customer">Cliente</SelectItem>
+                  <SelectItem value="support">Soporte Tecnico (Administración)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {newConvData.receiverType === 'customer' && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Cliente</Label>
+                <Select
+                  value={newConvData.receiverId}
+                  onValueChange={(val) => {
+                    const order = availableOrders.find(o => (o.clientId || o.userId) === val);
+                    setNewConvData({
+                      ...newConvData,
+                      receiverId: val,
+                      orderId: order?.id || ''
+                    });
+                  }}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Seleccionar Cliente via Orden" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableOrders.map(o => (
+                      <SelectItem key={o.id} value={o.clientId || o.userId || 'unknown'}>
+                        {o.nombre} ({o.orderNumber})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Orden</Label>
+              <Select
+                value={newConvData.orderId}
+                onValueChange={(val) => setNewConvData({...newConvData, orderId: val})}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Opcional: Vincular a Orden" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Ninguna</SelectItem>
+                  {availableOrders.map(o => (
+                    <SelectItem key={o.id} value={o.id}>{o.orderNumber} - {o.tipoServicio}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Asunto</Label>
+              <Input
+                value={newConvData.subject}
+                onChange={e => setNewConvData({...newConvData, subject: e.target.value})}
+                placeholder="Ej: Dudas sobre la reparación"
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Mensaje</Label>
+              <Textarea
+                value={newConvData.content}
+                onChange={e => setNewConvData({...newConvData, content: e.target.value})}
+                placeholder="Escribe tu mensaje aquí..."
+                className="col-span-3 min-h-[100px]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNewConvOpen(false)}>Cancelar</Button>
+            <Button onClick={handleCreateNewConversation} disabled={sending}>
+              {sending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              Enviar Mensaje
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

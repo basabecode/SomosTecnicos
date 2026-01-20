@@ -50,7 +50,7 @@ export default function HeroSection() {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#2C3E50] leading-[1.15] tracking-tight">
                 Reparaciones Inteligentes para tu Hogar
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#A50034] to-[#ff4d4d] mt-2 pb-2">
-                  Al Instante
+                  Pídelo ya!
                 </span>
               </h1>
 
@@ -65,20 +65,20 @@ export default function HeroSection() {
             {/* Trust Indicators */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 text-sm">
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-100 shadow-sm">
-                    <div className="p-1 bg-yellow-100 rounded-full">
-                        <Star className="w-4 h-4 text-yellow-600 fill-yellow-600" />
+                    <div className="p-1 bg-slate-950 rounded-full">
+                        <Star className="w-4 h-4 text-white fill-white" />
                     </div>
-                    <span className="font-semibold text-slate-700">4.8/5 Calificación</span>
+                    <span className="font-semibold text-slate-700">Mejor Calificación</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-100 shadow-sm">
-                    <div className="p-1 bg-green-100 rounded-full">
-                         <Shield className="w-4 h-4 text-green-600" />
+                    <div className="p-1 bg-slate-400 rounded-full">
+                         <Shield className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold text-slate-700">Garantía</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-100 shadow-sm">
-                    <div className="p-1 bg-blue-100 rounded-full">
-                        <Clock className="w-4 h-4 text-blue-600" />
+                    <div className="p-1 bg-slate-100 rounded-full">
+                        <Clock className="w-4 h-4 text-slate-900" />
                     </div>
                     <span className="font-semibold text-slate-700">Atención lun/sab</span>
                 </div>

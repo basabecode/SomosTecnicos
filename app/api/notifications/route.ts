@@ -14,15 +14,28 @@ export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser
     const onlyUnread = searchParams.get('unread') === 'true'
 
     // Mapear rol de AuthenticatedUser a userType de Notification
-    // El user.role puede venir como 'admin', 'customer', etc.
+    const isAdmin = ['admin', 'super_admin', 'technician_manager'].includes(user.role.toLowerCase())
     const userType = user.role.toLowerCase()
 
+    const whereClause: any = {
+      OR: [
+        {
+          userId: user.id.toString(),
+          userType: userType
+        },
+        // Los admins también ven notificaciones dirigidas a soporte/admin general
+        ...(isAdmin ? [
+          {
+            userId: '0',
+            userType: { in: ['admin', 'support'] }
+          }
+        ] : [])
+      ],
+      ...(onlyUnread ? { read: false } : {})
+    }
+
     const notifications = await prisma.notification.findMany({
-      where: {
-        userId: user.id.toString(),
-        userType: userType,
-        ...(onlyUnread ? { read: false } : {})
-      },
+      where: whereClause,
       orderBy: {
         createdAt: 'desc'
       },
@@ -31,8 +44,7 @@ export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser
 
     const unreadCount = await prisma.notification.count({
       where: {
-        userId: user.id.toString(),
-        userType: userType,
+        ...whereClause,
         read: false
       }
     })

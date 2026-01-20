@@ -1,7 +1,7 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authenticateRequest } from '@/lib/auth'
+import { sendNotification } from '@/lib/services/notification.service'
 
 // Tipos de usuario para la mensajería
 const MSG_ROLES = {
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
 
         senderId: user.id.toString(),
         senderType: senderType,
-        senderName: senderName,
+        senderName: senderName || user.email || user.username || 'Usuario',
 
         receiverId: receiverId.toString(),
         receiverType: receiverType,
@@ -181,6 +181,33 @@ export async function POST(request: NextRequest) {
         orderId: body.orderId, // Puede ser null
       }
     })
+
+    // 🔔 DISPARAR NOTIFICACIÓN IN-APP
+    try {
+      // Si el destinatario es '0' (Soporte/Admin), notificar a un rol o admin general
+      // En este sistema, '0' es capturado por los admins en sus consultas.
+
+      const notificationLink = body.orderId
+        ? (receiverType === MSG_ROLES.ADMIN || receiverType === MSG_ROLES.SUPPORT ? `/admin/orders/${body.orderId}` : `/technician/assignments?orderId=${body.orderId}`)
+        : (receiverType === MSG_ROLES.ADMIN || receiverType === MSG_ROLES.SUPPORT ? '/admin/messages' : '/technician/messages');
+
+      await sendNotification({
+        userId: receiverId.toString(),
+        userType: receiverType,
+        to: receiverType === MSG_ROLES.SUPPORT ? 'Administración' : (receiverId === '0' ? 'Soporte' : 'Usuario'),
+        subject: `Nuevo mensaje de ${senderName}`,
+        message: body.content.substring(0, 100) + (body.content.length > 100 ? '...' : ''),
+        type: 'SYSTEM',
+        orderId: body.orderId,
+        metadata: {
+          link: notificationLink,
+          messageId: newMessage.id,
+          senderName: senderName
+        }
+      })
+    } catch (notifError) {
+      console.error('Error enviando notificación de mensaje:', notifError)
+    }
 
     return NextResponse.json({
       success: true,
