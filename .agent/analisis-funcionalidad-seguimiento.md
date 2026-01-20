@@ -77,67 +77,65 @@ Retorna: Estado, Técnico, Información del servicio
 
 ---
 
-## ❌ **PENDIENTE - Facturación Electrónica**
+## 🚧 **EN PROGRESO - Facturación Electrónica**
 
-### 🔴 **NO IMPLEMENTADO**
+ ### 🟡 **PARCIALMENTE IMPLEMENTADO**
 
-#### 1. **Sistema de Facturación**
-- ❌ Generación de facturas electrónicas
-- ❌ Envío de facturas por correo
-- ❌ Envío de facturas por WhatsApp
-- ❌ Almacenamiento de facturas en PDF
-- ❌ Numeración de facturas
-- ❌ Integración con DIAN (si aplica en Colombia)
+ #### 1. **Sistema de Facturación**
+ - ✅ **Modelo de Datos:** `Invoice` creado en Prisma y migrado.
+ - ✅ **Generadores:** Librería para generar PDFs y números de factura creada (`lib/invoice`).
+ - ❌ **API:** Faltan endpoints para exponer la funcionalidad.
+ - ❌ **UI:** Faltan páginas de administración y cliente.
+ - ❌ **Integración:** Falta conectar la generación al completar órdenes.
 
-#### 2. **Flujo de Pago y Facturación**
-- ❌ Confirmación de pago del cliente
-- ❌ Generación automática de factura al completar servicio
-- ❌ Plantilla de factura electrónica
-- ❌ Historial de facturas por cliente
+ #### 2. **Flujo de Pago y Facturación**
+ - ❌ Confirmación de pago del cliente
+ - ❌ Generación automática de factura al completar servicio
+ - ❌ Plantilla de factura electrónica (Existe template base, falta integración)
+ - ❌ Historial de facturas por cliente
 
----
+ ---
 
-## 🎯 **Mejoras Recomendadas**
+ ## 🎯 **Mejoras Recomendadas**
 
-### **Prioridad Alta** 🔴
+ ### **Prioridad Alta** 🔴
 
-1. **Implementar Sistema de Facturación Electrónica**
-   - Crear modelo `Invoice` en Prisma
-   - Generar PDF de facturas (usando `pdfkit` o `react-pdf`)
-   - Envío automático por email (usando Resend o similar)
-   - Envío por WhatsApp (usando API de WhatsApp Business)
+ 1. **Completar Sistema de Facturación Electrónica**
+    - Crear endpoints API (`/api/invoices`)
+    - Crear UI para Administrador y Cliente
+    - Integrar envío por Email y WhatsApp
 
-2. **Flujo de Finalización de Servicio**
-   - Al marcar servicio como "completado"
-   - Solicitar confirmación de pago
-   - Generar factura automáticamente
-   - Enviar factura al cliente
+ 2. **Flujo de Finalización de Servicio**
+    - Al marcar servicio como "completado"
+    - Solicitar confirmación de pago
+    - Generar factura automáticamente
+    - Enviar factura al cliente
 
-### **Prioridad Media** 🟡
+ ### **Prioridad Media** 🟡
 
-3. **Mejorar Visibilidad del Número de Orden**
-   - Agregar badge destacado en paneles
-   - Permitir copiar número de orden con un clic
-   - Mostrar QR code del número de orden
+ 3. **Mejorar Visibilidad del Número de Orden**
+    - Agregar badge destacado en paneles
+    - Permitir copiar número de orden con un clic
+    - Mostrar QR code del número de orden
 
-4. **Notificaciones de Estado**
-   - Email cuando cambia el estado
-   - WhatsApp con link de seguimiento
-   - Incluir número de orden en todas las notificaciones
+ 4. **Notificaciones de Estado**
+    - Email cuando cambia el estado
+    - WhatsApp con link de seguimiento
+    - Incluir número de orden en todas las notificaciones
 
-### **Prioridad Baja** 🟢
+ ### **Prioridad Baja** 🟢
 
-5. **Portal de Seguimiento Público**
-   - Página pública `/track/{orderNumber}`
-   - No requiere login
-   - Muestra estado básico del servicio
+ 5. **Portal de Seguimiento Público**
+    - Página pública `/track/{orderNumber}`
+    - No requiere login
+    - Muestra estado básico del servicio
 
-6. **Historial de Facturas**
-   - Panel para ver facturas anteriores
-   - Descargar facturas en PDF
-   - Reenviar facturas por email
+ 6. **Historial de Facturas**
+    - Panel para ver facturas anteriores
+    - Descargar facturas en PDF
+    - Reenviar facturas por email
 
----
+ ---
 
 ## 📊 **Resumen Ejecutivo**
 

@@ -5,8 +5,9 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,6 +39,29 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const router = useRouter()
+  const { user, isAuthenticated, login: authLogin } = useAuth()
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const userRole = user.role || 'admin'
+      let dashboardUrl = '/admin/dashboard'
+
+      switch (userRole) {
+        case 'admin':
+        case 'super_admin': dashboardUrl = '/admin/dashboard'; break
+        case 'manager':
+        case 'gerente': dashboardUrl = '/manager/dashboard'; break
+        case 'technician':
+        case 'tecnico':
+        case 'technician_manager': dashboardUrl = '/technician/dashboard'; break
+        case 'customer':
+        case 'cliente': dashboardUrl = '/customer/dashboard'; break
+        default: dashboardUrl = '/admin/dashboard'
+      }
+
+      router.replace(dashboardUrl)
+    }
+  }, [isAuthenticated, user, router])
 
   const validateForm = () => {
     let isValid = true
@@ -71,32 +95,16 @@ export default function LoginPage() {
 
     setLoading(true)
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+    const result = await authLogin(email, password)
 
-      const data = await response.json()
+    if (result.success && result.user) {
+        // Redirection is handled by useEffect when isAuthenticated becomes true
+        // But we can also redirect here for immediate feedback if needed,
+        // essentially relying on state update spread is safer.
+        // However, useAuth handles state update, so we just wait for useEffect or do manual push.
+        // For smoother UX, let's let useEffect handle it or push here to match legacy logic.
 
-      if (data.status === 'pending_approval') {
-        setError('Tu cuenta está en proceso de aprobación.')
-        setLoading(false)
-        return
-      }
-
-      if (data.status === 'rejected') {
-        setError('Tu solicitud de registro ha sido rechazada.')
-        setLoading(false)
-        return
-      }
-
-      if (response.ok && data.success) {
-        localStorage.setItem('accessToken', data.accessToken)
-        if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken)
-
-        const userRole = data.user?.role || 'admin'
+        const userRole = result.user.role || 'admin'
         let dashboardUrl = '/admin/dashboard'
 
         switch (userRole) {
@@ -112,15 +120,10 @@ export default function LoginPage() {
           default: dashboardUrl = '/admin/dashboard'
         }
 
-        window.location.href = dashboardUrl
-      } else {
-        setError(data.message || 'Credenciales incorrectas. Verifica tu correo y contraseña.')
-      }
-    } catch (err) {
-      console.error('Login error:', err)
-      setError('Problemas de conexión. Intenta nuevamente más tarde.')
-    } finally {
-      setLoading(false)
+        router.push(dashboardUrl) // Use router.push instead of window.location.href for SPA feel
+    } else {
+        setError(result.error || 'Credenciales incorrectas. Verifica tu correo y contraseña.')
+        setLoading(false)
     }
   }
 
@@ -159,7 +162,13 @@ export default function LoginPage() {
           <div className="space-y-8">
             <div className="flex items-center gap-4">
               <div className="p-3 lg:p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
-                <Wrench className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                <Image
+                  src="/img_3d/logo modificado.jpeg"
+                  alt="SomosTécnicos"
+                  width={64}
+                  height={64}
+                  className="h-14 lg:h-16 w-14 lg:w-16 object-contain"
+                />
               </div>
               <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
                 SomosTécnicos
@@ -224,9 +233,13 @@ export default function LoginPage() {
         {/* HEADER MÓVIL COMPACTO (Solo < md) */}
         <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-                <Wrench className="h-6 w-6 text-white" />
-              </div>
+              <Image
+                src="/img_3d/logo modificado.jpeg"
+                alt="SomosTécnicos"
+                width={48}
+                height={48}
+                className="h-12 w-12 object-contain"
+              />
               <h1 className="text-2xl font-bold text-white tracking-tight">SomosTécnicos</h1>
            </div>
            <p className="text-white/90 text-base font-medium">¡Bienvenido de nuevo!</p>

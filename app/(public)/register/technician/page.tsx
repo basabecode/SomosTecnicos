@@ -40,6 +40,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { TECHNICIAN_SPECIALTIES } from '@/lib/constants'
+import { TermsModal } from '@/components/terms-modal'
+import { TERMS_VERSION } from '@/lib/terms-and-conditions'
 
 // Ciudades principales de Colombia
 const CIUDADES = [
@@ -102,6 +104,7 @@ interface FormData {
   zonaPreferida: string
   experienciaAnios: string
   documentos: File | null  // Archivo PDF con cédula y certificados
+  acceptTerms: boolean
 }
 
 export default function TechnicianRegistrationPage() {
@@ -110,6 +113,7 @@ export default function TechnicianRegistrationPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
@@ -123,6 +127,7 @@ export default function TechnicianRegistrationPage() {
     zonaPreferida: '',
     experienciaAnios: '',
     documentos: null,
+    acceptTerms: false,
   })
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -207,6 +212,10 @@ export default function TechnicianRegistrationPage() {
       setError('El archivo debe pesar menos de 1MB')
       return false
     }
+    if (!formData.acceptTerms) {
+      setError('Debes aceptar los términos y condiciones para continuar')
+      return false
+    }
     return true
   }
 
@@ -247,6 +256,8 @@ export default function TechnicianRegistrationPage() {
       if (formData.documentos) {
         submitData.append('documentos', formData.documentos)
       }
+      submitData.append('termsVersion', TERMS_VERSION)
+      submitData.append('termsAcceptedAt', new Date().toISOString())
 
       const response = await fetch('/api/technician/apply', {
         method: 'POST',
@@ -653,6 +664,39 @@ export default function TechnicianRegistrationPage() {
                     )}
                   </div>
 
+                  {/* Términos y Condiciones */}
+                  <div className="border-t pt-4 space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="acceptTerms"
+                        checked={formData.acceptTerms}
+                        onCheckedChange={(checked) => {
+                          setFormData(prev => ({ ...prev, acceptTerms: checked as boolean }))
+                          setError('')
+                        }}
+                      />
+                      <div className="flex-1">
+                        <label
+                          htmlFor="acceptTerms"
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          Acepto los{' '}
+                          <button
+                            type="button"
+                            onClick={() => setShowTermsModal(true)}
+                            className="text-[#A50034] hover:text-[#c9003f] underline font-semibold"
+                          >
+                            Términos y Condiciones
+                          </button>
+                          {' '}de uso de la plataforma *
+                        </label>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Al registrarte como técnico, aceptas que eres un profesional independiente y que SomosTécnicos es una plataforma intermediaria.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">
                       <strong>Nota:</strong> Al enviar esta solicitud, recibirás un email de confirmación.
@@ -728,6 +772,13 @@ export default function TechnicianRegistrationPage() {
           </p>
         </div>
       </div>
+
+      {/* Modal de Términos y Condiciones */}
+      <TermsModal
+        open={showTermsModal}
+        onOpenChange={setShowTermsModal}
+        mode="view"
+      />
     </div>
   )
 }

@@ -101,25 +101,24 @@ export default function TechnicianSchedulePage() {
 
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Header Creativo */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl text-white shadow-xl">
+      {/* Header Standard */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <CalendarIcon className="h-8 w-8 text-blue-400" />
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
             Mi Agenda
-          </h1>
-          <p className="text-slate-300 mt-1">
+          </h2>
+          <p className="text-muted-foreground mt-1">
             Gestión visual de tus servicios programados
           </p>
         </div>
         <div className="flex items-center gap-3">
             <div className="text-right hidden md:block">
-                <p className="text-sm font-medium text-slate-300">Hoy es</p>
-                <p className="text-xl font-bold capitalize">
+                <p className="text-sm font-medium text-muted-foreground">Hoy es</p>
+                <p className="text-xl font-bold capitalize text-gray-900">
                     {format(new Date(), "EEEE, d 'de' MMMM", { locale: es })}
                 </p>
             </div>
-            <Button variant="secondary" size="icon" onClick={fetchAssignments}>
+            <Button variant="outline" size="icon" onClick={fetchAssignments}>
                 <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>
         </div>
@@ -128,7 +127,7 @@ export default function TechnicianSchedulePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
         {/* COLUMNA IZQUIERDA: CALENDARIO */}
-        <Card className="lg:col-span-4 xl:col-span-4 shadow-md border-0 ring-1 ring-slate-200">
+        <Card className="lg:col-span-4 xl:col-span-4">
           <CardHeader>
             <CardTitle>Calendario</CardTitle>
             <CardDescription>Selecciona un día para ver detalles</CardDescription>
@@ -181,7 +180,7 @@ export default function TechnicianSchedulePage() {
         {/* COLUMNA DERECHA: AGENDA DEL DÍA (TIMELINE) */}
         <div className="lg:col-span-8 xl:col-span-8 space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                     <span className="bg-blue-100 text-blue-700 p-2 rounded-lg">
                         {date ? format(date, 'd') : '--'}
                     </span>
@@ -195,20 +194,19 @@ export default function TechnicianSchedulePage() {
             </div>
 
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-xl border border-dashed text-slate-400">
+                <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border border-dashed text-muted-foreground">
                     <Loader2 className="h-10 w-10 animate-spin mb-3" />
                     <p>Sincronizando calendario...</p>
                 </div>
             ) : selectedDayAssignments.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-xl border border-dashed text-slate-400">
-                    <Briefcase className="h-12 w-12 mb-3 opacity-20" />
-                    <p className="text-lg font-medium text-slate-600">Día Libre</p>
+                <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border border-dashed text-muted-foreground">
+                    <p className="text-lg font-medium text-gray-900">Día Libre</p>
                     <p>No tienes servicios asignados para esta fecha.</p>
                 </div>
             ) : (
                 <div className="space-y-4 relative">
                     {/* Línea de tiempo visual */}
-                    <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-slate-200 hidden md:block" />
+                    <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-200 hidden md:block" />
 
                     {selectedDayAssignments.map((assignment, index) => {
                         const isDone = assignment.estado === 'completado'
@@ -223,7 +221,7 @@ export default function TechnicianSchedulePage() {
                                 )} />
 
                                 {/* Hora Lateral */}
-                                <div className="absolute left-0 top-6 text-xs font-bold text-slate-400 w-16 text-right pr-6 hidden md:block">
+                                <div className="absolute left-0 top-6 text-xs font-bold text-muted-foreground w-16 text-right pr-6 hidden md:block">
                                     {assignment.fechaProgramada ? format(parseISO(assignment.fechaProgramada), 'HH:mm') : '--:--'}
                                 </div>
 
@@ -241,7 +239,7 @@ export default function TechnicianSchedulePage() {
                                                     <Badge variant={isHighPriority ? "destructive" : "secondary"} className="rounded-md">
                                                         {assignment.urgencia.toUpperCase()}
                                                     </Badge>
-                                                    <span className="text-xs font-mono text-slate-400">#{assignment.orderNumber}</span>
+                                                    <span className="text-xs font-mono text-muted-foreground">#{assignment.orderNumber}</span>
                                                     {isDone && (
                                                         <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 gap-1">
                                                             <CheckCircle2 className="h-3 w-3" /> Completado
@@ -249,19 +247,19 @@ export default function TechnicianSchedulePage() {
                                                     )}
                                                 </div>
 
-                                                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                                     {assignment.tipoElectrodomestico}
-                                                    <ChevronRight className="h-4 w-4 text-slate-300" />
-                                                    <span className="text-slate-600 font-normal">{assignment.problema}</span>
+                                                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="text-gray-600 font-normal">{assignment.problema}</span>
                                                 </h3>
 
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                                                    <div className="flex items-start gap-2 text-sm text-slate-600">
-                                                        <MapPin className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
+                                                    <div className="flex items-start gap-2 text-sm text-gray-600">
+                                                        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                                                         <span>{assignment.direccion}, {assignment.distrito}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                                                        <Clock className="h-4 w-4 text-slate-400" />
+                                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                        <Clock className="h-4 w-4 text-muted-foreground" />
                                                         <span>
                                                             {assignment.fechaProgramada ? format(parseISO(assignment.fechaProgramada), 'h:mm a', { locale: es }) : 'Por coordinar'}
                                                         </span>
@@ -269,16 +267,16 @@ export default function TechnicianSchedulePage() {
                                                 </div>
 
                                                 <div className="flex items-center gap-2 mt-2 pt-2 border-t border-dashed">
-                                                    <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                                                    <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
                                                         {assignment.cliente.charAt(0)}
                                                     </div>
-                                                    <span className="text-sm font-medium text-slate-700">{assignment.cliente}</span>
-                                                    <span className="text-xs text-slate-400 ml-1">• {assignment.telefono}</span>
+                                                    <span className="text-sm font-medium text-gray-700">{assignment.cliente}</span>
+                                                    <span className="text-xs text-muted-foreground ml-1">• {assignment.telefono}</span>
                                                 </div>
                                             </div>
 
                                             {/* Acciones */}
-                                            <div className="flex flex-row md:flex-col gap-2 justify-center md:border-l md:pl-4 border-slate-100">
+                                            <div className="flex flex-row md:flex-col gap-2 justify-center md:border-l md:pl-4 border-gray-100">
                                                 <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700" asChild>
                                                     <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${assignment.direccion}, ${assignment.distrito}`)}`} target="_blank">
                                                         <Navigation className="h-3 w-3 mr-2" />

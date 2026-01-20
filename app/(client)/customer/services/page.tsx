@@ -38,7 +38,6 @@ import {
   XCircle,
   PlayCircle,
   User,
-  Navigation,
   RefreshCw,
 } from 'lucide-react'
 
@@ -431,22 +430,19 @@ export default function CustomerServicesPage() {
                       Ver Detalles
                     </Button>
 
-                    <Button variant="outline" size="sm">
-                      <Phone className="w-4 h-4 mr-1" />
-                      Llamar Técnico
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={`tel:${service.technician.phone}`}>
+                        <Phone className="w-4 h-4 mr-1" />
+                        Llamar Técnico
+                      </a>
                     </Button>
 
-                    <Button variant="outline" size="sm">
-                      <MessageSquare className="w-4 h-4 mr-1" />
-                      Mensajes
+                    <Button variant="outline" size="sm" asChild>
+                      <a href="/customer/messages">
+                        <MessageSquare className="w-4 h-4 mr-1" />
+                        Mensajes
+                      </a>
                     </Button>
-
-                    {service.status === 'in_progress' && (
-                      <Button variant="outline" size="sm">
-                        <Navigation className="w-4 h-4 mr-1" />
-                        Ubicación en Vivo
-                      </Button>
-                    )}
 
                     {(service.status === 'scheduled' ||
                       service.status === 'confirmed') && (

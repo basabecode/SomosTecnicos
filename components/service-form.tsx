@@ -63,7 +63,7 @@ const electrodomesticos = [
   {
     id: 'televisor',
     label: 'Televisor',
-    image: '/img_3d/tecnico_revisando_televisor_lcd.PNG',
+    image: '/electrodomesticos/tv lg uhd.jpg',
     description: 'LED, LCD, Smart TV y 4K'
   }
 ]

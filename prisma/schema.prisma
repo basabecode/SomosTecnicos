@@ -60,6 +60,7 @@ model Order {
   notifications         Notification[]
   customer              Customer?         @relation(fields: [customerId], references: [id])
   invoices              Invoice[]
+  messages              Message[]
 
   // Índices
   @@index([estado])
@@ -95,6 +96,10 @@ model Technician {
   // Información Adicional
   fechaIngreso          DateTime @default(now()) @map("fecha_ingreso")
   ultimaActividad       DateTime @default(now()) @map("ultima_actividad")
+
+  // Aceptación de Términos y Condiciones
+  termsAcceptedAt       DateTime? @map("terms_accepted_at")
+  termsVersion          String?   @map("terms_version")
 
   // Timestamps
   createdAt             DateTime @default(now()) @map("created_at")
@@ -207,6 +212,11 @@ model Customer {
   isOnboarded  Boolean   @default(false) @map("is_onboarded") // Control de onboarding
   preferencias Json?
   lastLogin    DateTime? @map("last_login")
+
+  // Aceptación de Términos y Condiciones
+  termsAcceptedAt DateTime? @map("terms_accepted_at")
+  termsVersion    String?   @map("terms_version")
+
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
@@ -300,6 +310,10 @@ model AdminUser {
   preferencias    Json?     // Configuraciones de UI, notificaciones, etc.
   zona            String?   // Zona horaria preferida
   idioma          String    @default("es") // Idioma de la interfaz
+
+  // Aceptación de Términos y Condiciones
+  termsAcceptedAt DateTime? @map("terms_accepted_at")
+  termsVersion    String?   @map("terms_version")
 
   // Timestamps
   createdAt       DateTime  @default(now()) @map("created_at")
@@ -516,3 +530,46 @@ model TechnicianApplication {
   @@map("technician_applications")
 }
 
+
+// =============================================
+// MODELO DE MENSAJERÍA INTERNA
+// =============================================
+
+model Message {
+  id              String    @id @default(cuid())
+
+  // Relación con Orden (Opcional)
+  orderId         String?   @map("order_id")
+  order           Order?    @relation(fields: [orderId], references: [id])
+
+  // Remitente
+  senderId        String    @map("sender_id") // ID del usuario que envía
+  senderType      String    @map("sender_type") // 'admin', 'customer', 'technician'
+  senderName      String    @map("sender_name") // Para caché y mostrar rápido
+
+  // Destinatario
+  receiverId      String    @map("receiver_id") // ID del usuario que recibe
+  receiverType    String    @map("receiver_type") // 'admin', 'customer', 'technician'
+
+  // Contenido
+  subject         String?
+  content         String    @db.Text
+
+  // Metadatos
+  category        String    @default("general") // 'service', 'support', 'billing', 'general'
+  priority        String    @default("normal") // 'low', 'normal', 'high'
+  read            Boolean   @default(false)
+  readAt          DateTime? @map("read_at")
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Índices para búsquedas rápidas
+  @@index([senderId, senderType])
+  @@index([receiverId, receiverType])
+  @@index([orderId])
+  @@index([read])
+  @@index([createdAt])
+  @@map("messages")
+}

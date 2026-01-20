@@ -1,6 +1,8 @@
 'use client'
 
 import { Phone, Mail, Clock } from 'lucide-react'
+import Image from 'next/image'
+import { TermsLink } from './terms-link'
 
 /**
  * Footer - 3 columnas responsive
@@ -23,7 +25,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Columna 1: Logo y descripción */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">SomosTécnicos</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <Image
+                src="/img_3d/logo modificado.jpeg"
+                alt="SomosTécnicos"
+                width={56}
+                height={56}
+                className="object-contain w-14 h-14"
+              />
+              <h3 className="text-2xl font-bold text-white">SomosTécnicos</h3>
+            </div>
             <p className="text-gray-300 leading-relaxed">
               Servicio técnico profesional desde 2020. Reparación, instalación y
               mantenimiento de electrodomésticos a domicilio.
@@ -89,15 +100,23 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-gray-600 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
             <p>© 2025 SomosTécnicos. Todos los derechos reservados.</p>
-            <a
-              href="/admin-info"
-              className="mt-2 md:mt-0 text-gray-500 hover:text-gray-300 transition-colors duration-200 text-xs"
-              title="Información del Panel Administrativo"
-            >
-              Panel Administrativo
-            </a>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
+              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false} />
+              <span className="text-gray-600">•</span>
+              <button className="hover:text-gray-200 transition-colors">
+                Política de Privacidad
+              </button>
+              <span className="text-gray-600">•</span>
+              <a
+                href="/admin-info"
+                className="text-gray-500 hover:text-gray-300 transition-colors"
+                title="Información del Panel Administrativo"
+              >
+                Información y Funcionamiento
+              </a>
+            </div>
           </div>
         </div>
       </div>

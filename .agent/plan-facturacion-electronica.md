@@ -559,13 +559,13 @@ ${process.env.NEXT_PUBLIC_APP_URL}${invoice.pdfUrl}
 ## ✅ **Checklist de Implementación**
 
 ### Base de Datos
-- [ ] Crear modelo Invoice en Prisma
-- [ ] Ejecutar migración
-- [ ] Actualizar relaciones
+- [x] Crear modelo Invoice en Prisma
+- [x] Ejecutar migración
+- [x] Actualizar relaciones
 
 ### Backend
-- [ ] Implementar generador de números de factura
-- [ ] Implementar generador de PDF
+- [x] Implementar generador de números de factura
+- [x] Implementar generador de PDF
 - [ ] Crear API de generación de facturas
 - [ ] Crear API de envío de facturas
 - [ ] Implementar servicio de email
@@ -589,12 +589,12 @@ ${process.env.NEXT_PUBLIC_APP_URL}${invoice.pdfUrl}
 
 ## 🚀 **Orden de Implementación Recomendado**
 
-1. **Día 1:** Base de datos y modelo
-2. **Día 2:** Generador de PDF y números
-3. **Día 3:** API de generación
-4. **Día 4:** Envío por email
-5. **Día 5:** Interfaz de usuario
-6. **Día 6:** Testing y ajustes
+1. **Día 1:** Base de datos y modelo (✅ Completado)
+2. **Día 2:** Generador de PDF y números (✅ Completado - ver `lib/invoice`)
+3. **Día 3:** API de generación (🚧 Pendiente)
+4. **Día 4:** Envío por email (🚧 Pendiente)
+5. **Día 5:** Interfaz de usuario (🚧 Pendiente)
+6. **Día 6:** Testing y ajustes (🚧 Pendiente)
 
 ---
 
@@ -631,4 +631,5 @@ ${process.env.NEXT_PUBLIC_APP_URL}${invoice.pdfUrl}
 
 ---
 
-**¿Listo para comenzar la implementación?** 🚀
+**Estado Actual: En Progreso** 🚀
+El modelo de datos y las utilidades core (generador PDF) ya existen. Falta exponer la funcionalidad vía API y conectar la UI.

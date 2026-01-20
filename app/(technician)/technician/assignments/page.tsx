@@ -169,62 +169,7 @@ export default function TechnicianAssignmentsPage() {
         <h2 className="text-3xl font-bold tracking-tight">Mis Asignaciones</h2>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Asignadas
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{mockAssignments.length}</div>
-            <p className="text-xs text-muted-foreground">En mi lista</p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mockAssignments.filter(a => a.status === 'assigned').length}
-            </div>
-            <p className="text-xs text-muted-foreground">Por iniciar</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En Progreso</CardTitle>
-            <PlayCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mockAssignments.filter(a => a.status === 'in_progress').length}
-            </div>
-            <p className="text-xs text-muted-foreground">Trabajando ahora</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Urgentes</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {mockAssignments.filter(a => a.priority === 'urgent').length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Atención prioritaria
-            </p>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Filters */}
       <Card>

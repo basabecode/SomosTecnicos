@@ -52,6 +52,7 @@ import {
   Wrench,
   Calendar
 } from 'lucide-react'
+import Image from 'next/image'
 
 // ============================================================================
 // INTERFACES Y TIPOS
@@ -707,7 +708,13 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
           <div className="flex items-center justify-between">
             {/* Título y estado */}
             <div className="flex items-center space-x-2">
-              <Bot className="h-5 w-5" />
+              <Image
+                src="/img_3d/logo modificado.jpeg"
+                alt="SomosTécnicos"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
               <div>
                 <CardTitle className="text-sm font-medium">
                   Asistente IA SomosTécnicos

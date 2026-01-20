@@ -37,6 +37,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { TermsModal } from '@/components/terms-modal'
+import { TERMS_VERSION } from '@/lib/terms-and-conditions'
 
 // Ciudades principales de Colombia
 const CIUDADES = [
@@ -98,6 +100,9 @@ const step2Schema = z.object({
 
 const step3Schema = z.object({
   electrodomesticos: z.array(z.string()).min(1, 'Selecciona al menos un electrodoméstico'),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: 'Debes aceptar los términos y condiciones para continuar',
+  }),
 })
 
 type Step1Data = z.infer<typeof step1Schema>
@@ -109,6 +114,7 @@ export default function CustomerRegistrationPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showTermsModal, setShowTermsModal] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -150,6 +156,7 @@ export default function CustomerRegistrationPage() {
     resolver: zodResolver(step3Schema),
     defaultValues: {
       electrodomesticos: formData.electrodomesticos,
+      acceptTerms: false,
     },
   })
 
@@ -174,6 +181,8 @@ export default function CustomerRegistrationPage() {
       ...data,
       username: formData.email.split('@')[0], // Generar username del email
       isOnboarded: true, // Marcar como onboarded
+      termsVersion: TERMS_VERSION,
+      termsAcceptedAt: new Date().toISOString(),
     }
 
     try {
@@ -551,6 +560,39 @@ export default function CustomerRegistrationPage() {
                     )}
                   </div>
 
+                  {/* Términos y Condiciones */}
+                  <div className="border-t pt-4 space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="acceptTerms"
+                        checked={form3.watch('acceptTerms')}
+                        onCheckedChange={(checked) => form3.setValue('acceptTerms', checked as boolean)}
+                      />
+                      <div className="flex-1">
+                        <label
+                          htmlFor="acceptTerms"
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          Acepto los{' '}
+                          <button
+                            type="button"
+                            onClick={() => setShowTermsModal(true)}
+                            className="text-[#A50034] hover:text-[#c9003f] underline font-semibold"
+                          >
+                            Términos y Condiciones
+                          </button>
+                          {' '}de uso de la plataforma *
+                        </label>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Al registrarte, aceptas que SomosTécnicos es una plataforma intermediaria y que los técnicos son profesionales independientes.
+                        </p>
+                      </div>
+                    </div>
+                    {form3.formState.errors.acceptTerms && (
+                      <p className="text-sm text-red-600">{form3.formState.errors.acceptTerms.message}</p>
+                    )}
+                  </div>
+
                   {error && (
                     <Alert variant="destructive" className="bg-red-50 border-red-200">
                       <AlertCircle className="h-4 w-4" />
@@ -602,6 +644,13 @@ export default function CustomerRegistrationPage() {
           </p>
         </div>
       </div>
+
+      {/* Modal de Términos y Condiciones */}
+      <TermsModal
+        open={showTermsModal}
+        onOpenChange={setShowTermsModal}
+        mode="view"
+      />
     </div>
   )
 }

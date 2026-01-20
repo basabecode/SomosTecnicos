@@ -12,13 +12,13 @@ async function main() {
   console.log('🌱 Iniciando siembra de datos...')
 
   try {
-  // =============================================
-  // 1. CREAR USUARIO ADMINISTRADOR POR DEFECTO
-  // =============================================
+    // =============================================
+    // 1. CREAR USUARIO ADMINISTRADOR POR DEFECTO
+    // =============================================
     console.log('👤 Creando usuario administrador...')
 
-    const adminEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@servicio-tecnico.com'
-    const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin123!'
+    const adminEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin.demo@tecnocity.com'
+    const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || '123456'
     const adminName = process.env.DEFAULT_ADMIN_NAME || 'Administrador Principal'
 
     // Verificar si ya existe el admin
@@ -62,33 +62,33 @@ async function main() {
     const customersData = [
       {
         username: 'cliente.demo',
-        email: 'cliente.demo@somostecnicos.com',
+        email: 'cliente.demo@tecnocity.com',
         nombre: 'Camila',
         apellido: 'Suárez',
         telefono: '3005557788',
         direccion: 'Carrera 45 #12-34',
         ciudad: 'Bogotá',
-        password: process.env.DEFAULT_CUSTOMER_PASSWORD || 'Cliente123!'
+        password: '123456'
       },
       {
         username: 'cliente.vip',
-        email: 'cliente.vip@somostecnicos.com',
+        email: 'cliente.vip@tecnocity.com',
         nombre: 'Esteban',
         apellido: 'Mejía',
         telefono: '3106668899',
         direccion: 'Calle 98 #23-45',
         ciudad: 'Medellín',
-        password: process.env.DEFAULT_CUSTOMER_PASSWORD || 'Cliente123!'
+        password: '123456'
       },
       {
         username: 'cliente.norte',
-        email: 'cliente.norte@somostecnicos.com',
+        email: 'cliente.norte@tecnocity.com',
         nombre: 'Daniela',
         apellido: 'Gómez',
         telefono: '3207779900',
         direccion: 'Transversal 25 #45-12',
         ciudad: 'Barranquilla',
-        password: process.env.DEFAULT_CUSTOMER_PASSWORD || 'Cliente123!'
+        password: '123456'
       }
     ]
 
@@ -295,12 +295,14 @@ async function main() {
       {
         nombre: 'Carlos Mendoza',
         telefono: '3151234567',
-        email: 'carlos.mendoza@servicio.com',
+        email: 'tecnico.demo@tecnocity.com', // Updated alias for login demo
         cedula: '12345678',
         especialidades: ['nevera', 'congelador', 'aire_acondicionado'],
         zonaTrabajoArea: 'Zona Norte',
         ordenesCompletadas: 45,
-        calificacionPromedio: 4.9
+        calificacionPromedio: 4.9,
+        // Optional: Adding password for AdminUser creation
+        loginAccess: true
       },
       {
         nombre: 'María Rodriguez',
@@ -345,15 +347,40 @@ async function main() {
     ]
 
     for (const tech of technicians) {
+      // 1. Create Technician Profile
       const existing = await prisma.technician.findUnique({
         where: { email: tech.email }
       })
 
       if (!existing) {
+        const { loginAccess, ...techData } = tech;
         await prisma.technician.create({
-          data: tech
+          data: techData
         })
         console.log(`✅ Técnico creado: ${tech.nombre}`)
+      }
+
+      // 2. Create Login Account (AdminUser) if needed for this technician
+      // We only strictly need it for the demo technician
+      if (tech.loginAccess) {
+         const existingAdminTech = await prisma.adminUser.findUnique({
+            where: { email: tech.email }
+         })
+
+         if (!existingAdminTech) {
+            const techPassword = await bcrypt.hash('123456', 12);
+            await prisma.adminUser.create({
+                data: {
+                    username: tech.email.split('@')[0],
+                    email: tech.email,
+                    passwordHash: techPassword,
+                    nombre: tech.nombre,
+                    role: 'technician',
+                    activo: true
+                }
+            })
+            console.log(`✅ Cuenta de login creada para técnico: ${tech.email}`)
+         }
       }
     }
 

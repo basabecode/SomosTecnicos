@@ -7,11 +7,13 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { NotificationProvider as InternalToastProvider } from '@/components/notifications/notification-system-simple'
 import { NotificationProvider } from '@/contexts/notification-context'
 import { Toaster } from '@/components/ui/toaster'
+import { TermsEnforcer } from '@/components/terms-enforcer'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://somostecnicos.co'), // Set base URL for metadata resolution
   title: {
     default: 'SomosTécnicos | Servicio Técnico a Domicilio',
     template: '%s | SomosTécnicos',
@@ -44,9 +46,9 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   icons: {
-    icon: '/img_3d/somos_tecnicos_favicon.jpeg',
-    shortcut: '/img_3d/somos_tecnicos_favicon.jpeg',
-    apple: '/img_3d/somos_tecnicos_favicon.jpeg',
+    icon: '/img_3d/logo modificado.jpeg',
+    shortcut: '/img_3d/logo modificado.jpeg',
+    apple: '/img_3d/logo modificado.jpeg',
   },
 }
 
@@ -61,7 +63,9 @@ export default function RootLayout({
         <ClientAuthProvider>
           <NotificationProvider>
             <InternalToastProvider>
-              <Suspense fallback={null}>{children}</Suspense>
+              <TermsEnforcer>
+                <Suspense fallback={null}>{children}</Suspense>
+              </TermsEnforcer>
             </InternalToastProvider>
           </NotificationProvider>
         </ClientAuthProvider>

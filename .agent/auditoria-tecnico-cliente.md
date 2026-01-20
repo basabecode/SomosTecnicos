@@ -33,13 +33,13 @@ El panel de técnico presenta una implementación robusta. La navegación es fun
 
 ## 👤 2. Panel de Cliente (`/customer`)
 
-### Estado General: ⚠️ FUNCIONALIDAD VISUAL (Datos Simulados)
-El panel de cliente tiene una estructura de navegación completa y sólida (todas las rutas existen). Sin embargo, el **Dashboard Principal muestra datos estáticos (hardcoded)** en lugar de las órdenes reales del usuario. Aunque el componente de "Rastreo de Orden" funciona, el resumen de "Servicios Activos" es ficticio.
+### Estado General: ✅ SALUDABLE
+El panel de cliente ahora cuenta con integración real de datos en el dashboard principal. Se ha reemplazado la data estática por consultas a la API `/api/orders`, permitiendo al cliente ver sus servicios activos e historial real.
 
 ### 🧭 Mapeo de Navegación
 | Ítem de Menú | Ruta Destino | Estado | Observación |
 | :--- | :--- | :--- | :--- |
-| **Dashboard** | `/customer/dashboard` | ✅ **[FUNCIONAL]** | Datos estáticos. |
+| **Dashboard** | `/customer/dashboard` | ✅ **[FUNCIONAL]** | Conectado a API. |
 | **Mis Servicios** | `/customer/services` | ✅ **[FUNCIONAL]** | Ruta existe. |
 | **Solicitar Servicio** | `/customer/request` | ✅ **[FUNCIONAL]** | Flujo completo. |
 | **Historial** | `/customer/history` | ✅ **[FUNCIONAL]** | Ruta existe. |
@@ -47,21 +47,17 @@ El panel de cliente tiene una estructura de navegación completa y sólida (toda
 | **Mensajes** | `/customer/messages` | ✅ **[FUNCIONAL]** | Ruta existe. |
 
 ### 🔍 Análisis de Integridad de Datos (Dashboard)
-*   **Servicios Activos:** ❌ **[DATOS_ESTÁTICOS]**. Array `activeServices` hardcodeado en `page.tsx`. No refleja la BD.
-*   **Servicios Recientes:** ❌ **[DATOS_ESTÁTICOS]**. Array `recentServices` hardcodeado.
-*   **Promociones:** ⚠️ **[DATOS_ESTÁTICOS]**. Array hardcodeado (aceptable para MVP).
-*   **Rastreo de Orden:** ✅ **[FUNCIONAL]**. Componente `OrderTrackingDashboard` sí conecta a API.
+*   **Servicios Activos:** ✅ **[FUNCIONAL]**. Se obtienen dinámicamente vía `fetch /api/orders`.
+*   **Servicios Recientes:** ✅ **[FUNCIONAL]**. Filtrados correctamente del historial de órdenes.
+*   **Promociones:** ⚠️ **[DATOS_ESTÁTICOS]**. Array hardcodeado (aceptable para MVP, se sugiere CMS futuro).
+*   **Rastreo de Orden:** ✅ **[FUNCIONAL]**. Componente `OrderTrackingDashboard` conecta a API.
 
 ---
 
 ## 📋 Recomendaciones Prioritarias
 
-1.  **Conectar Dashboard Cliente a API:**
-    *   Crear endpoint `/api/customer/stats` o reutilizar `/api/orders` filtrando por `customerId`.
-    *   Reemplazar el array estático `activeServices` en `/app/customer/dashboard/page.tsx` por un `fetch` real, similar a como se hizo en el panel de Técnico.
-
-2.  **Mejorar "Reportar Incidencia" (Técnico):**
-    *   Sustituir el `alert()` por un modal simple o redirigir a un formulario de contacto/soporte técnico.
+1.  **Mejorar "Reportar Incidencia" (Técnico):**
+    *   Sustituir el `alert()` actual por un modal o formulario de contacto real.
 
 ---
 **Fin del Reporte**

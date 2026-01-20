@@ -69,7 +69,12 @@ export default function TechnicianDashboard() {
     setLoading(true)
     setError('')
     try {
-      const response = await fetch('/api/technicians/me/assignments')
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch('/api/technicians/me/assignments', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       const data = await response.json()
 
       if (data.success) {
@@ -90,10 +95,14 @@ export default function TechnicianDashboard() {
   // Función para actualizar estado
   const updateStatus = async (assignmentId: number, orderId: string, newStatus: string) => {
     try {
+      const token = localStorage.getItem('accessToken')
       // Usar endpoint de asignación para cambiar estado
       const response = await fetch(`/api/technicians/me/assignments/${assignmentId}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({ status: newStatus })
       })
 

@@ -47,6 +47,7 @@ import {
   Flame,
   Droplets,
   Settings,
+  ArrowUp,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -153,7 +154,6 @@ export default function RequestServicePage() {
   const [selectedPriority, setSelectedPriority] = useState('media') // Default updated to spanish
 
   const [description, setDescription] = useState('')
-  const [images, setImages] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [serviceRequestNumber, setServiceRequestNumber] = useState('')
@@ -164,18 +164,6 @@ export default function RequestServicePage() {
   const totalCost = selectedServiceData
     ? selectedServiceData.basePrice + (selectedPriorityData?.surcharge || 0)
     : 0
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files) {
-      const newImages = Array.from(files).slice(0, 3 - images.length)
-      setImages(prev => [...prev, ...newImages])
-    }
-  }
-
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index))
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -197,10 +185,13 @@ export default function RequestServicePage() {
     setIsSubmitting(true)
 
     try {
+      const token = localStorage.getItem('accessToken')
+
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           // Información del Cliente
@@ -238,7 +229,6 @@ export default function RequestServicePage() {
       setSelectedTime('')
       setSelectedPriority('medium')
       setDescription('')
-      setImages([])
 
     } catch (error) {
       console.error('Error submitting order:', error)
@@ -250,6 +240,10 @@ export default function RequestServicePage() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -342,49 +336,6 @@ export default function RequestServicePage() {
                   className="min-h-[100px] mt-2"
                   required
                 />
-              </div>
-
-              {/* Image Upload */}
-              <div>
-                <Label>Fotos del Problema (Opcional)</Label>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Sube hasta 3 fotos para ayudar al técnico a entender mejor el
-                  problema
-                </p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <div className="flex flex-wrap gap-2">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index + 1}`}
-                        className="w-20 h-20 object-cover rounded-lg border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                  {images.length < 3 && (
-                    <label
-                      htmlFor="image-upload"
-                      className="w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
-                    >
-                      <Camera className="w-6 h-6 text-muted-foreground" />
-                    </label>
-                  )}
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -616,6 +567,15 @@ export default function RequestServicePage() {
           </p>
         </div>
       </form>
+
+      {/* Scroll to Top Button */}
+      <Button
+        onClick={scrollToTop}
+        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg z-50 bg-primary hover:bg-primary/90"
+        size="icon"
+      >
+        <ArrowUp className="h-6 w-6" />
+      </Button>
 
       {/* Success Modal */}
       <Dialog open={isSuccessModalOpen} onOpenChange={setIsSuccessModalOpen}>

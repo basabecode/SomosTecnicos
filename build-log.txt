@@ -1,0 +1,44 @@
+
+> somos-tecnicos@0.1.0 build C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA
+> prisma generate && next build
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+Ô£ö Generated Prisma Client (v6.17.0) to .\node_modules\.pnpm\@prisma+client@6.17.0_prism_9cd274e8275800995647dd1d52e36ba9\node_modules\@prisma\client in 192ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+   Ôû▓ Next.js 15.2.4
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/65) ...
+ ÔÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ ÔÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ ÔÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+   Generating static pages (16/65) 
+Error occurred prerendering page "/". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: Cannot read properties of undefined (reading 'entryCSSFiles')
+    at tV (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:129:2534)
+    at Z.preloadCallbacks (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:129:5839)
+    at t8 (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:129:6577)
+    at C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:129:4764
+    at C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\server\lib\trace\tracer.js:169:36
+    at NoopContextManager.with (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\compiled\@opentelemetry\api\index.js:1:18854)
+    at C:\Users\Usuario\Desktop\Servicio_tecnico\tienda_servicio_nueva_moderna_IA\node_modules\.pnpm\next@15.2.4_@playwright+tes_e59e2ff435d2d0252e2ffbb5638bc941\node_modules\next\dist\server\lib\trace\tracer.js:151:103
+Export encountered an error on /(public)/page: /, exiting the build.
+ Ô¿» Next.js build worker exited with code: 1 and signal: null
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.

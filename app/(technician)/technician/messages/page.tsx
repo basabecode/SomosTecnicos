@@ -54,7 +54,7 @@ interface Message {
   }
 }
 
-export default function CustomerMessages() {
+export default function TechnicianMessages() {
   const { user } = useAuth()
   const searchParams = useSearchParams()
 
@@ -215,13 +215,13 @@ export default function CustomerMessages() {
   return (
     <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mensajes</h1>
-          <p className="text-gray-600 mt-2">Centro de comunicación</p>
+          <h1 className="text-3xl font-bold text-gray-900">Mis Mensajes</h1>
+          <p className="text-gray-600 mt-2">Comunicación con clientes y soporte</p>
         </div>
-        <Button onClick={() => alert('Próximamente: Iniciar nueva conversación')}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => alert('Para nuevos mensajes, por favor contacte a soporte o use el chat de la orden.')}>
+          <Plus className="mr-2 h-4 w-4" />
           Nuevo Mensaje
         </Button>
       </div>

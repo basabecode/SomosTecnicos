@@ -34,6 +34,7 @@ import {
   Wrench,
   Calendar,
   FileText,
+  Mail,
 } from 'lucide-react'
 
 interface SidebarItem {
@@ -49,6 +50,11 @@ const sidebarItems: SidebarItem[] = [
     title: 'Dashboard',
     href: '/admin/dashboard',
     icon: Home,
+  },
+  {
+    title: 'Mensajes',
+    href: '/admin/messages',
+    icon: Mail,
   },
   {
     title: 'Órdenes',
@@ -96,9 +102,14 @@ const sidebarItems: SidebarItem[] = [
   },
 ]
 
+import Image from 'next/image'
+
+// ... imports ...
+
 function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname()
   const [expandedItems, setExpandedItems] = useState<string[]>([])
+  const { logout } = useAuth()
 
   const toggleExpanded = (title: string) => {
     setExpandedItems(prev =>
@@ -116,11 +127,16 @@ function Sidebar({ className }: { className?: string }) {
     <div className={`pb-12 ${className}`}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <div className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-[#A50034] rounded-lg flex items-center justify-center mr-3">
-              <Wrench className="w-5 h-5 text-white" />
-            </div>
-            <h2 className="text-lg font-semibold">TecnoCity Admin</h2>
+          {/* Branding */}
+          <div className="flex items-center space-x-2 px-2 mb-6">
+            <Image
+                src="/img_3d/somos_tecnicos.png"
+                alt="SomosTécnicos"
+                width={80}
+                height={80}
+                className="h-12 w-auto object-contain"
+                priority
+            />
           </div>
 
           {/* Botón para regresar al inicio */}
@@ -136,6 +152,7 @@ function Sidebar({ className }: { className?: string }) {
           <div className="space-y-1">
             {sidebarItems.map(item => (
               <div key={item.title}>
+                {/* ... existing map content ... */}
                 {item.children ? (
                   <>
                     <Button
@@ -199,6 +216,16 @@ function Sidebar({ className }: { className?: string }) {
                 )}
               </div>
             ))}
+
+            {/* Logout Button */}
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 mt-4"
+              onClick={logout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Cerrar Sesión
+            </Button>
           </div>
         </div>
       </div>

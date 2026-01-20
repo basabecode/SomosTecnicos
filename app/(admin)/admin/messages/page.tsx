@@ -54,7 +54,7 @@ interface Message {
   }
 }
 
-export default function CustomerMessages() {
+export default function AdminMessages() {
   const { user } = useAuth()
   const searchParams = useSearchParams()
 
@@ -215,13 +215,13 @@ export default function CustomerMessages() {
   return (
     <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mensajes</h1>
-          <p className="text-gray-600 mt-2">Centro de comunicación</p>
+          <h1 className="text-3xl font-bold text-gray-900">Buzón de Administración</h1>
+          <p className="text-gray-600 mt-2">Gestión de comunicaciones</p>
         </div>
-        <Button onClick={() => alert('Próximamente: Iniciar nueva conversación')}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => alert('Función de nuevo mensaje próximamente')}>
+          <Plus className="mr-2 h-4 w-4" />
           Nuevo Mensaje
         </Button>
       </div>
@@ -232,6 +232,7 @@ export default function CustomerMessages() {
           {/* Controls */}
           <Card>
             <CardContent className="p-4 space-y-4">
+               {/* Search Block was here in original, I am assuming structure match */}
                <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input

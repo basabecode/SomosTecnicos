@@ -7,6 +7,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { ProtectedRoute, useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -27,9 +28,12 @@ import {
   LogOut,
   Wrench,
   Calendar,
+  Mail,
 } from 'lucide-react'
 import { BottomNav } from '@/components/navigation/bottom-nav'
 import { NotificationBell } from '@/components/navigation/notification-bell'
+import { TermsLink } from '@/components/terms-link'
+import { FileText } from 'lucide-react'
 
 // Navigation items for technician sidebar
 const sidebarItems = [
@@ -42,6 +46,11 @@ const sidebarItems = [
     title: 'Mis Asignaciones',
     href: '/technician/assignments',
     icon: ClipboardList,
+  },
+  {
+    title: 'Mensajes',
+    href: '/technician/messages',
+    icon: Mail,
   },
   {
     title: 'Calendario',
@@ -63,6 +72,7 @@ const sidebarItems = [
 // Mobile Navigation Items
 const mobileNavItems = [
     { label: 'Inicio', href: '/technician/dashboard', icon: Home },
+    { label: 'Mensajes', href: '/technician/messages', icon: Calendar },
     { label: 'Asignaciones', href: '/technician/assignments', icon: ClipboardList },
     { label: 'Historial', href: '/technician/history', icon: History },
     { label: 'Config', href: '/technician/settings', icon: Settings },
@@ -110,6 +120,15 @@ export default function TechnicianLayout({
           </Link>
         )
       })}
+
+      {/* Logout Button as a Nav Item */}
+      <button
+        onClick={handleLogout}
+        className="flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        <LogOut className="h-4 w-4" />
+        <span>Cerrar Sesión</span>
+      </button>
     </>
   )
 
@@ -122,7 +141,13 @@ export default function TechnicianLayout({
             {/* Logo/Brand */}
             <div className="flex items-center flex-shrink-0 px-4">
               <div className="flex items-center gap-2">
-                <Wrench className="h-8 w-8 text-blue-600" />
+                <Image
+                  src="/img_3d/logo modificado.jpeg"
+                  alt="SomosTécnicos"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain"
+                />
                 <span className="text-xl font-bold text-gray-900">
                   Portal Técnico
                 </span>
@@ -148,16 +173,11 @@ export default function TechnicianLayout({
               <NavItems />
             </nav>
 
-            {/* Logout Button */}
-            <div className="p-4">
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Cerrar Sesión
-              </Button>
+            {/* Terms at the bottom */}
+            <div className="p-4 mt-auto">
+              <div className="text-xs text-center">
+                 <TermsLink variant="link" className="text-xs text-muted-foreground hover:text-primary justify-center w-full" />
+              </div>
             </div>
           </div>
         </div>
@@ -168,9 +188,13 @@ export default function TechnicianLayout({
             <div className="flex items-center justify-between h-10">
               {/* Mobile Brand */}
               <div className="flex items-center md:hidden">
-                 <div className="bg-primary/10 p-1.5 rounded-lg mr-2">
-                    <Wrench className="h-5 w-5 text-primary" />
-                 </div>
+                 <Image
+                   src="/img_3d/logo modificado.jpeg"
+                   alt="SomosTécnicos"
+                   width={40}
+                   height={40}
+                   className="h-10 w-10 object-contain mr-2"
+                 />
                  <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                     SomosTécnicos Técnico
                  </span>
@@ -212,6 +236,12 @@ export default function TechnicianLayout({
                        >
                          <Settings className="mr-2 h-4 w-4" />
                          <span>Configuración</span>
+                       </DropdownMenuItem>
+                       <DropdownMenuSeparator />
+                       <DropdownMenuItem asChild>
+                         <div className="w-full cursor-pointer">
+                           <TermsLink variant="link" className="flex items-center text-sm w-full" showIcon={true} />
+                         </div>
                        </DropdownMenuItem>
                        <DropdownMenuSeparator />
                        <DropdownMenuItem onClick={handleLogout}>

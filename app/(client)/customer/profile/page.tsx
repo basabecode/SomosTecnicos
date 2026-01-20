@@ -24,7 +24,6 @@ import {
   Calendar,
   Edit2,
   Save,
-  Camera,
   Star,
   CheckCircle,
   History,
@@ -37,8 +36,8 @@ export default function CustomerProfile() {
     nombre: user?.nombre || '',
     apellido: user?.apellido || '',
     email: user?.email || '',
-    phone: user?.phone || '+57 300 123 4567',
-    address: user?.address || 'Calle 123 #45-67, Bogotá',
+    phone: (user as any)?.phone || '+57 300 123 4567',
+    address: (user as any)?.address || 'Calle 123 #45-67, Bogotá',
   })
 
   const handleInputChange = (field: string, value: string) => {
@@ -59,8 +58,8 @@ export default function CustomerProfile() {
       nombre: user?.nombre || '',
       apellido: user?.apellido || '',
       email: user?.email || '',
-      phone: user?.phone || '+57 300 123 4567',
-      address: user?.address || 'Calle 123 #45-67, Bogotá',
+      phone: (user as any)?.phone || '+57 300 123 4567',
+      address: (user as any)?.address || 'Calle 123 #45-67, Bogotá',
     })
     setIsEditing(false)
   }
@@ -105,14 +104,8 @@ export default function CustomerProfile() {
                       {formData.nombre} {formData.apellido}
                     </CardTitle>
                     <CardDescription>{formData.email}</CardDescription>
-                    <Badge variant="outline" className="mt-2">
-                      Cliente Premium
-                    </Badge>
                   </div>
                 </div>
-                <Button variant="outline" size="icon">
-                  <Camera className="h-4 w-4" />
-                </Button>
               </div>
             </CardHeader>
           </Card>

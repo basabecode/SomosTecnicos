@@ -15,7 +15,7 @@ export default function FAQ() {
     {
       question: "¿Cuál es el costo del servicio?",
       answer:
-        "El costo del arreglo varía según el tipo de electrodoméstico, complejidad y repuesto requerido. Visita técnica para revisión del electrodoméstico y diagnóstico: 50 mil pesos.",
+        "El costo del arreglo varía según el tipo de electrodoméstico, complejidad y repuesto requerido. Visita técnica para revisión del electrodoméstico y diagnóstico: 50 mil pesos dentro de la ciudad, este dinero es abonable al total de la reparación.",
     },
     {
       question: "¿Cuánto tiempo tarda la reparación?",
@@ -31,7 +31,7 @@ export default function FAQ() {
     },
     {
       question: "¿Cómo puedo pagar?",
-      answer: "Efectivo y transferencias banacarias.",
+      answer: "Efectivo y transferencias bancarias.",
     },
   ]
 

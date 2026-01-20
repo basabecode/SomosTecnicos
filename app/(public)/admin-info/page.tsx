@@ -1,15 +1,10 @@
 /**
- * Página de Información del Panel Administrativo
- * Información sobre las funcionalidades del sistema para administradores
+ * Página de Información del Sistema
+ * Explicación pública de la arquitectura y flujo operativo
  */
 
 import Link from 'next/link'
 import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Gestión Administrativa y Reportes',
-  description: 'Conoce las herramientas de gestión de SomosTécnicos: Dashboard, control de técnicos, reportes avanzados y seguimiento operativo.',
-}
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -20,314 +15,243 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
-  BarChart3,
-  Users,
-  ClipboardList,
-  Settings,
-  Shield,
-  Activity,
   ArrowLeft,
-  LogIn,
-  Eye,
-  Edit,
-  FileText,
-  PieChart,
-  TrendingUp,
-  UserCheck,
+  Users,
+  Settings,
   Wrench,
+  Smartphone,
+  ShieldCheck,
+  Zap,
+  Layout,
+  ArrowRight,
+  Database
 } from 'lucide-react'
 
+export const metadata: Metadata = {
+  title: 'Cómo Funciona | SomosTécnicos',
+  description: 'Descubre cómo funciona nuestra plataforma de gestión de servicios técnicos.',
+}
+
 export default function AdminInfoPage() {
-  const features = [
+  const workflowSteps = [
     {
-      icon: BarChart3,
-      title: 'Dashboard Principal',
-      description:
-        'Métricas en tiempo real, estadísticas de órdenes, ingresos y rendimiento del equipo.',
+      role: 'Cliente',
+      icon: Users,
+      action: 'Solicita Servicio',
+      description: 'El cliente registra su solicitud vía web o móvil, indicando el tipo de electrodoméstico y la falla.',
       color: 'bg-blue-100 text-blue-600',
     },
     {
-      icon: ClipboardList,
-      title: 'Gestión de Órdenes',
-      description:
-        'Lista completa, filtros avanzados, seguimiento de estados y asignación de técnicos.',
-      color: 'bg-green-100 text-green-600',
+      role: 'Plataforma',
+      icon: Database,
+      action: 'Procesamiento',
+      description: 'El sistema recibe la orden, valida la cobertura y notifica al panel administrativo.',
+      color: 'bg-indigo-100 text-indigo-600',
     },
     {
-      icon: Users,
-      title: 'Administración de Técnicos',
-      description:
-        'Gestión del equipo, disponibilidad, especialidades y rendimiento individual.',
+      role: 'Administrador',
+      icon: Layout,
+      action: 'Asignación',
+      description: 'El admin verifica disponibilidad y asigna al técnico más cercano y capacitado.',
       color: 'bg-purple-100 text-purple-600',
     },
     {
-      icon: PieChart,
-      title: 'Reportes y Análisis',
-      description:
-        'Informes detallados, análisis geográfico, tendencias y métricas de negocio.',
-      color: 'bg-orange-100 text-orange-600',
-    },
-    {
-      icon: Shield,
-      title: 'Control de Acceso',
-      description:
-        'Sistema de roles y permisos para diferentes niveles de administración.',
-      color: 'bg-red-100 text-red-600',
-    },
-    {
-      icon: Activity,
-      title: 'Monitoreo en Tiempo Real',
-      description:
-        'Seguimiento en vivo de órdenes activas, técnicos disponibles y alertas.',
-      color: 'bg-indigo-100 text-indigo-600',
-    },
-  ]
-
-  const roles = [
-    {
-      name: 'Super Administrador',
-      description: 'Acceso completo a todas las funcionalidades del sistema',
-      permissions: [
-        'Gestión completa de órdenes',
-        'Administración de técnicos',
-        'Reportes avanzados',
-        'Configuración del sistema',
-      ],
-      badge: 'bg-red-100 text-red-800',
-    },
-    {
-      name: 'Administrador',
-      description: 'Gestión operativa del día a día',
-      permissions: [
-        'Gestión de órdenes',
-        'Asignación de técnicos',
-        'Reportes operativos',
-        'Seguimiento de rendimiento',
-      ],
-      badge: 'bg-blue-100 text-blue-800',
-    },
-    {
-      name: 'Manager de Técnicos',
-      description: 'Coordinación y supervisión del equipo técnico',
-      permissions: [
-        'Gestión de técnicos',
-        'Asignaciones',
-        'Reportes de equipo',
-        'Seguimiento de órdenes',
-      ],
-      badge: 'bg-green-100 text-green-800',
+      role: 'Técnico',
+      icon: Wrench,
+      action: 'Ejecución',
+      description: 'El técnico recibe la orden en su app, visita al cliente y realiza el servicio.',
+      color: 'bg-green-100 text-green-600',
     },
   ]
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/"
-                className="flex items-center text-gray-600 hover:text-gray-800"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Volver al inicio
-              </Link>
-            </div>
-            <Link href="/admin/login">
-              <Button className="bg-[#A50034] hover:bg-[#E74C3C]">
-                <LogIn className="mr-2 h-4 w-4" />
-                Iniciar Sesión
-              </Button>
+            <Link
+              href="/"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              <span className="font-medium">Volver al inicio</span>
             </Link>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-gray-500">
+                v1.0.0
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Panel Administrativo TecnoCity
+        <div className="text-center mb-16 space-y-4">
+          <Badge className="bg-[#A50034]/10 text-[#A50034] hover:bg-[#A50034]/20 border-none px-4 py-1.5 text-sm font-medium mb-4">
+            Arquitectura del Sistema
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+            Así Funciona <span className="text-[#A50034]">SomosTécnicos</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Sistema completo de gestión para servicios técnicos. Controla
-            órdenes, gestiona tu equipo y obtén insights detallados del
-            rendimiento de tu negocio.
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Una plataforma integral que conecta necesidades técnicas con soluciones profesionales, orquestada por tecnología moderna y eficiente.
           </p>
         </div>
 
-        {/* Funcionalidades Principales */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Funcionalidades Principales
+        {/* Flujograma Operativo (Organigrama) */}
+        <div className="mb-20">
+          <h2 className="text-2xl font-bold text-gray-900 mb-10 text-center flex items-center justify-center gap-2">
+            <Zap className="w-6 h-6 text-yellow-500" />
+            Flujo Operativo del Servicio
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon
-              return (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div
-                      className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center mb-4`}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-gray-600">
-                      {feature.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              )
-            })}
+
+          <div className="relative">
+            {/* Connecting Line (Desktop) */}
+            <div className="hidden lg:block absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 transform -translate-y-1/2 rounded-full" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {workflowSteps.map((step, index) => {
+                const Icon = step.icon
+                return (
+                  <div key={index} className="relative group">
+                    <Card className="h-full border-2 border-transparent hover:border-gray-200 transition-all duration-300 bg-white hover:shadow-xl relative z-10">
+                      <CardHeader className="text-center pb-2">
+                        <div
+                          className={`w-16 h-16 rounded-2xl ${step.color} flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300`}
+                        >
+                          <Icon className="h-8 w-8" />
+                        </div>
+                        <Badge variant="secondary" className="mb-2 w-fit mx-auto">
+                          Paso {index + 1}
+                        </Badge>
+                        <CardTitle className="text-lg font-bold text-gray-900">
+                          {step.role}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <h4 className="font-semibold text-gray-700 mb-2">
+                          {step.action}
+                        </h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                          {step.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Arrow for mobile/tablet flow */}
+                    {index < workflowSteps.length - 1 && (
+                      <div className="lg:hidden flex justify-center py-4 text-gray-300">
+                        <ArrowRight className="h-8 w-8 transform rotate-90 md:rotate-0" />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Tipos de Usuario */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Roles y Permisos
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {roles.map((role, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-lg">{role.name}</CardTitle>
-                    <Badge className={role.badge}>
-                      {role.name.split(' ')[0]}
-                    </Badge>
-                  </div>
-                  <CardDescription>{role.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <h4 className="font-semibold text-gray-900 mb-3">
-                    Permisos:
-                  </h4>
-                  <ul className="space-y-2">
-                    {role.permissions.map((permission, permIndex) => (
-                      <li key={permIndex} className="flex items-start">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        <span className="text-sm text-gray-600">
-                          {permission}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Capturas de Pantalla / Preview */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Vista Previa del Sistema
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BarChart3 className="mr-2 h-5 w-5 text-blue-600" />
-                  Dashboard Principal
-                </CardTitle>
-                <CardDescription>
-                  Vista general con métricas clave y acceso rápido
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 h-48 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <TrendingUp className="h-12 w-12 text-blue-600 mx-auto mb-2" />
-                    <p className="text-blue-800 font-medium">
-                      Dashboard Interactivo
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <ClipboardList className="mr-2 h-5 w-5 text-green-600" />
-                  Gestión de Órdenes
-                </CardTitle>
-                <CardDescription>
-                  Lista completa con filtros y gestión avanzada
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gradient-to-br from-green-50 to-emerald-100 h-48 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <FileText className="h-12 w-12 text-green-600 mx-auto mb-2" />
-                    <p className="text-green-800 font-medium">
-                      Control Total de Órdenes
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Credenciales de Demo */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-            🔑 Acceso de Demostración
-          </h2>
-          <div className="max-w-2xl mx-auto">
-            <p className="text-gray-600 mb-6 text-center">
-              Puedes probar el sistema usando cualquiera de estas credenciales
-              de demostración:
+        {/* Componentes del Sistema */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Componentes de la Plataforma
+            </h2>
+            <p className="text-lg text-gray-600">
+              Nuestro ecosistema digital se compone de tres pilares fundamentales que garantizan una operación fluida y transparente.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                <h3 className="font-semibold text-red-800 mb-2">Super Admin</h3>
-                <p className="text-sm text-red-600 font-mono">
-                  admin@servicio.com
-                </p>
-                <p className="text-sm text-red-600 font-mono">admin123</p>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:border-blue-100 transition-colors">
+                <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Aplicación de Cliente</h3>
+                  <p className="text-sm text-gray-600">Interfaz web progresiva (PWA) para solicitar servicios, rastrear técnicos y realizar pagos seguros.</p>
+                </div>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                <h3 className="font-semibold text-blue-800 mb-2">Manager</h3>
-                <p className="text-sm text-blue-600 font-mono">
-                  manager@servicio.com
-                </p>
-                <p className="text-sm text-blue-600 font-mono">manager123</p>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:border-purple-100 transition-colors">
+                <div className="p-3 rounded-lg bg-purple-50 text-purple-600">
+                  <Layout className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Panel Administrativo</h3>
+                  <p className="text-sm text-gray-600">Centro de control para gestionar órdenes, monitorear métricas y administrar la fuerza laboral técnica.</p>
+                </div>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <h3 className="font-semibold text-green-800 mb-2">Técnico</h3>
-                <p className="text-sm text-green-600 font-mono">
-                  tecnico@servicio.com
-                </p>
-                <p className="text-sm text-green-600 font-mono">tecnico123</p>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:border-green-100 transition-colors">
+                <div className="p-3 rounded-lg bg-green-50 text-green-600">
+                  <Wrench className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Portal Técnico</h3>
+                  <p className="text-sm text-gray-600">Herramienta especializada para que los técnicos gestionen su agenda, reporten avances y finalicen servicios.</p>
+                </div>
               </div>
             </div>
-            <div className="text-center">
-              <Link href="/admin/login">
-                <Button size="lg" className="bg-[#A50034] hover:bg-[#E74C3C]">
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Acceder al Panel Administrativo
-                </Button>
-              </Link>
+          </div>
+
+          <div className="relative">
+            {/* Visual Abstracta del Sistema (Estilo Nanobana/Organigrama Moderno) */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#A50034]/5 to-blue-500/5 rounded-3xl transform rotate-3 scale-105" />
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Settings className="w-32 h-32" />
+               </div>
+
+               <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                 <ShieldCheck className="w-5 h-5 text-green-500" />
+                 Estándares de Calidad
+               </h3>
+
+               <ul className="space-y-4 relative z-10">
+                 <li className="flex items-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-blue-500" />
+                   <span className="text-gray-700">Verificación rigurosa de técnicos</span>
+                 </li>
+                 <li className="flex items-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-green-500" />
+                   <span className="text-gray-700">Seguimiento GPS en tiempo real</span>
+                 </li>
+                 <li className="flex items-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-purple-500" />
+                   <span className="text-gray-700">Garantía de servicio digital</span>
+                 </li>
+                 <li className="flex items-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-orange-500" />
+                   <span className="text-gray-700">Pagos seguros y transparentes</span>
+                 </li>
+                 <li className="flex items-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-red-500" />
+                   <span className="text-gray-700">Soporte y mediación 24/7</span>
+                 </li>
+               </ul>
+
+               <div className="mt-8 pt-6 border-t border-gray-100">
+                 <p className="text-xs text-center text-gray-400 font-mono">
+                   Arquitectura Segura v1.0 • Encriptación SSL • Cloud Native
+                 </p>
+               </div>
             </div>
           </div>
         </div>
 
         {/* Footer Info */}
-        <div className="text-center text-gray-500">
-          <p className="mb-2">
-            TecnoCity - Sistema de Gestión de Servicios Técnicos
+        <div className="text-center border-t border-gray-200 pt-12">
+          <p className="text-gray-500 mb-4">
+            ¿Eres parte del equipo administrativo?
           </p>
-          <p className="text-sm">
-            Sistema completo con frontend cliente, panel administrativo y
-            backend funcional
-          </p>
+          <Link href="/admin/login">
+            <Button variant="outline" className="gap-2">
+              <Layout className="w-4 h-4" />
+              Acceso Restringido al Panel
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

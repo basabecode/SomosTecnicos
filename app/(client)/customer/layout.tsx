@@ -7,6 +7,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { ProtectedRoute, useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -32,6 +33,8 @@ import {
 } from 'lucide-react'
 import { BottomNav } from '@/components/navigation/bottom-nav'
 import { NotificationBell } from '@/components/navigation/notification-bell'
+import { TermsLink } from '@/components/terms-link'
+import { FileText } from 'lucide-react'
 
 // Navigation items for customer sidebar
 const sidebarItems = [
@@ -127,6 +130,14 @@ export default function CustomerLayout({
           </Link>
         )
       })}
+
+      <button
+        onClick={handleLogout}
+        className="flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        <LogOut className="h-4 w-4" />
+        <span>Cerrar Sesión</span>
+      </button>
     </>
   )
 
@@ -139,16 +150,21 @@ export default function CustomerLayout({
             {/* Logo/Brand */}
             <div className="flex items-center flex-shrink-0 px-4">
               <div className="flex items-center gap-2">
-                <Wrench className="h-8 w-8 text-blue-600" />
-                <span className="text-xl font-bold text-gray-900">
-                  Portal Cliente
-                </span>
+                <Image
+                  src="/img_3d/somos_tecnicos.png"
+                  alt="SomosTécnicos"
+                  width={80}
+                  height={80}
+                  className="h-12 w-auto object-contain"
+                  priority
+                />
               </div>
             </div>
 
             {/* User Info */}
             <div className="flex items-center px-4 py-3 mt-6 bg-gray-50 mx-4 rounded-lg">
-              <Avatar className="h-10 w-10">
+                {/* ... existing User Info content ... */}
+                <Avatar className="h-10 w-10">
                 <AvatarImage src={userData.avatar} alt={userData.name} />
                 <AvatarFallback>{userData.initials}</AvatarFallback>
               </Avatar>
@@ -165,16 +181,9 @@ export default function CustomerLayout({
               <NavItems />
             </nav>
 
-            {/* Logout Button */}
-            <div className="p-4">
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Cerrar Sesión
-              </Button>
+            {/* Footer: Terms */}
+            <div className="p-4 mt-auto">
+               <TermsLink variant="link" className="w-full justify-center text-xs text-muted-foreground h-auto p-0" />
             </div>
           </div>
         </div>
@@ -182,19 +191,25 @@ export default function CustomerLayout({
         {/* Main Content Area */}
         <div className="flex flex-col flex-1 overflow-hidden pb-16 md:pb-0">
           <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 px-4 py-3 md:px-6">
-            <div className="flex items-center justify-between h-10">
-              {/* Mobile Brand (only visible on mobile) */}
-              <div className="flex items-center md:hidden">
-                 <div className="bg-primary/10 p-1.5 rounded-lg mr-2">
-                    <Wrench className="h-5 w-5 text-primary" />
-                 </div>
-                 <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    Portal Cliente
-                 </span>
+            <div className="relative flex items-center justify-center h-10">
+              {/* Mobile Brand (Absolute Left) */}
+              <div className="absolute left-0 flex items-center md:hidden">
+                 <Image
+                   src="/img_3d/somos_tecnicos.png"
+                   alt="SomosTécnicos"
+                   width={40}
+                   height={40}
+                   className="h-10 w-10 object-contain"
+                 />
               </div>
 
-               {/* Navigation Actions (Notifications + User Menu) */}
-               <div className="flex items-center gap-2 ml-auto">
+              {/* Center Title */}
+              <h1 className="text-lg font-bold text-gray-900">
+                Portal Cliente
+              </h1>
+
+               {/* Navigation Actions (Absolute Right) */}
+               <div className="absolute right-0 flex items-center gap-2">
                  <NotificationBell />
 
                  {/* Desktop User Menu */}
@@ -235,6 +250,12 @@ export default function CustomerLayout({
                        >
                          <Settings className="mr-2 h-4 w-4" />
                          <span>Configuración</span>
+                       </DropdownMenuItem>
+                       <DropdownMenuSeparator />
+                       <DropdownMenuItem asChild>
+                         <div className="w-full cursor-pointer">
+                           <TermsLink variant="link" className="flex items-center text-sm w-full" showIcon={true} />
+                         </div>
                        </DropdownMenuItem>
                        <DropdownMenuSeparator />
                        <DropdownMenuItem onClick={handleLogout}>

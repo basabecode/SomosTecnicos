@@ -273,7 +273,7 @@ export default function ApplicationsPage() {
                   <SelectItem value="pendiente">Pendientes</SelectItem>
                   <SelectItem value="aprobado">Aprobadas</SelectItem>
                   <SelectItem value="rechazado">Rechazadas</SelectItem>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -315,7 +315,7 @@ export default function ApplicationsPage() {
             {filter === 'pendiente' && 'Solicitudes pendientes de revisión'}
             {filter === 'aprobado' && 'Solicitudes aprobadas'}
             {filter === 'rechazado' && 'Solicitudes rechazadas'}
-            {!filter && 'Todas las solicitudes'}
+            {(filter === 'all' || !filter) && 'Todas las solicitudes'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -325,7 +325,7 @@ export default function ApplicationsPage() {
             </div>
           ) : applications.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              No hay solicitudes {filter && `en estado "${filter}"`}
+              No hay solicitudes {filter && filter !== 'all' && `en estado "${filter}"`}
             </div>
           ) : (
             <div className="space-y-4">
