@@ -1,5 +1,5 @@
 /**
- * 📈 TecnoCity - Gráfico de Órdenes en el Tiempo
+ * 📈 SomosTécnicos - Gráfico de Órdenes en el Tiempo
  * =============================================
  *
  * Componente especializado para mostrar la evolución temporal de órdenes

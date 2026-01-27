@@ -1,5 +1,5 @@
 /**
- * 🥧 TecnoCity - Gráfico de Distribución de Servicios
+ * 🥧 SomosTécnicos - Gráfico de Distribución de Servicios
  * =================================================
  *
  * Componente especializado para mostrar distribución de tipos de servicio

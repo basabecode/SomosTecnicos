@@ -1,3 +1,4 @@
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
 # 🚀 Acceso al Panel Administrativo - Implementación Completa
 
 ## 📋 Problema Solucionado

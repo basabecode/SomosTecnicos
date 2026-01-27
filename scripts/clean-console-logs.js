@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 🧹 TecnoCity - Script de Limpieza de Console.logs
+ * 🧹 SomosTécnicos - Script de Limpieza de Console.logs
  * ================================================
  *
  * Remueve automáticamente console.log statements de producción

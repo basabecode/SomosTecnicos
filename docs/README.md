@@ -1,4 +1,4 @@
-# 🏢 TecnoCity - Documentación del Sistema
+# 🏢 SomosTécnicos - Documentación del Sistema
 
 Bienvenido a la base de conocimientos de **SomosTécnicos (TecnoCity)**. Este directorio contiene toda la información necesaria para el desarrollo, despliegue y operación de la plataforma.
 
@@ -36,5 +36,5 @@ pnpm db:studio      # Explorador de base de datos visual
 Para más detalles sobre la planificación a largo plazo, consulta el **[03-ROADMAP-Y-PENDIENTES.md](./03-ROADMAP-Y-PENDIENTES.md)**.
 
 ---
-_Mantenido por el equipo de desarrollo de TecnoCity._
+_Mantenido por el equipo de desarrollo de SomosTécnicos._
 

@@ -8,14 +8,18 @@ interface TermsLinkProps {
   variant?: 'link' | 'button'
   className?: string
   showIcon?: boolean
+  children?: React.ReactNode
 }
 
 export function TermsLink({
   variant = 'link',
   className = '',
-  showIcon = true
+  showIcon = true,
+  children
 }: TermsLinkProps) {
   const [isOpen, setIsOpen] = useState(false)
+
+  const defaultText = 'Términos y Condiciones'
 
   if (variant === 'button') {
     return (
@@ -25,7 +29,7 @@ export function TermsLink({
           className={`flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors ${className}`}
         >
           {showIcon && <FileText className="h-4 w-4" />}
-          <span>Términos y Condiciones</span>
+          <span>{children || defaultText}</span>
         </button>
         <TermsModal
           open={isOpen}
@@ -43,7 +47,7 @@ export function TermsLink({
         className={`text-sm hover:underline inline-flex items-center gap-1 ${className}`}
       >
         {showIcon && <FileText className="h-3 w-3" />}
-        Términos y Condiciones
+        {children || defaultText}
       </button>
       <TermsModal
         open={isOpen}

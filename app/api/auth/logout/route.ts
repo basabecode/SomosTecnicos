@@ -10,6 +10,19 @@ import { extractToken, invalidateToken } from '@/lib/auth'
 // POST /api/auth/logout
 // =============================================
 
+// =============================================
+// GET /api/auth/logout (Support for simple links/redirects)
+// =============================================
+export async function GET(request: NextRequest) {
+  const response = NextResponse.redirect(new URL('/login', request.url))
+
+  // Limpiar cookies
+  response.cookies.delete('refreshToken')
+  response.cookies.delete('auth-token')
+
+  return response
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Extraer token del header

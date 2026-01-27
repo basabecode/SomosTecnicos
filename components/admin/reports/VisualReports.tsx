@@ -1,5 +1,5 @@
 /**
- * 📊 TecnoCity - Reportes Visuales Refactorizados
+ * 📊 SomosTécnicos - Reportes Visuales Refactorizados
  * ==============================================
  *
  * Componente principal de reportes completamente refactorizado

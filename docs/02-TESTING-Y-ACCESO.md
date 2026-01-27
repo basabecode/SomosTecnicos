@@ -1,6 +1,6 @@
 # 🧪 02. TESTING Y ACCESO - Guía de Pruebas
 
-Este documento contiene las credenciales de prueba, flujos de validación y guías para testing manual del sistema.
+Este documento contiene las credenciales de prueba, flujos de validación y guías para testing manual del sistema SomosTécnicos.
 
 ---
 

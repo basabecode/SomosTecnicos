@@ -1,5 +1,5 @@
 ﻿/**
- * Login - TecnoCity
+ * Login - SomosTécnicos
  * Diseño moderno 50/50 con UX optimizada mobile-first
  */
 
@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { TermsLink } from '@/components/terms-link'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -407,9 +408,19 @@ export default function LoginPage() {
             {/* Mobile Footer Legal */}
             <div className="mt-12 text-center">
                <div className="flex justify-center gap-4 text-xs text-[#6B7280]">
-                  <Link href="/terms" className="hover:text-[#A50034]">Términos</Link>
+                  <TermsLink
+                    className="hover:text-[#A50034] transition-colors"
+                    showIcon={false}
+                  >
+                    Términos
+                  </TermsLink>
                   <span>•</span>
-                  <Link href="/privacy" className="hover:text-[#A50034]">Privacidad</Link>
+                  <TermsLink
+                    className="hover:text-[#A50034] transition-colors"
+                    showIcon={false}
+                  >
+                    Privacidad
+                  </TermsLink>
                </div>
                <p className="mt-4 text-[11px] text-[#9CA3AF]">
                  © 2026 SomosTécnicos. Calidad Certificada.

@@ -1,5 +1,5 @@
 /**
- * 🎛️ TecnoCity - Filtros de Reportes
+ * 🎛️ SomosTécnicos - Filtros de Reportes
  * ==================================
  *
  * Controles para filtrar y configurar los reportes visuales

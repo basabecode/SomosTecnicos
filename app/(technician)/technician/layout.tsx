@@ -168,8 +168,19 @@ export default function TechnicianLayout({
               </div>
             </div>
 
+            {/* Botón para regresar al inicio */}
+            <div className="mx-4 mt-4 mb-2 pb-3 border-b border-gray-100">
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors px-2 py-1 rounded-md hover:bg-blue-50"
+              >
+                <Home className="h-4 w-4" />
+                <span>Volver al Inicio</span>
+              </Link>
+            </div>
+
             {/* Navigation */}
-            <nav className="mt-8 flex-1 px-4 space-y-1">
+            <nav className="mt-2 flex-1 px-4 space-y-1">
               <NavItems />
             </nav>
 

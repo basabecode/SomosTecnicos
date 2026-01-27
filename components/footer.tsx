@@ -103,11 +103,13 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
             <p>© 2025 SomosTécnicos. Todos los derechos reservados.</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
-              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false} />
+              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false}>
+                Términos y Condiciones
+              </TermsLink>
               <span className="text-gray-600">•</span>
-              <button className="hover:text-gray-200 transition-colors">
+              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false}>
                 Política de Privacidad
-              </button>
+              </TermsLink>
               <span className="text-gray-600">•</span>
               <a
                 href="/admin-info"

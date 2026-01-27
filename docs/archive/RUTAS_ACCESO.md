@@ -1,4 +1,5 @@
-# 🚀 Rutas de Acceso - Sistema de Registro
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
+# 🛣️ Rutas de Acceso y Credenciales - TecnoCitystro
 
 ## 📍 Rutas Públicas
 

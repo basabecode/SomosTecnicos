@@ -1,5 +1,5 @@
 /**
- * 🔒 TecnoCity - Sistema de Logging Centralizado y Seguro
+ * 🔒 SomosTécnicos - Sistema de Logging Centralizado y Seguro
  * ======================================================
  *
  * Reemplaza console.log para prevenir exposición de datos sensibles en producción

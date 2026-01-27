@@ -1,4 +1,5 @@
-# 🚀 Reporte Completo - Mejoras Frontend UX/UI 2025
+# 🚀 Reporte<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
+# 🎨 REPORTE FINAL: Mejoras de Frontend y UX/UI - TecnoCity2025
 
 ## 📋 Resumen Ejecutivo
 

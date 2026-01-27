@@ -29,7 +29,7 @@
  * - Indicador visual de progreso
  * - Respuestas contextuales según el estado de la conversación
  *
- * @author TecnoCity Dev Team
+ * @author SomosTécnicos Dev Team
  * @version 2.1
  */
 

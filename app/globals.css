@@ -2,9 +2,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tema personalizado para TecnoCity con paleta corporativa */
+/* Tema personalizado para SomosTécnicos con paleta corporativa */
 :root {
-  /* Colores principales TecnoCity */
+  /* Colores principales SomosTécnicos */
   --primary: #a50034; /* Rojo principal - CTA y acentos */
   --secondary: #2c3e50; /* Azul oscuro - textos importantes */
   --accent: #e74c3c; /* Rojo hover */

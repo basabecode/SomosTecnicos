@@ -57,40 +57,41 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, [isAuthenticated])
 
   const markAsRead = async (id: number) => {
+    // 1. Optimistic Update (Immediate Feedback)
+    setNotifications(prev =>
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    )
+    setUnreadCount(prev => Math.max(0, prev - 1))
+
     try {
       const token = localStorage.getItem('accessToken')
-      const response = await fetch(`/api/notifications/${id}/read`, {
+      // Fire and forget, or handle error silently
+      await fetch(`/api/notifications/${id}/read`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-
-      if (response.ok) {
-        setNotifications(prev =>
-          prev.map(n => n.id === id ? { ...n, read: true } : n)
-        )
-        setUnreadCount(prev => Math.max(0, prev - 1))
-      }
+      // No need to wait for response if we already updated UI
     } catch (error) {
       console.error('Error marking notification as read:', error)
+      // Optional: Revert state if critical, but for read status usually acceptable to keep optimistic
     }
   }
 
   const markAllAsRead = async () => {
+    // 1. Optimistic Update (Immediate Feedback)
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    setUnreadCount(0)
+
     try {
       const token = localStorage.getItem('accessToken')
-      const response = await fetch('/api/notifications/read-all', {
+      await fetch('/api/notifications/read-all', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-
-      if (response.ok) {
-        setNotifications(prev => prev.map(n => ({ ...n, read: true })))
-        setUnreadCount(0)
-      }
     } catch (error) {
       console.error('Error marking all as read:', error)
     }

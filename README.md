@@ -73,7 +73,7 @@
 
 ### **1. Clonar el Repositorio**
 ```bash
-git clone https://github.com/basabecode/TecnoCity.git
+git clone https://github.com/basabecode/SomosTecnicos.git
 cd SomosTécnicos
 ```
 

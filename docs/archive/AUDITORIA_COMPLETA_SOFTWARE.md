@@ -3,7 +3,8 @@
 **TecnoCity - Sistema de Servicio Técnico**
 
 **Fecha:** 11 de octubre de 2025
-**Auditor:** Arquitecto de Software Senior
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
+# 🔍 Auditoría Completa del Software - TecnoCity (v1.0)
 **Versión del Proyecto:** 0.1.0
 **Stack Tecnológico:** Next.js 15.2.4, React 19, TypeScript, Prisma, PostgreSQL
 

@@ -1,4 +1,5 @@
-Eres un experto desarrollador frontend senior especializado en UX/UI y diseño responsive. Vas a mejorar un sitio web de servicios técnicos de electrodomésticos llamado "TecnoCity" que actualmente está en construcción.
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
+Eres un experto desarrollador frontend senior especializado en UX/UI y diseño responsive. Vas a mejorar un sitio web de servicios técnicos de electrodomésticos llamado "SomosTécnicos" (anteriormente "TecnoCity") que actualmente está en construcción.
 
 ## CARACTERÍSTICAS ACTUALES DEL PROYECTO
 

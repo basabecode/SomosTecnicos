@@ -36,6 +36,7 @@ import {
   FileText,
   Mail,
 } from 'lucide-react'
+import { NotificationBell } from '@/components/navigation/notification-bell'
 
 interface SidebarItem {
   title: string
@@ -258,11 +259,9 @@ function Header() {
         </h1>
       </div>
 
-      {/* Notifications */}
-      <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-        <Bell className="h-4 w-4" />
-        <span className="sr-only">Toggle notifications</span>
-      </Button>
+      <div className="ml-auto">
+        <NotificationBell />
+      </div>
 
       {/* User Menu */}
       <DropdownMenu>

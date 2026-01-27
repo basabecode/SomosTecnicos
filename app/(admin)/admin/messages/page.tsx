@@ -49,6 +49,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
+import { calculateReplyReceiver, getThreadKey } from '@/lib/chat-logic'
 
 interface Message {
   id: string
@@ -61,7 +62,7 @@ interface Message {
   receiverType: string
   createdAt: string
   read: boolean
-  priority: 'low' | 'medium' | 'high'
+  priority: 'low' | 'normal' | 'high'
   category: 'service' | 'support' | 'billing' | 'warranty'
   relatedOrder?: string
   orderId?: string
@@ -104,7 +105,9 @@ export default function AdminMessages() {
   const [availableTechnicians, setAvailableTechnicians] = useState<any[]>([])
 
   // Fetch Messages
-  const fetchMessages = async () => {
+  const fetchMessages = async (silent = false) => {
+    if (!silent) setLoading(true)
+
     try {
       const token = localStorage.getItem('accessToken')
       if (!token) return
@@ -119,17 +122,19 @@ export default function AdminMessages() {
       }
     } catch (error) {
       console.error('Error fetching messages:', error)
+      if (!silent) toast.error('Error al cargar mensajes')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }
 
-  // Initial Load & Polling
   useEffect(() => {
     fetchMessages()
-    const interval = setInterval(fetchMessages, 10000) // Poll every 10s
+    const interval = setInterval(() => {
+      fetchMessages(true) // Polling silencioso
+    }, 10000)
     return () => clearInterval(interval)
-  }, [])
+  }, [user])
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -137,6 +142,8 @@ export default function AdminMessages() {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
   }, [selectedThreadId, messages])
+
+
 
   // -------------------------------------------
   // THREAD GROUPING LOGIC (Robust & Normalized)
@@ -158,19 +165,10 @@ export default function AdminMessages() {
     const grouped: Record<string, Thread> = {}
 
     messages.forEach(msg => {
-      const isMe = msg.senderId === user.id.toString()
+      const isMe = String(msg.senderId) === String(user?.id)
 
       // 1. DETERMINE THREAD KEY
-      let threadKey = ''
-
-      if (msg.orderId) {
-        threadKey = `order-${msg.orderId}`
-      } else {
-        // User pair logic
-        const partnerId = isMe ? msg.receiverId : msg.senderId
-        // Normalization not strictly needed for Admin view of users, but good practice
-        threadKey = `direct-${partnerId}`
-      }
+      const threadKey = getThreadKey(msg, user)
 
       // 2. INITIALIZE THREAD
       if (!grouped[threadKey]) {
@@ -220,14 +218,17 @@ export default function AdminMessages() {
         thread.lastMessage = msg
         // Update partner info from newest incoming message
         if (!isMe) {
-          thread.partnerName = msg.senderName || thread.partnerName
+          // Solo actualizar nombre si tenemos uno real (no genérico)
+          if (msg.senderName && msg.senderName !== 'Usuario' && !msg.senderName.startsWith('Cliente (')) {
+            thread.partnerName = msg.senderName
+          }
           thread.partnerRole = msg.senderType
           thread.partnerId = msg.senderId
         }
       }
 
       // 4. COUNT UNREAD
-      if (!msg.read && msg.receiverId === user.id.toString()) {
+      if (!msg.read && String(msg.receiverId) === String(user?.id)) {
         thread.unreadCount++
       }
     })
@@ -240,9 +241,6 @@ export default function AdminMessages() {
 
   const sortedThreads = threads
 
-
-  const selectedThread = selectedThreadId ? threads.find(t => t.id === selectedThreadId) : null
-
   // Filter threads for the list
   const filteredThreads = sortedThreads.filter(thread => {
     const matchesSearch =
@@ -251,7 +249,7 @@ export default function AdminMessages() {
       thread.lastMessage.content.toLowerCase().includes(searchTerm.toLowerCase())
 
     // Status filter logic (simplified: check if last message is unread and received)
-    const isUnread = !thread.lastMessage.read && thread.lastMessage.receiverId === user?.id?.toString()
+    const isUnread = !thread.lastMessage.read && String(thread.lastMessage.receiverId) === String(user?.id)
 
     if (statusFilter === 'unread' && !isUnread) return false
     if (statusFilter === 'read' && isUnread) return false
@@ -259,46 +257,48 @@ export default function AdminMessages() {
     return matchesSearch
   })
 
+  // Mark as Read Logic
+  useEffect(() => {
+    if (selectedThreadId && user) {
+       const thread = threads.find(t => t.id === selectedThreadId)
+       if (!thread) return
+
+       const unreadIds = thread.messages
+          .filter(m => !m.read && String(m.receiverId) === String(user.id))
+          .map(m => m.id)
+
+       if (unreadIds.length > 0) {
+          setMessages(prev => prev.map(m =>
+             unreadIds.includes(m.id) ? { ...m, read: true } : m
+          ))
+
+          const token = localStorage.getItem('accessToken')
+          fetch('/api/messages/mark-read', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${token}`
+             },
+             body: JSON.stringify({ messageIds: unreadIds })
+          }).catch(err => console.error('Error marking read', err))
+       }
+    }
+  }, [selectedThreadId, threads, user])
+
+  const selectedThread = selectedThreadId ? threads.find(t => t.id === selectedThreadId) : null
+
+
   // Handle Send Reply
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedThread) return
+    if (!newMessage.trim() || !selectedThread || !user) return
 
     setSending(true)
     try {
       const token = localStorage.getItem('accessToken')
       const lastMsg = selectedThread.lastMessage
 
-      // LÓGICA CRÍTICA DE RESPUESTA (Fix aplicado desde panel cliente)
-      // Determinar quién es el receptor basado en el último mensaje
-      const amISender = lastMsg.senderId === user?.id?.toString()
-
-      // Si yo envié el último, le sigo respondiendo al mismo receptor (receiverId)
-      // Si yo recibí el último, le respondo a quien me envió (senderId)
-      let receiverId = amISender ? lastMsg.receiverId : lastMsg.senderId
-      let receiverType = amISender ? lastMsg.receiverType : lastMsg.senderType
-
-      // FIX CRÍTICO: Normalización de casos edge con soporte/admin genérico
-      // Si el receiverType es 'customer' pero el receiverId está vacío o es '0',
-      // esto indica un problema de datos. Intentamos recuperar del contexto.
-      if (!receiverId || receiverId === '0') {
-        // Si no hay receiverId válido, intentamos inferir del thread
-        // En caso de admin respondiendo a cliente, el receiverId debe ser el partnerId del thread
-        if (receiverType === 'customer' && selectedThread.partnerName) {
-          // El partnerId debería tener el ID correcto del cliente
-          // Si no, mantenemos el receiverId actual y confiamos en el backend
-          console.warn('receiverId vacío detectado, usando contexto del thread')
-        }
-      }
-
-      // Corrección adicional: Si respondo a 'support' o 'admin' genérico
-      // (esto puede pasar si un cliente envió a soporte general)
-      if (receiverType === 'admin' || receiverType === 'support') {
-        // Si el receiverId es '0' o vacío, mantenerlo como soporte general
-        if (!receiverId || receiverId === '0') {
-          receiverId = '0'
-          receiverType = 'support'
-        }
-      }
+      // LOGICA CRITICA DE RESPUESTA CENTRALIZADA
+      const { receiverId, receiverType } = calculateReplyReceiver(lastMsg, user, selectedThread)
 
       const payload = {
         content: newMessage,
@@ -360,6 +360,12 @@ export default function AdminMessages() {
   const handleCreateNewConversation = async () => {
     if (!newConvData.content.trim() || !newConvData.receiverType) {
       toast.error('Por favor completa el contenido y el destinatario')
+      return
+    }
+
+    // Validar que se haya seleccionado un destinatario específico cuando no es soporte
+    if (newConvData.receiverType !== 'support' && !newConvData.receiverId) {
+      toast.error('Por favor selecciona un destinatario específico')
       return
     }
 
@@ -452,9 +458,9 @@ export default function AdminMessages() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0 w-full relative">
         {/* Thread List */}
-        <div className={`lg:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
           {/* Controls */}
           <Card>
             <CardContent className="p-4 space-y-4">
@@ -539,7 +545,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Chat Detail */}
-        <div className={`lg:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
           {selectedThread ? (
             <Card className="flex flex-col flex-1 h-full shadow-lg border-gray-200 overflow-hidden">
               {/* Chat Header */}
@@ -548,7 +554,7 @@ export default function AdminMessages() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="lg:hidden -ml-2 h-8 w-8"
+                    className="md:hidden -ml-2 h-8 w-8"
                     onClick={() => setSelectedThreadId(null)}
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -580,8 +586,8 @@ export default function AdminMessages() {
               {/* Messages Area */}
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
                  {/* Sort chronological for display */}
-                 {[...selectedThread.messages].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((msg) => {
-                   const isMe = msg.senderId === user?.id?.toString()
+                  {[...selectedThread.messages].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((msg) => {
+                    const isMe = String(msg.senderId) === String(user?.id)
                    return (
                      <div key={msg.id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'} mb-4`}>
                        <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>

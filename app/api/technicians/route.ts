@@ -111,13 +111,26 @@ export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser
     const hasNextPage = page < totalPages
     const hasPrevPage = page > 1
 
+    // Obtener los emails de los técnicos para buscar sus usuarios Admin asociados
+    const emails = technicians.map(t => t.email)
+    const adminUsers = await prisma.adminUser.findMany({
+      where: { email: { in: emails } },
+      select: { id: true, email: true }
+    })
+
+    // Crear mapa de email -> adminUserId
+    const emailToAdminIdMap = new Map<string, number>()
+    adminUsers.forEach(u => emailToAdminIdMap.set(u.email, u.id))
+
     // Procesar datos de técnicos
     const processedTechnicians = technicians.map(technician => {
       const { assignments, _count, ...rest } = technician
       const [currentAssignment] = assignments
+      const adminUserId = emailToAdminIdMap.get(technician.email)
 
       return {
         ...rest,
+        adminUserId: adminUserId, // ID vital para mensajería
         ordenesCompletadas: _count.assignments,
         asignacionActual: currentAssignment
           ? {

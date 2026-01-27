@@ -80,7 +80,7 @@ function Sidebar({ className }: { className?: string }) {
         <div className="px-3 py-2">
           <div className="flex items-center space-x-2 mb-4">
             <Wrench className="h-6 w-6 text-[#A50034]" />
-            <h2 className="text-lg font-semibold">TecnoCity Manager</h2>
+            <h2 className="text-lg font-semibold">SomosTécnicos Manager</h2>
           </div>
 
           {/* Botón para regresar al inicio */}

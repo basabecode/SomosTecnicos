@@ -32,7 +32,16 @@ export function NotificationBell() {
       : '/notifications'
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen)
+        // Auto-mark all as read when opening notification menu
+        if (isOpen && unreadCount > 0) {
+             markAllAsRead()
+        }
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative active-tap">
           <Bell className="h-5 w-5" />

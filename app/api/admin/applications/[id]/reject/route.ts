@@ -67,10 +67,10 @@ async function handler(
     // Enviar email al solicitante
     await sendSimpleEmail(
       application.email,
-      'Actualización de Solicitud - TecnoCity',
+      'Actualización de Solicitud - SomosTécnicos',
       `
         <h2>Hola ${application.nombre},</h2>
-        <p>Gracias por tu interés en unirte a TecnoCity.</p>
+        <p>Gracias por tu interés en unirte a SomosTécnicos.</p>
 
         <p>Después de revisar tu solicitud, lamentamos informarte que en este momento no podemos continuar con el proceso.</p>
 
@@ -84,7 +84,7 @@ async function handler(
         <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
 
         <p>Saludos cordiales,<br>
-        <strong>Equipo TecnoCity</strong></p>
+        <strong>Equipo SomosTécnicos</strong></p>
       `
     )
 

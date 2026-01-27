@@ -1,5 +1,5 @@
 /**
- * 🎯 TecnoCity - Tipos y Constantes para Reportes
+ * 🎯 SomosTécnicos - Tipos y Constantes para Reportes
  * ==============================================
  *
  * Tipos TypeScript y constantes compartidas entre componentes de reportes

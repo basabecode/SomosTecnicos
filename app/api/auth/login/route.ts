@@ -92,7 +92,9 @@ export async function POST(request: NextRequest) {
 
     // Generar tokens
     const accessToken = generateToken(user)
-    const refreshToken = generateRefreshToken(user.id, user.userType)
+    const refreshToken = generateRefreshToken(user.id, user.userType as 'admin' | 'customer')
+
+    console.log(`✅ Login exitoso para: ${email} (ID: ${user.id}, Role: ${user.role || user.userType})`)
 
     // Configurar cookie httpOnly para refresh token
     const response = NextResponse.json({
@@ -101,8 +103,11 @@ export async function POST(request: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         nombre: user.nombre,
-        role: user.role || user.userType
+        apellido: user.apellido,
+        role: user.role || user.userType,
+        activo: user.activo
       },
       accessToken,
       refreshToken,

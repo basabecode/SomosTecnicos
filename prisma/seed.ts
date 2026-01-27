@@ -469,7 +469,7 @@ async function main() {
 
     const customerOrders = [
       {
-        email: 'cliente.demo@somostecnicos.com',
+        email: 'cliente.demo@tecnocity.com',
         orderNumber: 'ORD-CL-1001',
         tipoElectrodomestico: 'lavadora',
         tipoServicio: 'reparacion',
@@ -480,7 +480,7 @@ async function main() {
         horario: 'mañana'
       },
       {
-        email: 'cliente.demo@somostecnicos.com',
+        email: 'cliente.demo@tecnocity.com',
         orderNumber: 'ORD-CL-1002',
         tipoElectrodomestico: 'nevera',
         tipoServicio: 'mantenimiento',
@@ -491,7 +491,7 @@ async function main() {
         horario: 'tarde'
       },
       {
-        email: 'cliente.vip@somostecnicos.com',
+        email: 'cliente.vip@tecnocity.com',
         orderNumber: 'ORD-CL-2001',
         tipoElectrodomestico: 'microondas',
         tipoServicio: 'diagnostico',

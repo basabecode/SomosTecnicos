@@ -1,3 +1,4 @@
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
 # 🚀 ROADMAP DE MEJORAS - TIENDA SERVICIO TÉCNICO
 
 **📅 Fecha de creación:** 8 de octubre de 2025

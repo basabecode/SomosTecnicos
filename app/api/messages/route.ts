@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateRequest(request)
     if (!auth.authenticated || !auth.user) {
+      console.log('[API-MSG] Unauthorized GET attempt')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -31,6 +32,13 @@ export async function GET(request: NextRequest) {
     if (['admin', 'super_admin', 'technician_manager'].includes(user.role)) {
       userType = MSG_ROLES.ADMIN
     }
+
+    console.log('[API-MSG] GET Request:', {
+        userId: user.id,
+        role: user.role,
+        normalizedType: userType,
+        orderId
+    })
 
     // Construir filtro
     const whereClause: any = {
@@ -70,21 +78,86 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    // OPTIMIZACIÓN: Enriquecimiento de nombres faltantes para mensajes históricos
+    // Identificar IDs que necesitan nombre (senderName es null o 'Usuario')
+    const missingNames: Record<string, Set<number>> = {
+      [MSG_ROLES.CUSTOMER]: new Set(),
+      [MSG_ROLES.TECHNICIAN]: new Set(),
+      [MSG_ROLES.ADMIN]: new Set()
+    }
+
+    messages.forEach((msg: any) => {
+      if (!msg.senderName || msg.senderName === 'Usuario') {
+        const id = parseInt(msg.senderId)
+        if (!isNaN(id) && missingNames[msg.senderType]) {
+          missingNames[msg.senderType].add(id)
+        }
+      }
+    })
+
+    // Fetch batch de nombres
+    const nameMap = new Map<string, string>()
+
+    await Promise.all([
+      // Clientes
+      (async () => {
+        if (missingNames[MSG_ROLES.CUSTOMER].size > 0) {
+          const users = await prisma.customer.findMany({
+            where: { id: { in: Array.from(missingNames[MSG_ROLES.CUSTOMER]) } },
+            select: { id: true, nombre: true, apellido: true }
+          })
+          users.forEach(u => nameMap.set(`${MSG_ROLES.CUSTOMER}:${u.id}`, `${u.nombre} ${u.apellido || ''}`.trim()))
+        }
+      })(),
+      // Técnicos
+      (async () => {
+        if (missingNames[MSG_ROLES.TECHNICIAN].size > 0) {
+          const users = await prisma.technician.findMany({
+            where: { id: { in: Array.from(missingNames[MSG_ROLES.TECHNICIAN]) } },
+            select: { id: true, nombre: true } // Técnicos no tienen apellido obligatorio a veces
+          })
+          users.forEach(u => nameMap.set(`${MSG_ROLES.TECHNICIAN}:${u.id}`, u.nombre))
+        }
+      })(),
+      // Admins
+      (async () => {
+        if (missingNames[MSG_ROLES.ADMIN].size > 0) {
+          const users = await prisma.adminUser.findMany({
+            where: { id: { in: Array.from(missingNames[MSG_ROLES.ADMIN]) } },
+            select: { id: true, nombre: true, apellido: true }
+          })
+          users.forEach(u => nameMap.set(`${MSG_ROLES.ADMIN}:${u.id}`, `${u.nombre} ${u.apellido || ''}`.trim()))
+        }
+      })()
+    ])
+
     return NextResponse.json({
       success: true,
-      messages: messages.map((msg: any) => ({
-        ...msg,
-        from: {
-          name: msg.senderName,
-          role: msg.senderType,
-          id: msg.senderId
-        },
-        to: {
-           role: msg.receiverType,
-           id: msg.receiverId
-        },
-        relatedOrder: msg.order?.orderNumber
-      }))
+      messages: messages.map((msg: any) => {
+        // Resolver nombre final
+        let finalName = msg.senderName
+        if (!finalName || finalName === 'Usuario') {
+          const key = `${msg.senderType}:${msg.senderId}`
+          if (nameMap.has(key)) {
+            finalName = nameMap.get(key)
+          }
+        }
+
+        return {
+          ...msg,
+          senderName: finalName, // Sobrescribir con nombre enriquecido
+          from: {
+            name: finalName,
+            role: msg.senderType,
+            id: msg.senderId
+          },
+          to: {
+             role: msg.receiverType,
+             id: msg.receiverId
+          },
+          relatedOrder: msg.order?.orderNumber
+        }
+      })
     })
 
   } catch (error) {
@@ -118,7 +191,43 @@ export async function POST(request: NextRequest) {
       senderType = MSG_ROLES.ADMIN
     }
 
-    const senderName = `${user.nombre} ${user.apellido || ''}`.trim()
+    // Obtener nombre del remitente con fallback robusto
+    let senderName = 'Usuario'
+
+    if (user.nombre) {
+      senderName = `${user.nombre} ${user.apellido || ''}`.trim()
+    } else {
+      // Si user no tiene nombre, buscar en la tabla correspondiente
+      try {
+        if (senderType === MSG_ROLES.CUSTOMER) {
+          const customer = await prisma.customer.findUnique({
+            where: { id: parseInt(user.id.toString()) },
+            select: { nombre: true, apellido: true }
+          })
+          if (customer) {
+            senderName = `${customer.nombre} ${customer.apellido || ''}`.trim()
+          }
+        } else if (senderType === MSG_ROLES.TECHNICIAN) {
+          const tech = await prisma.technician.findFirst({
+            where: { email: user.email },
+            select: { nombre: true }
+          })
+          if (tech) {
+            senderName = tech.nombre
+          }
+        } else if (senderType === MSG_ROLES.ADMIN) {
+          const admin = await prisma.adminUser.findUnique({
+            where: { id: parseInt(user.id.toString()) },
+            select: { nombre: true, apellido: true }
+          })
+          if (admin) {
+            senderName = `${admin.nombre} ${admin.apellido || ''}`.trim()
+          }
+        }
+      } catch (err) {
+        console.error('Error obteniendo nombre del remitente:', err)
+      }
+    }
 
     // Resolver Destinatario
     let receiverId = body.receiverId
@@ -163,6 +272,11 @@ export async function POST(request: NextRequest) {
        receiverType = MSG_ROLES.SUPPORT
     }
 
+    // Validar Order ID para evitar errores de Foreign Key
+    const orderIdToSave = (body.orderId && typeof body.orderId === 'string' && body.orderId.trim() !== '' && body.orderId !== '0')
+      ? body.orderId
+      : null
+
     // @ts-ignore
     const newMessage = await prisma.message.create({
       data: {
@@ -171,14 +285,14 @@ export async function POST(request: NextRequest) {
         category: body.category || 'general',
         priority: body.priority || 'normal',
 
-        senderId: user.id.toString(),
+        senderId: String(user.id),
         senderType: senderType,
         senderName: senderName || user.email || user.username || 'Usuario',
 
-        receiverId: receiverId.toString(),
+        receiverId: String(receiverId),
         receiverType: receiverType,
 
-        orderId: body.orderId, // Puede ser null
+        orderId: orderIdToSave,
       }
     })
 
@@ -187,8 +301,8 @@ export async function POST(request: NextRequest) {
       // Si el destinatario es '0' (Soporte/Admin), notificar a un rol o admin general
       // En este sistema, '0' es capturado por los admins en sus consultas.
 
-      const notificationLink = body.orderId
-        ? (receiverType === MSG_ROLES.ADMIN || receiverType === MSG_ROLES.SUPPORT ? `/admin/orders/${body.orderId}` : `/technician/assignments?orderId=${body.orderId}`)
+      const notificationLink = orderIdToSave
+        ? (receiverType === MSG_ROLES.ADMIN || receiverType === MSG_ROLES.SUPPORT ? `/admin/orders/${orderIdToSave}` : `/technician/assignments?orderId=${orderIdToSave}`)
         : (receiverType === MSG_ROLES.ADMIN || receiverType === MSG_ROLES.SUPPORT ? '/admin/messages' : '/technician/messages');
 
       await sendNotification({
@@ -198,7 +312,7 @@ export async function POST(request: NextRequest) {
         subject: `Nuevo mensaje de ${senderName}`,
         message: body.content.substring(0, 100) + (body.content.length > 100 ? '...' : ''),
         type: 'SYSTEM',
-        orderId: body.orderId,
+        orderId: orderIdToSave || undefined,
         metadata: {
           link: notificationLink,
           messageId: newMessage.id,
@@ -216,8 +330,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error sending message:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { success: false, error: 'Error enviando mensaje' },
+      {
+        success: false,
+        error: 'Error enviando mensaje',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     )
   }

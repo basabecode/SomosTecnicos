@@ -49,6 +49,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
+import { calculateReplyReceiver, getThreadKey } from '@/lib/chat-logic'
 
 interface Message {
   id: string
@@ -61,7 +62,7 @@ interface Message {
   receiverType: string
   createdAt: string
   read: boolean
-  priority: 'low' | 'medium' | 'high'
+  priority: 'low' | 'normal' | 'high'
   category: 'service' | 'support' | 'billing' | 'warranty'
   relatedOrder?: string
   orderId?: string
@@ -103,7 +104,9 @@ export default function TechnicianMessages() {
   const [availableOrders, setAvailableOrders] = useState<any[]>([])
 
   // Fetch Messages
-  const fetchMessages = async () => {
+  const fetchMessages = async (silent = false) => {
+    if (!silent) setLoading(true)
+
     try {
       const token = localStorage.getItem('accessToken')
       if (!token) return
@@ -118,17 +121,19 @@ export default function TechnicianMessages() {
       }
     } catch (error) {
       console.error('Error fetching messages:', error)
+      if (!silent) toast.error('Error al cargar mensajes')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }
 
-  // Initial Load & Polling
   useEffect(() => {
     fetchMessages()
-    const interval = setInterval(fetchMessages, 10000) // Poll every 10s
+    const interval = setInterval(() => {
+      fetchMessages(true) // Polling silencioso
+    }, 10000)
     return () => clearInterval(interval)
-  }, [])
+  }, [user])
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -136,6 +141,8 @@ export default function TechnicianMessages() {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
   }, [selectedThreadId, messages])
+
+
 
   // -------------------------------------------
   // THREAD GROUPING LOGIC (Robust & Normalized)
@@ -157,18 +164,10 @@ export default function TechnicianMessages() {
     const grouped: Record<string, Thread> = {}
 
     messages.forEach(msg => {
-      const isMe = msg.senderId === user.id.toString()
+      const isMe = String(msg.senderId) === String(user?.id)
 
       // 1. DETERMINE THREAD KEY
-      let threadKey = ''
-
-      if (msg.orderId) {
-        threadKey = `order-${msg.orderId}`
-      } else {
-        // User pair logic for Technician
-        const partnerId = isMe ? msg.receiverId : msg.senderId
-        threadKey = `direct-${partnerId}`
-      }
+      const threadKey = getThreadKey(msg, user)
 
       // 2. INITIALIZE THREAD
       if (!grouped[threadKey]) {
@@ -250,46 +249,47 @@ export default function TechnicianMessages() {
     return matchesSearch
   })
 
+  // Mark as Read Logic
+  useEffect(() => {
+    if (selectedThreadId && user) {
+       const thread = threads.find(t => t.id === selectedThreadId)
+       if (!thread) return
+
+       const unreadIds = thread.messages
+          .filter(m => !m.read && String(m.receiverId) === String(user.id))
+          .map(m => m.id)
+
+       if (unreadIds.length > 0) {
+          setMessages(prev => prev.map(m =>
+             unreadIds.includes(m.id) ? { ...m, read: true } : m
+          ))
+
+          const token = localStorage.getItem('accessToken')
+          fetch('/api/messages/mark-read', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${token}`
+             },
+             body: JSON.stringify({ messageIds: unreadIds })
+          }).catch(err => console.error('Error marking read', err))
+       }
+    }
+  }, [selectedThreadId, threads, user])
+
   // Handle Send Reply
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedThread) return
+    if (!newMessage.trim() || !selectedThread || !user) {
+        return
+    }
 
     setSending(true)
     try {
       const token = localStorage.getItem('accessToken')
       const lastMsg = selectedThread.lastMessage
 
-      // LÓGICA CRÍTICA DE RESPUESTA (Fix aplicado desde panel cliente)
-      // Determinar quién es el receptor basado en el último mensaje
-      const amISender = lastMsg.senderId === user?.id?.toString()
-
-      // Si yo envié el último, le sigo respondiendo al mismo receptor (receiverId)
-      // Si yo recibí el último, le respondo a quien me envió (senderId)
-      let receiverId = amISender ? lastMsg.receiverId : lastMsg.senderId
-      let receiverType = amISender ? lastMsg.receiverType : lastMsg.senderType
-
-      // FIX CRÍTICO: Normalización de casos edge con soporte/admin genérico
-      // Si el receiverType es 'customer' pero el receiverId está vacío o es '0',
-      // esto indica un problema de datos. Intentamos recuperar del contexto.
-      if (!receiverId || receiverId === '0') {
-        // Si no hay receiverId válido, intentamos inferir del thread
-        // En caso de técnico respondiendo a cliente, el receiverId debe ser el partnerId del thread
-        if (receiverType === 'customer' && selectedThread.partnerName) {
-          // El partnerId debería tener el ID correcto del cliente
-          // Si no, mantenemos el receiverId actual y confiamos en el backend
-          console.warn('receiverId vacío detectado, usando contexto del thread')
-        }
-      }
-
-      // Corrección adicional: Si respondo a 'support' o 'admin' genérico
-      // (esto puede pasar si un técnico envió a soporte general)
-      if (receiverType === 'admin' || receiverType === 'support') {
-        // Si el receiverId es '0' o vacío, mantenerlo como soporte general
-        if (!receiverId || receiverId === '0') {
-          receiverId = '0'
-          receiverType = 'support'
-        }
-      }
+      // LÓGICA CRÍTICA DE RESPUESTA CENTRALIZADA
+      const { receiverId, receiverType } = calculateReplyReceiver(lastMsg, user, selectedThread)
 
       const payload = {
         content: newMessage,
@@ -375,8 +375,16 @@ export default function TechnicianMessages() {
   }, [isNewConvOpen])
 
   const handleCreateNewConversation = async () => {
+    // console.log('Tech handleCreateNewConversation BEGIN');
+
     if (!newConvData.content.trim() || !newConvData.receiverType) {
       toast.error('Por favor completa el contenido y el destinatario')
+      return
+    }
+
+    // Validar que se haya seleccionado un destinatario específico cuando no es soporte
+    if (newConvData.receiverType !== 'support' && !newConvData.receiverId) {
+      toast.error('Por favor selecciona un destinatario específico')
       return
     }
 
@@ -384,19 +392,22 @@ export default function TechnicianMessages() {
     try {
       const token = localStorage.getItem('accessToken')
 
+      const payload = {
+          ...newConvData,
+          subject: newConvData.subject || 'Consulta Técnica'
+      };
+
       const res = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          ...newConvData,
-          subject: newConvData.subject || 'Consulta Técnica'
-        })
+        body: JSON.stringify(payload)
       })
 
       const data = await res.json()
+
       if (data.success) {
         toast.success('Mensaje enviado correctamente')
         setIsNewConvOpen(false)
@@ -406,6 +417,7 @@ export default function TechnicianMessages() {
         toast.error(data.error || 'Error al enviar mensaje')
       }
     } catch (err) {
+      console.error('Error sending:', err)
       toast.error('Error de red al enviar mensaje')
     } finally {
       setSending(false)
@@ -437,9 +449,9 @@ export default function TechnicianMessages() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0 w-full relative">
         {/* Thread List */}
-        <div className={`lg:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
           {/* Controls */}
           <Card>
             <CardContent className="p-4 space-y-4">
@@ -523,7 +535,7 @@ export default function TechnicianMessages() {
         </div>
 
         {/* Chat Detail */}
-        <div className={`lg:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
           {selectedThread ? (
             <Card className="flex flex-col flex-1 h-full shadow-lg border-gray-200 overflow-hidden">
               {/* Chat Header */}
@@ -532,7 +544,7 @@ export default function TechnicianMessages() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="lg:hidden -ml-2 h-8 w-8"
+                    className="md:hidden -ml-2 h-8 w-8"
                     onClick={() => setSelectedThreadId(null)}
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -567,7 +579,7 @@ export default function TechnicianMessages() {
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
                  {/* Sort chronological for display */}
                  {[...selectedThread.messages].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((msg) => {
-                   const isMe = msg.senderId === user?.id?.toString()
+                   const isMe = String(msg.senderId) === String(user?.id)
                    return (
                      <div key={msg.id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'} mb-4`}>
                        <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>
@@ -669,7 +681,7 @@ export default function TechnicianMessages() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="customer">Cliente</SelectItem>
-                  <SelectItem value="support">Soporte Tecnico (Administración)</SelectItem>
+                  <SelectItem value="support">Administración / Soporte</SelectItem>
                 </SelectContent>
               </Select>
             </div>

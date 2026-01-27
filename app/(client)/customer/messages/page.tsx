@@ -63,8 +63,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
+import { calculateReplyReceiver, getThreadKey } from '@/lib/chat-logic'
 
 // =============================================
 // TYPES
@@ -162,6 +164,7 @@ export default function CustomerMessages() {
       }
     } catch (error) {
       console.error('Error fetching orders:', error)
+      toast.error('Error al cargar órdenes')
     }
   }
 
@@ -212,6 +215,8 @@ export default function CustomerMessages() {
     }
   }, [selectedThreadId, messages])
 
+
+
   // -------------------------------------------
   // THREAD GROUPING LOGIC
   // -------------------------------------------
@@ -222,26 +227,10 @@ export default function CustomerMessages() {
     const grouped: Record<string, Thread> = {}
 
     messages.forEach(msg => {
-      const isMe = msg.senderId === user.id.toString()
+      const isMe = String(msg.senderId) === String(user?.id)
 
       // DETERMINE THREAD KEY
-      // Priority 1: Order ID (If referencing an order, group by that)
-      // Priority 2: User Pair (Chat with Support or Technician)
-      let threadKey = ''
-
-      if (msg.orderId) {
-        threadKey = `order-${msg.orderId}`
-      } else {
-        // Fallback to direct conversation key
-        // We identify the "partner" ID to form the key
-        const partnerId = isMe ? msg.receiverId : msg.senderId
-        // Normalize 'support' or '0' to a common key if needed
-        const normalizedPartnerId = (partnerId === '0' || msg.receiverType === 'support' || msg.senderType === 'support')
-          ? 'support'
-          : partnerId
-
-        threadKey = `direct-${normalizedPartnerId}`
-      }
+      const threadKey = getThreadKey(msg, user)
 
       // Initialize Thread if needed
       if (!grouped[threadKey]) {
@@ -327,6 +316,36 @@ export default function CustomerMessages() {
     })
   }, [threads, searchTerm, statusFilter])
 
+  // Mark as Read Logic
+  useEffect(() => {
+    if (selectedThreadId && user) {
+       const thread = threads.find(t => t.id === selectedThreadId)
+       if (!thread) return
+
+       const unreadIds = thread.messages
+          .filter(m => !m.read && String(m.receiverId) === String(user.id))
+          .map(m => m.id)
+
+       if (unreadIds.length > 0) {
+          // Optimistic Update
+          setMessages(prev => prev.map(m =>
+             unreadIds.includes(m.id) ? { ...m, read: true } : m
+          ))
+
+          // API Call
+          const token = localStorage.getItem('accessToken')
+          fetch('/api/messages/mark-read', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${token}`
+             },
+             body: JSON.stringify({ messageIds: unreadIds })
+          }).catch(err => console.error('Error marking read', err))
+       }
+    }
+  }, [selectedThreadId, threads, user])
+
   const selectedThread = threads.find(t => t.id === selectedThreadId)
 
   // -------------------------------------------
@@ -334,31 +353,15 @@ export default function CustomerMessages() {
   // -------------------------------------------
 
   const handleSendMessage = async () => {
-    if (!replyContent.trim() || !selectedThread || !user) return
-
-    setSending(true)
+    if (!replyContent.trim() || !selectedThread || !user) {
+        return
+    }  setSending(true)
     try {
       const token = localStorage.getItem('accessToken')
       const lastMsg = selectedThread.lastMessage
 
-      // LOGICA CRITICA DE RESPUESTA (Problema 3)
-      // Definir quién es el receptor basado en el último mensaje
-
-      const amISender = lastMsg.senderId === user.id.toString()
-
-      // Si yo envié el último, le sigo respondiendo al mismo receptor (receiverId)
-      // Si yo recibí el último, le respondo a quien me envió (senderId)
-      let receiverId = amISender ? lastMsg.receiverId : lastMsg.senderId
-      let receiverType = amISender ? lastMsg.receiverType : lastMsg.senderType
-
-      // Corrección de Edge Case: Si respondo a 'support' o 'admin' generico
-      if (receiverType === 'admin' || receiverType === 'support') {
-         // Mantener receiverId '0' para buzón compartido si no es un admin específico
-         if (!receiverId || receiverId === '0') {
-             receiverId = '0'
-             receiverType = 'support'
-         }
-      }
+      // LOGICA CRITICA DE RESPUESTA CENTRALIZADA
+      const { receiverId, receiverType } = calculateReplyReceiver(lastMsg, user, selectedThread)
 
       const payload = {
         content: replyContent,
@@ -491,7 +494,7 @@ export default function CustomerMessages() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mensajes</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Mis Mensajes</h1>
           <p className="text-sm text-gray-500 mt-1">Centro de comunicación con Soporte y Técnicos</p>
         </div>
         <Button onClick={() => setIsNewMessageOpen(true)} className="bg-slate-900 text-white hover:bg-slate-800">
@@ -501,11 +504,11 @@ export default function CustomerMessages() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0 w-full relative">
 
         {/* LISTA DE HILOS (Izquierda) */}
         {/* Oculta en móvil si hay un hilo seleccionado */}
-        <div className={`lg:col-span-1 flex flex-col gap-4 min-h-0 ${selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-1 flex flex-col gap-4 min-h-0 ${selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
             <Card className="flex flex-col h-full border-gray-200 shadow-sm">
                 <CardHeader className="p-4 pb-2 border-b">
                    <div className="relative mb-2">
@@ -609,7 +612,7 @@ export default function CustomerMessages() {
 
         {/* DETALLE DEL CHAT (Derecha) */}
         {/* Oculta en móvil si NO hay hilo seleccionado */}
-        <div className={`lg:col-span-2 flex flex-col min-h-0 ${!selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`md:col-span-2 flex flex-col min-h-0 ${!selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
             {selectedThread ? (
               <Card className="flex flex-col h-full shadow-lg border-gray-200 overflow-hidden bg-gray-50/30">
                  {/* Chat Header */}
@@ -618,7 +621,7 @@ export default function CustomerMessages() {
                        <Button
                          variant="ghost"
                          size="icon"
-                         className="lg:hidden -ml-2 h-8 w-8 text-gray-600"
+                         className="md:hidden -ml-2 h-8 w-8 text-gray-600"
                          onClick={() => setSelectedThreadId(null)}
                        >
                          <ArrowLeft className="h-5 w-5" />
@@ -670,7 +673,7 @@ export default function CustomerMessages() {
                     {[...selectedThread.messages]
                       .sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
                       .map((msg, index, arr) => {
-                        const isMe = msg.senderId === user?.id?.toString()
+                        const isMe = String(msg.senderId) === String(user?.id)
                         const showAvatar = !isMe && (index === 0 || arr[index-1].senderId !== msg.senderId)
 
                         return (

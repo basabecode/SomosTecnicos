@@ -1,3 +1,4 @@
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
 # 🔐 REPORTE: Validación de Cuentas de Prueba - RESUELTO
 
 **Fecha:** 11 de octubre de 2025

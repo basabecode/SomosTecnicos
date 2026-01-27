@@ -9,9 +9,10 @@ import { authenticateRequest } from '@/lib/auth'
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { threadId: string } }
+  props: { params: Promise<{ threadId: string }> }
 ) {
   try {
+    const params = await props.params
     const auth = await authenticateRequest(request)
     if (!auth.authenticated || !auth.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -36,8 +37,8 @@ export async function DELETE(
           { orderId: orderId },
           {
             OR: [
-              { senderId: user.id.toString() },
-              { receiverId: user.id.toString() }
+              { senderId: String(user.id) },
+              { receiverId: String(user.id) }
             ]
           }
         ]
@@ -49,20 +50,29 @@ export async function DELETE(
       // Normalizar partnerId para soporte
       const normalizedPartnerId = partnerId === 'support' ? '0' : partnerId
 
-      // Eliminar mensajes directos entre este usuario y el partner
-      // Importante: No filtrar por orderId null, ya que algunos mensajes directos pueden tener orderId
+      // Si el usuario es ADMIN, también debe poder eliminar mensajes enviados a/desde '0' (Soporte)
+      const isAdmin = ['admin', 'super_admin', 'technician_manager'].includes(user.role)
+
+      // Array de IDs que representan al usuario actual
+      const myIds = [String(user.id)]
+      if (isAdmin) {
+          myIds.push('0') // El admin también es '0' (Soporte)
+      }
+
       deleteCondition = {
         OR: [
+          // Mensajes que YO envié al Partner
           {
             AND: [
-              { senderId: user.id.toString() },
+              { senderId: { in: myIds } },
               { receiverId: normalizedPartnerId }
             ]
           },
+          // Mensajes que el Partner ME envió
           {
             AND: [
               { senderId: normalizedPartnerId },
-              { receiverId: user.id.toString() }
+              { receiverId: { in: myIds } }
             ]
           }
         ]

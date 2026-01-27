@@ -1,3 +1,4 @@
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
 # 🧪 Guía de Pruebas - Flujos de Registro Avanzados
 
 ## 📋 Checklist de Pruebas

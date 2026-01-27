@@ -1,5 +1,5 @@
 /**
- * 👷 TecnoCity - Gráfico de Rendimiento de Técnicos
+ * 👷 SomosTécnicos - Gráfico de Rendimiento de Técnicos
  * ===============================================
  *
  * Componente para mostrar métricas de performance de técnicos

@@ -1,4 +1,5 @@
-# 🔐 Cuentas de Prueba - TecnoCity
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
+# 🔐 Cuentas de Prueba y Credenciales - TecnoCity
 
 **Última actualización:** 2 de enero de 2026
 **Propósito:** Testing y demostración del sistema

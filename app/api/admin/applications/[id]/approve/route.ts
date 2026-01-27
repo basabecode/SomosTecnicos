@@ -88,10 +88,10 @@ async function handler(
     // Enviar email al técnico con credenciales
     await sendSimpleEmail(
       application.email,
-      '🎉 Solicitud Aprobada - Bienvenido a TecnoCity',
+      '🎉 Solicitud Aprobada - Bienvenido a SomosTécnicos',
       `
         <h2>¡Felicitaciones ${application.nombre}!</h2>
-        <p>Tu solicitud para unirte a TecnoCity ha sido <strong>aprobada</strong>.</p>
+        <p>Tu solicitud para unirte a SomosTécnicos ha sido <strong>aprobada</strong>.</p>
 
         <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin-top: 0;">🔑 Tus Credenciales de Acceso</h3>
@@ -113,7 +113,7 @@ async function handler(
           <li>Espera asignaciones de servicio</li>
         </ol>
 
-        <p>¡Bienvenido al equipo de TecnoCity!</p>
+        <p>¡Bienvenido al equipo de SomosTécnicos!</p>
       `
     )
 

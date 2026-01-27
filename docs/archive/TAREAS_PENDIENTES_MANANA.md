@@ -1,3 +1,4 @@
+<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
 # 📋 TAREAS PENDIENTES - CONTINUACIÓN MAÑANA
 
 **Fecha:** 11 de octubre de 2025

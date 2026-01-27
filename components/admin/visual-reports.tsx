@@ -1,5 +1,5 @@
 /**
- * TecnoCity - Reportes Visuales Refactorizados
+ * SomosTécnicos - Reportes Visuales Refactorizados
  */
 
 'use client'

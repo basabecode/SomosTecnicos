@@ -1,5 +1,5 @@
 /**
- * 📤 TecnoCity - Exportaciones de Componentes de Reportes
+ * 📤 SomosTécnicos - Exportaciones de Componentes de Reportes
  * ====================================================
  *
  * Archivo de índice para importaciones limpias y organizadas
