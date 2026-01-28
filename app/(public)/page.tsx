@@ -27,7 +27,6 @@ export default function HomePage() {
         <ServiceForm />
         {/* Proceso de Servicio - Cómo funciona */}
         <ServiceProcess />
-        {/* Sección Uber-Técnico */}
         <FAQ />
       </main>
       <Footer />

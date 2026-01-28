@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Login - SomosTécnicos
  * Diseño moderno 50/50 con UX optimizada mobile-first
  */
@@ -166,14 +166,15 @@ export default function LoginPage() {
           {/* Header */}
           <div className="space-y-4 lg:space-y-6">
             <div className="flex items-center gap-4">
-              <Image
-                src="/img_3d/logo modificado.jpeg"
-                alt="SomosTécnicos"
-                width={70}
-                height={70}
-                className="h-16 lg:h-16 w-16 lg:w-16 object-contain"
-                priority
-              />
+              <div className="p-3 lg:p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
+                <Image
+                  src="/img_3d/logo modificado.jpeg"
+                  alt="SomosTécnicos"
+                  width={64}
+                  height={64}
+                  className="h-14 lg:h-16 w-14 lg:w-16 object-contain"
+                />
+              </div>
               <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
                 SomosTécnicos
               </h1>
@@ -434,77 +435,3 @@ export default function LoginPage() {
       </div>
      </div>
 
-      {/* Modal de Selección de Registro */}
-      {isRegisterModalOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setIsRegisterModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Cabecera Corporativa */}
-            <div className="bg-[#A50034] px-6 py-6 text-center">
-              <h2 className="text-2xl font-bold text-white mb-1">Únete a SomosTécnicos</h2>
-              <p className="text-white/80 text-sm">Selecciona tu perfil para continuar</p>
-            </div>
-
-            {/* Opciones de Acceso */}
-            <div className="p-6 space-y-4">
-              {/* Opción: Cliente */}
-              <Link
-                href="/register/customer"
-                className="group flex items-center gap-4 bg-white hover:bg-red-50/30 rounded-xl p-4 border border-gray-100 hover:border-[#A50034] transition-all duration-300 shadow-sm hover:shadow-md"
-                onClick={() => setIsRegisterModalOpen(false)}
-              >
-                <div className="p-3 bg-[#A50034]/10 rounded-xl group-hover:bg-[#A50034] transition-colors">
-                  <Users className="w-6 h-6 text-[#A50034] group-hover:text-white" />
-                </div>
-
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#2C3E50] mb-0.5">Soy Cliente</h3>
-                  <p className="text-gray-500 text-xs">
-                    Solicita servicios técnicos expertos
-                  </p>
-                </div>
-
-                <ArrowRight className="w-5 h-5 text-[#A50034] opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
-              </Link>
-
-              {/* Opción: Técnico */}
-              <Link
-                href="/register/technician"
-                className="group flex items-center gap-4 bg-white hover:bg-slate-50/50 rounded-xl p-4 border border-gray-100 hover:border-[#2C3E50] transition-all duration-300 shadow-sm hover:shadow-md"
-                onClick={() => setIsRegisterModalOpen(false)}
-              >
-                <div className="p-3 bg-[#2C3E50]/10 rounded-xl group-hover:bg-[#2C3E50] transition-colors">
-                  <Wrench className="w-6 h-6 text-[#2C3E50] group-hover:text-white" />
-                </div>
-
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#2C3E50] mb-0.5">Soy Técnico</h3>
-                  <p className="text-gray-500 text-xs">
-                    Forma parte de nuestro equipo profesional
-                  </p>
-                </div>
-
-                <ArrowRight className="w-5 h-5 text-[#2C3E50] opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 pb-6 text-center">
-              <button
-                onClick={() => setIsRegisterModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-xs font-medium transition-colors border-b border-transparent hover:border-gray-300"
-              >
-                Cerrar ventana
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}

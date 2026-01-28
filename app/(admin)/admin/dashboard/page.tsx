@@ -29,7 +29,7 @@ import {
   CheckCircle,
   Clock,
 } from 'lucide-react'
-import UberTechnicianSection from '@/components/uber-technician-section'
+import { TechnicianAvailabilitySection } from '@/components/admin/technician-availability'
 
 // Componente de carga para las estadísticas
 function StatsLoading() {
@@ -328,9 +328,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Panel de Asignación / Mapa de Técnicos */}
-        <div className="w-full">
-            <UberTechnicianSection />
-        </div>
+            <TechnicianAvailabilitySection />
 
         {/* Fila Inferior */}
         <div className="grid gap-6 md:grid-cols-2">

@@ -62,9 +62,9 @@ export default function ServiceTypes() {
       badgeColor: 'text-[#A50034] border-[#A50034]',
     },
     {
-      title: 'Instalación Certificada',
+      title: 'Instalación Calificada',
       description: 'Montaje seguro de equipos nuevos o en caso de traslados y reconexión.',
-      badgeLabel: 'Certificado',
+      badgeLabel: 'Calificada',
       accentColor: 'border-l-[#2C3E50]',
       badgeColor: 'text-[#2C3E50] border-[#2C3E50]',
     },

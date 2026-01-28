@@ -8,10 +8,10 @@ import { Users, Star } from 'lucide-react'
 /**
  * Panel de Disponibilidad de Técnicos (Admin View)
  * - Muestra técnicos disponibles para asignación de servicios
- * - Utilizado para gestión y asignación de órdenes
+ * - Utilizado para gestión y asignación de órdenes en tiempo real
  */
 
-export default function UberTechnicianSection() {
+export function TechnicianAvailabilitySection() {
   const [availableTechnicians, setAvailableTechnicians] = useState(12)
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function UberTechnicianSection() {
               Disponibilidad de Técnicos
             </CardTitle>
             <CardDescription className="text-sm text-gray-500">
-              Vista general de la flota de técnicos para asignación
+              Vista general de la flota de técnicos para asignación coordinada
             </CardDescription>
           </div>
           <Badge className="bg-green-100 text-green-800 border-green-200 px-3 py-1">
@@ -94,9 +94,9 @@ export default function UberTechnicianSection() {
         <div className="mt-6 p-4 bg-blue-50/50 rounded-lg border border-blue-100 flex items-start gap-3">
           <Users className="w-5 h-5 text-blue-600 mt-0.5" />
           <div>
-              <p className="text-sm font-medium text-blue-800">Panel de Asignación</p>
+              <p className="text-sm font-medium text-blue-800">Panel de Asignación Manual</p>
               <p className="text-blue-600 text-sm mt-1">
-                Utiliza este panel para monitorear la carga de trabajo. Los técnicos "Disponibles" pueden recibir nuevas asignaciones inmediatas.
+                Utiliza este panel para monitorear la carga de trabajo y asignar técnicos de manera estratégica según su disponibilidad.
               </p>
           </div>
         </div>

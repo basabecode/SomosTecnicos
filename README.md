@@ -1,4 +1,4 @@
-# 🔧 SomosTécnicos - Sistema de Reparación de Electrodomésticos
+# 🔧 SomosTécnicos - Sistema de Gestión de Servicios Técnicos (FSM)
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
@@ -6,252 +6,101 @@
 [![Prisma](https://img.shields.io/badge/Prisma-6.17.0-2D3748)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> 🏠 **Plataforma web moderna para servicios técnicos de electrodomésticos a domicilio**
+> 🏠 **Plataforma web premium para la gestión y asignación de servicios técnicos de electrodomésticos a domicilio.**
 
-## 🚀 Características Principales
+---
+
+## � Estado del Proyecto (Enero 2026)
+- **Progreso General:** 90% ✅
+- **Hito Reciente:** Sistema de Notificaciones In-App (Persistentes) completamente funcional.
+- **En Enfoque:** Implementación de Facturación Electrónica y Gateway de Pagos.
+
+---
+
+## �🚀 Características Principales
 
 ### 🎨 **Frontend Optimizado (UX/UI 2025)**
-- ✅ Title: 'SomosTécnicos - Servicio Técnico de Electrodomésticos a Domicilio'
-- ✅ Formulario optimizado de 3 pasos para máxima conversión
-- ✅ Chat IA integrado para diagnóstico automático (v2.1)
-- ✅ Sección interactiva del proceso de servicio
-- ✅ Componentes UI modernos con shadcn/ui y Tailwind CSS
-- ✅ Animaciones fluidas con Framer Motion
-- ✅ Diseño consistente con colores corporativos (#A50034, #2C3E50)
+- ✅ **Diseño Premium:** Estética moderna con colores corporativos (#A50034, #2C3E50).
+- ✅ **Conversión:** Formulario wizard de 3 pasos diseñado para reducir fricción.
+- ✅ **Mobile-First:** Optimización total para técnicos en campo y clientes móviles.
+- ✅ **Interactividad:** Animaciones fluidas con Framer Motion y componentes shadcn/ui.
 
-### 🤖 **Asistente IA SomosTécnicos v2.1**
-- ✅ Diagnóstico inteligente de problemas de electrodomésticos
-- ✅ Detección de Instalación y Mantenimiento
-- ✅ Auto-llenado de formularios mediante eventos personalizados
-- ✅ Comunicación mejorada con ServiceForm
-- ✅ Respuestas contextuales y sugerencias técnicas
-- ✅ Cierre automático después de transferir datos
+### 🤖 **Asistente IA v2.1**
+- ✅ **Diagnóstico Inteligente:** Identificación automática de fallas en electrodomésticos.
+- ✅ **Auto-llenado:** El chat IA transfiere datos directamente al formulario de solicitud.
+- ✅ **Contextual:** Sugiere servicios de mantenimiento, instalación o reparación según el caso.
 
-### 👥 **Sistema Multi-Usuario**
-- 🏠 **Clientes**: Registro simplificado, solicitar servicios, seguimiento de órdenes
-- 🔧 **Técnicos**: Registro con validación de documentos, dashboard, asignaciones, historial
-- 👨‍💼 **Administradores**: Gestión completa, reportes, analytics, revisión de aplicaciones
+### 👥 **Roles y Gestión (RBAC)**
+- 🏠 **Clientes:** Portal para solicitar servicios, rastrear órdenes y recibir notificaciones.
+- 🔧 **Técnicos:** Vista optimizada para móviles, gestión de asignaciones y reporte de trabajos.
+- 👨‍💼 **Administradores:** Panel de control para asignación manual, gestión de técnicos y analytics.
 
-### 📊 **Panel de Administración**
-- ✅ Dashboard con métricas y estadísticas
-- ✅ Gestión de órdenes y asignaciones
-- ✅ Reportes visuales y analytics
-- ✅ Sistema de notificaciones
-- ✅ Revisión de documentos de técnicos
+---
 
 ## 🛠️ Stack Tecnológico
 
-### **Frontend**
-- **Next.js 15.2.4** - Framework de React con App Router
-- **React 19** - Biblioteca de interfaz de usuario
-- **TypeScript** - Tipado estático para JavaScript
-- **Tailwind CSS** - Framework de CSS utility-first
-- **shadcn/ui** - Componentes UI modernos
-- **Lucide React** - Iconos SVG optimizados
-- **Framer Motion** - Animaciones fluidas
+### **Frontend & UX**
+- **Next.js 15.2.4** (App Router)
+- **React 19**
+- **Tailwind CSS** & **shadcn/ui**
+- **Framer Motion** (Animaciones)
 
-### **Backend & Base de Datos**
-- **Prisma ORM** - Object-Relational Mapping moderno
-- **PostgreSQL** - Base de datos relacional
-- **Next.js API Routes** - Endpoints RESTful
-- **JWT** - Autenticación con tokens seguros
-- **bcryptjs** - Hashing de contraseñas
+### **Backend & Core**
+- **Prisma ORM** (PostgreSQL)
+- **TypeScript**
+- **Zod** (Validaciones de esquemas globales)
+- **JWT** (Autenticación segura con Roles)
+- **BCrypt** (Hashing de seguridad)
 
-### **Herramientas de Desarrollo**
-- **pnpm** - Gestor de paquetes rápido
-- **ESLint** - Linter para código JavaScript/TypeScript
-- **Docker** - Contenedores para desarrollo
-- **VS Code** - Editor recomendado con extensiones
+---
 
-## 🚀 Instalación y Configuración
+## 🚀 Instalación Rápida
 
-### **Prerrequisitos**
-- Node.js 18+
-- pnpm (recomendado) o npm
-- Docker y Docker Compose
-- PostgreSQL (o usar Docker)
-
-### **1. Clonar el Repositorio**
-```bash
-git clone https://github.com/basabecode/SomosTecnicos.git
-cd SomosTécnicos
-```
-
-### **2. Instalar Dependencias**
+### **1. Configurar Entorno**
 ```bash
 pnpm install
+# Clonar .env.example a .env.local y configurar DATABASE_URL
 ```
 
-### **3. Configurar Variables de Entorno**
-Crea un archivo `.env.local`:
-```env
-# Base de datos
-DATABASE_URL="postgresql://usuario:password@localhost:5432/somostecnicos"
-
-# JWT
-JWT_SECRET="tu-secreto-jwt-super-seguro"
-
-# Email (opcional)
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT=587
-SMTP_USER="tu-email@gmail.com"
-SMTP_PASS="tu-password"
-```
-
-### **4. Configurar Base de Datos**
+### **2. Preparar Base de Datos**
 ```bash
-# Iniciar PostgreSQL con Docker
-pnpm docker:up
-
-# Ejecutar migraciones de Prisma
-pnpm db:push
-
-# Poblar base de datos con datos de ejemplo
-pnpm db:seed
+pnpm db:push    # Sincronizar esquema
+pnpm db:seed    # Poblar con datos de prueba
 ```
 
-### **5. Ejecutar en Desarrollo**
+### **3. Iniciar**
 ```bash
 pnpm dev
 ```
 
-La aplicación estará disponible en `http://localhost:3000`
+---
 
-## 📱 Rutas Principales
+## � Cuentas de Prueba (Demo)
 
-### **🏠 Usuario General**
-- `/` - Landing page con formulario optimizado
-- `/login` - Página de autenticación
+| Rol | Email | Password |
+|-----|-------|----------|
+| **Admin** | `admin.demo@tecnocity.com` | `123456` |
+| **Técnico** | `tecnico.demo@tecnocity.com` | `123456` |
+| **Cliente** | `cliente.demo@tecnocity.com` | `123456` |
 
-### **👤 Cliente**
-- `/customer/dashboard` - Dashboard del cliente
-- `/customer/request` - Solicitar nuevo servicio
-- `/customer/history` - Historial de servicios
-
-### **🔧 Técnico**
-- `/technician/dashboard` - Dashboard del técnico
-- `/technician/assignments` - Asignaciones activas
-- `/technician/history` - Historial de trabajos
-
-### **👨‍💼 Administrador**
-- `/admin/dashboard` - Panel de control principal
-- `/admin/orders` - Gestión de órdenes
-- `/admin/technicians` - Gestión de técnicos
-- `/admin/reports` - Reportes y analytics
-
-## 🤖 API Endpoints
-
-### **Autenticación**
-- `POST /api/auth/login` - Iniciar sesión
-- `POST /api/auth/logout` - Cerrar sesión
-- `GET /api/auth/me` - Obtener usuario actual
-
-### **Órdenes de Servicio**
-- `GET /api/orders` - Listar órdenes
-- `POST /api/orders` - Crear nueva orden
-- `GET /api/orders/[id]` - Obtener orden específica
-- `PUT /api/orders/[id]/status` - Actualizar estado
-
-### **Chat IA**
-- `POST /api/ai-chat` - Procesar mensaje del chat IA
-
-### **Técnicos**
-- `GET /api/technicians` - Listar técnicos
-- `POST /api/technicians` - Crear técnico
-- `GET /api/technicians/available` - Técnicos disponibles
-
-## 🎯 Características del Asistente IA
-
-### **Diagnóstico Inteligente**
-- Reconocimiento de electrodomésticos (nevera, lavadora, aire acondicionado, etc.)
-- Identificación de problemas comunes
-- Estimación automática de costos y tiempos
-
-### **Servicios Detectados**
-- **Reparaciones**: Diagnóstico de fallas y reparación
-- **Mantenimiento**: Servicios preventivos
-- **Instalación**: Instalación profesional de equipos
-
-### **Electrodomésticos Compatibles**
-- 🧊 Neveras y refrigeradores
-- 🧺 Lavadoras y secadoras
-- ❄️ Aires acondicionados
-- 🔥 Estufas y hornos
-- 📡 Microondas
-- 🔧 Otros electrodomésticos
-
-## 📊 Dashboard y Reportes
-
-### **Métricas Principales**
-- Total de órdenes activas
-- Técnicos disponibles
-- Ingresos del mes
-- Calificación promedio
-
-### **Reportes Visuales**
-- Gráficos de órdenes por período
-- Distribución por tipo de servicio
-- Rendimiento de técnicos
-- Análisis de tendencias
-
-## 🔒 Cuentas de Prueba
-
-### **Administrador**
-- **Usuario**: `admin@somostecnicos.com`
-- **Contraseña**: `admin123`
-
-### **Técnico**
-- **Usuario**: `tecnico@somostecnicos.com`
-- **Contraseña**: `tecnico123`
-
-### **Cliente**
-- Registro libre desde la landing page
-
-## 🚢 Despliegue
-
-### **Vercel (Recomendado)**
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Desplegar
-vercel --prod
-```
-
-### **Docker**
-```bash
-# Construir imagen
-docker build -t somostecnicos .
-
-# Ejecutar contenedor
-docker run -p 3000:3000 somostecnicos
-```
-
-## 📚 Documentación Adicional
-
-- 📖 [Arquitectura del Software](docs/ARQUITECTURA_SOFTWARE.md)
-- 🔍 [Auditoría Completa](docs/AUDITORIA_COMPLETA_SOFTWARE.md)
-- 🎯 [Mejoras UX/UI](docs/REPORTE_MEJORAS_FRONTEND_COMPLETO.md)
-- 🛣️ [Roadmap 2025](docs/ROADMAP_MEJORAS_2025.md)
-
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
-
-## 👨‍💻 Desarrollado por
-
-**basabecode** - [GitHub](https://github.com/basabecode)
+*Para más detalles y casos de prueba, consulta [02-TESTING-Y-ACCESO.md](docs/02-TESTING-Y-ACCESO.md).*
 
 ---
 
-⭐ **¡Si te gusta el proyecto, dale una estrella!** ⭐
+## 📚 Documentación del Sistema
 
-🔗 **Demo en vivo**: [SomosTécnicos](https://tu-dominio.vercel.app)
+Para una comprensión profunda del sistema, consulta nuestra base de conocimientos en el directorio `docs/`:
+
+1.  � **[01-SISTEMA-Y-ARQUITECTURA.md](docs/01-SISTEMA-Y-ARQUITECTURA.md)**: Estructura, roles y stack técnico.
+2.  🧪 **[02-TESTING-Y-ACCESO.md](docs/02-TESTING-Y-ACCESO.md)**: Guía detallada de pruebas y credenciales.
+3.  � **[03-ROADMAP-Y-PENDIENTES.md](docs/03-ROADMAP-Y-PENDIENTES.md)**: Próximas funcionalidades y visión 2026.
+4.  � **[04-AUDITORIA-E-HISTORIAL.md](docs/04-AUDITORIA-E-HISTORIAL.md)**: Hitos alcanzados y reportes consolidados.
+5.  🗺️ **[INDICE_DOCUMENTACION.md](docs/INDICE_DOCUMENTACION.md)**: Mapa completo de archivos.
+
+---
+
+## 📄 Licencia
+Este proyecto está bajo la Licencia MIT.
+
+## 👨‍💻 Desarrollado por
+**basabecode** - [GitHub](https://github.com/basabecode)
