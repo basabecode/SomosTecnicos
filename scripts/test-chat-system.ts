@@ -29,7 +29,7 @@ function log(type: 'INFO' | 'SUCCESS' | 'ERROR' | 'WARN', message: string, data?
 
 async function setupTestUsers() {
   log('INFO', 'Configurando usuarios de prueba...')
-  const passwordHash = await bcrypt.hash('Demo2026!Secure', 10)
+  const passwordHash = await bcrypt.hash(process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!', 10)
 
   // 1. Crear Admin
   const adminEmail = 'admin.chat.test@somostecnicos.com'
@@ -121,7 +121,7 @@ async function login(email: string) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password: 'Demo2026!Secure' })
+    body: JSON.stringify({ email, password: process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!' })
   })
   const data = await res.json()
   if (!data.success) {

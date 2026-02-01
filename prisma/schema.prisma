@@ -87,6 +87,7 @@ model Technician {
   zonaTrabajoArea       String?  @map("zona_trabajo")
   activo                Boolean  @default(true)
   disponible            Boolean  @default(true)
+  estadoActual          String   @default("disponible") @map("estado_actual") // disponible, ocupado, en_descanso, offline
 
   // Métricas de Rendimiento
   ordenesCompletadas    Int      @default(0) @map("ordenes_completadas")

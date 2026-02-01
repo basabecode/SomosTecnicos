@@ -126,7 +126,7 @@ window.location.href = dashboardUrl
 #### **Credenciales Admin Confirmadas:**
 
 - **Email:** `admin.demo@somostecnicos.com`
-- **Password:** `Demo2026!Secure`
+- **Password:** `ChangeMe2026!`
 - **Resultado:** ✅ Login exitoso → `/admin/dashboard`
 
 #### **Flujo Completo Validado:**
@@ -685,7 +685,7 @@ Se verificó que los datos en la DB eran correctos. El problema radicaba en el f
 Uso de `Invoke-RestMethod` en lugar de `curl` para evitar problemas de escape de JSON en PowerShell.
 
 ```powershell
-$body = @{email='cliente.demo@somostecnicos.com'; password='Demo2026!Secure'} | ConvertTo-Json
+$body = @{email='cliente.demo@somostecnicos.com'; password='ChangeMe2026!'} | ConvertTo-Json
 Invoke-RestMethod -Uri 'http://localhost:3000/api/auth/login' -Method POST -Body $body -ContentType 'application/json'
 ```
 
@@ -723,3 +723,4 @@ Eliminados datos hardcoded; ahora se usa `useAuth()` para pre-llenar solicitudes
 Corregido el orden de Context Providers en `app/layout.tsx` para evitar errores de inicialización.
 
 ---
+

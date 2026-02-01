@@ -33,16 +33,36 @@ export async function GET(request: NextRequest) {
         nombre: true,
         apellido: true,
         email: true,
-        telefono: true
+        telefono: true,
+        ciudad: true,
+        direccion: true,
+        createdAt: true,
+        updatedAt: true,
+        orders: {
+          take: 1,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            createdAt: true,
+            estado: true
+          }
+        },
+        _count: {
+          select: { orders: true }
+        }
       }
     })
 
     return NextResponse.json({
       success: true,
-      customers: customers.map((c: any) => ({
-        ...c,
-        nombreCompleto: `${c.nombre} ${c.apellido || ''}`.trim()
-      }))
+      customers: customers.map((c: any) => {
+        const lastOrder = c.orders[0]
+        return {
+          ...c,
+          nombreCompleto: `${c.nombre} ${c.apellido || ''}`.trim(),
+          ultimaSolicitud: lastOrder ? lastOrder.createdAt : null,
+          totalOrdenes: c._count.orders
+        }
+      })
     })
   } catch (error) {
     console.error('Error fetching customers:', error)

@@ -6,17 +6,17 @@ async function testLogin() {
   const testUsers = [
     {
       email: 'admin.demo@somostecnicos.com',
-      password: 'Demo2026!Secure',
+      password: process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!',
       expectedRole: 'super_admin'
     },
     {
       email: 'tecnico.demo@somostecnicos.com',
-      password: 'Demo2026!Secure',
+      password: process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!',
       expectedRole: 'technician'
     },
     {
       email: 'cliente.demo@somostecnicos.com',
-      password: 'Demo2026!Secure',
+      password: process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!',
       expectedRole: 'customer'
     }
   ]

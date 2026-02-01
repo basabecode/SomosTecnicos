@@ -79,9 +79,9 @@ pnpm dev
 
 | Rol | Email | Password |
 |-----|-------|----------|
-| **Admin** | `admin.demo@somostecnicos.com` | `Demo2026!Secure` |
-| **Técnico** | `tecnico.demo@somostecnicos.com` | `Demo2026!Secure` |
-| **Cliente** | `cliente.demo@somostecnicos.com` | `Demo2026!Secure` |
+| **Admin** | `admin.demo@somostecnicos.com` | `********` |
+| **Técnico** | `tecnico.demo@somostecnicos.com` | `********` |
+| **Cliente** | `cliente.demo@somostecnicos.com` | `********` |
 
 *Para más detalles y casos de prueba, consulta [02-TESTING-Y-ACCESO.md](docs/02-TESTING-Y-ACCESO.md).*
 

@@ -55,6 +55,7 @@ interface TechnicianProfile {
   nombre: string
   especialidades: string[]
   zona: string
+  status?: 'disponible' | 'ocupado' | 'en_descanso' | 'offline'
 }
 
 export default function TechnicianDashboard() {
@@ -122,6 +123,40 @@ export default function TechnicianDashboard() {
     }
   }
 
+  const updateTechnicianStatus = async (status: string) => {
+      try {
+        const token = localStorage.getItem('accessToken')
+        const response = await fetch('/api/technicians/me/status', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ status })
+        })
+
+        if (response.ok) {
+            const data = await response.json()
+             if (technician) {
+                 setTechnician({
+                     ...technician,
+                     status: data.data.status
+                 })
+             }
+        } else {
+             const errorData = await response.json().catch(() => ({ error: 'Error parsing JSON' }))
+             console.error('Failed to update status:', {
+                 status: response.status,
+                 statusText: response.statusText,
+                 data: errorData
+             })
+             alert(`Error al actualizar estado: ${errorData.error || response.statusText}`)
+        }
+      } catch (error) {
+          console.error('Error updating status:', error)
+      }
+  }
+
   useEffect(() => {
     fetchAssignments()
   }, [])
@@ -162,13 +197,49 @@ export default function TechnicianDashboard() {
               : 'No tienes servicios pendientes por ahora'}
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">
-            En línea
-          </Badge>
-          <Button size="sm" variant="ghost" onClick={fetchAssignments}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+        <div className="flex flex-col items-end gap-2">
+           <div className="flex items-center space-x-2 bg-white p-1 rounded-lg border shadow-sm">
+              <Button
+                size="sm"
+                variant={technician?.status === 'disponible' ? 'default' : 'ghost'}
+                className={technician?.status === 'disponible' ? 'bg-green-600 hover:bg-green-700' : 'text-gray-500'}
+                onClick={() => updateTechnicianStatus('disponible')}
+              >
+                Disponible
+              </Button>
+              <Button
+                size="sm"
+                variant={technician?.status === 'ocupado' ? 'default' : 'ghost'}
+                 className={technician?.status === 'ocupado' ? 'bg-blue-600 hover:bg-blue-700' : 'text-gray-500'}
+                onClick={() => updateTechnicianStatus('ocupado')}
+              >
+                Ocupado
+              </Button>
+               <Button
+                size="sm"
+                variant={technician?.status === 'en_descanso' ? 'default' : 'ghost'}
+                 className={technician?.status === 'en_descanso' ? 'bg-orange-500 hover:bg-orange-600' : 'text-gray-500'}
+                onClick={() => updateTechnicianStatus('en_descanso')}
+              >
+                Descanso
+              </Button>
+           </div>
+
+           <div className="flex items-center gap-2 text-xs text-muted-foreground mr-1">
+             <span className="flex items-center">
+               <div className={`w-2 h-2 rounded-full mr-1 ${
+                 technician?.status === 'disponible' ? 'bg-green-500 animate-pulse' :
+                 technician?.status === 'ocupado' ? 'bg-blue-500' : 'bg-orange-500'
+               }`}></div>
+                Estado actual: {
+                  technician?.status === 'disponible' ? 'Disponible para servicios' :
+                  technician?.status === 'ocupado' ? 'En servicio' : 'En pausa'
+                }
+             </span>
+             <Button size="icon" variant="ghost" className="h-6 w-6" onClick={fetchAssignments}>
+               <RefreshCw className="h-3 w-3" />
+             </Button>
+           </div>
         </div>
       </div>
 

@@ -45,9 +45,14 @@ const sidebarItems: SidebarItem[] = [
     badge: 12,
   },
   {
+    title: 'Clientes',
+    href: '/admin/customers',
+    icon: Users,
+  },
+  {
     title: 'Técnicos',
     href: '/admin/technicians',
-    icon: Users,
+    icon: Wrench,
   },
   {
     title: 'Reportes',

@@ -8,8 +8,9 @@ async function main() {
   console.log('🌱 Creando usuarios demo para testing...\n');
 
   try {
-    // Password hash para "Demo2026!Secure"
-    const passwordHash = await bcrypt.hash('Demo2026!Secure', 10);
+    // Password hash para "ChangeMe2026!"
+    const password = process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!';
+    const passwordHash = await bcrypt.hash(password, 10);
 
     // 1. Crear Admin Demo
     const admin = await prisma.adminUser.upsert({
@@ -66,3 +67,4 @@ main()
     console.error(e);
     process.exit(1);
   });
+

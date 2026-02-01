@@ -18,7 +18,7 @@ async function main() {
     console.log('🔧 Creando cuenta de técnico demo...')
 
     const techEmail = 'tecnico.demo@somostecnicos.com'
-    const techPassword = 'Demo2026!Secure'
+    const techPassword = process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!'
 
     const existingTech = await prisma.adminUser.findUnique({
       where: { email: techEmail }
@@ -63,7 +63,7 @@ async function main() {
     console.log('\n👤 Verificando cuenta de cliente demo...')
 
     const clientEmail = 'cliente.demo@somostecnicos.com'
-    const clientPassword = 'Demo2026!Secure'
+    const clientPassword = process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!'
 
     const existingClient = await prisma.customer.findUnique({
       where: { email: clientEmail }
@@ -108,7 +108,7 @@ async function main() {
     console.log('\n🛡️  Verificando cuenta de admin demo...')
 
     const adminEmail = 'admin.demo@somostecnicos.com'
-    const adminPassword = 'Demo2026!Secure'
+    const adminPassword = process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!'
 
     const existingAdmin = await prisma.adminUser.findUnique({
       where: { email: adminEmail }
@@ -157,17 +157,17 @@ async function main() {
 
 🛡️  ADMINISTRADOR:
    Email:    admin.demo@somostecnicos.com
-   Password: Demo2026!Secure
+   Password: ChangeMe2026!
    Panel:    /admin/dashboard
 
 🔧 TÉCNICO:
    Email:    tecnico.demo@somostecnicos.com
-   Password: Demo2026!Secure
+   Password: ChangeMe2026!
    Panel:    /technician/dashboard
 
 👤 CLIENTE:
    Email:    cliente.demo@somostecnicos.com
-   Password: Demo2026!Secure
+   Password: ChangeMe2026!
    Panel:    /customer/dashboard
 
 ⚠️  IMPORTANTE: Estas contraseñas son SOLO para testing.
@@ -188,3 +188,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+

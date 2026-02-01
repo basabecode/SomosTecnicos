@@ -43,7 +43,7 @@ export interface AuthRequest extends NextRequest {
 // CONFIGURACIÓN JWT
 // =============================================
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production'
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-this-in-env-file'
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h'
 
 // =============================================

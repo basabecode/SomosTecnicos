@@ -6,14 +6,14 @@ Este documento contiene las credenciales de prueba, flujos de validación y guí
 
 ## 🔐 1. Cuentas de Prueba (Demo)
 
-⚠️ **IMPORTANTE:** Estas cuentas son solo para el entorno de desarrollo/testing. Las contraseñas se reinician con `pnpm db:seed`.
+⚠️ **IMPORTANTE:** Estas cuentas son solo para el entorno de desarrollo/testing. Las contraseñas se gestionan mediante variables de entorno en el archivo `.env` (Ver `DEMO_ADMIN_PASSWORD`, etc) y se aplican con `pnpm db:seed`.
 
 | Rol | Email | Password | Panel Principal |
 |-----|-------|----------|-----------------|
-| **Admin** | `admin.demo@somostecnicos.com` | `Demo2026!Secure` | `/admin/dashboard` |
-| **Técnico** | `tecnico.demo@somostecnicos.com` | `Demo2026!Secure` | `/technician/dashboard` |
-| **Cliente** | `cliente.demo@somostecnicos.com` | `Demo2026!Secure` | `/customer/dashboard` |
-| **Cliente VIP**| `cliente.vip@somostecnicos.com` | `Demo2026!Secure` | `/customer/dashboard` |
+| **Admin** | `admin.demo@somostecnicos.com` | `********` | `/admin/dashboard` |
+| **Técnico** | `tecnico.demo@somostecnicos.com` | `********` | `/technician/dashboard` |
+| **Cliente** | `cliente.demo@somostecnicos.com` | `********` | `/customer/dashboard` |
+| **Cliente VIP**| `cliente.vip@somostecnicos.com` | `********` | `/customer/dashboard` |
 
 ### **Script de Restauración:**
 Si las cuentas no funcionan o necesitas limpiar datos:

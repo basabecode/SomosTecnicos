@@ -304,7 +304,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
 async function resetearPasswordsDemo() {
-  const defaultPassword = 'Demo2026!Secure'; // Password temporal seguro
+  const defaultPassword = 'ChangeMe2026!'; // Password temporal seguro
   const hashedPassword = await bcrypt.hash(defaultPassword, saltRounds);
 
   // Actualizar en base de datos
@@ -484,7 +484,7 @@ describe('Validación Post-Limpieza', () => {
       .post('/api/auth/login')
       .send({
         email: 'admin.demo@somostecnicos.com',
-        password: 'Demo2026!Secure'
+        password: 'ChangeMe2026!'
       });
     expect(response.status).toBe(200);
     expect(response.body.token).toBeDefined();
@@ -495,7 +495,7 @@ describe('Validación Post-Limpieza', () => {
       .post('/api/auth/login')
       .send({
         email: 'tecnico.demo@somostecnicos.com',
-        password: 'Demo2026!Secure'
+        password: 'ChangeMe2026!'
       });
     expect(response.status).toBe(200);
   });
@@ -505,7 +505,7 @@ describe('Validación Post-Limpieza', () => {
       .post('/api/auth/login')
       .send({
         email: 'cliente.demo@somostecnicos.com',
-        password: 'Demo2026!Secure'
+        password: 'ChangeMe2026!'
       });
     expect(response.status).toBe(200);
   });
@@ -717,9 +717,9 @@ Ejecutado por: [NOMBRE_RESPONSABLE]
 ## Credenciales Demo
 **NOTA: Estos usuarios deben cambiar password en primer login**
 
-Admin: admin.demo@somostecnicos.com / Demo2026!Secure
-Técnico: tecnico.demo@somostecnicos.com / Demo2026!Secure
-Cliente: cliente.demo@somostecnicos.com / Demo2026!Secure
+Admin: admin.demo@somostecnicos.com / ChangeMe2026!
+Técnico: tecnico.demo@somostecnicos.com / ChangeMe2026!
+Cliente: cliente.demo@somostecnicos.com / ChangeMe2026!
 
 ## Siguientes Pasos
 1. [ ] Ejecutar suite de pruebas completa
@@ -772,7 +772,7 @@ echo "✅ Rollback completado"
  - [x] **Backup creado y verificado** (Realizado por el sistema previo a reset)
  - [x] **Solo 3 usuarios existen** (admin, técnico, cliente demo actualizados a @somostecnicos.com)
  - [x] **Solo 2-3 órdenes demo existen** (Creadas mediante seed optimizado)
- - [x] **Passwords reseteados** con passwords seguros temporales (`Demo2026!Secure`)
+ - [x] **Passwords reseteados** con passwords seguros temporales (`ChangeMe2026!`)
  - [x] **Datos sensibles eliminados** (Limpieza total mediante `db push --force-reset`)
  - [x] **Archivos huérfanos eliminados** (N/A en dev local, DB reseteada)
  - [x] **Cache limpiado** (Re-inicialización de la app)
@@ -868,3 +868,4 @@ Si algo sale mal durante la limpieza:
 **Esta limpieza es IRREVERSIBLE sin backup. Proceder con cautela máxima.**
 
 ✅ Una vez completado, el sistema estará listo para producción con datos demo limpios y seguros.
+

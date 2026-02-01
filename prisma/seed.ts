@@ -18,7 +18,7 @@ async function main() {
     console.log('👤 Creando usuario administrador...')
 
     const adminEmail = 'admin.demo@somostecnicos.com'
-    const adminPassword = 'Demo2026!Secure'
+    const adminPassword = process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!'
     const adminName = 'Administrador Demo'
 
     const hashedPassword = await bcrypt.hash(adminPassword, 12)
@@ -59,7 +59,7 @@ async function main() {
         telefono: '3005557788',
         direccion: 'Carrera 45 #12-34',
         ciudad: 'Bogotá',
-        password: 'Demo2026!Secure'
+        password: process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!'
       }
     ]
 
@@ -169,7 +169,7 @@ async function main() {
     // =============================================
     console.log('👷 Creando técnicos de ejemplo...')
 
-    const techPassword = await bcrypt.hash('Demo2026!Secure', 12)
+    const techPassword = await bcrypt.hash(process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!', 12)
 
     const technician = {
       nombre: 'Carlos Mendoza',
