@@ -947,10 +947,9 @@ Agregar/verificar en `.env.local`:
 ```env
 # Email Service (Resend)
 RESEND_API_KEY=tu_api_key_de_resend
-FROM_EMAIL=noreply@tecnocity.com
-
-# Admin Configuration
-ADMIN_EMAIL=admin.demo@tecnocity.com
+FROM_EMAIL=noreply@somostecnicos.com
+# Otras credenciales
+ADMIN_EMAIL=admin.demo@somostecnicos.com
 
 # Application URL
 NEXT_PUBLIC_APP_URL=http://localhost:3000

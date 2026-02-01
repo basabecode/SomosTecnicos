@@ -16,8 +16,8 @@ Se han creado y validado exitosamente **3 cuentas de prueba** con credenciales s
 ### ✅ 1. ADMINISTRADOR
 
 ```
-Email:     admin.demo@tecnocity.com
-Password:  123456
+Email:     admin.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       super_admin
 Dashboard: /admin/dashboard
 ```
@@ -35,8 +35,8 @@ Dashboard: /admin/dashboard
 ### ✅ 2. TÉCNICO
 
 ```
-Email:     tecnico.demo@tecnocity.com
-Password:  123456
+Email:     tecnico.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       technician
 Dashboard: /technician/dashboard
 ```
@@ -54,8 +54,8 @@ Dashboard: /technician/dashboard
 ### ✅ 3. CLIENTE
 
 ```
-Email:     cliente.demo@tecnocity.com
-Password:  123456
+Email:     cliente.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       customer
 Dashboard: /customer/dashboard
 ```
@@ -95,7 +95,7 @@ Dashboard: /customer/dashboard
 ## 🔧 SOLUCIÓN IMPLEMENTADA
 
 ### **Problema Identificado:**
-Las cuentas `tecnico.demo@tecnocity.com` y `cliente.demo@tecnocity.com` no existían en la base de datos con las contraseñas correctas.
+Las cuentas `tecnico.demo@somostecnicos.com` y `cliente.demo@somostecnicos.com` no existían en la base de datos con las contraseñas correctas.
 
 ### **Solución Aplicada:**
 
@@ -104,12 +104,12 @@ Las cuentas `tecnico.demo@tecnocity.com` y `cliente.demo@tecnocity.com` no exist
    - Función: Crear/actualizar cuentas de prueba con contraseñas simples
 
 2. **Cuentas creadas/actualizadas:**
-   - ✅ `admin.demo@tecnocity.com` - super_admin
-   - ✅ `tecnico.demo@tecnocity.com` - technician
-   - ✅ `cliente.demo@tecnocity.com` - customer
+   - ✅ `admin.demo@somostecnicos.com` - super_admin
+   - ✅ `tecnico.demo@somostecnicos.com` - technician
+   - ✅ `cliente.demo@somostecnicos.com` - customer
 
 3. **Contraseñas estandarizadas:**
-   - Todas las cuentas usan: `123456`
+   - Todas las cuentas usan: `Demo2026!Secure`
    - Hash bcrypt con 12 rounds
    - Almacenadas de forma segura
 
@@ -149,9 +149,9 @@ Este comando:
 
 | Cuenta | Email | Password | Rol | Login | Dashboard | Funcionalidad |
 |--------|-------|----------|-----|-------|-----------|---------------|
-| Admin | admin.demo@tecnocity.com | 123456 | super_admin | ✅ | ✅ | ✅ |
-| Técnico | tecnico.demo@tecnocity.com | 123456 | technician | ✅ | ✅ | ✅ |
-| Cliente | cliente.demo@tecnocity.com | 123456 | customer | ✅ | ✅ | ✅ |
+| Admin | admin.demo@somostecnicos.com | Demo2026!Secure | super_admin | ✅ | ✅ | ✅ |
+| Técnico | tecnico.demo@somostecnicos.com | Demo2026!Secure | technician | ✅ | ✅ | ✅ |
+| Cliente | cliente.demo@somostecnicos.com | Demo2026!Secure | customer | ✅ | ✅ | ✅ |
 
 ---
 

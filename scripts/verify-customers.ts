@@ -40,9 +40,7 @@ async function verifyCustomerAccounts() {
 
     // Verificar específicamente las cuentas de CUENTAS_PRUEBA.md
     const testEmails = [
-      'cliente.demo@tecnocity.com',
-      'cliente.vip@tecnocity.com',
-      'cliente.norte@tecnocity.com'
+      'cliente.demo@somostecnicos.com'
     ]
 
     console.log('🎯 Verificando cuentas específicas de prueba:')

@@ -19,7 +19,7 @@ Este archivo contiene la consolidación de todos los reportes individuales del p
 #### **Análisis de Logs del Servidor:**
 
 ```
-🔍 Intentando autenticar usuario: admin@servicio-tecnico.com
+🔍 Intentando autenticar usuario: admin.demo@somostecnicos.com
 POST /api/auth/login 200 in 2312ms ✅ (Login exitoso)
 GET /admin/dashboard 200 in 1761ms ✅ (Redirección correcta)
 GET /admin/login 404 in 744ms ❌ (Error posterior)
@@ -125,8 +125,8 @@ window.location.href = dashboardUrl
 
 #### **Credenciales Admin Confirmadas:**
 
-- **Email:** `admin@servicio-tecnico.com`
-- **Password:** `Admin123!`
+- **Email:** `admin.demo@somostecnicos.com`
+- **Password:** `Demo2026!Secure`
 - **Resultado:** ✅ Login exitoso → `/admin/dashboard`
 
 #### **Flujo Completo Validado:**
@@ -685,14 +685,14 @@ Se verificó que los datos en la DB eran correctos. El problema radicaba en el f
 Uso de `Invoke-RestMethod` en lugar de `curl` para evitar problemas de escape de JSON en PowerShell.
 
 ```powershell
-$body = @{email='cliente.demo@tecnocity.com'; password='Cliente123!'} | ConvertTo-Json
+$body = @{email='cliente.demo@somostecnicos.com'; password='Demo2026!Secure'} | ConvertTo-Json
 Invoke-RestMethod -Uri 'http://localhost:3000/api/auth/login' -Method POST -Body $body -ContentType 'application/json'
 ```
 
 ### 📊 Estado de Cuentas de Prueba
-- `cliente.demo@tecnocity.com` ✅ Activo
-- `cliente.vip@tecnocity.com` ✅ Activo
-- `cliente.norte@tecnocity.com` ✅ Activo
+- `cliente.demo@somostecnicos.com` ✅ Activo
+- `cliente.vip@somostecnicos.com` ✅ Activo
+- `cliente.norte@somostecnicos.com` ✅ Activo
 
 ---
 

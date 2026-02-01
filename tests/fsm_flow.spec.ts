@@ -29,8 +29,8 @@ test.describe('FSM Flow - General Rehearsal', () => {
 
     if (isLoginPageVisible) {
         console.log('[TEST] Login form detected. Filling credentials...');
-        await emailInput.fill('cliente.demo@tecnocity.com');
-        await page.getByPlaceholder('••••••••').fill('123456');
+        await emailInput.fill('cliente.demo@somostecnicos.com');
+        await page.getByPlaceholder('••••••••').fill('Demo2026!Secure');
         await page.getByRole('button', { name: 'Ingresar' }).click();
 
         // Wait for navigation to complete
@@ -108,8 +108,8 @@ test.describe('FSM Flow - General Rehearsal', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
      if (await page.getByPlaceholder('ejemplo@correo.com').isVisible()) {
-        await page.getByPlaceholder('ejemplo@correo.com').fill('admin.demo@tecnocity.com');
-        await page.getByPlaceholder('••••••••').fill('123456');
+        await page.getByPlaceholder('ejemplo@correo.com').fill('admin.demo@somostecnicos.com');
+        await page.getByPlaceholder('••••••••').fill('Demo2026!Secure');
         await page.getByRole('button', { name: 'Ingresar' }).click();
     }
     await expect(page).toHaveURL(/\/admin\/dashboard/);
@@ -123,8 +123,8 @@ test.describe('FSM Flow - General Rehearsal', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
      if (await page.getByPlaceholder('ejemplo@correo.com').isVisible()) {
-        await page.getByPlaceholder('ejemplo@correo.com').fill('tecnico.demo@tecnocity.com');
-        await page.getByPlaceholder('••••••••').fill('123456');
+        await page.getByPlaceholder('ejemplo@correo.com').fill('tecnico.demo@somostecnicos.com');
+        await page.getByPlaceholder('••••••••').fill('Demo2026!Secure');
         await page.getByRole('button', { name: 'Ingresar' }).click();
     }
     await expect(page).toHaveURL(/\/technician\/dashboard/);

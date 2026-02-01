@@ -29,10 +29,10 @@ function log(type: 'INFO' | 'SUCCESS' | 'ERROR' | 'WARN', message: string, data?
 
 async function setupTestUsers() {
   log('INFO', 'Configurando usuarios de prueba...')
-  const passwordHash = await bcrypt.hash('TestPass123!', 10)
+  const passwordHash = await bcrypt.hash('Demo2026!Secure', 10)
 
   // 1. Crear Admin
-  const adminEmail = 'admin.chat.test@tecnocity.com'
+  const adminEmail = 'admin.chat.test@somostecnicos.com'
   let admin = await prisma.adminUser.findUnique({ where: { email: adminEmail } })
   if (!admin) {
     admin = await prisma.adminUser.create({
@@ -52,7 +52,7 @@ async function setupTestUsers() {
   }
 
   // 2. Crear Cliente
-  const clientEmail = 'client.chat.test@tecnocity.com'
+  const clientEmail = 'client.chat.test@somostecnicos.com'
   let client = await prisma.customer.findUnique({ where: { email: clientEmail } })
   if (!client) {
     client = await prisma.customer.create({
@@ -72,7 +72,7 @@ async function setupTestUsers() {
   }
 
   // 3. Crear Técnico (Requiere AdminUser para login + Technician para datos)
-  const techEmail = 'tech.chat.test@tecnocity.com'
+  const techEmail = 'tech.chat.test@somostecnicos.com'
 
   // 3a. AdminUser para login
   let techUser = await prisma.adminUser.findUnique({ where: { email: techEmail } })
@@ -121,7 +121,7 @@ async function login(email: string) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password: 'TestPass123!' })
+    body: JSON.stringify({ email, password: 'Demo2026!Secure' })
   })
   const data = await res.json()
   if (!data.success) {

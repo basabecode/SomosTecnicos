@@ -18,7 +18,7 @@ async function main() {
 
   // 2. Verificar Admin User
   const admin = await prisma.adminUser.findFirst({
-    where: { email: 'admin@servicio-tecnico.com' }
+    where: { email: 'admin.demo@somostecnicos.com' }
   })
   if (admin) {
     console.log(`✅ Usuario Administrador encontrado: ${admin.email}`)

@@ -128,8 +128,8 @@ pnpm db:studio
 
 ### Admin (para aprobar técnicos):
 ```
-Email: admin@tecnocity.com
-Password: [configurar en seed.ts]
+Email: admin.demo@somostecnicos.com
+Password: Demo2026!Secure
 ```
 
 ### Cliente de Prueba:

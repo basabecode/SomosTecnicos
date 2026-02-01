@@ -24,8 +24,8 @@
 **Acceso completo al sistema**
 
 ```
-Email:     admin.demo@tecnocity.com
-Password:  123456
+Email:     admin.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       super_admin
 Panel:     /admin/dashboard
 ```
@@ -45,8 +45,8 @@ Panel:     /admin/dashboard
 **Portal para técnicos de campo**
 
 ```
-Email:     tecnico.demo@tecnocity.com
-Password:  123456
+Email:     tecnico.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       technician
 Panel:     /technician/dashboard
 ```
@@ -66,8 +66,8 @@ Panel:     /technician/dashboard
 **Portal para clientes finales**
 
 ```
-Email:     cliente.demo@tecnocity.com
-Password:  123456
+Email:     cliente.demo@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       customer
 Panel:     /customer/dashboard
 ```
@@ -93,8 +93,8 @@ Panel:     /customer/dashboard
 **Cliente con historial extenso**
 
 ```
-Email:     cliente.vip@tecnocity.com
-Password:  123456
+Email:     cliente.vip@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       customer
 Panel:     /customer/dashboard
 ```
@@ -113,8 +113,8 @@ Panel:     /customer/dashboard
 **Cliente de otra ciudad**
 
 ```
-Email:     cliente.norte@tecnocity.com
-Password:  123456
+Email:     cliente.norte@somostecnicos.com
+Password:  Demo2026!Secure
 Rol:       customer
 Panel:     /customer/dashboard
 ```
@@ -363,6 +363,6 @@ pnpm start
 
 ---
 
-**Generado por:** TecnoCity Development Team
+**Generado por:** SomosTécnicos Development Team
 **Versión:** 1.2.0
 **Fecha:** 2 de enero de 2026

@@ -19,14 +19,14 @@ async function main() {
 
     // Obtener cliente demo
     const customer = await prisma.customer.findFirst({
-        where: { email: 'cliente.demo@tecnocity.com' }
+        where: { email: 'cliente.demo@somostecnicos.com' }
     })
     if (!customer) throw new Error('Cliente demo no encontrado. Ejecuta seed-demo-users.ts')
     console.log(`   ✅ Cliente: ${customer.nombre} (ID: ${customer.id})`)
 
     // Obtener técnico demo
     const technician = await prisma.technician.findFirst({
-      where: { email: 'tecnico.demo@tecnocity.com' } // Asumiendo que existe en tabla Technician
+      where: { email: 'tecnico.demo@somostecnicos.com' } // Asumiendo que existe en tabla Technician
     })
 
     // NOTA IMPORTANTISIMA:
@@ -41,7 +41,7 @@ async function main() {
         const newTech = await prisma.technician.create({
             data: {
                 nombre: 'Juan Pérez (Demo Tech)',
-                email: 'tecnico.demo@tecnocity.com', // El mismo email que el usuario
+                email: 'tecnico.demo@somostecnicos.com', // El mismo email que el usuario
                 telefono: '3999999999',
                 cedula: 'DEMO-123456',
                 especialidades: ['general'],

@@ -17,8 +17,8 @@ async function main() {
     // =============================================
     console.log('🔧 Creando cuenta de técnico demo...')
 
-    const techEmail = 'tecnico.demo@tecnocity.com'
-    const techPassword = '123456'
+    const techEmail = 'tecnico.demo@somostecnicos.com'
+    const techPassword = 'Demo2026!Secure'
 
     const existingTech = await prisma.adminUser.findUnique({
       where: { email: techEmail }
@@ -62,8 +62,8 @@ async function main() {
     // =============================================
     console.log('\n👤 Verificando cuenta de cliente demo...')
 
-    const clientEmail = 'cliente.demo@tecnocity.com'
-    const clientPassword = '123456'
+    const clientEmail = 'cliente.demo@somostecnicos.com'
+    const clientPassword = 'Demo2026!Secure'
 
     const existingClient = await prisma.customer.findUnique({
       where: { email: clientEmail }
@@ -107,8 +107,8 @@ async function main() {
     // =============================================
     console.log('\n🛡️  Verificando cuenta de admin demo...')
 
-    const adminEmail = 'admin.demo@tecnocity.com'
-    const adminPassword = '123456'
+    const adminEmail = 'admin.demo@somostecnicos.com'
+    const adminPassword = 'Demo2026!Secure'
 
     const existingAdmin = await prisma.adminUser.findUnique({
       where: { email: adminEmail }
@@ -156,18 +156,18 @@ async function main() {
 📋 RESUMEN DE CUENTAS DE PRUEBA:
 
 🛡️  ADMINISTRADOR:
-   Email:    admin.demo@tecnocity.com
-   Password: 123456
+   Email:    admin.demo@somostecnicos.com
+   Password: Demo2026!Secure
    Panel:    /admin/dashboard
 
 🔧 TÉCNICO:
-   Email:    tecnico.demo@tecnocity.com
-   Password: 123456
+   Email:    tecnico.demo@somostecnicos.com
+   Password: Demo2026!Secure
    Panel:    /technician/dashboard
 
 👤 CLIENTE:
-   Email:    cliente.demo@tecnocity.com
-   Password: 123456
+   Email:    cliente.demo@somostecnicos.com
+   Password: Demo2026!Secure
    Panel:    /customer/dashboard
 
 ⚠️  IMPORTANTE: Estas contraseñas son SOLO para testing.

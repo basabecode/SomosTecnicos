@@ -9,9 +9,7 @@ import { authenticateCustomer } from '../lib/auth'
 async function testCustomerAuth() {
   try {
     const testCredentials = [
-      { email: 'cliente.demo@tecnocity.com', password: 'Cliente123!' },
-      { email: 'cliente.vip@tecnocity.com', password: 'Cliente123!' },
-      { email: 'cliente.norte@tecnocity.com', password: 'Cliente123!' }
+      { email: 'cliente.demo@somostecnicos.com', password: 'Demo2026!Secure' }
     ]
 
     console.log('🔐 Probando autenticación de clientes...\n')

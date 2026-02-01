@@ -45,3 +45,12 @@ Este archivo agrupa las tareas pendientes y planes de acción detallados para el
 - [ ] `npm audit fix` y `pnpm update`.
 
 ---
+
+## Tarea 3: Fase de Pruebas Reales
+**Estado:** PENDIENTE (Siguiente paso post-limpieza)
+
+### 🟡 Tareas Pendientes
+- [ ] **Validación de Login:** Probar acceso con las nuevas credenciales `admin.demo@somostecnicos.com`.
+- [ ] **Flujo Completo de Orden:** Crear una orden real, asignarla al técnico demo y completarla.
+- [ ] **Pruebas de Notificaciones:** Verificar que los correos/notificaciones lleguen correctamente (si están configurados).
+- [ ] **Pruebas de Performance:** Monitorear tiempos de carga con la nueva base de datos limpia.

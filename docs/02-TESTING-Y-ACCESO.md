@@ -10,10 +10,10 @@ Este documento contiene las credenciales de prueba, flujos de validación y guí
 
 | Rol | Email | Password | Panel Principal |
 |-----|-------|----------|-----------------|
-| **Admin** | `admin.demo@tecnocity.com` | `123456` | `/admin/dashboard` |
-| **Técnico** | `tecnico.demo@tecnocity.com` | `123456` | `/technician/dashboard` |
-| **Cliente** | `cliente.demo@tecnocity.com` | `123456` | `/customer/dashboard` |
-| **Cliente VIP**| `cliente.vip@tecnocity.com` | `123456` | `/customer/dashboard` |
+| **Admin** | `admin.demo@somostecnicos.com` | `Demo2026!Secure` | `/admin/dashboard` |
+| **Técnico** | `tecnico.demo@somostecnicos.com` | `Demo2026!Secure` | `/technician/dashboard` |
+| **Cliente** | `cliente.demo@somostecnicos.com` | `Demo2026!Secure` | `/customer/dashboard` |
+| **Cliente VIP**| `cliente.vip@somostecnicos.com` | `Demo2026!Secure` | `/customer/dashboard` |
 
 ### **Script de Restauración:**
 Si las cuentas no funcionan o necesitas limpiar datos:

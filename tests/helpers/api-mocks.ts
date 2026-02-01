@@ -10,7 +10,7 @@ export interface MockUser {
 
 export const MOCK_TECH: MockUser = {
   id: '2',
-  email: 'tecnico.demo@tecnocity.com',
+  email: 'tecnico.demo@somostecnicos.com',
   nombre: 'Carlos Mendoza',
   role: 'technician',
   userType: 'admin_user'
@@ -18,7 +18,7 @@ export const MOCK_TECH: MockUser = {
 
 export const MOCK_ADMIN: MockUser = {
   id: '1',
-  email: 'admin.demo@tecnocity.com',
+  email: 'admin.demo@somostecnicos.com',
   nombre: 'Administrador Principal',
   role: 'admin',
   userType: 'admin_user'

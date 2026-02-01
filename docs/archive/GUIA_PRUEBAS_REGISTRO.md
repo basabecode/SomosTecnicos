@@ -110,8 +110,8 @@
 1. **Login como Admin:**
    ```
    http://localhost:3000/login
-   Email: admin@tecnocity.com
-   Password: [tu contraseña de admin]
+   Email: admin.demo@somostecnicos.com
+   Password: Demo2026!Secure
    ```
 
 2. **Acceder a Solicitudes:**

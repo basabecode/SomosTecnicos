@@ -58,9 +58,9 @@
 #### 🎫 **Credenciales de Demo Visibles**:
 
 ```
-Super Admin: admin@tecnocity.com / password123
-Manager: manager@tecnocity.com / password123
-Técnico: tecnico@tecnocity.com / password123
+Super Admin: admin.demo@somostecnicos.com / Demo2026!Secure
+Técnico: tecnico.demo@somostecnicos.com / Demo2026!Secure
+Cliente: cliente.demo@somostecnicos.com / Demo2026!Secure
 ```
 
 ### 3. **Mejoras en Login Administrativo**

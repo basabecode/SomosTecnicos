@@ -8,16 +8,16 @@ async function main() {
   console.log('🌱 Creando usuarios demo para testing...\n');
 
   try {
-    // Password hash para "123456"
-    const passwordHash = await bcrypt.hash('123456', 10);
+    // Password hash para "Demo2026!Secure"
+    const passwordHash = await bcrypt.hash('Demo2026!Secure', 10);
 
     // 1. Crear Admin Demo
     const admin = await prisma.adminUser.upsert({
-      where: { email: 'admin.demo@tecnocity.com' },
+      where: { email: 'admin.demo@somostecnicos.com' },
       update: {},
       create: {
         username: 'admin_demo',
-        email: 'admin.demo@tecnocity.com',
+        email: 'admin.demo@somostecnicos.com',
         passwordHash: passwordHash,
         nombre: 'Admin',
         apellido: 'Demo',
@@ -30,12 +30,12 @@ async function main() {
 
     // 2. Crear Técnico Demo
     const technician = await prisma.technician.upsert({
-      where: { email: 'tecnico.demo@tecnocity.com' },
+      where: { email: 'tecnico.demo@somostecnicos.com' },
       update: {},
       create: {
         nombre: 'Juan Pérez',
         telefono: '3007654321',
-        email: 'tecnico.demo@tecnocity.com',
+        email: 'tecnico.demo@somostecnicos.com',
         cedula: '1234567890',
         especialidades: ['lavadora', 'nevera', 'general'],
         zonaTrabajoArea: 'Bogotá',
@@ -47,7 +47,7 @@ async function main() {
 
     // 3. Verificar Cliente Demo (ya existe)
     const customer = await prisma.customer.findUnique({
-      where: { email: 'cliente.demo@tecnocity.com' }
+      where: { email: 'cliente.demo@somostecnicos.com' }
     });
     console.log('✅ Cliente verificado:', customer?.email || 'NO ENCONTRADO');
 

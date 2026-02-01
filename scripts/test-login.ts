@@ -5,23 +5,18 @@
 async function testLogin() {
   const testUsers = [
     {
-      email: 'admin@servicio-tecnico.com',
-      password: 'Admin123!',
-      expectedRole: 'admin'
+      email: 'admin.demo@somostecnicos.com',
+      password: 'Demo2026!Secure',
+      expectedRole: 'super_admin'
     },
     {
-      email: 'cliente.demo@tecnocity.com',
-      password: 'Cliente123!',
-      expectedRole: 'customer'
+      email: 'tecnico.demo@somostecnicos.com',
+      password: 'Demo2026!Secure',
+      expectedRole: 'technician'
     },
     {
-      email: 'esteban.garcia@email.com',
-      password: 'Cliente123!',
-      expectedRole: 'customer'
-    },
-    {
-      email: 'daniela.morales@email.com',
-      password: 'Cliente123!',
+      email: 'cliente.demo@somostecnicos.com',
+      password: 'Demo2026!Secure',
       expectedRole: 'customer'
     }
   ]

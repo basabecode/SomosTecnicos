@@ -1,43 +1,33 @@
 /**
  * Layout del Portal del Cliente
- * Navegación y estructura para clientes
+ * Diseño unificado con componentes estandarizados
  */
 
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { ProtectedRoute, useAuth } from '@/contexts/auth-context'
+import { UnifiedSidebar, SidebarItem } from '@/components/layout/unified-sidebar'
+import { UnifiedHeader, HeaderMenuItem } from '@/components/layout/unified-header'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { BottomNav } from '@/components/navigation/bottom-nav'
+import { TermsLink } from '@/components/terms-link'
 import {
   Home,
   ClipboardList,
   History,
   User,
   Settings,
-  LogOut,
   Shield,
   MessageSquare,
-  Wrench,
   Plus,
+  Menu,
+  FileText,
 } from 'lucide-react'
-import { BottomNav } from '@/components/navigation/bottom-nav'
-import { NotificationBell } from '@/components/navigation/notification-bell'
-import { TermsLink } from '@/components/terms-link'
-import { FileText } from 'lucide-react'
 
-// Navigation items for customer sidebar
-const sidebarItems = [
+// Items de navegación del sidebar
+const sidebarItems: SidebarItem[] = [
   {
     title: 'Dashboard',
     href: '/customer/dashboard',
@@ -80,7 +70,7 @@ const sidebarItems = [
   },
 ]
 
-// Navigation items for mobile bottom nav (simpler subset)
+// Items para navegación móvil inferior
 const mobileNavItems = [
   { label: 'Inicio', href: '/customer/dashboard', icon: Home },
   { label: 'Solicitar', href: '/customer/request', icon: Plus },
@@ -97,192 +87,96 @@ export default function CustomerLayout({
   const router = useRouter()
   const { user, logout } = useAuth()
 
+  // Datos del usuario
+  const userData = {
+    name: user ? `${user.nombre} ${user.apellido || ''}`.trim() : 'Usuario',
+    email: user?.email || 'usuario@email.com',
+    initials: user
+      ? `${user.nombre?.[0] || ''}${user.apellido?.[0] || ''}`
+      : 'U',
+    avatar: undefined,
+  }
+
+  // Items del menú del header
+  const headerMenuItems: HeaderMenuItem[] = [
+    {
+      label: 'Mi Perfil',
+      icon: User,
+      onClick: () => router.push('/customer/profile'),
+    },
+    {
+      label: 'Configuración',
+      icon: Settings,
+      onClick: () => router.push('/customer/settings'),
+    },
+  ]
+
   const handleLogout = async () => {
     await logout()
   }
 
-  // Datos del usuario o defaults
-  const userData = {
-    name: user ? `${user.nombre} ${user.apellido || ''}`.trim() : 'Usuario',
-    email: user?.email || 'usuario@email.com',
-    avatar: '/placeholder-user.jpg',
-    initials: user
-      ? `${user.nombre?.[0] || ''}${user.apellido?.[0] || ''}`
-      : 'U',
-  }
-
-  const NavItems = () => (
-    <>
-      {sidebarItems.map(item => {
-        const isActive = pathname === item.href
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            }`}
-          >
-            <item.icon className="h-4 w-4" />
-            <span>{item.title}</span>
-          </Link>
-        )
-      })}
-
-      <button
-        onClick={handleLogout}
-        className="flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-      >
-        <LogOut className="h-4 w-4" />
-        <span>Cerrar Sesión</span>
-      </button>
-    </>
+  // Componente Sidebar para reutilizar en desktop y mobile
+  const SidebarContent = () => (
+    <UnifiedSidebar
+      userName={userData.name}
+      userEmail={userData.email}
+      userInitials={userData.initials}
+      userAvatar={userData.avatar}
+      navItems={sidebarItems}
+      onLogout={handleLogout}
+      showBackToHome={true}
+    />
   )
 
   return (
     <ProtectedRoute requiredRoles={['customer']}>
-      <div className="flex h-screen overflow-hidden">
-        {/* Desktop Sidebar (Hidden on Mobile) */}
-        <div className="hidden md:flex md:w-64 md:flex-col">
-          <div className="flex flex-col flex-grow pt-5 bg-white border-r overflow-y-auto">
-            {/* Logo/Brand */}
-            <div className="flex items-center flex-shrink-0 px-4">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/img_3d/somos_tecnicos.png"
-                  alt="SomosTécnicos"
-                  width={80}
-                  height={80}
-                  className="h-12 w-auto object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* User Info */}
-            <div className="flex items-center px-4 py-3 mt-6 bg-gray-50 mx-4 rounded-lg">
-                {/* ... existing User Info content ... */}
-                <Avatar className="h-10 w-10">
-                <AvatarImage src={userData.avatar} alt={userData.name} />
-                <AvatarFallback>{userData.initials}</AvatarFallback>
-              </Avatar>
-              <div className="ml-3 min-w-0">
-                <p className="text-sm font-medium truncate">{userData.name}</p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {userData.email}
-                </p>
-              </div>
-            </div>
-
-            {/* Botón para regresar al inicio */}
-            <div className="mx-4 mt-4 mb-2 pb-3 border-b border-gray-100">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#A50034] transition-colors px-2 py-1 rounded-md hover:bg-red-50"
-              >
-                <Home className="h-4 w-4" />
-                <span>Volver al Inicio</span>
-              </Link>
-            </div>
-
-            {/* Navigation */}
-            <nav className="mt-2 flex-1 px-4 space-y-1">
-              <NavItems />
-            </nav>
-
-            {/* Footer: Terms */}
-            <div className="p-4 mt-auto">
-               <TermsLink variant="link" className="w-full justify-center text-xs text-muted-foreground h-auto p-0" />
-            </div>
-          </div>
+      <div className="flex h-screen overflow-hidden bg-gray-50">
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block">
+          <SidebarContent />
         </div>
 
-        {/* Main Content Area */}
+        {/* Main Content */}
         <div className="flex flex-col flex-1 overflow-hidden pb-16 md:pb-0">
-          <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 px-4 py-3 md:px-6">
-            <div className="relative flex items-center justify-center h-10">
-              {/* Mobile Brand (Absolute Left) */}
-              <div className="absolute left-0 flex items-center md:hidden">
-                 <Image
-                   src="/img_3d/somos_tecnicos.png"
-                   alt="SomosTécnicos"
-                   width={40}
-                   height={40}
-                   className="h-10 w-10 object-contain"
-                 />
-              </div>
+          {/* Header */}
+          <UnifiedHeader
+            title="Portal Cliente"
+            userName={userData.name}
+            userEmail={userData.email}
+            userInitials={userData.initials}
+            userAvatar={userData.avatar}
+            menuItems={headerMenuItems}
+            onLogout={handleLogout}
+            showNotifications={true}
+            rightContent={
+              <Button
+                onClick={() => router.push('/customer/request')}
+                className="hidden md:flex bg-[#991B1B] hover:bg-[#7F1D1D] text-white"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Nueva Solicitud
+              </Button>
+            }
+          />
 
-              {/* Center Title */}
-              <h1 className="text-lg font-bold text-gray-900">
-                Portal Cliente
-              </h1>
-
-               {/* Navigation Actions (Absolute Right) */}
-               <div className="absolute right-0 flex items-center gap-2">
-                 <NotificationBell />
-
-                 {/* Desktop User Menu */}
-                 <div className="hidden md:block">
-                   <DropdownMenu>
-                     <DropdownMenuTrigger asChild>
-                       <Button
-                         variant="ghost"
-                         className="relative h-8 w-8 rounded-full"
-                       >
-                         <Avatar className="h-8 w-8">
-                           <AvatarImage
-                             src={userData.avatar}
-                             alt={userData.name}
-                           />
-                           <AvatarFallback>{userData.initials}</AvatarFallback>
-                         </Avatar>
-                       </Button>
-                     </DropdownMenuTrigger>
-                     <DropdownMenuContent className="w-56" align="end" forceMount>
-                       <div className="flex items-center justify-start gap-2 p-2">
-                         <div className="flex flex-col space-y-1 leading-none">
-                           <p className="font-medium">{userData.name}</p>
-                           <p className="w-[200px] truncate text-sm text-muted-foreground">
-                             {userData.email}
-                           </p>
-                         </div>
-                       </div>
-                       <DropdownMenuSeparator />
-                       <DropdownMenuItem
-                         onClick={() => router.push('/customer/profile')}
-                       >
-                         <User className="mr-2 h-4 w-4" />
-                         <span>Mi Perfil</span>
-                       </DropdownMenuItem>
-                       <DropdownMenuItem
-                         onClick={() => router.push('/customer/settings')}
-                       >
-                         <Settings className="mr-2 h-4 w-4" />
-                         <span>Configuración</span>
-                       </DropdownMenuItem>
-                       <DropdownMenuSeparator />
-                       <DropdownMenuItem asChild>
-                         <div className="w-full cursor-pointer">
-                           <TermsLink variant="link" className="flex items-center text-sm w-full" showIcon={true} />
-                         </div>
-                       </DropdownMenuItem>
-                       <DropdownMenuSeparator />
-                       <DropdownMenuItem onClick={handleLogout}>
-                         <LogOut className="mr-2 h-4 w-4" />
-                         <span>Cerrar Sesión</span>
-                       </DropdownMenuItem>
-                     </DropdownMenuContent>
-                   </DropdownMenu>
-                 </div>
-               </div>
-            </div>
-          </header>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden fixed top-4 left-4 z-50">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="bg-white shadow-md h-11 w-11">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Abrir menú</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-[240px]">
+                <SidebarContent />
+              </SheetContent>
+            </Sheet>
+          </div>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto bg-gray-50">
-            <div className="container mx-auto p-4 md:p-6 max-w-7xl">{children}</div>
+          <main className="flex-1 overflow-y-auto bg-gray-50 pb-safe">
+            <div className="max-w-7xl mx-auto p-4 md:p-8">{children}</div>
           </main>
         </div>
 
