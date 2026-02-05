@@ -97,7 +97,7 @@ const estadoIcons = {
 }
 
 const estadoLabels = {
-  activo: 'Activo',
+  activo: 'Disponible',
   ocupado: 'Ocupado',
   inactivo: 'Inactivo',
   descanso: 'En Descanso',
@@ -122,9 +122,57 @@ export default function TechniciansPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
+  // Real-time stats
+  const [stats, setStats] = useState({
+    total: 0,
+    disponibles: 0,
+    ocupados: 0,
+    descanso: 0,
+    inactivos: 0
+  })
+
+  // Fetch stats separately to avoid pagination limits
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch('/api/technicians/availability', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (data.stats) {
+          const s = data.stats
+          // Calculate inactivos (technicians not in any active state)
+          // Or use the count from difference if total is accurate
+          const calculatedInactivos = Math.max(0, s.total - (s.disponibles + s.ocupados + s.descanso))
+
+          setStats({
+            total: s.total,
+            disponibles: s.disponibles,
+            ocupados: s.ocupados,
+            descanso: s.descanso,
+            inactivos: calculatedInactivos
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    }
+  }
+
   useEffect(() => {
     fetchTechnicians()
+    // Trigger stats fetch when filters change (though stats are usually global)
+    // If stats should filter by city/search, we'd need to pass params to stats API too.
+    // For now, assuming global stats as per dashboard.
   }, [currentPage, statusFilter, cityFilter, availabilityFilter, searchTerm])
+
+  // Poll for stats real-time
+  useEffect(() => {
+    fetchStats()
+    const interval = setInterval(fetchStats, 30000) // 30 seconds polling
+    return () => clearInterval(interval)
+  }, [])
 
   const fetchTechnicians = async () => {
     try {
@@ -264,9 +312,9 @@ export default function TechniciansPage() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {technicians.filter(t => t.estado === 'activo').length}
+                    {stats.disponibles}
                   </p>
-                  <p className="text-xs text-muted-foreground">Activos</p>
+                  <p className="text-xs text-muted-foreground">Disponibles</p>
                 </div>
               </div>
             </CardContent>
@@ -277,7 +325,7 @@ export default function TechniciansPage() {
                 <Activity className="h-8 w-8 text-blue-600" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {technicians.filter(t => t.estado === 'ocupado').length}
+                    {stats.ocupados}
                   </p>
                   <p className="text-xs text-muted-foreground">Ocupados</p>
                 </div>
@@ -290,7 +338,7 @@ export default function TechniciansPage() {
                 <Clock className="h-8 w-8 text-yellow-600" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {technicians.filter(t => t.estado === 'descanso').length}
+                    {stats.descanso}
                   </p>
                   <p className="text-xs text-muted-foreground">En Descanso</p>
                 </div>
@@ -303,7 +351,7 @@ export default function TechniciansPage() {
                 <XCircle className="h-8 w-8 text-red-600" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {technicians.filter(t => t.estado === 'inactivo').length}
+                    {stats.inactivos}
                   </p>
                   <p className="text-xs text-muted-foreground">Inactivos</p>
                 </div>

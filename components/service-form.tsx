@@ -39,13 +39,13 @@ const electrodomesticos = [
   {
     id: 'lavadora',
     label: 'Lavadora',
-    image: '/electrodomesticos/lavadora blanca lg1.jpg',
+    image: '/electrodomesticos/lavadora carga superior lg.jpg',
     description: 'Carga frontal y superior'
   },
   {
     id: 'secadora',
     label: 'Secadora',
-    image: '/electrodomesticos/lavadora carga superior lg.jpg',
+    image: '/electrodomesticos/lavadora blanca lg1.jpg',
     description: 'Secadoras a gas y eléctricas'
   },
   {
@@ -296,7 +296,7 @@ export default function ServiceForm() {
             Solicitud En Línea
           </Badge>
           <h2 className="text-3xl md:text-5xl font-bold text-[#2C3E50] mb-4 tracking-tight">
-            Agenda tu Técnico
+            Agenda tu Técnico de Electrodomésticos
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Sección para la solicitud de tu servicio, para ello debes completar los siguientes campos:          </p>

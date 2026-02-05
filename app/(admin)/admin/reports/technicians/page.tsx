@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -50,6 +50,7 @@ interface TechnicianReport {
   lastActivity: string
 }
 
+// Datos simulados (Placeholder)
 const mockTechnicians: TechnicianReport[] = [
   {
     id: '1',
@@ -90,6 +91,46 @@ const statusColors = {
 export default function TechniciansReport() {
   const [timeRange, setTimeRange] = useState('30d')
   const [sortBy, setSortBy] = useState('rating')
+  const [stats, setStats] = useState({
+    total: 0,
+    activos: 0,
+    promedioCalificacion: 0,
+    tiempoPromedio: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('accessToken')
+        if (!token) return
+
+        const response = await fetch('/api/dashboard/stats', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.data) {
+            setStats({
+              total: data.data.tecnicos?.total || 0,
+              activos: data.data.tecnicos?.activos || 0,
+              promedioCalificacion: data.data.negocio?.satisfaccionPromedio || 0,
+              tiempoPromedio: data.data.negocio?.tiempoPromedioResolucion || 0
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching technician stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -126,8 +167,8 @@ export default function TechniciansReport() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">15</div>
-            <p className="text-xs text-muted-foreground">+2 este mes</p>
+            <div className="text-2xl font-bold">{loading ? '...' : stats.total}</div>
+            <p className="text-xs text-muted-foreground">Registrados en sistema</p>
           </CardContent>
         </Card>
 
@@ -139,8 +180,8 @@ export default function TechniciansReport() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">80% del total</p>
+            <div className="text-2xl font-bold">{loading ? '...' : stats.activos}</div>
+            <p className="text-xs text-muted-foreground">Disponibles ahora</p>
           </CardContent>
         </Card>
 
@@ -152,9 +193,9 @@ export default function TechniciansReport() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4.7</div>
+            <div className="text-2xl font-bold">{loading ? '...' : stats.promedioCalificacion.toFixed(1)}</div>
             <p className="text-xs text-muted-foreground">
-              +0.2 vs mes anterior
+              General del equipo
             </p>
           </CardContent>
         </Card>
@@ -167,9 +208,9 @@ export default function TechniciansReport() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2.8h</div>
+            <div className="text-2xl font-bold">{loading ? '...' : stats.tiempoPromedio} días</div>
             <p className="text-xs text-muted-foreground">
-              -0.3h vs mes anterior
+              De resolución
             </p>
           </CardContent>
         </Card>
@@ -181,7 +222,7 @@ export default function TechniciansReport() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Award className="w-5 h-5" />
-              <span>Top Performers</span>
+              <span>Top Performers (Demo)</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -221,7 +262,7 @@ export default function TechniciansReport() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Clock className="w-5 h-5" />
-              <span>Más Eficientes</span>
+              <span>Más Eficientes (Demo)</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -267,33 +308,12 @@ export default function TechniciansReport() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <AlertTriangle className="w-5 h-5" />
-              <span>Requieren Atención</span>
+              <span>Requieren Atención (Demo)</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
-                <p className="text-sm font-medium text-yellow-800">
-                  Carlos Ruiz
-                </p>
-                <p className="text-xs text-yellow-600">
-                  Calificación baja: 3.2/5
-                </p>
-              </div>
-              <div className="p-3 border border-red-200 bg-red-50 rounded-lg">
-                <p className="text-sm font-medium text-red-800">
-                  Miguel Torres
-                </p>
-                <p className="text-xs text-red-600">Sin actividad en 5 días</p>
-              </div>
-              <div className="p-3 border border-orange-200 bg-orange-50 rounded-lg">
-                <p className="text-sm font-medium text-orange-800">
-                  Pedro Sánchez
-                </p>
-                <p className="text-xs text-orange-600">
-                  Tiempo promedio alto: 4.5h
-                </p>
-              </div>
+             <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">
+                Datos de atención no disponibles
             </div>
           </CardContent>
         </Card>
@@ -318,6 +338,9 @@ export default function TechniciansReport() {
           </div>
         </CardHeader>
         <CardContent>
+          <div className="rounded-md border p-4 mb-4 bg-yellow-50 text-yellow-800 text-sm">
+            Nota: La tabla a continuación muestra datos simulados. El reporte detallado estará disponible próximamente.
+          </div>
           <Table>
             <TableHeader>
               <TableRow>

@@ -5,6 +5,7 @@
 
 'use client'
 
+import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { UnifiedSidebar, SidebarItem } from '@/components/layout/unified-sidebar'
@@ -42,7 +43,6 @@ const sidebarItems: SidebarItem[] = [
     title: 'Órdenes',
     href: '/admin/orders',
     icon: ShoppingCart,
-    badge: 12,
   },
   {
     title: 'Clientes',
@@ -74,6 +74,43 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuth()
+  const [navItems, setNavItems] = useState<SidebarItem[]>(sidebarItems)
+
+  // Fetch stats for badges
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('accessToken')
+        if (!token) return
+
+        const response = await fetch('/api/dashboard/stats', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          const pendingOrders = data.data?.ordenes?.pendientes || 0
+
+          setNavItems((prev: SidebarItem[]) => prev.map((item: SidebarItem) => {
+            if (item.href === '/admin/orders') {
+              return { ...item, badge: pendingOrders }
+            }
+            return item
+          }))
+        }
+      } catch (error) {
+        console.error('Error fetching stats for sidebar:', error)
+      }
+    }
+
+    fetchStats()
+
+    // Refresh stats every minute
+    const interval = setInterval(fetchStats, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   // Si estamos en la página de login, no mostrar sidebar ni header
   if (pathname === '/admin/login') {
@@ -115,7 +152,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       userEmail={userData.email}
       userInitials={userData.initials}
       userAvatar={userData.avatar}
-      navItems={sidebarItems}
+      navItems={navItems}
       onLogout={handleLogout}
       showBackToHome={true}
     />

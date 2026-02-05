@@ -1,10 +1,6 @@
-/**
- * Página Principal de Reportes - Panel Admin
- * Selección de tipos de reportes disponibles
- */
-
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -14,11 +10,11 @@ import {
   TrendingUp,
   Calendar,
   PieChart,
-  BarChart3,
-  FileText,
   Target,
+  FileText,
 } from 'lucide-react'
 
+// Tipos de reportes disponibles
 const reportTypes = [
   {
     title: 'Reportes de Técnicos',
@@ -70,38 +66,79 @@ const reportTypes = [
   },
 ]
 
-const quickStats = [
-  {
-    title: 'Órdenes Este Mes',
-    value: '127',
-    change: '+12%',
-    changeType: 'positive',
-    icon: ClipboardList,
-  },
-  {
-    title: 'Ingresos Este Mes',
-    value: '$42,350',
-    change: '+8%',
-    changeType: 'positive',
-    icon: TrendingUp,
-  },
-  {
-    title: 'Satisfacción Cliente',
-    value: '4.8/5',
-    change: '+0.3',
-    changeType: 'positive',
-    icon: Target,
-  },
-  {
-    title: 'Técnicos Activos',
-    value: '12',
-    change: '0',
-    changeType: 'neutral',
-    icon: Users,
-  },
-]
-
 export default function ReportsPage() {
+  const [stats, setStats] = useState({
+    ordenesMes: 0,
+    ingresosMes: 0,
+    satisfaccion: 0,
+    tecnicosActivos: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('accessToken')
+        if (!token) return
+
+        const response = await fetch('/api/dashboard/stats', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.data) {
+            setStats({
+              ordenesMes: data.data.ordenes?.completadasMes || 0,
+              ingresosMes: data.data.negocio?.ingresosMes || 0,
+              satisfaccion: data.data.negocio?.satisfaccionPromedio || 0,
+              tecnicosActivos: data.data.tecnicos?.activos || 0
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching report stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+    }).format(amount)
+  }
+
+  const quickStats = [
+    {
+      title: 'Órdenes Este Mes',
+      value: loading ? '...' : stats.ordenesMes.toString(),
+      icon: ClipboardList,
+    },
+    {
+      title: 'Ingresos Este Mes',
+      value: loading ? '...' : formatCurrency(stats.ingresosMes),
+      icon: TrendingUp,
+    },
+    {
+      title: 'Satisfacción Cliente',
+      value: loading ? '...' : `${Number(stats.satisfaccion).toFixed(1)}/5`,
+      icon: Target,
+    },
+    {
+      title: 'Técnicos Activos',
+      value: loading ? '...' : stats.tecnicosActivos.toString(),
+      icon: Users,
+    },
+  ]
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
@@ -122,17 +159,6 @@ export default function ReportsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p
-                className={`text-xs ${
-                  stat.changeType === 'positive'
-                    ? 'text-green-600'
-                    : stat.changeType === 'negative'
-                    ? 'text-red-600'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                {stat.change} vs mes anterior
-              </p>
             </CardContent>
           </Card>
         ))}
@@ -171,42 +197,6 @@ export default function ReportsPage() {
           ))}
         </div>
       </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Actividad Reciente</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Reporte mensual generado</p>
-                <p className="text-xs text-muted-foreground">Hace 2 horas</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">
-                  Nuevo técnico agregado al sistema
-                </p>
-                <p className="text-xs text-muted-foreground">Hace 4 horas</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">
-                  Actualización de datos financieros
-                </p>
-                <p className="text-xs text-muted-foreground">Ayer</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

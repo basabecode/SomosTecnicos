@@ -48,6 +48,8 @@ import {
   Briefcase,
   Calendar,
   Eye,
+  FileText,
+  Download,
 } from 'lucide-react'
 
 interface TechnicianApplication {
@@ -62,6 +64,7 @@ interface TechnicianApplication {
   especialidades: string[]
   zonaPreferida: string
   experienciaAnios?: number
+  documentosUrl?: string
   estado: 'pendiente' | 'aprobado' | 'rechazado'
   motivoRechazo?: string
   createdAt: string
@@ -460,6 +463,27 @@ export default function ApplicationsPage() {
                   <div>
                     <Label className="text-gray-600">Experiencia</Label>
                     <p className="font-medium">{selectedApp.experienciaAnios} años</p>
+                  </div>
+                )}
+
+                {selectedApp.documentosUrl && (
+                  <div className="col-span-2 mt-4 pt-4 border-t">
+                    <Label className="text-gray-600 mb-2 block">Documentos Adjuntos</Label>
+                    <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                      <div className="bg-white p-2 rounded-full shadow-sm">
+                        <FileText className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-sm text-blue-900">Documentación de Soporte</p>
+                        <p className="text-xs text-blue-700">Cédula y Certificados.pdf</p>
+                      </div>
+                      <Button asChild size="sm" variant="outline" className="border-blue-200 hover:bg-white hover:text-blue-700">
+                        <a href={selectedApp.documentosUrl} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Ver / Descargar
+                        </a>
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
