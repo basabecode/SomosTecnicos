@@ -64,6 +64,32 @@ export const APPLIANCE_TYPES = {
   LAVAVAJILLAS: 'lavavajillas',
   AIRE_ACONDICIONADO: 'aire_acondicionado',
   CALENTADOR: 'calentador',
+
+  // Categorías Generales (Padres)
+  ELECTRICISTA: 'electricidad_general',
+  TECNICO_SISTEMAS: 'sistemas_general',
+  TECNICO_SEGURIDAD: 'seguridad_general',
+
+  // Electricidad
+  CABLEADO: 'cableado',
+  TABLERO: 'tablero',
+  ILUMINACION: 'iluminacion',
+  TOMACORRIENTE: 'tomacorriente',
+
+  // Computación y Redes
+  COMPUTADOR: 'computador',
+  PORTATIL: 'portatil',
+  RED: 'red',
+  SERVIDOR: 'servidor',
+  IMPRESORA: 'impresora',
+
+  // Seguridad Electrónica
+  CAMARA: 'camara',
+  ALARMA: 'alarma',
+  CITOFONO: 'citofono',
+  CONTROL_ACCESO: 'control_acceso',
+  CERCO_ELECTRICO: 'cerco_electrico',
+
   OTROS: 'otros'
 } as const
 
@@ -143,7 +169,13 @@ export const TECHNICIAN_SPECIALTIES = {
   MANTENIMIENTO: 'mantenimiento',
   INSTALACION: 'instalacion',
   DIAGNOSTICO: 'diagnostico',
-  LIMPIEZA: 'limpieza'
+  LIMPIEZA: 'limpieza',
+
+  // Nuevas Especialidades
+  ELECTRICIDAD: 'electricidad',
+  COMPUTACION: 'computacion',
+  REDES: 'redes',
+  SEGURIDAD_ELECTRONICA: 'seguridad_electronica'
 } as const
 
 export type TechnicianSpecialty = typeof TECHNICIAN_SPECIALTIES[keyof typeof TECHNICIAN_SPECIALTIES]
@@ -291,7 +323,32 @@ export const APPLIANCE_ICONS = {
   [APPLIANCE_TYPES.LAVAVAJILLAS]: '💧',
   [APPLIANCE_TYPES.AIRE_ACONDICIONADO]: '❄️',
   [APPLIANCE_TYPES.CALENTADOR]: '🔥',
-  [APPLIANCE_TYPES.OTROS]: '➕'
+  [APPLIANCE_TYPES.OTROS]: '➕',
+
+  // Categorías Padres (Iconos Generales)
+  [APPLIANCE_TYPES.ELECTRICISTA]: '⚡',
+  [APPLIANCE_TYPES.TECNICO_SISTEMAS]: '💻',
+  [APPLIANCE_TYPES.TECNICO_SEGURIDAD]: '🛡️',
+
+  // Electricidad
+  [APPLIANCE_TYPES.CABLEADO]: '⚡',
+  [APPLIANCE_TYPES.TABLERO]: '🔌',
+  [APPLIANCE_TYPES.ILUMINACION]: '💡',
+  [APPLIANCE_TYPES.TOMACORRIENTE]: '🔌',
+
+  // Computación
+  [APPLIANCE_TYPES.COMPUTADOR]: '🖥️',
+  [APPLIANCE_TYPES.PORTATIL]: '💻',
+  [APPLIANCE_TYPES.RED]: '🌐',
+  [APPLIANCE_TYPES.SERVIDOR]: '💾',
+  [APPLIANCE_TYPES.IMPRESORA]: '🖨️',
+
+  // Seguridad
+  [APPLIANCE_TYPES.CAMARA]: '📹',
+  [APPLIANCE_TYPES.ALARMA]: '🚨',
+  [APPLIANCE_TYPES.CITOFONO]: '🔔',
+  [APPLIANCE_TYPES.CONTROL_ACCESO]: '🔐',
+  [APPLIANCE_TYPES.CERCO_ELECTRICO]: '⚡'
 } as const
 
 // =============================================
@@ -407,6 +464,32 @@ export function getApplianceText(appliance: ApplianceType): string {
     [APPLIANCE_TYPES.LAVAVAJILLAS]: 'Lavavajillas',
     [APPLIANCE_TYPES.AIRE_ACONDICIONADO]: 'Aire Acondicionado',
     [APPLIANCE_TYPES.CALENTADOR]: 'Calentador',
+
+    // Categorías Padres
+    [APPLIANCE_TYPES.ELECTRICISTA]: 'Electricista',
+    [APPLIANCE_TYPES.TECNICO_SISTEMAS]: 'Computación y Redes',
+    [APPLIANCE_TYPES.TECNICO_SEGURIDAD]: 'Seguridad Electrónica',
+
+    // Electricidad
+    [APPLIANCE_TYPES.CABLEADO]: 'Cableado Eléctrico',
+    [APPLIANCE_TYPES.TABLERO]: 'Tablero Eléctrico',
+    [APPLIANCE_TYPES.ILUMINACION]: 'Iluminación',
+    [APPLIANCE_TYPES.TOMACORRIENTE]: 'Puntos Eléctricos',
+
+    // Computación
+    [APPLIANCE_TYPES.COMPUTADOR]: 'Computador de Mesa',
+    [APPLIANCE_TYPES.PORTATIL]: 'Portátil / Laptop',
+    [APPLIANCE_TYPES.RED]: 'Redes / WiFi',
+    [APPLIANCE_TYPES.SERVIDOR]: 'Servidores',
+    [APPLIANCE_TYPES.IMPRESORA]: 'Impresoras',
+
+    // Seguridad
+    [APPLIANCE_TYPES.CAMARA]: 'Cámaras de Seguridad',
+    [APPLIANCE_TYPES.ALARMA]: 'Sistemas de Alarma',
+    [APPLIANCE_TYPES.CITOFONO]: 'Citofonía',
+    [APPLIANCE_TYPES.CONTROL_ACCESO]: 'Control de Acceso',
+    [APPLIANCE_TYPES.CERCO_ELECTRICO]: 'Cercos Eléctricos',
+
     [APPLIANCE_TYPES.OTROS]: 'Otros'
   }
   return applianceTexts[appliance] || appliance

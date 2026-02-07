@@ -8,13 +8,13 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-interface Brand {
+export interface Brand {
   name: string
   logo: string
   alt: string
 }
 
-const brands: Brand[] = [
+export const APPLIANCE_BRANDS: Brand[] = [
   {
     name: 'Samsung',
     logo: 'https://logos-world.net/wp-content/uploads/2020/04/Samsung-Logo.png',
@@ -77,6 +77,13 @@ const brands: Brand[] = [
   },
 ]
 
+interface BrandsSliderProps {
+  title?: string
+  description?: string
+  brands?: Brand[]
+  className?: string
+}
+
 /**
  * BrandsSlider - Slider infinito de marcas
  * - Animación CSS pura para mejor rendimiento
@@ -84,7 +91,12 @@ const brands: Brand[] = [
  * - Hover effects
  * - Fallback a texto si imagen no carga
  */
-export default function BrandsSlider() {
+export default function BrandsSlider({
+  title = "Marcas que Reparamos",
+  description = "Trabajamos con todas las marcas líderes del mercado",
+  brands = APPLIANCE_BRANDS,
+  className = ""
+}: BrandsSliderProps) {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
 
   const handleImageError = (brandName: string) => {
@@ -95,15 +107,15 @@ export default function BrandsSlider() {
   const duplicatedBrands = [...brands, ...brands]
 
   return (
-    <section className="py-8 bg-gradient-to-r from-blue-50/30 via-gray-50/50 to-blue-50/30 overflow-hidden border-y border-gray-100/50">
+    <section className={`py-4 bg-gradient-to-r from-blue-50/30 via-gray-50/50 to-blue-50/30 overflow-hidden ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header compacto */}
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            Marcas que Reparamos
+            {title}
           </h2>
           <p className="text-sm text-gray-500 max-w-xl mx-auto">
-            Trabajamos con todas las marcas líderes del mercado
+            {description}
           </p>
         </div>
 
@@ -120,9 +132,9 @@ export default function BrandsSlider() {
                 key={`${brand.name}-${index}`}
                 className="flex-shrink-0 w-28 h-16 flex items-center justify-center group"
               >
-                {imageErrors[brand.name] ? (
+                {imageErrors[brand.name] || !brand.logo ? (
                   // Fallback to text logo más compacto
-                  <div className="text-lg font-bold text-gray-400 group-hover:text-gray-600 transition-colors duration-300">
+                  <div className="text-lg font-bold text-gray-400 group-hover:text-gray-600 transition-colors duration-300 text-center px-2">
                     {brand.name}
                   </div>
                 ) : (
@@ -156,7 +168,7 @@ export default function BrandsSlider() {
         }
 
         .animate-scroll {
-          animation: scroll 30s linear infinite;
+          animation: scroll 40s linear infinite; /* Un poco más lento para mejor lectura de texto */
         }
 
         .animate-scroll:hover {
@@ -165,7 +177,7 @@ export default function BrandsSlider() {
 
         @media (max-width: 768px) {
           .animate-scroll {
-            animation-duration: 20s;
+            animation-duration: 25s;
           }
         }
       `}</style>

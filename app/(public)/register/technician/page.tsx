@@ -90,6 +90,12 @@ const ESPECIALIDADES = [
   { value: TECHNICIAN_SPECIALTIES.LAVAVAJILLAS, label: 'Lavavajillas' },
   { value: TECHNICIAN_SPECIALTIES.AIRE_ACONDICIONADO, label: 'Aire Acondicionado' },
   { value: TECHNICIAN_SPECIALTIES.CALENTADOR, label: 'Calentador' },
+
+  // Nuevas Especialidades
+  { value: TECHNICIAN_SPECIALTIES.ELECTRICIDAD, label: 'Electricista / Redes Eléctricas' },
+  { value: TECHNICIAN_SPECIALTIES.COMPUTACION, label: 'Soporte de Computadores' },
+  { value: TECHNICIAN_SPECIALTIES.REDES, label: 'Redes y Telecomunicaciones' },
+  { value: TECHNICIAN_SPECIALTIES.SEGURIDAD_ELECTRONICA, label: 'Cámaras y Seguridad' },
 ]
 
 interface FormData {

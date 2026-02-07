@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import SuccessModal from '@/components/success-modal'
 import { Badge } from '@/components/ui/badge'
+import { SpecialtyConfig, SPECIALTIES_CONFIG } from '@/lib/config/specialties'
 
 interface OptimizedFormData {
   tipoElectrodomestico: string
@@ -29,107 +30,27 @@ interface OptimizedFormData {
   urgencia: string
 }
 
-const electrodomesticos = [
-  {
-    id: 'nevera',
-    label: 'Nevera / Nevecon',
-    image: '/electrodomesticos/nevecon lg1.jpg',
-    description: 'Reparación y mantenimiento de refrigeración'
-  },
-  {
-    id: 'lavadora',
-    label: 'Lavadora',
-    image: '/electrodomesticos/lavadora carga superior lg.jpg',
-    description: 'Carga frontal y superior'
-  },
-  {
-    id: 'secadora',
-    label: 'Secadora',
-    image: '/electrodomesticos/lavadora blanca lg1.jpg',
-    description: 'Secadoras a gas y eléctricas'
-  },
-  {
-    id: 'estufa',
-    label: 'Estufa / Horno',
-    image: '/electrodomesticos/estufa empotrar 1.jpg',
-    description: 'Estufas de empotrar y hornos'
-  },
-  {
-    id: 'calentador',
-    label: 'Calentador',
-    image: '/electrodomesticos/calentador challenger.jpg',
-    description: 'Calentadores de paso y acumulación'
-  },
-  {
-    id: 'televisor',
-    label: 'Televisor',
-    image: '/electrodomesticos/tv lg uhd.jpg',
-    description: 'LED, LCD, Smart TV y 4K'
-  }
-]
-
-const problemasSugeridos: Record<string, string[]> = {
-  nevera: [
-    'No enfría',
-    'Hace ruido extraño',
-    'Gotea agua',
-    'No prende',
-    'Congela los alimentos',
-    'Mantenimiento preventivo',
-    'Instalación'
-  ],
-  lavadora: [
-    'No enciende',
-    'No gira el tambor',
-    'No drena el agua',
-    'Vibra demasiado',
-    'Mancha la ropa',
-    'Mantenimiento preventivo',
-    'Instalación'
-  ],
-  secadora: [
-    'No calienta',
-    'No gira',
-    'Hace mucho ruido',
-    'Se apaga sola',
-    'No enciende',
-    'Mantenimiento preventivo',
-    'Instalación'
-  ],
-  estufa: [
-    'Llama muy baja',
-    'No prende el quemador',
-    'Olor a gas',
-    'Horno no calienta',
-    'Chispa no funciona',
-    'Mantenimiento general',
-    'Instalación'
-  ],
-  calentador: [
-    'No calienta el agua',
-    'Se apaga repentinamente',
-    'Fuga de agua',
-    'Explosiones al encender',
-    'Poca presión',
-    'Mantenimiento anual',
-    'Instalación'
-  ],
-  televisor: [
-    'Pantalla negra con sonido',
-    'No enciende',
-    'Imagen distorsionada',
-    'Sin conexión Wifi',
-    'Puertos HDMI no funcionan',
-    'Pantalla rota',
-    'Instalación'
-  ]
+interface ServiceFormProps {
+  config?: SpecialtyConfig
 }
 
-export default function ServiceForm() {
+export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTICOS }: ServiceFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [showSuccess, setShowSuccess] = useState(false)
   const [orderNumber, setOrderNumber] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Color theme from config
+  const primaryColor = config.color
+  const primaryColorClass = `text-[${primaryColor}]`
+  const primaryBgClass = `bg-[${primaryColor}]`
+
+  // Custom styles for dynamic colors since Tailwind arbitrary values might not interpolate well with variables in class names sometimes
+  // We will use inline styles for the specific dynamic colors where Tailwind isn't enough or for simplicity with dynamic values
+  const textStyle = { color: primaryColor }
+  const bgStyle = { backgroundColor: primaryColor }
+  const borderStyle = { borderColor: primaryColor }
+  const ringStyle = { '--tw-ring-color': primaryColor } as React.CSSProperties
 
   const [formData, setFormData] = useState<OptimizedFormData>({
     tipoElectrodomestico: '',
@@ -141,13 +62,17 @@ export default function ServiceForm() {
     urgencia: 'normal',
   })
 
+  // Reset form when config changes (e.g. switching tabs if we had them, OR if rendered in different sections)
+  useEffect(() => {
+    // Optional: Reset logic if needed when props change significantly
+  }, [config])
+
   // Escuchar evento del AIChat para pre-llenar el formulario
   useEffect(() => {
     const handleOpenServiceForm = (event: any) => {
       const { tipoElectrodomestico, descripcionProblema, urgencia, fromAI } = event.detail || {}
 
       if (fromAI) {
-        // Pre-llenar el formulario con los datos del AIChat
         setFormData(prev => ({
           ...prev,
           tipoElectrodomestico: tipoElectrodomestico || prev.tipoElectrodomestico,
@@ -155,7 +80,6 @@ export default function ServiceForm() {
           urgencia: urgencia || prev.urgencia,
         }))
 
-        // Avanzar al paso 3 (datos de contacto) si ya tenemos electrodoméstico y problema
         if (tipoElectrodomestico && descripcionProblema) {
           setCurrentStep(3)
         }
@@ -178,7 +102,7 @@ export default function ServiceForm() {
 
     if (step === 1) {
       if (!formData.tipoElectrodomestico) {
-        newErrors.tipoElectrodomestico = 'Por favor selecciona un electrodoméstico'
+        newErrors.tipoElectrodomestico = 'Por favor selecciona una opción'
       }
     }
 
@@ -245,7 +169,7 @@ export default function ServiceForm() {
             urgencia: formData.urgencia,
             fechaPreferida: new Date().toISOString().split('T')[0],
             horarioPreferido: 'AM',
-            comentarios: '',
+            comentarios: `Especialidad: ${config.title}`,
           }),
         })
 
@@ -286,32 +210,33 @@ export default function ServiceForm() {
 
   return (
     <section
-      id="formulario"
-      className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50"
+      id={config.id}
+      className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50 border-b border-gray-100"
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12 animate-fade-in-up">
-          <Badge variant="outline" className="mb-4 border-[#A50034] text-[#A50034]">
+          <Badge variant="outline" className="mb-4" style={{ ...textStyle, ...borderStyle }}>
             Solicitud En Línea
           </Badge>
           <h2 className="text-3xl md:text-5xl font-bold text-[#2C3E50] mb-4 tracking-tight">
-            Agenda tu Técnico de Electrodomésticos
+            {config.title}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Sección para la solicitud de tu servicio, para ello debes completar los siguientes campos:          </p>
+            {config.description}
+          </p>
 
           {/* Progress Bar */}
           <div className="max-w-md mx-auto mt-8">
             <div className="flex justify-between text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
-                <span className={currentStep >= 1 ? 'text-[#A50034]' : ''}>1. Equipo</span>
-                <span className={currentStep >= 2 ? 'text-[#A50034]' : ''}>2. Falla</span>
-                <span className={currentStep >= 3 ? 'text-[#A50034]' : ''}>3. Datos</span>
+                <span style={currentStep >= 1 ? textStyle : {}}>1. Equipo</span>
+                <span style={currentStep >= 2 ? textStyle : {}}>2. Falla</span>
+                <span style={currentStep >= 3 ? textStyle : {}}>3. Datos</span>
             </div>
             <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
                 <div
-                    className="h-full bg-[#A50034] transition-all duration-500 ease-out"
-                    style={{ width: `${progressPercentage}%` }}
+                    className="h-full transition-all duration-500 ease-out"
+                    style={{ width: `${progressPercentage}%`, backgroundColor: primaryColor }}
                 />
             </div>
           </div>
@@ -320,7 +245,7 @@ export default function ServiceForm() {
         <Card className="shadow-2xl border-0 overflow-hidden bg-white/80 backdrop-blur-sm ring-1 ring-gray-100 max-w-4xl mx-auto">
           <CardContent className="p-0">
 
-            {/* Form Content - Center Aligned - No left column */}
+            {/* Form Content */}
             <div className="p-6 md:p-12 relative min-h-[400px]">
 
                     {/* Step 1: Selección Visual con Fotos */}
@@ -328,13 +253,13 @@ export default function ServiceForm() {
                         <div className="animate-in fade-in zoom-in-95 duration-500">
                              <div className="text-center mb-8">
                                 <h3 className="text-2xl font-bold text-[#2C3E50] mb-2">
-                                    ¿Qué equipo necesitas reparar, instalar o hacer mantenimiento?
+                                    ¿Qué equipo necesitas reparar, instalar o mantener?
                                 </h3>
                                 <p className="text-gray-500">Selecciona una opción para continuar</p>
                              </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                {electrodomesticos.map((item) => (
+                                {config.items.map((item) => (
                                     <div
                                         key={item.id}
                                         onClick={() => selectElectrodomestico(item.id)}
@@ -342,11 +267,16 @@ export default function ServiceForm() {
                                             group relative cursor-pointer rounded-2xl border-2 overflow-hidden transition-all duration-300
                                             hover:shadow-xl bg-white
                                             ${formData.tipoElectrodomestico === item.id
-                                                ? 'border-[#A50034] ring-4 ring-[#A50034]/10 scale-[1.02]'
+                                                ? 'ring-4 scale-[1.02]'
                                                 : 'border-transparent hover:border-gray-200 shadow-sm'}
                                         `}
+                                        style={
+                                          formData.tipoElectrodomestico === item.id
+                                          ? { ...borderStyle, ...ringStyle, '--tw-ring-opacity': '0.1' } as React.CSSProperties
+                                          : {}
+                                        }
                                     >
-                                        {/* Image Container - object-contain for full visibility */}
+                                        {/* Image Container */}
                                         <div className="aspect-square relative p-4 bg-white flex items-center justify-center">
                                             <Image
                                                 src={item.image}
@@ -365,7 +295,10 @@ export default function ServiceForm() {
 
                                         {/* Checked Indicator */}
                                         {formData.tipoElectrodomestico === item.id && (
-                                            <div className="absolute top-3 right-3 bg-[#A50034] text-white rounded-full p-1.5 shadow-md z-10 animate-in zoom-in">
+                                            <div
+                                              className="absolute top-3 right-3 text-white rounded-full p-1.5 shadow-md z-10 animate-in zoom-in"
+                                              style={bgStyle}
+                                            >
                                                 <CheckCircle className="w-5 h-5" />
                                             </div>
                                         )}
@@ -388,22 +321,25 @@ export default function ServiceForm() {
                                 <h3 className="text-2xl font-bold text-[#2C3E50]">
                                     Describe el problema
                                 </h3>
-                                <p className="text-gray-500">Cuéntanos qué le pasa a tu {electrodomesticos.find(e => e.id === formData.tipoElectrodomestico)?.label || 'equipo'}</p>
+                                <p className="text-gray-500">
+                                  Cuéntanos qué le pasa a tu {config.items.find(e => e.id === formData.tipoElectrodomestico)?.label || 'equipo'}
+                                </p>
                              </div>
 
-                            {formData.tipoElectrodomestico && problemasSugeridos[formData.tipoElectrodomestico] && (
+                            {formData.tipoElectrodomestico && config.problems[formData.tipoElectrodomestico] && (
                                 <div>
                                     <Label className="text-gray-500 mb-3 block text-center">Problemas comunes (selecciona uno)</Label>
                                     <div className="flex flex-wrap gap-3 justify-center">
-                                        {problemasSugeridos[formData.tipoElectrodomestico].map((prob, i) => (
+                                        {config.problems[formData.tipoElectrodomestico].map((prob, i) => (
                                             <Button
                                                 key={i}
                                                 variant="outline"
-                                                className={`rounded-full px-4 h-auto py-2 border transition-all ${
-                                                    formData.descripcionProblema === prob
-                                                    ? 'border-[#A50034] bg-[#A50034] text-white hover:bg-[#A50034]/90 hover:text-white'
-                                                    : 'hover:border-[#A50034] hover:text-[#A50034]'
-                                                }`}
+                                                className={`rounded-full px-4 h-auto py-2 border transition-all`}
+                                                style={
+                                                  formData.descripcionProblema === prob
+                                                  ? { ...borderStyle, ...bgStyle, color: 'white' }
+                                                  : {}
+                                                }
                                                 onClick={() => selectProblema(prob)}
                                             >
                                                 {prob}
@@ -422,7 +358,8 @@ export default function ServiceForm() {
                                     value={formData.descripcionProblema}
                                     onChange={(e) => updateField('descripcionProblema', e.target.value)}
                                     placeholder="Describe brevemente qué está pasando con tu equipo..."
-                                    className="min-h-[150px] text-base resize-none border-gray-200 focus:border-[#A50034] focus:ring-[#A50034]/20 p-4 rounded-xl"
+                                    className="min-h-[150px] text-base resize-none border-gray-200 focus:ring-opacity-20 p-4 rounded-xl"
+                                    style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
                                 />
                                 {errors.descripcionProblema && (
                                     <p className="text-red-500 text-sm mt-2">{errors.descripcionProblema}</p>
@@ -444,26 +381,28 @@ export default function ServiceForm() {
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <Label htmlFor="nombre" className="flex items-center gap-2 text-gray-700">
-                                        <User className="w-4 h-4 text-[#A50034]" /> Nombre completo
+                                        <User className="w-4 h-4" style={textStyle} /> Nombre completo
                                     </Label>
                                     <Input
                                         id="nombre"
                                         value={formData.nombre}
                                         onChange={(e) => updateField('nombre', e.target.value)}
-                                        className="h-12 border-gray-200 focus:border-[#A50034] rounded-lg"
+                                        className="h-12 border-gray-200 rounded-lg focus:ring-1"
+                                        style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
                                         placeholder="Ej: María González"
                                     />
                                     {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="telefono" className="flex items-center gap-2 text-gray-700">
-                                        <Phone className="w-4 h-4 text-[#A50034]" /> WhatsApp / Celular
+                                        <Phone className="w-4 h-4" style={textStyle} /> WhatsApp / Celular
                                     </Label>
                                     <Input
                                         id="telefono"
                                         value={formData.telefono}
                                         onChange={(e) => updateField('telefono', e.target.value)}
-                                        className="h-12 border-gray-200 focus:border-[#A50034] rounded-lg"
+                                        className="h-12 border-gray-200 rounded-lg focus:ring-1"
+                                        style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
                                         placeholder="Ej: 300 123 4567"
                                         type="tel"
                                     />
@@ -473,20 +412,21 @@ export default function ServiceForm() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="direccion" className="flex items-center gap-2 text-gray-700">
-                                    <MapPin className="w-4 h-4 text-[#A50034]" /> Dirección de visita
+                                    <MapPin className="w-4 h-4" style={textStyle} /> Dirección de visita
                                 </Label>
                                 <Input
                                     id="direccion"
                                     value={formData.direccion}
                                     onChange={(e) => updateField('direccion', e.target.value)}
-                                    className="h-12 border-gray-200 focus:border-[#A50034] rounded-lg"
+                                    className="h-12 border-gray-200 rounded-lg focus:ring-1"
+                                    style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
                                     placeholder="Ej: Calle 123 # 45-67, Apto 501"
                                 />
                                 {errors.direccion && <p className="text-red-500 text-xs">{errors.direccion}</p>}
                             </div>
 
                             <div className="pt-4 bg-gray-50 rounded-xl p-4 text-xs text-gray-500 flex items-start gap-3 border border-gray-100">
-                                <AlertCircle className="w-5 h-5 text-[#A50034] shrink-0" />
+                                <AlertCircle className="w-5 h-5 shrink-0" style={textStyle} />
                                 <p>
                                     Al enviar esta solicitud, aceptas ser contactado vía WhatsApp o llamada para confirmar la visita técnica. Tus datos están seguros con nosotros.
                                 </p>
@@ -506,7 +446,8 @@ export default function ServiceForm() {
                         {currentStep < 3 && currentStep > 1 ? (
                              <Button
                                 onClick={nextStep}
-                                className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all"
+                                className="text-white px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all"
+                                style={bgStyle}
                             >
                                 Continuar <ChevronRight className="w-4 h-4 ml-2" />
                             </Button>

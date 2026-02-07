@@ -44,7 +44,9 @@ import {
 
 // Tipos de especialidades disponibles
 const TECHNICIAN_SPECIALTIES = {
+  // Electrodomésticos
   nevera: 'Nevera/Refrigerador',
+  congelador: 'Congelador',
   lavadora: 'Lavadora',
   secadora: 'Secadora',
   estufa: 'Estufa/Cocina',
@@ -53,6 +55,13 @@ const TECHNICIAN_SPECIALTIES = {
   equipo_sonido: 'Equipo de Sonido',
   aire_acondicionado: 'Aire Acondicionado',
   calentador: 'Calentador de Agua',
+
+  // Nuevas Especialidades
+  electricidad: 'Electricista / Redes Eléctricas',
+  computacion: 'Soporte de Computadores',
+  redes: 'Redes y Telecomunicaciones',
+  seguridad_electronica: 'Cámaras y Seguridad',
+
   otros: 'Otros Electrodomésticos',
 }
 

@@ -15,23 +15,27 @@ export default function FAQ() {
     {
       question: "¿Cuál es el costo del servicio?",
       answer:
-        "El costo del arreglo varía según el tipo de electrodoméstico, complejidad y repuesto requerido. Visita técnica para revisión del electrodoméstico y diagnóstico: 50 mil pesos dentro de la ciudad, este dinero es abonable al total de la reparación.",
+        "El costo varía según el tipo de servicio y complejidad. Visita técnica para diagnóstico: 50 mil pesos dentro de la ciudad (abonable al total de la reparación). Servicios de electrodomésticos, electricidad, computación y seguridad tienen tarifas específicas según el trabajo requerido.",
     },
     {
       question: "¿Cuánto tiempo tarda la reparación?",
-      answer: "Depende del problema. Reparaciones simples: mismo día. Complejas: 2-3 días hábiles.",
+      answer: "Depende del problema. Reparaciones simples: mismo día. Complejas: 2-3 días hábiles. Instalaciones de seguridad o redes pueden tomar 1-2 días según la complejidad.",
+    },
+    {
+      question: "¿Qué servicios ofrecen?",
+      answer: "Reparación de electrodomésticos (neveras, lavadoras, aires, etc.), servicios de electricidad (cableado, tableros, iluminación), soporte de computadores y redes, e instalación de sistemas de seguridad (cámaras, alarmas, control de acceso).",
     },
     {
       question: "¿Qué marcas atienden?",
-      answer: "Atendemos todas las marcas: LG, Samsung, Whirlpool, Mabe, Electrolux, Haceb, Challenger, etc.",
+      answer: "Atendemos todas las marcas de electrodomésticos: LG, Samsung, Whirlpool, Mabe, Electrolux, Haceb, Challenger. En especialidades: Schneider, Legrand, Siemens (electricidad), HP, Dell, Lenovo, Cisco (computación), Hikvision, Dahua (seguridad).",
     },
     {
       question: "¿Tienen garantía?",
-      answer: "Sí, 30 días en reparaciones y 90 días en instalaciones.",
+      answer: "Sí, 30 días en reparaciones de electrodomésticos, 90 días en instalaciones eléctricas y de seguridad, y 60 días en servicios de computación y redes.",
     },
     {
       question: "¿Cómo puedo pagar?",
-      answer: "Efectivo y transferencias bancarias.",
+      answer: "Aceptamos efectivo y transferencias bancarias.",
     },
   ]
 

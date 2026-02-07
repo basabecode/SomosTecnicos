@@ -149,7 +149,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
     },
     {
       id: '2',
-      text: 'Te ayudo a solicitar tu servicio en 3 pasos:\n\n1️⃣ Identifico tu electrodoméstico\n2️⃣ Entiendo el problema\n3️⃣ Creo tu solicitud\n\n**¿Qué electrodoméstico necesitas reparar, instalar o darle mantenimiento?**\n(Lavadora, nevera, aire, estufa, microondas, secadora, lavavajillas, horno eléctrico, calentador, televisor...)',
+      text: 'Te ayudo a solicitar tu servicio en 3 pasos:\n\n1️⃣ Identifico tu necesidad\n2️⃣ Entiendo el problema\n3️⃣ Creo tu solicitud\n\n**¿Qué servicio necesitas?**\n\n📱 **Electrodomésticos:** Lavadora, nevera, aire, estufa, microondas, secadora, lavavajillas, horno, calentador, televisor\n\n⚡ **Especialidades:** Electricidad, computadores, redes, cámaras de seguridad',
       isBot: true,
       timestamp: new Date(),
     },
@@ -226,12 +226,12 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
 
       // Patrón: Saludos generales
       if (lower.includes('hola') || lower.includes('buenas') || lower.includes('hey')) {
-        return '¡Hola! 😊 Listo para ayudarte.\n\n**¿Qué electrodoméstico tiene el problema?**'
+        return '¡Hola! 😊 Listo para ayudarte.\n\n**¿Qué servicio necesitas?** (electrodomésticos, electricidad, computadores, redes, seguridad)'
       }
 
       // Patrón: Solicitud de ayuda
       if (lower.includes('ayuda') || lower.includes('help')) {
-        return 'Claro! Te ayudo paso a paso:\n\n1. Dime qué electrodoméstico\n2. Describes el problema\n3. Te creo la solicitud ✅\n\n**Empecemos: ¿Lavadora, nevera, aire, secadora, TV...?**'
+        return 'Claro! Te ayudo paso a paso:\n\n1. Dime qué servicio necesitas\n2. Describes el problema\n3. Te creo la solicitud ✅\n\n**Servicios disponibles:**\n📱 Electrodomésticos\n⚡ Electricidad\n💻 Computadores\n🌐 Redes\n📹 Seguridad'
       }
     }
 
@@ -307,9 +307,33 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
         followUp = '**¿Qué está pasando?**\n\n• No enciende\n• No da imagen\n• No hay sonido\n• Pantalla dañada\n• Instalación\n• Mantenimiento'
       }
 
-      // NO SE IDENTIFICÓ EL ELECTRODOMÉSTICO
+      // ELECTRICIDAD
+      else if (lower.includes('electricidad') || lower.includes('eléctrico') || lower.includes('electrico') || lower.includes('cableado') || lower.includes('tablero') || lower.includes('breaker') || lower.includes('toma') || lower.includes('interruptor')) {
+        appliance = 'Electricidad'
+        followUp = '**¿Qué necesitas?**\n\n• Instalación de cableado\n• Reparación de tablero\n• Cambio de breakers\n• Instalación de tomas\n• Iluminación\n• Revisión eléctrica'
+      }
+
+      // COMPUTADORES
+      else if (lower.includes('computador') || lower.includes('computadora') || lower.includes('pc') || lower.includes('laptop') || lower.includes('portatil') || lower.includes('portátil')) {
+        appliance = 'Computador'
+        followUp = '**¿Cuál es el problema?**\n\n• No enciende\n• Lento\n• Virus\n• Pantalla dañada\n• Formateo\n• Instalación de software\n• Mantenimiento'
+      }
+
+      // REDES
+      else if (lower.includes('red') || lower.includes('redes') || lower.includes('internet') || lower.includes('wifi') || lower.includes('router') || lower.includes('cableado estructurado')) {
+        appliance = 'Redes'
+        followUp = '**¿Qué necesitas?**\n\n• Instalación de red\n• Configuración de router\n• Cableado estructurado\n• Puntos de acceso WiFi\n• Diagnóstico de conexión\n• Optimización de red'
+      }
+
+      // SEGURIDAD ELECTRÓNICA
+      else if (lower.includes('cámara') || lower.includes('camara') || lower.includes('seguridad') || lower.includes('alarma') || lower.includes('cctv') || lower.includes('vigilancia')) {
+        appliance = 'Seguridad Electrónica'
+        followUp = '**¿Qué necesitas?**\n\n• Instalación de cámaras\n• Sistema de alarma\n• Control de acceso\n• Videoportero\n• Mantenimiento de sistema\n• Ampliación de cámaras'
+      }
+
+      // NO SE IDENTIFICÓ EL SERVICIO
       else {
-        return 'Mmm, no identifiqué el electrodoméstico 🤔\n\n**Por favor escribe uno de estos:**\nLavadora, Nevera, Aire, Estufa, Microondas, Secadora, Lavavajillas, Horno Eléctrico, Calentador, Televisor'
+        return 'Mmm, no identifiqué el servicio 🤔\n\n**Por favor escribe uno de estos:**\n\n📱 **Electrodomésticos:** Lavadora, Nevera, Aire, Estufa, Microondas, Secadora, Lavavajillas, Horno, Calentador, Televisor\n\n⚡ **Especialidades:** Electricidad, Computador, Redes, Cámaras/Seguridad'
       }
 
       // Actualizar estado: ahora tenemos el electrodoméstico identificado
@@ -600,6 +624,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
   const createServiceRequest = () => {
     // Mapeo de nombres del chat a valores del formulario
     const typeMap: Record<string, string> = {
+      // Electrodomésticos
       'Lavadora': 'lavadora',
       'Nevera': 'nevera',
       'Aire Acondicionado': 'aire',
@@ -609,7 +634,13 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
       'Lavavajillas': 'lavavajillas',
       'Horno Eléctrico': 'horno',
       'Calentador': 'calentador',
-      'Televisor': 'televisor'
+      'Televisor': 'televisor',
+
+      // Especialidades
+      'Electricidad': 'electricidad',
+      'Computador': 'computacion',
+      'Redes': 'redes',
+      'Seguridad Electrónica': 'seguridad_electronica'
     }
 
     const mappedType = typeMap[conversationState.appliance || '']
