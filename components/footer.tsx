@@ -36,8 +36,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold text-white">SomosTécnicos</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Servicio técnico profesional desde 2020. Reparación, instalación y
-              mantenimiento de electrodomésticos a domicilio.
+           Servicio Técnico Especializado en reparación, instalación y mantenimiento de equipos domésticos y tecnológicos. Con más de 5 años de experiencia, brindando soluciones en los hogares colombianos.
             </p>
           </div>
 
@@ -84,11 +83,11 @@ export default function Footer() {
                 <span>+57 300 309 48 54</span>
               </a>
               <a
-                href="mailto:info@somostecnicos.co"
+                href="mailto:info@somostecnicos.com"
                 className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Mail size={20} />
-                <span>info@somostecnicos.co</span>
+                <span>info@somostecnicos.com</span>
               </a>
               <div className="flex items-center gap-3 text-gray-300">
                 <Clock size={20} />

@@ -244,7 +244,7 @@ export default function Header() {
             </button>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map(link => (
                 <button
                   key={link.id}
@@ -266,7 +266,7 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-[#2C3E50]"
+              className="lg:hidden p-2 text-[#2C3E50]"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -275,7 +275,7 @@ export default function Header() {
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
-            <nav className="md:hidden py-4 border-t border-[#E0E0E0] animate-fade-in">
+            <nav className="lg:hidden py-4 border-t border-[#E0E0E0] animate-fade-in">
               <div className="flex flex-col gap-4">
                 {navLinks.map(link => (
                   <button

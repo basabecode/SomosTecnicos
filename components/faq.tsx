@@ -2,7 +2,6 @@
 import Image from "next/image"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { MessageCircle } from "lucide-react"
-import AIChat from '@/components/ai-chat'
 
 /**
  * FAQ - Acordeón de preguntas frecuentes
@@ -102,14 +101,9 @@ export default function FAQ() {
                      </div>
                 </div>
 
-                {/* Componente Chat IA Integrado - Posicionado sobre el botón */}
-                <AIChat
-                  hideTrigger={true}
-                  className="absolute bottom-0 right-0 z-50 mr-4 mb-4"
-                />
+                </div>
             </div>
         </div>
-      </div>
     </section>
   )
 }

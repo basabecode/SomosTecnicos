@@ -221,7 +221,8 @@ model Customer {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
-  orders       Order[]
+  orders                Order[]
+  passwordResetTokens   PasswordResetToken[]
 
   @@map("customers")
 }
@@ -319,6 +320,8 @@ model AdminUser {
   // Timestamps
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  passwordResetTokens PasswordResetToken[]
 
   // Índices
   @@index([username])
@@ -573,4 +576,46 @@ model Message {
   @@index([read])
   @@index([createdAt])
   @@map("messages")
+}
+
+// =============================================
+// MODELO DE TOKENS DE RECUPERACIÓN DE CONTRASEÑA
+// =============================================
+
+model PasswordResetToken {
+  id              String    @id @default(uuid())
+  token           String    @unique @default(uuid())
+
+  // Usuario asociado (puede ser Admin o Customer)
+  userEmail       String    @map("user_email")
+  userType        String    @map("user_type") // 'admin' o 'customer'
+
+  // Para relaciones opcionales con AdminUser o Customer
+  adminUserId     Int?      @map("admin_user_id")
+  customerId      Int?      @map("customer_id")
+
+  // Control de expiración y uso
+  expiresAt       DateTime  @map("expires_at")
+  used            Boolean   @default(false)
+  usedAt          DateTime? @map("used_at")
+
+  // Metadatos de seguridad
+  ipAddress       String?   @map("ip_address") // IP desde donde se solicitó
+  userAgent       String?   @map("user_agent") // Navegador/dispositivo
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  adminUser       AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  customer        Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Índices para búsquedas rápidas
+  @@index([token])
+  @@index([userEmail])
+  @@index([expiresAt])
+  @@index([used])
+  @@index([createdAt])
+  @@map("password_reset_tokens")
 }

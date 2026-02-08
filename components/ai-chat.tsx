@@ -88,7 +88,6 @@ interface ConversationState {
  * Props del componente AIChat
  */
 interface AIChatProps {
-  hideTrigger?: boolean   // Si true, no muestra el botón flotante
   className?: string      // Clases CSS personalizadas
 }
 
@@ -96,7 +95,7 @@ interface AIChatProps {
 // COMPONENTE PRINCIPAL
 // ============================================================================
 
-export default function AIChat({ hideTrigger = false, className }: AIChatProps) {
+export default function AIChat({ className }: AIChatProps) {
 
   // ========================================================================
   // ESTADOS DEL COMPONENTE
@@ -702,13 +701,13 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
 
   /**
    * Si el chat no está abierto, mostrar solo el botón flotante
-   * (a menos que hideTrigger sea true)
+   *
+   * IMPORTANTE: Este botón se oculta en móviles (hidden md:block) porque
+   * MobileOptimizations maneja el trigger en mobile mediante eventos.
    */
   if (!isOpen) {
-    if (hideTrigger) return null
-
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50 hidden md:block">
         {/* Botón circular flotante con animación de pulso */}
         <Button
           onClick={() => setIsOpen(true)}
@@ -726,16 +725,18 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
   // ========================================================================
 
   return (
-    <div className={className || "fixed bottom-6 right-6 z-50"}>
+    <div className={className || "fixed bottom-0 right-0 md:bottom-6 md:right-6 z-[60] w-full md:w-auto h-full md:h-auto flex items-end md:block bg-black/50 md:bg-transparent"}>
       <Card
-        className={`w-96 shadow-2xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${
-          isMinimized ? 'h-16' : 'h-[520px]'
+        className={`w-full md:w-96 shadow-2xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 flex flex-col ${
+          isMinimized
+            ? 'h-16'
+            : 'h-[90vh] md:h-[520px] rounded-t-xl md:rounded-xl'
         }`}
       >
         {/* ================================================================
             HEADER DEL CHAT
             ================================================================ */}
-        <CardHeader className="p-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-t-lg">
+        <CardHeader className="p-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-t-xl shrink-0">
           <div className="flex items-center justify-between">
             {/* Título y estado */}
             <div className="flex items-center space-x-2">
@@ -744,11 +745,11 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
                 alt="SomosTécnicos"
                 width={32}
                 height={32}
-                className="h-8 w-8 object-contain"
+                className="h-8 w-8 object-contain bg-white rounded-full p-0.5"
               />
               <div>
                 <CardTitle className="text-sm font-medium">
-                  Asistente IA SomosTécnicos
+                  Asistente IA
                 </CardTitle>
                 {!isMinimized && (
                   <p className="text-xs opacity-90">
@@ -764,7 +765,7 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="h-8 w-8 p-0 text-white hover:bg-white/20"
+                className="h-8 w-8 p-0 text-white hover:bg-white/20 hidden md:flex"
                 aria-label={isMinimized ? "Maximizar" : "Minimizar"}
               >
                 {isMinimized ? (
@@ -801,33 +802,33 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
             ================================================================ */}
         {!isMinimized && (
           <>
-            <CardContent className="p-0 flex flex-col h-[460px]">
+            <CardContent className="p-0 flex flex-col flex-1 overflow-hidden">
               {/* ============================================================
                   ÁREA DE MENSAJES
                   ============================================================ */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px]">
-                {messages.map(message => (
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {messages.map((message, index) => (
                   <div
-                    key={message.id}
+                    key={`${message.id}-${index}`}
                     className={`flex ${
                       message.isBot ? 'justify-start' : 'justify-end'
                     }`}
                   >
                     <div
-                      className={`max-w-[85%] p-3 rounded-lg ${
+                      className={`max-w-[85%] p-3 rounded-lg shadow-sm ${
                         message.isBot
-                          ? 'bg-gray-100 text-gray-800'
-                          : 'bg-blue-500 text-white'
+                          ? 'bg-gray-100 text-gray-800 rounded-tl-none'
+                          : 'bg-blue-500 text-white rounded-tr-none'
                       }`}
                     >
                       <div className="flex items-start space-x-2">
                         {message.isBot && (
-                          <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <Bot className="h-4 w-4 mt-0.5 flex-shrink-0 text-blue-600" />
                         )}
                         {!message.isBot && (
-                          <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <User className="h-4 w-4 mt-0.5 flex-shrink-0 text-blue-100" />
                         )}
-                        <p className="text-sm whitespace-pre-line">
+                        <p className="text-sm whitespace-pre-line leading-relaxed">
                           {message.text}
                         </p>
                       </div>
@@ -837,11 +838,10 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
 
                 {/* Indicador de "escribiendo..." */}
                 {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 p-3 rounded-lg flex items-center space-x-2">
-                      <Bot className="h-4 w-4" />
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">Pensando...</span>
+                  <div className="flex justify-start animate-fade-in">
+                    <div className="bg-gray-100 p-3 rounded-lg flex items-center space-x-2 rounded-tl-none">
+                      <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                      <span className="text-sm text-gray-500 italic">Escribiendo...</span>
                     </div>
                   </div>
                 )}
@@ -854,16 +854,16 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
                   BOTÓN DE CREAR SOLICITUD (solo visible cuando está listo)
                   ============================================================ */}
               {conversationState.step === 'ready' && (
-                <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 border-t">
+                <div className="p-3 bg-emerald-50 border-t border-emerald-100 animate-in slide-in-from-bottom-2 fade-in">
                   <Button
                     onClick={createServiceRequest}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-medium"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md py-6 text-lg"
                   >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    <CheckCircle2 className="h-5 w-5 mr-2" />
                     Crear Solicitud de Servicio
                   </Button>
-                  <p className="text-xs text-center text-gray-600 mt-2">
-                    Llenaremos el formulario automáticamente
+                  <p className="text-xs text-center text-emerald-700 mt-2 font-medium">
+                    Llenaremos el formulario automáticamente por ti ✨
                   </p>
                 </div>
               )}
@@ -871,27 +871,27 @@ export default function AIChat({ hideTrigger = false, className }: AIChatProps) 
               {/* ============================================================
                   ÁREA DE INPUT
                   ============================================================ */}
-              <div className="p-4 border-t bg-white border-gray-200">
-                <div className="flex items-center space-x-3">
+              <div className="p-3 md:p-4 border-t bg-white border-gray-100 shrink-0">
+                <div className="flex items-center space-x-2">
                   <Input
                     value={inputValue}
                     onChange={e => setInputValue(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Escribe tu mensaje..."
-                    className="flex-1 text-sm h-10 border-2 focus:border-blue-500"
+                    onKeyDown={handleKeyPress}
+                    placeholder="Escribe aquí..."
+                    className="flex-1 text-base md:text-sm h-12 md:h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-full px-4"
                     disabled={isTyping}
                   />
                   <Button
                     onClick={handleSendMessage}
-                    size="sm"
+                    size="icon"
                     disabled={!inputValue.trim() || isTyping}
-                    className="bg-blue-500 hover:bg-blue-600 h-10 px-4"
+                    className="bg-blue-600 hover:bg-blue-700 h-12 w-12 md:h-10 md:w-10 rounded-full shrink-0 shadow-sm"
                     aria-label="Enviar mensaje"
                   >
-                    <Send className="h-4 w-4" />
+                    <Send className="h-5 w-5 md:h-4 md:w-4" />
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-[10px] text-center text-gray-400 mt-2 hidden md:block">
                   Presiona Enter para enviar • Shift+Enter para nueva línea
                 </p>
               </div>

@@ -7,6 +7,7 @@ import ServiceProcess from '@/components/service-process'
 import FAQ from '@/components/faq'
 import Footer from '@/components/footer'
 import MobileOptimizations from '@/components/mobile-optimizations'
+import AiChat from '@/components/ai-chat'
 import { SuppressHydrationWarning } from '@/components/no-ssr'
 import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
@@ -28,7 +29,9 @@ export default function HomePage() {
         <ServiceTypes />
 
         {/* Sección: Electrodomésticos */}
-        <ServiceForm config={SPECIALTIES_CONFIG.ELECTRODOMESTICOS} />
+        <div id="formulario">
+          <ServiceForm config={SPECIALTIES_CONFIG.ELECTRODOMESTICOS} />
+        </div>
 
         {/* Slider de marcas - Especialistas */}
         <BrandsSlider
@@ -47,6 +50,8 @@ export default function HomePage() {
       </main>
       <Footer />
 
+      {/* Asistente Virtual IA */}
+      <AiChat />
 
       {/* Optimizaciones Mobile - botones sticky y widget chat */}
       <MobileOptimizations />

@@ -21,6 +21,7 @@
     "reset": "pnpm docker:down && pnpm docker:up && sleep 5 && pnpm db:push && pnpm db:seed"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.17.0",
     "@radix-ui/react-accordion": "1.2.2",

@@ -2,15 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Phone, MessageCircle, X, Bot } from 'lucide-react'
+import { Phone, MessageCircle, X, Bot, LogIn } from 'lucide-react'
+import Link from 'next/link'
 
 /**
  * Componentes Mobile Optimizados
- * - Botón de llamada sticky (siempre visible)
+ * - Botón de llamada sticky (DESHABILITADO - puede reactivarse en el futuro)
  * - Chatbot flotante mejorado
  * - Accesos rápidos mobile
  */
 
+// ============================================================================
+// DESHABILITADO TEMPORALMENTE - Puede reactivarse en el futuro
+// ============================================================================
+/*
 export function StickyCallButton() {
   const [isVisible, setIsVisible] = useState(false)
 
@@ -44,6 +49,7 @@ export function StickyCallButton() {
     </Button>
   )
 }
+*/
 
 export function MobileChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
@@ -56,6 +62,10 @@ export function MobileChatWidget() {
     setIsOpen(false)
   }
 
+  // ============================================================================
+  // FUNCIONES DESHABILITADAS - Pueden reactivarse en el futuro
+  // ============================================================================
+  /*
   const callNow = () => {
     window.location.href = 'tel:+573001234567'
   }
@@ -66,13 +76,14 @@ export function MobileChatWidget() {
       '_blank'
     )
   }
+  */
 
   return (
     <>
       {/* Botón principal flotante */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-20 right-4 z-50 bg-[#A50034] hover:bg-[#E74C3C] text-white rounded-full p-4 shadow-2xl md:hidden"
+        className="fixed bottom-4 right-4 z-50 bg-[#A50034] hover:bg-[#E74C3C] text-white rounded-full p-4 shadow-2xl md:hidden"
         size="lg"
       >
         {isOpen ? (
@@ -84,7 +95,7 @@ export function MobileChatWidget() {
 
       {/* Panel de opciones */}
       {isOpen && (
-        <div className="fixed bottom-32 right-4 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 md:hidden animate-in slide-in-from-bottom-2">
+        <div className="fixed bottom-20 right-4 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 md:hidden animate-in slide-in-from-bottom-2 w-64">
           <div className="space-y-3">
             <p className="text-sm font-semibold text-[#2C3E50] mb-3">
               ¿Cómo te ayudamos?
@@ -111,6 +122,24 @@ export function MobileChatWidget() {
               Asistente IA
             </Button>
 
+            {/* Nuevo botón: Chat en el Portal */}
+            <Link href="/login" className="w-full block">
+              <Button
+                variant="outline"
+                className="w-full border-blue-500 text-blue-600 hover:bg-blue-50 justify-start"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                <div className="text-left flex-1">
+                  <div className="font-semibold text-sm">Chat en el Portal</div>
+                  <div className="text-xs text-gray-500">Inicia sesión para hablar</div>
+                </div>
+              </Button>
+            </Link>
+
+            {/* ============================================================================
+                BOTONES DESHABILITADOS - Pueden reactivarse en el futuro
+                ============================================================================ */}
+            {/*
             <Button
               onClick={callNow}
               variant="outline"
@@ -128,6 +157,7 @@ export function MobileChatWidget() {
               <MessageCircle className="w-4 h-4 mr-2" />
               WhatsApp
             </Button>
+            */}
           </div>
         </div>
       )}
@@ -146,7 +176,8 @@ export function MobileChatWidget() {
 export default function MobileOptimizations() {
   return (
     <>
-      <StickyCallButton />
+      {/* StickyCallButton deshabilitado temporalmente */}
+      {/* <StickyCallButton /> */}
       <MobileChatWidget />
     </>
   )
