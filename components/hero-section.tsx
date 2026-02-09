@@ -32,19 +32,20 @@ export default function HeroSection() {
       id="hero"
       className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-16 bg-gradient-to-br from-white via-blue-50/30 to-slate-50"
     >
-      {/* Patrón de herramientas decorativo - Elemento memorable */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
-        <div className="absolute top-20 left-10 animate-float-slow">
-          <Wrench className="w-24 h-24 text-[#A50034] rotate-45" />
+      {/* Patrón de herramientas decorativo - Elemento memorable - Responsive */}
+      <div className="absolute inset-0 z-0 opacity-[0.06] lg:opacity-[0.03] pointer-events-none">
+        {/* Mobile: Iconos más pequeños y mejor posicionados */}
+        <div className="absolute top-10 left-4 lg:top-20 lg:left-10 animate-float-slow">
+          <Wrench className="w-12 h-12 lg:w-24 lg:h-24 text-[#A50034] rotate-45" />
         </div>
-        <div className="absolute top-40 right-20 animate-float-slower">
-          <Zap className="w-32 h-32 text-[#2C3E50] -rotate-12" />
+        <div className="absolute top-24 right-4 lg:top-40 lg:right-20 animate-float-slower">
+          <Zap className="w-16 h-16 lg:w-32 lg:h-32 text-[#2C3E50] -rotate-12" />
         </div>
-        <div className="absolute bottom-32 left-1/4 animate-float-slow">
-          <Shield className="w-28 h-28 text-[#A50034] rotate-12" />
+        <div className="absolute bottom-40 left-8 lg:bottom-32 lg:left-1/4 animate-float-slow">
+          <Shield className="w-14 h-14 lg:w-28 lg:h-28 text-[#A50034] rotate-12" />
         </div>
-        <div className="absolute bottom-20 right-1/3 animate-float-slower">
-          <Sparkles className="w-20 h-20 text-[#2C3E50] -rotate-45" />
+        <div className="absolute bottom-24 right-8 lg:bottom-20 lg:right-1/3 animate-float-slower">
+          <Sparkles className="w-10 h-10 lg:w-20 lg:h-20 text-[#2C3E50] -rotate-45" />
         </div>
       </div>
 
@@ -76,8 +77,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Gradiente de opacidad para móviles */}
-      <div className="lg:hidden absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-white/60 to-white"></div>
+      {/* Gradiente de opacidad para móviles - Más sutil para ver el fondo */}
+      <div className="lg:hidden absolute inset-0 z-[1] bg-gradient-to-b from-transparent from-10% via-white/40 via-60% to-white"></div>
 
       {/* Overlay gradiente para mejorar legibilidad del texto */}
       <div className="hidden lg:block absolute inset-0 z-[1] bg-gradient-to-r from-white from-20% via-white/25 to-transparent"></div>
