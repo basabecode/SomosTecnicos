@@ -8,7 +8,7 @@
 - ✅ **Documentación Maestra:** Reorganización completa de la base de conocimientos en documentos numerados (`01-04`) para facilitar la navegación.
 - ✅ **Archivo Inteligente:** Reducción de más de 20 archivos dispersos a 3 listas consolidadas en `docs/archive/` (`lista_de_reportes.md`, `lista_de_tareas.md`, `lista_de_mejoras.md`).
 - ✅ **README Unificado:** Fusión de información de múltiples READMEs en uno solo en la raíz del proyecto, eliminando redundancias.
-- ✅ **Rebranding Final:** Completada la transición de marca de "TecnoCity" a "SomosTécnicos" en toda la documentación técnica y operativa.
+- ✅ **Rebranding Final:** Completada la transición de marca a **somostecnicos** en toda la documentación técnica y operativa.
 
 #### **Operatividad y QA**
 - ✅ **Guía de Acceso:** Actualizadas las credenciales de prueba y los flujos críticos de validación en `02-TESTING-Y-ACCESO.md`.

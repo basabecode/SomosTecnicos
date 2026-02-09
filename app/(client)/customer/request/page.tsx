@@ -250,10 +250,10 @@ export default function RequestServicePage() {
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
             Solicitar Servicio
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Describe tu problema y programa una visita técnica
           </p>
         </div>

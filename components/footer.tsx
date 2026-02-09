@@ -33,7 +33,7 @@ export default function Footer() {
                 height={56}
                 className="object-contain w-14 h-14"
               />
-              <h3 className="text-2xl font-bold text-white">SomosTécnicos</h3>
+              <h3 className="text-2xl font-bold text-white">somostecnicos</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
            Servicio Técnico Especializado en reparación, instalación y mantenimiento de equipos domésticos y tecnológicos. Con más de 5 años de experiencia, brindando soluciones en los hogares colombianos.
@@ -87,7 +87,7 @@ export default function Footer() {
                 className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Mail size={20} />
-                <span>info@somostecnicos.com</span>
+                <span>somostecnicos.com</span>
               </a>
               <div className="flex items-center gap-3 text-gray-300">
                 <Clock size={20} />
@@ -100,7 +100,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="border-t border-gray-600 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
-            <p>© 2025 SomosTécnicos. Todos los derechos reservados.</p>
+            <p>© 2026 somostecnicos. Todos los derechos reservados.</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
               <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false}>
                 Términos y Condiciones

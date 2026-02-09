@@ -438,48 +438,50 @@ export default function TechnicianMessages() {
   return (
     <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mis Mensajes</h1>
-          <p className="text-gray-600 mt-2">Comunicación con clientes y soporte</p>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900">Mis Mensajes</h1>
+          <p className="text-xs md:text-base text-gray-600 mt-1">Comunicación con clientes y soporte</p>
         </div>
-        <Button onClick={() => setIsNewConvOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button onClick={() => setIsNewConvOpen(true)} size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
+          <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
           Nuevo Mensaje
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0 w-full relative">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6 flex-1 min-h-0 w-full relative">
         {/* Thread List */}
-        <div className={`md:col-span-1 flex-col gap-4 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`lg:col-span-1 flex-col gap-3 min-h-0 overflow-y-auto pr-1 ${selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
           {/* Controls */}
-          <Card>
-            <CardContent className="p-4 space-y-4">
+          <Card className="shadow-sm border-gray-100">
+            <CardContent className="p-3 space-y-3">
                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4" />
                   <Input
                     placeholder="Buscar..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 h-9 text-sm bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                   />
                </div>
-               <div className="flex gap-2">
+               <div className="flex gap-2 p-0.5 bg-gray-100 rounded-lg">
                  <Button
-                   variant={statusFilter === 'all' ? 'default' : 'outline'}
+                   variant={statusFilter === 'all' ? 'default' : 'ghost'}
                    size="sm"
                    onClick={() => setStatusFilter('all')}
-                   className="flex-1"
+                   className={`flex-1 h-8 text-xs rounded-md ${statusFilter === 'all' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
                  >
                    Todos
                  </Button>
                  <Button
-                   variant={statusFilter === 'unread' ? 'default' : 'outline'}
+                   variant={statusFilter === 'unread' ? 'default' : 'ghost'}
                    size="sm"
                    onClick={() => setStatusFilter('unread')}
-                   className="flex-1"
+                   className={`flex-1 h-8 text-xs rounded-md whitespace-nowrap ${statusFilter === 'unread' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
                  >
-                   No leídos
+                   <span className="hidden sm:inline">No leídos</span>
+                   <span className="sm:hidden">No leídos</span>
                  </Button>
                </div>
             </CardContent>
@@ -535,7 +537,7 @@ export default function TechnicianMessages() {
         </div>
 
         {/* Chat Detail */}
-        <div className={`md:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`lg:col-span-2 flex-col min-h-0 ${!selectedThreadId ? 'hidden lg:flex' : 'flex'}`}>
           {selectedThread ? (
             <Card className="flex flex-col flex-1 h-full shadow-lg border-gray-200 overflow-hidden">
               {/* Chat Header */}
@@ -544,7 +546,7 @@ export default function TechnicianMessages() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="md:hidden -ml-2 h-8 w-8"
+                    className="lg:hidden -ml-2 h-8 w-8"
                     onClick={() => setSelectedThreadId(null)}
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -670,85 +672,91 @@ export default function TechnicianMessages() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Tipo</Label>
-              <Select
-                value={newConvData.receiverType}
-                onValueChange={(val: any) => setNewConvData({...newConvData, receiverType: val, receiverId: (val === 'support' ? '0' : '')})}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="customer">Cliente</SelectItem>
-                  <SelectItem value="support">Administración / Soporte</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex flex-col sm:grid sm:grid-cols-4 sm:items-center gap-2 sm:gap-4">
+              <Label className="text-left sm:text-right">Tipo</Label>
+              <div className="sm:col-span-3">
+                <Select
+                  value={newConvData.receiverType}
+                  onValueChange={(val: any) => setNewConvData({...newConvData, receiverType: val, receiverId: (val === 'support' ? '0' : '')})}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="customer">Cliente</SelectItem>
+                    <SelectItem value="support">Administración / Soporte</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {newConvData.receiverType === 'customer' && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Cliente</Label>
+              <div className="flex flex-col sm:grid sm:grid-cols-4 sm:items-center gap-2 sm:gap-4">
+                <Label className="text-left sm:text-right">Cliente</Label>
+                <div className="sm:col-span-3">
+                  <Select
+                    value={newConvData.receiverId}
+                    onValueChange={(val) => {
+                      const order = availableOrders.find(o => (o.clientId || o.userId) === val);
+                      setNewConvData({
+                        ...newConvData,
+                        receiverId: val,
+                        orderId: order?.id || ''
+                      });
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar Cliente via Orden" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableOrders.map(o => (
+                        <SelectItem key={o.id} value={o.clientId || o.userId || 'unknown'}>
+                          {o.nombre} ({o.orderNumber})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:grid sm:grid-cols-4 sm:items-center gap-2 sm:gap-4">
+              <Label className="text-left sm:text-right">Orden</Label>
+              <div className="sm:col-span-3">
                 <Select
-                  value={newConvData.receiverId}
-                  onValueChange={(val) => {
-                    const order = availableOrders.find(o => (o.clientId || o.userId) === val);
-                    setNewConvData({
-                      ...newConvData,
-                      receiverId: val,
-                      orderId: order?.id || ''
-                    });
-                  }}
+                  value={newConvData.orderId}
+                  onValueChange={(val) => setNewConvData({...newConvData, orderId: val})}
                 >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Seleccionar Cliente via Orden" />
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Opcional: Vincular a Orden" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">Ninguna</SelectItem>
                     {availableOrders.map(o => (
-                      <SelectItem key={o.id} value={o.clientId || o.userId || 'unknown'}>
-                        {o.nombre} ({o.orderNumber})
-                      </SelectItem>
+                      <SelectItem key={o.id} value={o.id}>{o.orderNumber} - {o.tipoServicio}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            )}
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Orden</Label>
-              <Select
-                value={newConvData.orderId}
-                onValueChange={(val) => setNewConvData({...newConvData, orderId: val})}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Opcional: Vincular a Orden" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Ninguna</SelectItem>
-                  {availableOrders.map(o => (
-                    <SelectItem key={o.id} value={o.id}>{o.orderNumber} - {o.tipoServicio}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Asunto</Label>
+            <div className="flex flex-col sm:grid sm:grid-cols-4 sm:items-center gap-2 sm:gap-4">
+              <Label className="text-left sm:text-right">Asunto</Label>
               <Input
                 value={newConvData.subject}
                 onChange={e => setNewConvData({...newConvData, subject: e.target.value})}
                 placeholder="Ej: Dudas sobre la reparación"
-                className="col-span-3"
+                className="sm:col-span-3"
               />
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Mensaje</Label>
+            <div className="flex flex-col sm:grid sm:grid-cols-4 sm:items-start gap-2 sm:gap-4">
+              <Label className="text-left sm:text-right sm:mt-2">Mensaje</Label>
               <Textarea
                 value={newConvData.content}
                 onChange={e => setNewConvData({...newConvData, content: e.target.value})}
                 placeholder="Escribe tu mensaje aquí..."
-                className="col-span-3 min-h-[100px]"
+                className="sm:col-span-3 min-h-[100px]"
               />
             </div>
           </div>

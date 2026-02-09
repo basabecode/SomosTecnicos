@@ -6,6 +6,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   Card,
@@ -26,6 +27,7 @@ import {
   Star,
   Wrench,
 } from 'lucide-react'
+import { TechnicianCard } from '@/components/domain/technician-card'
 
 interface Technician {
   id: number
@@ -66,6 +68,7 @@ const getSpecialtyColor = (specialty: string) => {
 }
 
 export function TechnicianStatus() {
+  const router = useRouter()
   const [technicians, setTechnicians] = useState<Technician[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -84,7 +87,6 @@ export function TechnicianStatus() {
           // Verificar que data.data sea un array
           setTechnicians(Array.isArray(data.data) ? data.data : [])
         } else {
-          // Datos mock si la API no responde
           // Datos vacíos si la API no responde
           setTechnicians([])
         }
@@ -99,6 +101,10 @@ export function TechnicianStatus() {
 
     fetchTechnicians()
   }, [])
+
+  const handleViewTechnician = (technicianId: number) => {
+    router.push(`/admin/technicians/${technicianId}`)
+  }
 
   if (loading) {
     return (
@@ -130,6 +136,21 @@ export function TechnicianStatus() {
   const activeTechnicians = technicianArray.filter(t => t.activo)
   const availableTechnicians = activeTechnicians.filter(t => t.disponible)
 
+  // Mapear técnicos al formato esperado por TechnicianCard
+  const mappedTechnicians = technicianArray.map(tech => ({
+    id: tech.id,
+    nombre: tech.nombre,
+    foto: `/avatars/${tech.id}.jpg`,
+    estado: (tech.disponible ? 'disponible' : 'ocupado') as 'disponible' | 'ocupado' | 'en_descanso' | 'offline',
+    zona: '', // No disponible en este endpoint
+    especialidades: tech.especialidades,
+    proximaOrden: tech.currentAssignment ? {
+      orderNumber: tech.currentAssignment.order.numeroOrden,
+      cliente: tech.currentAssignment.order.tipoElectrodomestico,
+      hora: tech.currentAssignment.order.ciudad,
+    } : undefined,
+  }))
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -152,114 +173,14 @@ export function TechnicianStatus() {
             <p className="text-muted-foreground">No hay técnicos registrados</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {technicianArray.map((technician, index) => (
-              <div key={technician.id}>
-                <div className="flex items-start space-x-4">
-                  {/* Avatar */}
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={`/avatars/${technician.id}.jpg`} />
-                    <AvatarFallback>
-                      {getInitials(technician.nombre)}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  {/* Technician Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-sm font-medium truncate">
-                        {technician.nombre}
-                      </h4>
-                      <div className="flex items-center space-x-2">
-                        {technician.disponible ? (
-                          <Badge
-                            variant="secondary"
-                            className="bg-green-100 text-green-800"
-                          >
-                            <CheckCircle className="mr-1 h-3 w-3" />
-                            Disponible
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="secondary"
-                            className="bg-orange-100 text-orange-800"
-                          >
-                            <Clock className="mr-1 h-3 w-3" />
-                            Ocupado
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Especialidades */}
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {technician.especialidades.slice(0, 3).map(specialty => (
-                        <Badge
-                          key={specialty}
-                          variant="outline"
-                          className={`text-xs ${getSpecialtyColor(specialty)}`}
-                        >
-                          {specialty}
-                        </Badge>
-                      ))}
-                      {technician.especialidades.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{technician.especialidades.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center space-x-3">
-                        <span className="flex items-center">
-                          <Wrench className="mr-1 h-3 w-3" />
-                          {technician.ordenesCompletadas} órdenes
-                        </span>
-                        <span className="flex items-center">
-                          <Star className="mr-1 h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          {technician.calificacionPromedio.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Current Assignment */}
-                    {technician.currentAssignment && (
-                      <div className="mt-2 p-2 bg-blue-50 rounded-md">
-                        <div className="text-xs text-blue-800">
-                          <div className="flex items-center">
-                            <Wrench className="mr-1 h-3 w-3" />
-                            <span className="font-medium">
-                              {technician.currentAssignment.order.numeroOrden}
-                            </span>
-                          </div>
-                          <div className="flex items-center mt-1">
-                            <MapPin className="mr-1 h-3 w-3" />
-                            <span>
-                              {
-                                technician.currentAssignment.order
-                                  .tipoElectrodomestico
-                              }{' '}
-                              en {technician.currentAssignment.order.ciudad}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action Button */}
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/admin/technicians/${technician.id}`}>
-                      Ver
-                    </Link>
-                  </Button>
-                </div>
-
-                {index < technicians.length - 1 && (
-                  <Separator className="mt-4" />
-                )}
-              </div>
+          <div className="space-y-3">
+            {mappedTechnicians.map((technician) => (
+              <TechnicianCard
+                key={technician.id}
+                technician={technician}
+                onViewDetails={handleViewTechnician}
+                compact={true}
+              />
             ))}
           </div>
         )}

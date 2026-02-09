@@ -140,17 +140,18 @@ export default function ReportsPage() {
   ]
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4 p-3 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
           Reportes y Análisis
         </h2>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Quick Stats - Scrollable on mobile */}
+      <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
         {quickStats.map((stat, index) => (
-          <Card key={index}>
+          <Card key={index} className="min-w-[200px] md:min-w-0 snap-start flex-shrink-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
@@ -167,11 +168,11 @@ export default function ReportsPage() {
       {/* Report Types */}
       <div>
         <h3 className="text-lg font-medium mb-4">Tipos de Reportes</h3>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
           {reportTypes.map((report, index) => (
             <Card
               key={index}
-              className="group hover:shadow-md transition-shadow"
+              className="group hover:shadow-md transition-shadow min-w-[260px] md:min-w-0 snap-start flex-shrink-0"
             >
               <CardHeader>
                 <div className="flex items-start space-x-4">

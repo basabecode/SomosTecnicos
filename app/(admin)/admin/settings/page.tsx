@@ -56,15 +56,15 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Configuración</h2>
-        <div className="flex items-center space-x-2">
-          <Button onClick={handleSave} disabled={loading}>
+    <div className="flex-1 space-y-4 p-3 md:p-8 pt-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">Configuración</h2>
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <Button onClick={handleSave} disabled={loading} className="w-full sm:w-auto text-xs sm:text-sm" size="sm">
             {loading ? (
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              <RefreshCw className="w-3.5 h-3.5 mr-2 animate-spin" />
             ) : (
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-3.5 h-3.5 mr-2" />
             )}
             Guardar Cambios
           </Button>

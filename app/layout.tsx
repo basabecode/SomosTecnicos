@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { Inter } from 'next/font/google'
+import { Outfit, Plus_Jakarta_Sans } from 'next/font/google'
 import { ClientAuthProvider } from '@/components/client-auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { NotificationProvider as InternalToastProvider } from '@/components/notifications/notification-system-simple'
@@ -10,7 +10,20 @@ import { Toaster } from '@/components/ui/toaster'
 import { TermsEnforcer } from '@/components/terms-enforcer'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Tipografía distintiva para SomosTécnicos
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+})
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://somostecnicos.co'), // Set base URL for metadata resolution
@@ -59,7 +72,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning={true}>
+      <body className={`${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`} suppressHydrationWarning={true}>
         <ClientAuthProvider>
           <NotificationProvider>
             <InternalToastProvider>

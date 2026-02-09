@@ -163,42 +163,43 @@ export default function CustomerHistory() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900">
           Historial de Servicios
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-xs md:text-sm text-gray-600 mt-1">
           Revisa todos tus servicios técnicos anteriores
         </p>
       </div>
 
       {/* Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Filtros de Búsqueda</CardTitle>
+        <CardHeader className="py-3 md:py-6">
+          <CardTitle className="text-base md:text-lg">Filtros de Búsqueda</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="search">Buscar</Label>
+              <Label htmlFor="search" className="text-xs md:text-sm">Buscar</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   id="search"
                   placeholder="Número de orden, electrodoméstico, marca..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-9 h-9 text-sm"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Estado</Label>
+              <Label className="text-xs md:text-sm">Estado</Label>
               <div className="flex gap-2">
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('all')}
+                  className="h-9 text-xs"
                 >
                   Todos
                 </Button>
@@ -206,6 +207,7 @@ export default function CustomerHistory() {
                   variant={statusFilter === 'completed' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('completed')}
+                  className="h-9 text-xs"
                 >
                   Completados
                 </Button>
@@ -213,6 +215,7 @@ export default function CustomerHistory() {
                   variant={statusFilter === 'cancelled' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setStatusFilter('cancelled')}
+                  className="h-9 text-xs"
                 >
                   Cancelados
                 </Button>

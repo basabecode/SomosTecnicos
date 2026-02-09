@@ -122,8 +122,8 @@ export default function CustomersPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestión de Clientes</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">Gestión de Clientes</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Consulta y valida la base de datos de usuarios registrados
           </p>
         </div>
@@ -177,12 +177,12 @@ export default function CustomersPage() {
           </CardHeader>
           <CardContent>
              <div className="relative max-w-md">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar cliente..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 h-9 text-sm"
                   />
             </div>
           </CardContent>

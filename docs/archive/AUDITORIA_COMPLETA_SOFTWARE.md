@@ -1,10 +1,8 @@
 # 🏗️ REPORTE COMPLETO DE AUDITORÍA DE SOFTWARE
 
-**TecnoCity - Sistema de Servicio Técnico**
+**somostecnicos - Sistema de Servicio Técnico**
 
-**Fecha:** 11 de octubre de 2025
-<!-- NOTA: Este archivo es obsoleto. El proyecto se llamaba anteriormente "TecnoCity", ahora es "SomosTécnicos". -->
-# 🔍 Auditoría Completa del Software - TecnoCity (v1.0)
+# 🔍 Auditoría Completa del Software - somostecnicos (v1.0)
 **Versión del Proyecto:** 0.1.0
 **Stack Tecnológico:** Next.js 15.2.4, React 19, TypeScript, Prisma, PostgreSQL
 
@@ -639,7 +637,7 @@ export const trackPerformance = (operation: string, duration: number) => {
 
 ## 🏁 **CONCLUSIONES**
 
-El proyecto **TecnoCity** tiene una **base sólida** pero presenta **vulnerabilidades críticas** que requieren atención inmediata. Los problemas principales son:
+El proyecto **somostecnicos** tiene una **base sólida** pero presenta **vulnerabilidades críticas** que requieren atención inmediata. Los problemas principales son:
 
 ### **✅ Fortalezas:**
 

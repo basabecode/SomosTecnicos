@@ -80,12 +80,12 @@ Garantizar una experiencia de usuario "Premium" en dispositivos móviles, resolv
 
 ---
 
-## Mejora 6: Rebranding a "SomosTécnicos" (COMPLETADO)
+## Mejora 6: Identidad de Marca "somostecnicos" (COMPLETADO)
 
-### 📋 Descripción
-Migración completa de la identidad visual y textual de "TecnoCity" a "SomosTécnicos".
+ ### 📋 Descripción
+ Implementación de la identidad visual y textual de **somostecnicos**.
 
-### ✅ Acciones Realizadas
-- Reemplazo global de nombres en componentes, textos y metadatos.
-- Actualización de activos visuales y logos.
-- Documentación técnica actualizada a la nueva marca.
+ ### ✅ Acciones Realizadas
+ - Definición de nombres en componentes, textos y metadatos.
+ - Creación de activos visuales y logos corporativos.
+ - Finalización de documentación técnica.

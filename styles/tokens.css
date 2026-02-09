@@ -1,0 +1,386 @@
+/**
+ * Workshop Design System - Tokens CSS
+ * Sistema de diseño intencional para SomosTécnicos
+ * Basado en el mundo físico de talleres técnicos profesionales
+ */
+
+@layer base {
+  :root {
+    /* ========================================
+       BASE - Ambiente de Taller
+       ======================================== */
+
+    /* Piso de taller limpio y profesional */
+    --workshop-floor: 210 20% 98%;
+
+    /* Estructura metálica - marcos y soportes */
+    --steel-frame: 215 16% 47%;
+
+    /* Naranja de herramientas - destornilladores, cajas */
+    --tool-orange: 25 95% 53%;
+
+    /* Amarillo de seguridad - chalecos, advertencias */
+    --safety-vest: 48 96% 53%;
+
+    /* ========================================
+       TEXTO - Etiquetas y Documentos
+       ======================================== */
+
+    /* Tinta de etiquetas - texto principal */
+    --label-ink: 222 47% 11%;
+
+    /* Etiquetas desgastadas - texto secundario */
+    --label-faded: 215 20% 65%;
+
+    /* Sello rojo - urgente/crítico */
+    --stamp-red: 0 84% 60%;
+
+    /* Marca verde - completado/verificado */
+    --checkmark-green: 142 76% 36%;
+
+    /* ========================================
+       ESTADOS DE SERVICIO
+       ======================================== */
+
+    /* Pendiente - ámbar de advertencia */
+    --pending-amber: 38 92% 50%;
+
+    /* Asignado - azul de uniforme técnico */
+    --assigned-blue: 217 91% 60%;
+
+    /* En proceso - púrpura de trabajo activo */
+    --in-progress-purple: 262 52% 47%;
+
+    /* Completado - verde de verificación */
+    --completed-green: 142 71% 45%;
+
+    /* Cancelado - rojo de cancelación */
+    --canceled-red: 0 84% 60%;
+
+    /* ========================================
+       SUPERFICIES - Elevación de Materiales
+       ======================================== */
+
+    /* Base - piso del taller */
+    --surface-base: 210 20% 98%;
+
+    /* Elevado - mesa de trabajo */
+    --surface-raised: 0 0% 100%;
+
+    /* Tarjeta - clipboard sobre mesa */
+    --surface-card: 0 0% 100%;
+
+    /* Overlay - papel sobre mesa */
+    --surface-overlay: 210 20% 99%;
+
+    /* Dropdown - nota adhesiva */
+    --surface-dropdown: 0 0% 100%;
+
+    /* ========================================
+       BORDES - Separaciones Físicas
+       ======================================== */
+
+    /* Borde suave - líneas de guía */
+    --border-light: 214 32% 91%;
+
+    /* Borde estándar - separadores */
+    --border-standard: 214 32% 85%;
+
+    /* Borde enfatizado - marcos importantes */
+    --border-emphasis: 215 25% 70%;
+
+    /* Borde de foco - herramienta seleccionada */
+    --border-focus: 25 95% 53%;
+
+    /* ========================================
+       JERARQUÍA DE TEXTO
+       ======================================== */
+
+    /* Texto primario - contenido principal */
+    --text-primary: var(--label-ink);
+
+    /* Texto secundario - información de soporte */
+    --text-secondary: 215 20% 45%;
+
+    /* Texto terciario - metadatos */
+    --text-tertiary: var(--label-faded);
+
+    /* Texto muted - deshabilitado/placeholder */
+    --text-muted: 215 20% 75%;
+
+    /* ========================================
+       ESPACIADO - Grid Base 4px
+       ======================================== */
+
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+
+    /* ========================================
+       TIPOGRAFÍA
+       ======================================== */
+
+    /* Familias - Tipografía distintiva */
+    --font-display: var(--font-display), 'Outfit', system-ui, sans-serif;
+    --font-body: var(--font-body), 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+    /* Escala de tamaños */
+    --text-hero: 2.5rem;      /* 40px */
+    --text-h1: 2rem;          /* 32px */
+    --text-h2: 1.5rem;        /* 24px */
+    --text-h3: 1.25rem;       /* 20px */
+    --text-body: 1rem;        /* 16px */
+    --text-small: 0.875rem;   /* 14px */
+    --text-tiny: 0.75rem;     /* 12px */
+
+    /* Pesos */
+    --weight-hero: 800;
+    --weight-heading: 700;
+    --weight-emphasis: 600;
+    --weight-medium: 500;
+    --weight-body: 400;
+    --weight-light: 300;
+
+    /* Espaciado de letras */
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.025em;
+
+    /* Altura de línea */
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.75;
+
+    /* ========================================
+       BORDES Y RADIOS
+       ======================================== */
+
+    --radius-sm: 0.375rem;   /* 6px - inputs, buttons */
+    --radius-md: 0.5rem;     /* 8px - cards */
+    --radius-lg: 0.75rem;    /* 12px - modals */
+    --radius-xl: 1rem;       /* 16px - hero cards */
+    --radius-full: 9999px;   /* Circular */
+
+    /* ========================================
+       SOMBRAS - Sutiles y Profesionales
+       ======================================== */
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* ========================================
+       ANIMACIONES
+       ======================================== */
+
+    /* Duraciones */
+    --duration-instant: 100ms;
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
+
+    /* Easing - Profesional, sin bounce */
+    --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+    --ease-in: cubic-bezier(0.32, 0, 0.67, 0);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+    /* ========================================
+       Z-INDEX - Capas de Elevación
+       ======================================== */
+
+    --z-base: 0;
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-fixed: 1200;
+    --z-modal-backdrop: 1300;
+    --z-modal: 1400;
+    --z-popover: 1500;
+    --z-tooltip: 1600;
+  }
+
+  /* ========================================
+     MODO OSCURO (Futuro)
+     ======================================== */
+
+  .dark {
+    /* TODO: Implementar tokens de modo oscuro */
+    /* Principio: En dark mode, elevación = más claro */
+  }
+}
+
+/* ========================================
+   UTILIDADES DE TOKENS
+   ======================================== */
+
+/* Backgrounds */
+.bg-workshop-floor { background-color: hsl(var(--workshop-floor)); }
+.bg-surface-raised { background-color: hsl(var(--surface-raised)); }
+.bg-surface-card { background-color: hsl(var(--surface-card)); }
+
+/* Text Colors */
+.text-label-ink { color: hsl(var(--label-ink)); }
+.text-label-faded { color: hsl(var(--label-faded)); }
+.text-primary { color: hsl(var(--text-primary)); }
+.text-secondary { color: hsl(var(--text-secondary)); }
+.text-tertiary { color: hsl(var(--text-tertiary)); }
+
+/* Accent Colors */
+.text-tool-orange { color: hsl(var(--tool-orange)); }
+.text-stamp-red { color: hsl(var(--stamp-red)); }
+.text-checkmark-green { color: hsl(var(--checkmark-green)); }
+
+.bg-tool-orange { background-color: hsl(var(--tool-orange)); }
+.bg-stamp-red { background-color: hsl(var(--stamp-red)); }
+.bg-checkmark-green { background-color: hsl(var(--checkmark-green)); }
+
+/* Service Status Colors */
+.text-pending { color: hsl(var(--pending-amber)); }
+.text-assigned { color: hsl(var(--assigned-blue)); }
+.text-in-progress { color: hsl(var(--in-progress-purple)); }
+.text-completed { color: hsl(var(--completed-green)); }
+
+.bg-pending { background-color: hsl(var(--pending-amber)); }
+.bg-assigned { background-color: hsl(var(--assigned-blue)); }
+.bg-in-progress { background-color: hsl(var(--in-progress-purple)); }
+.bg-completed { background-color: hsl(var(--completed-green)); }
+
+/* Borders */
+.border-light { border-color: hsl(var(--border-light)); }
+.border-standard { border-color: hsl(var(--border-standard)); }
+.border-emphasis { border-color: hsl(var(--border-emphasis)); }
+.border-focus { border-color: hsl(var(--border-focus)); }
+
+/* ========================================
+   ANIMACIONES PERSONALIZADAS
+   ======================================== */
+
+@keyframes pulse-urgent {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsla(var(--stamp-red), 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px hsla(var(--stamp-red), 0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-pulse-urgent {
+  animation: pulse-urgent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right var(--duration-normal) var(--ease-out);
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-normal) var(--ease-out);
+}
+
+/* ========================================
+   COMPONENTES BASE CON TOKENS
+   ======================================== */
+
+/* Card con elevación */
+.workshop-card {
+  background-color: hsl(var(--surface-card));
+  border: 1px solid hsl(var(--border-standard));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.workshop-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Button primario */
+.workshop-button-primary {
+  background-color: hsl(var(--tool-orange));
+  color: white;
+  font-weight: var(--weight-emphasis);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.workshop-button-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Badge de estado */
+.workshop-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-tiny);
+  font-weight: var(--weight-emphasis);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.workshop-badge-pending {
+  background-color: hsla(var(--pending-amber), 0.1);
+  color: hsl(var(--pending-amber));
+  border: 1px solid hsla(var(--pending-amber), 0.3);
+}
+
+.workshop-badge-assigned {
+  background-color: hsla(var(--assigned-blue), 0.1);
+  color: hsl(var(--assigned-blue));
+  border: 1px solid hsla(var(--assigned-blue), 0.3);
+}
+
+.workshop-badge-in-progress {
+  background-color: hsla(var(--in-progress-purple), 0.1);
+  color: hsl(var(--in-progress-purple));
+  border: 1px solid hsla(var(--in-progress-purple), 0.3);
+}
+
+.workshop-badge-completed {
+  background-color: hsla(var(--completed-green), 0.1);
+  color: hsl(var(--completed-green));
+  border: 1px solid hsla(var(--completed-green), 0.3);
+}

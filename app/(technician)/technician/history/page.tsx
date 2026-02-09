@@ -200,14 +200,14 @@ export default function TechnicianHistoryPage() {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
           Historial de Trabajos
         </h2>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      {/* Stats Cards - Scrollable on mobile, Grid on desktop */}
+      <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
+        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Trabajos Completados
@@ -222,7 +222,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Calificación Promedio
@@ -246,7 +246,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Ingresos Totales
@@ -263,7 +263,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Horas Trabajadas
@@ -285,20 +285,20 @@ export default function TechnicianHistoryPage() {
           <CardTitle>Filtros</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por cliente, orden o servicio..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="pl-8"
+                  className="pl-9 h-9 text-sm"
                 />
               </div>
             </div>
             <Select value={timeFilter} onValueChange={setTimeFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full md:w-[150px] h-9 text-sm">
                 <SelectValue placeholder="Período" />
               </SelectTrigger>
               <SelectContent>
@@ -312,9 +312,9 @@ export default function TechnicianHistoryPage() {
         </CardContent>
       </Card>
 
-      {/* Performance Summary */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+      {/* Performance Summary - Scrollable on mobile */}
+      <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 scrollbar-hide">
+        <Card className="min-w-[300px] md:min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5" />
@@ -345,7 +345,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-[300px] md:min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Award className="w-5 h-5" />
@@ -367,7 +367,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-[300px] md:min-w-0">
           <CardHeader>
             <CardTitle>Tipos de Servicio</CardTitle>
           </CardHeader>
@@ -389,69 +389,168 @@ export default function TechnicianHistoryPage() {
         </Card>
       </div>
 
-      {/* Jobs History Table */}
+      {/* Jobs History - Responsive: Cards on Mobile, Table on Desktop */}
       <Card>
         <CardHeader>
           <CardTitle>
             Historial Detallado ({filteredJobs.length} trabajos)
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Orden</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Servicio</TableHead>
-                <TableHead>Fecha Completada</TableHead>
-                <TableHead>Duración</TableHead>
-                <TableHead>Calificación</TableHead>
-                <TableHead>Ingresos</TableHead>
-                <TableHead>Prioridad</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredJobs.map(job => (
-                <TableRow key={job.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{job.orderId}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(job.completedDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{job.clientName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {job.clientAddress}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{job.serviceType}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <p>{new Date(job.completedDate).toLocaleDateString()}</p>
-                      <p className="text-muted-foreground">
-                        {new Date(job.completedDate).toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{job.duration}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <div className="flex items-center">
+        <CardContent className="p-0 sm:p-6">
+          {/* Desktop Table - Hidden on mobile */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Orden</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Servicio</TableHead>
+                  <TableHead>Fecha Completada</TableHead>
+                  <TableHead>Duración</TableHead>
+                  <TableHead>Calificación</TableHead>
+                  <TableHead>Ingresos</TableHead>
+                  <TableHead>Prioridad</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredJobs.map(job => (
+                  <TableRow key={job.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{job.orderId}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(job.completedDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{job.clientName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {job.clientAddress}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{job.serviceType}</TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <p>{new Date(job.completedDate).toLocaleDateString()}</p>
+                        <p className="text-muted-foreground">
+                          {new Date(job.completedDate).toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm">{job.duration}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star
+                              key={star}
+                              className={`w-3 h-3 ${
+                                star <= job.rating
+                                  ? 'text-yellow-500 fill-current'
+                                  : 'text-gray-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm font-medium">
+                          ({job.rating})
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">
+                        ${job.earnings.toLocaleString()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={priorityColors[job.priority]}>
+                        {job.priority === 'low' && 'Baja'}
+                        {job.priority === 'medium' && 'Media'}
+                        {job.priority === 'high' && 'Alta'}
+                        {job.priority === 'urgent' && 'Urgente'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDetailDialog(job)}
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        Ver
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Cards - Hidden on desktop */}
+          <div className="md:hidden space-y-3 p-3">
+            {filteredJobs.map(job => (
+              <div
+                key={job.id}
+                className="border rounded-lg p-4 space-y-3 bg-white shadow-sm"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <p className="font-semibold text-base">{job.orderId}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {job.clientName}
+                    </p>
+                  </div>
+                  <Badge className={priorityColors[job.priority]}>
+                    {job.priority === 'low' && 'Baja'}
+                    {job.priority === 'medium' && 'Media'}
+                    {job.priority === 'high' && 'Alta'}
+                    {job.priority === 'urgent' && 'Urgente'}
+                  </Badge>
+                </div>
+
+                {/* Service Info */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Servicio:</span>
+                    <span className="font-medium text-right">{job.serviceType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fecha:</span>
+                    <span className="font-medium">
+                      {new Date(job.completedDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Duración:</span>
+                    <span className="font-medium flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {job.duration}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Ingresos:</span>
+                    <span className="font-semibold text-green-600">
+                      ${job.earnings.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Calificación:</span>
+                    <div className="flex items-center gap-1">
+                      <div className="flex">
                         {[1, 2, 3, 4, 5].map(star => (
                           <Star
                             key={star}
-                            className={`w-3 h-3 ${
+                            className={`w-3.5 h-3.5 ${
                               star <= job.rating
                                 ? 'text-yellow-500 fill-current'
                                 : 'text-gray-300'
@@ -459,38 +558,24 @@ export default function TechnicianHistoryPage() {
                           />
                         ))}
                       </div>
-                      <span className="text-sm font-medium">
-                        ({job.rating})
-                      </span>
+                      <span className="text-xs font-medium">({job.rating})</span>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">
-                      ${job.earnings.toLocaleString()}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={priorityColors[job.priority]}>
-                      {job.priority === 'low' && 'Baja'}
-                      {job.priority === 'medium' && 'Media'}
-                      {job.priority === 'high' && 'Alta'}
-                      {job.priority === 'urgent' && 'Urgente'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openDetailDialog(job)}
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      Ver
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => openDetailDialog(job)}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Ver Detalles
+                </Button>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 

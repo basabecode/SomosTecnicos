@@ -44,13 +44,13 @@ export function TechnicianAvailabilitySection() {
   const getStatusBadge = (status: string) => {
       switch (status) {
           case 'disponible':
-              return <Badge className="bg-green-100 text-green-800 border-green-200">Disponible</Badge>
+              return <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">Disponible</Badge>
           case 'ocupado':
-              return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Ocupado</Badge>
+              return <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs">Ocupado</Badge>
           case 'en_descanso':
-             return <Badge className="bg-orange-100 text-orange-800 border-orange-200">En Descanso</Badge>
+             return <Badge className="bg-orange-100 text-orange-800 border-orange-200 text-xs">Descanso</Badge>
           default:
-             return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Offline</Badge>
+             return <Badge className="bg-gray-100 text-gray-800 border-gray-200 text-xs">Offline</Badge>
       }
   }
 
@@ -66,69 +66,71 @@ export function TechnicianAvailabilitySection() {
   return (
     <Card className="border-0 shadow-md bg-white">
       <CardHeader className="pb-4 border-b">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-3 lg:space-y-0 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <CardTitle className="text-xl font-bold text-[#2C3E50]">
+            <CardTitle className="text-lg md:text-xl font-bold text-[#2C3E50]">
               Disponibilidad de Técnicos
             </CardTitle>
-            <CardDescription className="text-sm text-gray-500">
-              Vista general de la flota de técnicos para asignación coordinada
+            <CardDescription className="text-xs md:text-sm text-gray-500">
+              Vista general de la flota de técnicos
             </CardDescription>
           </div>
-          <div className="flex gap-2">
-             <Badge className="bg-green-100 text-green-800 border-green-200 px-3 py-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+          <div className="flex flex-wrap gap-2">
+             <Badge className="bg-green-100 text-green-800 border-green-200 px-2 md:px-3 py-1 text-xs">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-pulse"></div>
                 {stats.disponibles} Disponibles
              </Badge>
-             <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-3 py-1">
+             <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-2 md:px-3 py-1 text-xs">
                 {stats.ocupados} Ocupados
              </Badge>
-             <Badge className="bg-orange-100 text-orange-800 border-orange-200 px-3 py-1">
+             <Badge className="bg-orange-100 text-orange-800 border-orange-200 px-2 md:px-3 py-1 text-xs">
                 {stats.descanso} En Descanso
              </Badge>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 md:p-6">
         {loading ? (
              <div className="text-center py-8 text-gray-500">Cargando disponibilidad...</div>
         ) : technicians.length === 0 ? (
              <div className="text-center py-8 text-gray-500">No hay técnicos activos registrados.</div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
             {technicians.map((tech) => (
                 <div
                 key={tech.id}
-                className={`p-4 rounded-lg border-2 transition-all ${getStatusColor(tech.status)}`}
+                className={`p-3 md:p-4 rounded-lg border-2 transition-all ${getStatusColor(tech.status)}`}
                 >
-                <div className="flex items-center justify-between mb-2">
-                    <div className="font-semibold text-[#2C3E50]">
+                <div className="flex items-center justify-between mb-2 gap-2">
+                    <div className="font-semibold text-sm md:text-base text-[#2C3E50] truncate flex-1 min-w-0">
                     {tech.name}
                     </div>
-                    <div className="flex items-center text-sm bg-white px-2 py-0.5 rounded border border-gray-100">
+                    <div className="flex items-center text-xs md:text-sm bg-white px-1.5 md:px-2 py-0.5 rounded border border-gray-100 flex-shrink-0">
                     <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 mr-1" />
                     <span className="text-[#2C3E50] font-medium">{tech.rating.toFixed(1)}</span>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3">
-                    <div className="text-sm font-medium text-gray-600 bg-white px-2 py-0.5 rounded inline-block border border-gray-100 truncate max-w-[100px]" title={tech.specialty}>
+                <div className="flex items-center justify-between mt-3 gap-2">
+                    <div className="text-xs md:text-sm font-medium text-gray-600 bg-white px-2 py-0.5 rounded border border-gray-100 truncate flex-1 min-w-0" title={tech.specialty}>
                         {tech.specialty}
                     </div>
-                    {getStatusBadge(tech.status)}
+                    <div className="flex-shrink-0">
+                        {getStatusBadge(tech.status)}
+                    </div>
                 </div>
                 </div>
             ))}
             </div>
         )}
 
-        <div className="mt-6 p-4 bg-blue-50/50 rounded-lg border border-blue-100 flex items-start gap-3">
-          <Users className="w-5 h-5 text-blue-600 mt-0.5" />
-          <div>
-              <p className="text-sm font-medium text-blue-800">Panel de Asignación Manual</p>
-              <p className="text-blue-600 text-sm mt-1">
-                Utiliza este panel para monitorear la carga de trabajo y asignar técnicos de manera estratégica según su disponibilidad.
+        <div className="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50/50 rounded-lg border border-blue-100 flex flex-col sm:flex-row items-start gap-3">
+          <Users className="w-5 h-5 text-blue-600 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+              <p className="text-xs md:text-sm font-medium text-blue-800">Panel de Asignación Manual</p>
+              <p className="text-blue-600 text-xs md:text-sm mt-1">
+                Utiliza este panel para monitorear la carga de trabajo y asignar técnicos de manera estratégica.
               </p>
           </div>
         </div>

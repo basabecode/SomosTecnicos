@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import OrderTrackingDashboard from '@/components/dashboard/order-tracking-dashboard'
 import { useAuth } from '@/contexts/auth-context'
+import { ServiceTimeline, NoHistoryEmptyState } from '@/components/domain'
 import {
   Home,
   Clock,
@@ -156,24 +157,24 @@ export default function CustomerDashboard() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-8 pt-4 sm:pt-6">
       {/* Welcome Header */}
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between sm:space-y-0">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#A50034] to-[#2C3E50] bg-clip-text text-transparent">
+      <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#A50034] to-[#2C3E50] bg-clip-text text-transparent">
             ¡Hola, {user?.nombre || 'Cliente'}! 👋
           </h1>
-          <p className="text-sm text-muted-foreground font-medium">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
             Gestiona tus reparaciones con SomosTécnicos
           </p>
         </div>
         <div className="flex items-center gap-2">
-             <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos">
+             <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos" className="h-10 w-10 sm:h-9 sm:w-9">
                 <RefreshCw className="h-4 w-4" />
              </Button>
-            <Button asChild className="active-tap shadow-lg shadow-primary/20 bg-[#A50034] h-12 rounded-xl">
+            <Button asChild className="active-tap shadow-lg shadow-primary/20 bg-[#A50034] h-11 sm:h-12 rounded-xl text-sm sm:text-base flex-1 sm:flex-none">
             <Link href="/customer/request">
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                 Nueva Solicitud
             </Link>
             </Button>
@@ -181,35 +182,35 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-xs sm:text-sm font-medium">
               Servicios Activos
             </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeServices.length}</div>
-            <p className="text-xs text-muted-foreground">En proceso actual</p>
+            <div className="text-xl sm:text-2xl font-bold">{activeServices.length}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">En proceso actual</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-xs sm:text-sm font-medium">
               Historial Total
             </CardTitle>
-            <Home className="h-4 w-4 text-muted-foreground" />
+            <Home className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{orders.length}</div>
-            <p className="text-xs text-muted-foreground">Solicitudes realizadas</p>
+            <div className="text-xl sm:text-2xl font-bold">{orders.length}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">Solicitudes realizadas</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Left Column - Services */}
         <div className="lg:col-span-2 space-y-6">
           {/* Active Services */}
@@ -219,7 +220,7 @@ export default function CustomerDashboard() {
                 <AlertCircle className="w-5 h-5" />
                 <span>Servicios Activos</span>
               </CardTitle>
-              <CardDescription>Tus reparaciones en curso</CardDescription>
+              <CardDescription>Seguimiento de tus reparaciones en curso</CardDescription>
             </CardHeader>
             <CardContent>
               {activeServices.length === 0 ? (
@@ -233,59 +234,44 @@ export default function CustomerDashboard() {
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {activeServices.map(service => {
-                    const StatusIcon = statusIcons[service.estado] || Clock
                     const technician = service.assignments[0]?.technician
 
+                    // Mapear estado a paso del timeline
+                    const currentStep = service.estado === 'pendiente' ? 'pendiente' :
+                                      service.estado === 'asignado' ? 'asignado' :
+                                      service.estado === 'en_proceso' ? 'en_proceso' :
+                                      'completado'
+
                     return (
-                      <div key={service.id} className="native-card p-5 bg-white/60 border border-white/20 shadow-sm transition-all active-tap rounded-xl">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3 className="font-semibold">{service.tipoServicio}</h3> // Note: type might be missing in API response if it mapped to tipoServicio
-                             <p className="text-sm text-muted-foreground font-mono">
-                              #{service.orderNumber}
-                            </p>
-                             <p className="text-sm font-medium mt-1">{service.tipoServicio}</p>
-                          </div>
-                          <Badge className={statusColors[service.estado]}>
-                            <StatusIcon className="w-3 h-3 mr-1" />
-                            {statusLabels[service.estado]}
-                          </Badge>
-                        </div>
+                      <div key={service.id} className="space-y-4">
+                        <ServiceTimeline
+                          currentStep={currentStep as any}
+                          order={{
+                            id: service.id,
+                            orderNumber: service.orderNumber,
+                            createdAt: service.createdAt,
+                            technician: technician ? {
+                              nombre: technician.nombre,
+                              telefono: technician.telefono,
+                            } : undefined,
+                            estimatedArrival: service.fechaPreferida ?
+                              new Date(service.fechaPreferida).toLocaleTimeString('es-CO', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              }) : undefined,
+                          }}
+                        />
 
-                        <div className="space-y-2 text-sm mt-4">
-                          {technician ? (
-                            <div className="flex items-center space-x-2">
-                                <Users className="w-4 h-4 text-muted-foreground" />
-                                <span>Técnico: <strong>{technician.nombre}</strong></span>
-                            </div>
-                          ) : (
-                             <div className="flex items-center space-x-2">
-                                <Users className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-orange-600">Esperando asignación de técnico</span>
-                             </div>
-                          )}
-
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <span>
-                              Fecha: {new Date(service.createdAt).toLocaleDateString()}
-                            </span>
-                          </div>
-
-                          <div className="bg-muted/30 p-2 rounded text-xs text-muted-foreground">
-                             {service.descripcionProblema}
-                          </div>
-                        </div>
-
-                        <div className="flex gap-3 mt-5">
+                        {/* Acciones rápidas */}
+                        <div className="flex gap-3">
                           {technician && (
-                             <Button variant="secondary" size="sm" className="flex-1 rounded-xl active-tap h-9" asChild>
-                                <a href={`tel:${technician.telefono?.replace(/\s+/g, '')}`}>
+                            <Button variant="secondary" size="sm" className="flex-1 rounded-xl active-tap h-9" asChild>
+                              <a href={`tel:${technician.telefono?.replace(/\s+/g, '')}`}>
                                 <Phone className="w-4 h-4 mr-2" />
                                 Llamar
-                                </a>
+                              </a>
                             </Button>
                           )}
                           <Button variant="outline" size="sm" className="flex-1 rounded-xl active-tap h-9" asChild>
@@ -313,9 +299,7 @@ export default function CustomerDashboard() {
             </CardHeader>
             <CardContent>
                 {historyServices.length === 0 ? (
-                    <div className="text-center py-6 text-sm text-muted-foreground">
-                        No hay historial de servicios finalizados.
-                    </div>
+                    <NoHistoryEmptyState />
                 ) : (
                   <div className="space-y-4">
                     {historyServices.slice(0, 3).map(service => (

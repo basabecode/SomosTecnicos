@@ -178,22 +178,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           menuItems={headerMenuItems}
           onLogout={handleLogout}
           showNotifications={true}
+          leftContent={
+            <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="-ml-3 h-10 w-10 text-gray-500 hover:text-gray-900">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Abrir menú</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-[240px]">
+                  <SidebarContent />
+                </SheetContent>
+              </Sheet>
+            </div>
+          }
         />
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden fixed top-4 left-4 z-50">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="bg-white shadow-md h-11 w-11">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Abrir menú</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-[240px]">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-        </div>
+
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 pb-safe">

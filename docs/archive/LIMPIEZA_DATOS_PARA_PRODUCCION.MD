@@ -50,7 +50,8 @@ Debes generar un inventario que incluya:
 
 ### 2.1 Usuarios de Prueba a Mantener
 
-Define exactamente estos registros que se deben crear, debes eliminar los correo de tecnocity ya que se cambio el nombre del proyecto y actualiza la base de datos:
+Define exactamente estos registros que se deben crear y actualiza la base de datos:
+
 
 ```javascript
 // Estructura de usuarios a conservar

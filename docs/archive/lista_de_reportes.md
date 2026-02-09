@@ -545,11 +545,11 @@ La integración se completó exitosamente manteniendo **100% de compatibilidad**
 
 ---
 
-## Reporte 4: REPORTE FINAL: Mejoras de Frontend y UX/UI - TecnoCity2025
+## Reporte 4: REPORTE FINAL: Mejoras de Frontend y UX/UI - somostecnicos2025
 
 ### 📋 Resumen Ejecutivo
 
-**Proyecto:** TecnoCity - Plataforma de Servicios Técnicos
+**Proyecto:** somostecnicos - Plataforma de Servicios Técnicos
 **Fecha:** 12 de Octubre de 2025
 **Objetivo:** Implementar mejoras UX/UI siguiendo mejores prácticas 2025
 **Modelo de Negocio:** Uber-técnico (conectar clientes con técnicos en tiempo real)

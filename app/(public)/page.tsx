@@ -28,7 +28,7 @@ export default function HomePage() {
 
         <ServiceTypes />
 
-        {/* Sección: Electrodomésticos */}
+        {/* Sección: Electrodomésticos y Especialidades */}
         <div id="formulario">
           <ServiceForm config={SPECIALTIES_CONFIG.ELECTRODOMESTICOS} />
         </div>
@@ -40,9 +40,6 @@ export default function HomePage() {
           brands={SPECIALIST_BRANDS}
           className="bg-slate-50"
         />
-
-        {/* Sección: Especialistas */}
-        <ServiceForm config={SPECIALTIES_CONFIG.ESPECIALISTAS} />
 
         {/* Proceso de Servicio - Cómo funciona */}
         <ServiceProcess />

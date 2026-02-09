@@ -361,36 +361,36 @@ export default function OrderDetailPage() {
     <ProtectedRoute
       requiredRoles={['super_admin', 'admin', 'technician_manager']}
     >
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" asChild>
+      <div className="space-y-4 md:space-y-6 p-4 md:p-6">
+        {/* Header - Responsive */}
+        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center md:space-x-4">
+            <Button variant="ghost" asChild className="w-fit">
               <Link href="/admin/orders">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
                 {order.numeroOrden}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm md:text-base text-muted-foreground">
                 Orden creada el {formatDate(order.createdAt)}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <Badge
               variant="outline"
               className={`${
                 statusColors[order.estado as keyof typeof statusColors]
-              } text-sm px-3 py-1`}
+              } text-sm px-3 py-1 w-fit`}
             >
               <StatusIcon className="mr-1 h-4 w-4" />
               {statusLabels[order.estado as keyof typeof statusLabels]}
             </Badge>
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <Link href={`/admin/orders/${order.id}/edit`}>
                 <Edit className="mr-2 h-4 w-4" />
                 Editar
@@ -399,7 +399,7 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
           {/* Información del Cliente */}
           <Card>
             <CardHeader>
@@ -415,7 +415,7 @@ export default function OrderDetailPage() {
                 </label>
                 <p className="text-lg font-semibold">{order.nombre}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Teléfono
@@ -429,9 +429,9 @@ export default function OrderDetailPage() {
                   <label className="text-sm font-medium text-muted-foreground">
                     Email
                   </label>
-                  <p className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4" />
-                    {order.email}
+                  <p className="flex items-center text-sm break-all">
+                    <Mail className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{order.email}</span>
                   </p>
                 </div>
               </div>
@@ -462,7 +462,7 @@ export default function OrderDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Electrodoméstico
@@ -502,7 +502,7 @@ export default function OrderDetailPage() {
                 </p>
               </div>
               {order.fechaVisita && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
                       Fecha de Visita
@@ -628,7 +628,7 @@ export default function OrderDetailPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="text-sm font-medium">Nuevo Estado</label>
                 <Select value={newStatus} onValueChange={setNewStatus}>
@@ -649,15 +649,13 @@ export default function OrderDetailPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-end">
-                <Button
-                  onClick={handleStatusUpdate}
-                  disabled={updatingStatus || newStatus === order.estado}
-                  className="w-full"
-                >
-                  {updatingStatus ? 'Actualizando...' : 'Actualizar Estado'}
-                </Button>
-              </div>
+              <Button
+                onClick={handleStatusUpdate}
+                disabled={updatingStatus || newStatus === order.estado}
+                className="w-full mt-2"
+              >
+                {updatingStatus ? 'Actualizando...' : 'Actualizar Estado'}
+              </Button>
             </div>
             <div>
               <label className="text-sm font-medium">
@@ -674,7 +672,7 @@ export default function OrderDetailPage() {
         </Card>
 
         {/* Notas y Observaciones */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
           {order.notasInternas && (
             <Card>
               <CardHeader>
@@ -725,7 +723,7 @@ export default function OrderDetailPage() {
                   return (
                     <div key={index} className="flex items-start space-x-3">
                       <div
-                        className={`p-2 rounded-full ${
+                        className={`p-2 rounded-full flex-shrink-0 ${
                           statusColors[
                             historial.estado as keyof typeof statusColors
                           ]
@@ -733,21 +731,21 @@ export default function OrderDetailPage() {
                       >
                         <HistoriaIcon className="h-4 w-4" />
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                           <div>
-                            <p className="font-medium">
+                            <p className="font-medium text-sm md:text-base">
                               {
                                 statusLabels[
                                   historial.estado as keyof typeof statusLabels
                                 ]
                               }
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-xs md:text-sm text-muted-foreground">
                               por {historial.usuario}
                             </p>
                           </div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs md:text-sm text-muted-foreground whitespace-nowrap">
                             {formatDateTime(historial.fecha)}
                           </p>
                         </div>

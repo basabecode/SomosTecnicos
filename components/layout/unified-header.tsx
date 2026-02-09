@@ -47,6 +47,8 @@ interface UnifiedHeaderProps {
   showNotifications?: boolean
   /** Clase adicional */
   className?: string
+  /** Contenido adicional a la izquierda (ej. botón de menú) */
+  leftContent?: React.ReactNode
   /** Contenido adicional a la derecha */
   rightContent?: React.ReactNode
 }
@@ -62,6 +64,7 @@ export function UnifiedHeader({
   onLogout,
   showNotifications = true,
   className,
+  leftContent,
   rightContent,
 }: UnifiedHeaderProps) {
   return (
@@ -73,16 +76,19 @@ export function UnifiedHeader({
         className
       )}
     >
-      {/* Lado Izquierdo - Título */}
-      <div className="flex flex-col min-w-0 flex-1 mr-2">
-        <h1 className="text-lg md:text-2xl font-semibold text-gray-900 truncate">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="text-xs md:text-sm text-gray-600 hidden md:block truncate">
-            {subtitle}
-          </p>
-        )}
+      {/* Lado Izquierdo - Título y Menú */}
+      <div className="flex items-center min-w-0 flex-1 mr-2">
+        {leftContent && <div className="mr-3 md:hidden">{leftContent}</div>}
+        <div className="flex flex-col min-w-0">
+          <h1 className="text-lg md:text-2xl font-semibold text-gray-900 truncate">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-xs md:text-sm text-gray-600 hidden md:block truncate">
+              {subtitle}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Lado Derecho - Acciones */}

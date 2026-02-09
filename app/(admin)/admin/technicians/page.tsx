@@ -287,18 +287,19 @@ export default function TechniciansPage() {
     >
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
               Gestión de Técnicos
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground mt-1">
               Administra y supervisa el equipo de técnicos
             </p>
           </div>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto h-9 text-xs sm:text-sm" size="sm">
             <Link href="/admin/technicians/create">
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-3.5 w-3.5" />
               Nuevo Técnico
             </Link>
           </Button>
@@ -369,20 +370,20 @@ export default function TechniciansPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-3">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar por nombre, teléfono, email..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 h-9 text-sm"
                   />
                 </div>
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full md:w-48 h-9 text-sm">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -394,7 +395,7 @@ export default function TechniciansPage() {
                 </SelectContent>
               </Select>
               <Select value={cityFilter} onValueChange={setCityFilter}>
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full md:w-48 h-9 text-sm">
                   <SelectValue placeholder="Ciudad" />
                 </SelectTrigger>
                 <SelectContent>
@@ -410,7 +411,7 @@ export default function TechniciansPage() {
                 value={availabilityFilter}
                 onValueChange={setAvailabilityFilter}
               >
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full md:w-48 h-9 text-sm">
                   <SelectValue placeholder="Disponibilidad" />
                 </SelectTrigger>
                 <SelectContent>

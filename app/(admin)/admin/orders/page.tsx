@@ -262,18 +262,19 @@ export default function OrdersPage() {
     >
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
               Órdenes de Servicio
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground mt-1">
               Gestiona y supervisa todas las órdenes del sistema
             </p>
           </div>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto h-9 text-xs sm:text-sm" size="sm">
             <Link href="/admin/orders/create">
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-3.5 w-3.5" />
               Nueva Orden
             </Link>
           </Button>
@@ -287,21 +288,21 @@ export default function OrdersPage() {
               Filtra y busca órdenes específicas
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
+          <CardContent className="p-3 md:p-6">
+            <div className="flex flex-col md:flex-row gap-3">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar por número, cliente, teléfono..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="pl-10 h-12 md:h-10 text-base md:text-sm" // Larger touch target
+                    className="pl-9 h-9 text-sm"
                   />
                 </div>
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
+                <SelectTrigger className="w-full md:w-48 h-9 text-sm">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -314,7 +315,7 @@ export default function OrdersPage() {
                 </SelectContent>
               </Select>
               <Select value={urgencyFilter} onValueChange={setUrgencyFilter}>
-                <SelectTrigger className="w-full md:w-48 h-12 md:h-10">
+                <SelectTrigger className="w-full md:w-48 h-9 text-sm">
                   <SelectValue placeholder="Urgencia" />
                 </SelectTrigger>
                 <SelectContent>

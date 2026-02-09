@@ -45,6 +45,7 @@ import {
   Phone,
   Navigation,
   FileText,
+  MessageCircle,
 } from 'lucide-react'
 
 interface Assignment {
@@ -165,32 +166,30 @@ export default function TechnicianAssignmentsPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Mis Asignaciones</h2>
+       <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">Mis Asignaciones</h2>
       </div>
-
-
 
       {/* Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
+        <CardHeader className="py-3 md:py-6">
+          <CardTitle className="text-base md:text-lg">Filtros</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+        <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por cliente, orden o servicio..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="pl-8"
+                  className="pl-9 h-9 text-sm"
                 />
               </div>
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full md:w-[180px] h-9 text-sm">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent>
@@ -321,10 +320,33 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[120px] active-tap"
+                      className="flex-1 min-w-[120px] active-tap border-green-500 text-green-600 hover:bg-green-50"
+                      asChild
                     >
-                      <Navigation className="w-4 h-4 mr-1.5" />
-                      Navegar
+                      <a
+                        href={`https://wa.me/${assignment.clientPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${assignment.clientName}, soy su técnico de SomosTécnicos. Me comunico con usted para coordinar el servicio de ${assignment.serviceType} programado para hoy.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-1.5" />
+                        WhatsApp
+                      </a>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 min-w-[120px] active-tap"
+                      asChild
+                    >
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.clientAddress)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Navigation className="w-4 h-4 mr-1.5" />
+                        Navegar
+                      </a>
                     </Button>
 
                     {assignment.status === 'assigned' && (

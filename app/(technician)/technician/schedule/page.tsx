@@ -104,10 +104,10 @@ export default function TechnicianSchedulePage() {
       {/* Header Standard */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">
             Mi Agenda
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Gestión visual de tus servicios programados
           </p>
         </div>

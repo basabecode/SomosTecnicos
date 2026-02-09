@@ -85,29 +85,31 @@ function QuickActions() {
         <CardTitle>Acciones Rápidas</CardTitle>
         <CardDescription>Tareas comunes del sistema</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-2">
-        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+      <CardContent className="grid gap-3 grid-cols-2 md:gap-4">
+        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="outline" asChild>
           <Link href="/admin/orders">
-            <ShoppingCart className="h-6 w-6" />
+            <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
             <span>Nueva Orden</span>
           </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="outline" asChild>
             <Link href="/admin/technicians">
-                <Users className="h-6 w-6" />
+                <Users className="h-5 w-5 md:h-6 md:w-6" />
                 <span>Asignar Técnico</span>
             </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="outline" asChild>
             <Link href="/admin/orders?view=calendar">
-                <Calendar className="h-6 w-6" />
-                <span>Programar Servicio</span>
+                <Calendar className="h-5 w-5 md:h-6 md:w-6" />
+                <span className="hidden sm:inline">Programar Servicio</span>
+                <span className="sm:hidden">Programar</span>
             </Link>
         </Button>
-        <Button className="h-20 flex-col gap-2" variant="outline" asChild>
+        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="outline" asChild>
             <Link href="/admin/reports">
-                <TrendingUp className="h-6 w-6" />
-                <span>Ver Reportes</span>
+                <TrendingUp className="h-5 w-5 md:h-6 md:w-6" />
+                <span className="hidden sm:inline">Ver Reportes</span>
+                <span className="sm:hidden">Reportes</span>
             </Link>
         </Button>
       </CardContent>
@@ -255,19 +257,19 @@ function SystemAlerts() {
                   key={index}
                   className={`p-3 rounded-lg border ${getAlertColor(alert.type)}`}
                 >
-                  <div className="flex items-start space-x-3">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                     <Icon
-                      className={`h-5 w-5 mt-0.5 ${getIconColor(alert.type)}`}
+                      className={`h-5 w-5 flex-shrink-0 ${getIconColor(alert.type)}`}
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-gray-900">
                         {alert.title}
                       </h4>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-xs sm:text-sm text-gray-600 mt-1">
                         {alert.message}
                       </p>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-xs" asChild>
+                    <Button variant="ghost" size="sm" className="text-xs w-full sm:w-auto" asChild>
                       <Link href={alert.href}>
                         {alert.action}
                       </Link>
@@ -288,19 +290,20 @@ export default function AdminDashboard() {
     <ProtectedRoute
       requiredRoles={['super_admin', 'admin', 'technician_manager']}
     >
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6 p-4 md:p-6">
+        {/* Header - Responsive */}
+        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-sm md:text-base text-muted-foreground">
               Resumen general del sistema de servicio técnico
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="bg-green-50 text-green-700">
+            <Badge variant="outline" className="bg-green-50 text-green-700 text-xs md:text-sm">
               <CheckCircle className="mr-1 h-3 w-3" />
-              Sistema Operativo
+              <span className="hidden sm:inline">Sistema Operativo</span>
+              <span className="sm:hidden">Activo</span>
             </Badge>
           </div>
         </div>
@@ -311,16 +314,16 @@ export default function AdminDashboard() {
         </Suspense>
 
         {/* Grid Principal */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-3">
           {/* Órdenes Recientes */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             <Suspense fallback={<CardLoading />}>
               <RecentOrders />
             </Suspense>
           </div>
 
           {/* Estado de Técnicos */}
-          <div>
+          <div className="order-1 lg:order-2">
             <Suspense fallback={<CardLoading />}>
               <TechnicianStatus />
             </Suspense>
@@ -331,7 +334,7 @@ export default function AdminDashboard() {
             <TechnicianAvailabilitySection />
 
         {/* Fila Inferior */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
           {/* Acciones Rápidas */}
           <QuickActions />
 

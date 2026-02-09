@@ -1,4 +1,7 @@
-# 🔧 SomosTécnicos - Sistema de Gestión de Servicios Técnicos (FSM)
+# 🔧 somostecnicos - Sistema de Gestión de Servicios Técnicos (FSM)
+
+> ℹ️ **Nota de Rebranding:** Este proyecto, anteriormente conocido como **TecnoCity**, ha sido oficialmente renombrado a **somostecnicos**.
+
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
@@ -13,7 +16,7 @@
 
 ## 🌟 Funcionalidad del Proyecto
 
-**SomosTécnicos** centraliza todo el ciclo de vida de un servicio técnico, desde el diagnóstico inicial hasta la finalización del trabajo en campo.
+**somostecnicos** centraliza todo el ciclo de vida de un servicio técnico, desde el diagnóstico inicial hasta la finalización del trabajo en campo.
 
 ### � Ecosistema de Roles (RBAC)
 *   **Clientes:** Solicitud de servicios mediante formularios guiados o asistente IA, seguimiento en tiempo real y gestión de perfil.

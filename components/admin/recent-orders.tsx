@@ -6,6 +6,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   Card,
@@ -27,6 +28,7 @@ import {
   CheckCircle,
   Wrench,
 } from 'lucide-react'
+import { UrgentOrderBanner } from '@/components/domain/urgent-order-banner'
 
 interface Order {
   id: string
@@ -84,6 +86,7 @@ const StatusIcon = ({ status }: { status: string }) => {
 }
 
 export function RecentOrders() {
+  const router = useRouter()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -101,7 +104,6 @@ export function RecentOrders() {
           const data = await response.json()
           setOrders(data.data.orders)
         } else {
-          // Datos mock si la API no responde
           // Datos vacíos si la API no responde
           setOrders([])
         }
@@ -116,6 +118,22 @@ export function RecentOrders() {
 
     fetchOrders()
   }, [])
+
+  const handleAssignOrder = (orderId: string) => {
+    router.push(`/admin/orders/${orderId}?action=assign`)
+  }
+
+  const handleViewOrderDetails = (orderId: string) => {
+    router.push(`/admin/orders/${orderId}`)
+  }
+
+  // Separar órdenes urgentes de las normales
+  const urgentOrders = orders.filter(
+    (order) => order.urgencia === 'alta' && order.estado === 'pendiente'
+  )
+  const normalOrders = orders.filter(
+    (order) => !(order.urgencia === 'alta' && order.estado === 'pendiente')
+  )
 
   if (loading) {
     return (
@@ -177,91 +195,135 @@ export function RecentOrders() {
             <p className="text-muted-foreground">No hay órdenes recientes</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {orders.map((order, index) => (
-              <div key={order.id}>
-                <div className="flex items-start space-x-4">
-                  {/* Status Icon */}
-                  <div
-                    className={`rounded-full p-2 ${
-                      statusColors[order.estado as keyof typeof statusColors]
-                    }`}
-                  >
-                    <StatusIcon status={order.estado} />
-                  </div>
-
-                  {/* Order Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-sm font-medium truncate">
-                        {order.numeroOrden} - {order.nombre}
-                      </h4>
-                      <Badge
-                        variant="secondary"
-                        className={`${
-                          statusColors[
-                            order.estado as keyof typeof statusColors
-                          ]
-                        } text-xs`}
-                      >
-                        {
-                          statusLabels[
-                            order.estado as keyof typeof statusLabels
-                          ]
-                        }
-                      </Badge>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <div className="flex items-center space-x-4">
-                        <span className="flex items-center">
-                          <User className="mr-1 h-3 w-3" />
-                          {order.tipoElectrodomestico} - {order.tipoServicio}
-                        </span>
-                        <span className="flex items-center">
-                          <MapPin className="mr-1 h-3 w-3" />
-                          {order.ciudad}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center">
-                          <Phone className="mr-1 h-3 w-3" />
-                          {order.telefono}
-                        </span>
-                        <div className="flex items-center space-x-2">
-                          <span
-                            className={`text-xs font-medium ${
-                              urgencyColors[
-                                order.urgencia as keyof typeof urgencyColors
-                              ]
-                            }`}
-                          >
-                            {order.urgencia.toUpperCase()}
-                          </span>
-                          <span>•</span>
-                          <span>{formatTime(order.createdAt)}</span>
-                        </div>
-                      </div>
-
-                      {order.assignment && (
-                        <div className="flex items-center text-blue-600">
-                          <Wrench className="mr-1 h-3 w-3" />
-                          Técnico: {order.assignment.technician.nombre}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/admin/orders/${order.id}`}>Ver</Link>
-                  </Button>
+          <div className="space-y-6">
+            {/* Órdenes Urgentes - Hero Section */}
+            {urgentOrders.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-5 w-5 text-stamp-red" />
+                  <h3 className="text-h3 font-[700] text-label-ink">
+                    Órdenes Urgentes
+                  </h3>
+                  <Badge className="workshop-badge-pending">
+                    {urgentOrders.length}
+                  </Badge>
                 </div>
-
-                {index < orders.length - 1 && <Separator className="mt-4" />}
+                {urgentOrders.map((order) => (
+                  <UrgentOrderBanner
+                    key={order.id}
+                    order={{
+                      id: order.id,
+                      orderNumber: order.numeroOrden,
+                      cliente: order.nombre,
+                      direccion: '', // No disponible en este endpoint
+                      distrito: order.ciudad,
+                      tipoServicio: `${order.tipoElectrodomestico} - ${order.tipoServicio}`,
+                      problema: '', // No disponible en este endpoint
+                      createdAt: order.createdAt,
+                      urgencia: order.urgencia as 'alta' | 'media' | 'baja',
+                    }}
+                    onAssign={handleAssignOrder}
+                    onViewDetails={handleViewOrderDetails}
+                  />
+                ))}
+                {normalOrders.length > 0 && <Separator className="my-6" />}
               </div>
-            ))}
+            )}
+
+            {/* Órdenes Normales */}
+            {normalOrders.length > 0 && (
+              <div className="space-y-4">
+                {urgentOrders.length > 0 && (
+                  <h3 className="text-small font-[600] text-text-secondary uppercase tracking-wide mb-3">
+                    Otras Órdenes Recientes
+                  </h3>
+                )}
+                {normalOrders.map((order, index) => (
+                  <div key={order.id}>
+                    <div className="flex items-start space-x-4">
+                      {/* Status Icon */}
+                      <div
+                        className={`rounded-full p-2 ${
+                          statusColors[order.estado as keyof typeof statusColors]
+                        }`}
+                      >
+                        <StatusIcon status={order.estado} />
+                      </div>
+
+                      {/* Order Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-sm font-medium truncate">
+                            {order.numeroOrden} - {order.nombre}
+                          </h4>
+                          <Badge
+                            variant="secondary"
+                            className={`${
+                              statusColors[
+                                order.estado as keyof typeof statusColors
+                              ]
+                            } text-xs`}
+                          >
+                            {
+                              statusLabels[
+                                order.estado as keyof typeof statusLabels
+                              ]
+                            }
+                          </Badge>
+                        </div>
+
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <div className="flex items-center space-x-4">
+                            <span className="flex items-center">
+                              <User className="mr-1 h-3 w-3" />
+                              {order.tipoElectrodomestico} - {order.tipoServicio}
+                            </span>
+                            <span className="flex items-center">
+                              <MapPin className="mr-1 h-3 w-3" />
+                              {order.ciudad}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center">
+                              <Phone className="mr-1 h-3 w-3" />
+                              {order.telefono}
+                            </span>
+                            <div className="flex items-center space-x-2">
+                              <span
+                                className={`text-xs font-medium ${
+                                  urgencyColors[
+                                    order.urgencia as keyof typeof urgencyColors
+                                  ]
+                                }`}
+                              >
+                                {order.urgencia.toUpperCase()}
+                              </span>
+                              <span>•</span>
+                              <span>{formatTime(order.createdAt)}</span>
+                            </div>
+                          </div>
+
+                          {order.assignment && (
+                            <div className="flex items-center text-blue-600">
+                              <Wrench className="mr-1 h-3 w-3" />
+                              Técnico: {order.assignment.technician.nombre}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/orders/${order.id}`}>Ver</Link>
+                      </Button>
+                    </div>
+
+                    {index < normalOrders.length - 1 && <Separator className="mt-4" />}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>

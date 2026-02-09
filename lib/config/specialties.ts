@@ -20,8 +20,8 @@ export interface SpecialtyConfig {
 export const SPECIALTIES_CONFIG: Record<string, SpecialtyConfig> = {
   ELECTRODOMESTICOS: {
     id: 'electrodomesticos',
-    title: 'Agenda tu Técnico de Electrodomésticos',
-    description: 'Reparación y mantenimiento de electrodomésticos',
+    title: 'Agenda tu Técnico Especialista',
+    description: 'Reparación y mantenimiento de electrodomésticos y servicios técnicos especializados',
     color: '#A50034', // Red
     items: [
       {
@@ -59,6 +59,24 @@ export const SPECIALTIES_CONFIG: Record<string, SpecialtyConfig> = {
         label: 'Televisor',
         image: '/electrodomesticos/tv lg uhd.jpg',
         description: 'LED, LCD, Smart TV y 4K'
+      },
+      {
+        id: APPLIANCE_TYPES.ELECTRICISTA,
+        label: 'Electricista',
+        image: '/especialistas/electricista2.jpg',
+        description: 'Cableado, tableros e iluminación'
+      },
+      {
+        id: APPLIANCE_TYPES.TECNICO_SISTEMAS,
+        label: 'Computación y Redes',
+        image: '/especialistas/computacion_redes2.jpg',
+        description: 'PC, Portátiles, WiFi e Impresoras'
+      },
+      {
+        id: APPLIANCE_TYPES.TECNICO_SEGURIDAD,
+        label: 'Seguridad Electrónica',
+        image: '/especialistas/seguridad_electronica3.png',
+        description: 'Cámaras, Alarmas y Control de Acceso'
       }
     ],
     problems: {
@@ -85,36 +103,7 @@ export const SPECIALTIES_CONFIG: Record<string, SpecialtyConfig> = {
       'televisor': [
         'Pantalla negra con sonido', 'No enciende', 'Imagen distorsionada',
         'Sin conexión Wifi', 'Puertos HDMI no funcionan', 'Pantalla rota', 'Instalación'
-      ]
-    }
-  },
-
-  ESPECIALISTAS: {
-    id: 'especialistas',
-    title: 'Agenda tu Técnico Especialista',
-    description: 'Electricidad, Informática, Redes y Seguridad Electrónica',
-    color: '#0F172A', // Slate 900
-    items: [
-      {
-        id: APPLIANCE_TYPES.ELECTRICISTA,
-        label: 'Electricista',
-        image: '/especialistas/electricista2.jpg',
-        description: 'Cableado, tableros e iluminación'
-      },
-      {
-        id: APPLIANCE_TYPES.TECNICO_SISTEMAS,
-        label: 'Computación y Redes',
-        image: '/especialistas/computacion_redes2.jpg',
-        description: 'PC, Portátiles, WiFi e Impresoras'
-      },
-      {
-        id: APPLIANCE_TYPES.TECNICO_SEGURIDAD,
-        label: 'Seguridad Electrónica',
-        image: '/especialistas/seguridad_electronica3.png',
-        description: 'Cámaras, Alarmas y Control de Acceso'
-      }
-    ],
-    problems: {
+      ],
       [APPLIANCE_TYPES.ELECTRICISTA]: [
         'Cortocircuito / Sin energía',
         'Instalación nueva',

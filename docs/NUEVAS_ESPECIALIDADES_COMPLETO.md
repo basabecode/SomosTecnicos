@@ -23,19 +23,21 @@
 
 ## 🎯 Resumen Ejecutivo
 
-Se ha completado exitosamente la integración de **4 nuevas especialidades** de técnicos en la plataforma SomosTécnicos, expandiendo los servicios de reparación de electrodomésticos a servicios técnicos especializados.
+Se ha completado exitosamente la integración de **3 nuevas especialidades** de técnicos en la plataforma SomosTécnicos, expandiendo los servicios de reparación de electrodomésticos a servicios técnicos especializados.
+
+**ACTUALIZACIÓN (2026-02-08):** Se refactorizó la configuración para consolidar todas las especialidades en una sola sección, eliminando la separación innecesaria entre electrodomésticos y especialistas.
 
 ### Nuevas Categorías Agregadas:
 
-1. ⚡ **Electricidad** - Servicios eléctricos residenciales y comerciales
-2. 💻 **Computación** - Soporte técnico de computadores
-3. 🌐 **Redes** - Instalación y configuración de redes
-4. 📹 **Seguridad Electrónica** - Cámaras y sistemas de seguridad
+1. ⚡ **Electricista** - Servicios eléctricos residenciales y comerciales
+2. 💻 **Computación y Redes** - Soporte técnico de computadores, redes y WiFi
+3. 📹 **Seguridad Electrónica** - Cámaras y sistemas de seguridad
 
 ### Impacto:
 
-- **Servicios totales:** 10 electrodomésticos + 4 especialidades = **14 servicios**
-- **Cobertura:** +40% en tipos de servicio
+- **Servicios totales:** 6 electrodomésticos + 3 especialidades = **9 servicios**
+- **Arquitectura:** Consolidado en una sola sección `ELECTRODOMESTICOS` para mayor simplicidad
+- **Cobertura:** +50% en tipos de servicio
 - **Keywords IA:** +67% en capacidad de reconocimiento (~30 → ~50+ palabras clave)
 - **FAQ:** 5 → 6 preguntas (nueva: "¿Qué servicios ofrecen?")
 
@@ -164,38 +166,47 @@ export const TECHNICIAN_SPECIALTIES = {
 
 **Cambios principales:**
 
-#### A. Configuración de Especialistas
+#### Configuración Unificada
 ```typescript
-ESPECIALISTAS: {
-  title: 'Técnicos Especializados',
-  description: 'Servicios profesionales especializados',
-  categories: [
+ELECTRODOMESTICOS: {
+  id: 'electrodomesticos',
+  title: 'Agenda tu Técnico de Electrodomésticos',
+  description: 'Reparación y mantenimiento de electrodomésticos y servicios técnicos especializados',
+  color: '#A50034',
+  items: [
+    // Electrodomésticos tradicionales
+    { id: 'nevera', label: 'Nevera / Nevecon', ... },
+    { id: 'lavadora', label: 'Lavadora', ... },
+    { id: 'secadora', label: 'Secadora', ... },
+    { id: 'estufa', label: 'Estufa / Horno', ... },
+    { id: 'calentador', label: 'Calentador', ... },
+    { id: 'televisor', label: 'Televisor', ... },
+
+    // Nuevas especialidades agregadas al final
     {
-      id: 'electricidad',
-      name: 'Electricidad',
-      icon: '⚡',
-      description: 'Instalaciones y reparaciones eléctricas',
-      services: ['Cableado', 'Tableros', 'Iluminación', 'Breakers']
+      id: 'electricista',
+      label: 'Electricista',
+      description: 'Cableado, tableros e iluminación'
     },
     {
-      id: 'computacion',
-      name: 'Computación y Redes',
-      icon: '💻',
-      description: 'Soporte técnico y redes',
-      services: ['Reparación PC', 'Redes', 'Servidores', 'Cableado']
+      id: 'tecnico_sistemas',
+      label: 'Computación y Redes',
+      description: 'PC, Portátiles, WiFi e Impresoras'
     },
     {
-      id: 'seguridad',
-      name: 'Seguridad Electrónica',
-      icon: '📹',
-      description: 'Cámaras y sistemas de seguridad',
-      services: ['Cámaras', 'Alarmas', 'Control de Acceso', 'CCTV']
+      id: 'tecnico_seguridad',
+      label: 'Seguridad Electrónica',
+      description: 'Cámaras, Alarmas y Control de Acceso'
     }
-  ]
+  ],
+  problems: {
+    // Problemas de electrodomésticos + problemas de especialidades
+    // Todo en una sola configuración
+  }
 }
 ```
 
-#### B. Marcas Especializadas
+**Nota:** Se eliminó la sección separada `ESPECIALISTAS` y se consolidó todo en una sola sección para simplificar la configuración.
 ```typescript
 export const SPECIALIST_BRANDS = [
   // Electricidad

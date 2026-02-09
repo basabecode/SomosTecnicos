@@ -398,56 +398,109 @@ export default function WarrantyPage() {
               <span>Reclamos en Proceso</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Servicio</TableHead>
-                  <TableHead>Fecha del Reclamo</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Descripción</TableHead>
-                  <TableHead>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {warrantyClaims.map(claim => {
-                  const service = warrantyServices.find(
-                    s => s.id === claim.serviceId
-                  )
-                  return (
-                    <TableRow key={claim.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{service?.type}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {claim.serviceId}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(claim.claimDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[claim.status]}>
-                          {claim.status === 'under_review' && 'En Revisión'}
-                          {claim.status === 'approved' && 'Aprobado'}
-                          {claim.status === 'rejected' && 'Rechazado'}
-                          {claim.status === 'completed' && 'Completado'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <p className="text-sm truncate">{claim.description}</p>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="outline" size="sm">
-                          Ver Detalles
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+          <CardContent className="p-0 sm:p-6">
+            {/* Desktop Table - Hidden on mobile */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Servicio</TableHead>
+                    <TableHead>Fecha del Reclamo</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Descripción</TableHead>
+                    <TableHead>Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {warrantyClaims.map(claim => {
+                    const service = warrantyServices.find(
+                      s => s.id === claim.serviceId
+                    )
+                    return (
+                      <TableRow key={claim.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{service?.type}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {claim.serviceId}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(claim.claimDate).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={statusColors[claim.status]}>
+                            {claim.status === 'under_review' && 'En Revisión'}
+                            {claim.status === 'approved' && 'Aprobado'}
+                            {claim.status === 'rejected' && 'Rechazado'}
+                            {claim.status === 'completed' && 'Completado'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <p className="text-sm truncate">{claim.description}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            Ver Detalles
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Cards - Hidden on desktop */}
+            <div className="md:hidden space-y-3 p-3">
+              {warrantyClaims.map(claim => {
+                const service = warrantyServices.find(
+                  s => s.id === claim.serviceId
+                )
+                return (
+                  <div
+                    key={claim.id}
+                    className="border rounded-lg p-4 space-y-3 bg-white shadow-sm"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <p className="font-semibold text-base">{service?.type}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {claim.serviceId}
+                        </p>
+                      </div>
+                      <Badge className={statusColors[claim.status]}>
+                        {claim.status === 'under_review' && 'En Revisión'}
+                        {claim.status === 'approved' && 'Aprobado'}
+                        {claim.status === 'rejected' && 'Rechazado'}
+                        {claim.status === 'completed' && 'Completado'}
+                      </Badge>
+                    </div>
+
+                    {/* Claim Info */}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Fecha del reclamo:</span>
+                        <span className="font-medium">
+                          {new Date(claim.claimDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="pt-2 border-t">
+                        <p className="text-muted-foreground text-xs mb-1">Descripción:</p>
+                        <p className="text-sm">{claim.description}</p>
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <Button variant="outline" size="sm" className="w-full">
+                      Ver Detalles
+                    </Button>
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       )}
