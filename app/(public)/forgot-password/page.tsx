@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
               <div className="space-y-4 lg:space-y-6">
                 <div className="flex items-center gap-4">
                   <Image
-                    src="/img_3d/logo modificado.jpeg"
+                    src="/img_3d/logo_modificado.jpeg"
                     alt="SomosTécnicos"
                     width={70}
                     height={70}

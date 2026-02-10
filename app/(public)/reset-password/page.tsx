@@ -152,7 +152,7 @@ function ResetPasswordContent() {
               <div className="space-y-4 lg:space-y-6">
                 <div className="flex items-center gap-4">
                   <Image
-                    src="/img_3d/logo modificado.jpeg"
+                    src="/img_3d/logo_modificado.jpeg"
                     alt="SomosTécnicos"
                     width={70}
                     height={70}
@@ -210,7 +210,7 @@ function ResetPasswordContent() {
             <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
               <div className="flex items-center gap-3 mb-3">
                 <Image
-                  src="/img_3d/logo modificado.jpeg"
+                  src="/img_3d/logo_modificado.jpeg"
                   alt="SomosTécnicos"
                   width={48}
                   height={48}
