@@ -1,17 +1,10 @@
 /**
  * Sistema de Notificaciones por Email
- * Integración con Resend para envío de emails automáticos
+ * Integración con Brevo para envío de emails automáticos
  */
 
-import { Resend } from 'resend'
+import { apiInstance, brevo, defaultSender } from './email/brevo-client'
 
-// =============================================
-// CONFIGURACIÓN
-// =============================================
-
-const resend = new Resend(process.env.RESEND_API_KEY!)
-
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@somostecnicos.com'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 // =============================================
@@ -192,22 +185,23 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
  */
 export async function sendNewOrderEmail(data: OrderEmailData): Promise<NotificationResult> {
   try {
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `✅ Confirmación de Servicio - Orden ${data.orderNumber}`,
-      html: getNewOrderTemplate(data)
-    })
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = `✅ Confirmación de Servicio - Orden ${data.orderNumber}`
+    sendSmtpEmail.htmlContent = getNewOrderTemplate(data)
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: data.customerEmail, name: data.customerName }]
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
     return {
       success: true,
-      messageId: result.data?.id
+      messageId: result.body.messageId
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error enviando email de nueva orden:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error?.body?.message || error.message || 'Error desconocido'
     }
   }
 }
@@ -217,22 +211,23 @@ export async function sendNewOrderEmail(data: OrderEmailData): Promise<Notificat
  */
 export async function sendStatusUpdateEmail(data: OrderEmailData): Promise<NotificationResult> {
   try {
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: data.customerEmail,
-      subject: `📢 Actualización de Orden ${data.orderNumber} - ${data.status}`,
-      html: getStatusUpdateTemplate(data)
-    })
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = `📢 Actualización de Orden ${data.orderNumber} - ${data.status}`
+    sendSmtpEmail.htmlContent = getStatusUpdateTemplate(data)
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: data.customerEmail, name: data.customerName }]
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
     return {
       success: true,
-      messageId: result.data?.id
+      messageId: result.body.messageId
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error enviando email de actualización:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error?.body?.message || error.message || 'Error desconocido'
     }
   }
 }
@@ -246,11 +241,9 @@ export async function sendSimpleEmail(
   message: string
 ): Promise<NotificationResult> {
   try {
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to,
-      subject,
-      html: `
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = subject
+    sendSmtpEmail.htmlContent = `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
           <h2 style="color: #A50034;">🔧 SomosTécnicos</h2>
           <p>${message}</p>
@@ -260,17 +253,20 @@ export async function sendSimpleEmail(
           </p>
         </div>
       `
-    })
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: to }]
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
     return {
       success: true,
-      messageId: result.data?.id
+      messageId: result.body.messageId
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error enviando email simple:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error?.body?.message || error.message || 'Error desconocido'
     }
   }
 }
@@ -283,11 +279,9 @@ export async function sendTechnicianApplicationReceivedEmail(
   applicantName: string
 ): Promise<NotificationResult> {
   try {
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: applicantEmail,
-      subject: '✅ Solicitud Recibida - SomosTécnicos',
-      html: `
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = '✅ Solicitud Recibida - SomosTécnicos'
+    sendSmtpEmail.htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -348,17 +342,20 @@ export async function sendTechnicianApplicationReceivedEmail(
         </body>
         </html>
       `
-    })
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: applicantEmail, name: applicantName }]
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
     return {
       success: true,
-      messageId: result.data?.id
+      messageId: result.body.messageId
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error enviando confirmación de solicitud:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error?.body?.message || error.message || 'Error desconocido'
     }
   }
 }
@@ -383,11 +380,11 @@ export async function sendNewTechnicianApplicationNotification(
   try {
     const especialidadesText = applicationData.especialidades.join(', ')
 
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: adminEmail,
-      subject: '🆕 Nueva Solicitud de Técnico - Requiere Revisión',
-      html: `
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = '🆕 Nueva Solicitud de Técnico - Requiere Revisión'
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: adminEmail }]
+    sendSmtpEmail.htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -483,17 +480,18 @@ export async function sendNewTechnicianApplicationNotification(
         </body>
         </html>
       `
-    })
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
     return {
       success: true,
-      messageId: result.data?.id
+      messageId: result.body.messageId
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error enviando notificación al admin:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error?.body?.message || error.message || 'Error desconocido'
     }
   }
 }
@@ -504,13 +502,11 @@ export async function sendNewTechnicianApplicationNotification(
 export function validateEmailConfig(): { isValid: boolean; errors: string[] } {
   const errors: string[] = []
 
-  if (!process.env.RESEND_API_KEY) {
-    errors.push('RESEND_API_KEY no configurada')
+  if (!process.env.BREVO_API_KEY) {
+    errors.push('BREVO_API_KEY no configurada')
   }
 
-  if (!process.env.FROM_EMAIL) {
-    errors.push('FROM_EMAIL no configurada (usando default)')
-  }
+  // FROM_EMAIL y BREVO_SENDER_EMAIL se manejan con defaults en brevo-client.ts
 
   return {
     isValid: errors.length === 0,
