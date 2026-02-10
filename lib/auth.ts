@@ -507,16 +507,16 @@ export function authenticatedResponse(user: AuthenticatedUser, data?: unknown): 
  * HOC que protege rutas de API con autenticación
  */
 export function withAuth(
-  handler: (request: NextRequest, user: AuthenticatedUser) => Promise<NextResponse>
+  handler: (request: NextRequest, user: AuthenticatedUser, ...args: any[]) => Promise<NextResponse>
 ) {
-  return async function(request: NextRequest): Promise<NextResponse> {
+  return async function(request: NextRequest, ...args: any[]): Promise<NextResponse> {
     const authResult = await authenticateRequest(request)
 
     if (!authResult.authenticated || !authResult.user) {
       return unauthorizedResponse(authResult.error)
     }
 
-    return handler(request, authResult.user)
+    return handler(request, authResult.user, ...args)
   }
 }
 
@@ -525,9 +525,9 @@ export function withAuth(
  */
 export function withRoles(
   allowedRoles: string[],
-  handler: (request: NextRequest, user: AuthenticatedUser) => Promise<NextResponse>
+  handler: (request: NextRequest, user: AuthenticatedUser, ...args: any[]) => Promise<NextResponse>
 ) {
-  return async function(request: NextRequest): Promise<NextResponse> {
+  return async function(request: NextRequest, ...args: any[]): Promise<NextResponse> {
     const authCheck = requireRoles(allowedRoles)
     const authResult = await authCheck(request)
 
@@ -538,8 +538,24 @@ export function withRoles(
       return unauthorizedResponse(authResult.error)
     }
 
-    return handler(request, authResult.user)
+    return handler(request, authResult.user, ...args)
   }
+}
+
+/**
+ * Obtiene el usuario actual desde las cookies (Server Components)
+ */
+export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
+  const { cookies } = await import('next/headers')
+  const cookieStore = await cookies()
+  const token = cookieStore.get('token')?.value
+
+  if (!token) return null
+
+  const payload = verifyToken(token)
+  if (!payload) return null
+
+  return getUserById(payload.id, payload.userType)
 }
 
 // =============================================

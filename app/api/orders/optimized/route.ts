@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withAuth } from '@/lib/auth'
 import { ORDER_STATES } from '@/lib/constants'
+import { generateSequentialOrderNumber } from '@/lib/order-utils'
 import logger from '@/lib/logger'
 
 // =============================================
@@ -198,9 +199,8 @@ export const POST = withAuth(async (req) => {
       )
     }
 
-    // Generar número de orden único optimizado
-    const orderCount = await prisma.order.count()
-    const orderNumber = `ORD-${Date.now()}-${(orderCount + 1).toString().padStart(4, '0')}`
+    // Generar número de orden secuencial (formato ORD-YYYY-NNNN)
+    const orderNumber = await generateSequentialOrderNumber()
 
     // Crear orden con transacción optimizada
     const newOrder = await prisma.$transaction(async (tx) => {

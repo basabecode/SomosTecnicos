@@ -386,7 +386,7 @@ export const SYSTEM_MESSAGES = {
 export const REGEX_PATTERNS = {
   PHONE: /^(\+57|57)?[3][0-9]{9}$/,
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  ORDER_NUMBER: /^ORD-\d{4}-\d{3}$/,
+  ORDER_NUMBER: /^ORD-\d{4}-\d{4}$/,
   CEDULA: /^\d{7,10}$/,
   PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 } as const
@@ -510,7 +510,8 @@ export function isValidUrgencyLevel(urgency: string): urgency is UrgencyLevel {
 }
 
 /**
- * Genera un número de orden único
+ * @deprecated Usar generateSequentialOrderNumber() de '@/lib/order-utils' en su lugar.
+ * Esta función genera formatos no legibles. Se mantiene solo por compatibilidad temporal.
  */
 export function generateOrderNumber(): string {
   const timestamp = Date.now().toString(36).toUpperCase()

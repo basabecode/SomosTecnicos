@@ -176,8 +176,8 @@ export default function TechnicianAssignmentsPage() {
           <CardTitle className="text-base md:text-lg">Filtros</CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex-1">
+          <div className="flex flex-col md:flex-row gap-3 items-end">
+            <div className="flex-1 w-full">
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -188,18 +188,44 @@ export default function TechnicianAssignmentsPage() {
                 />
               </div>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[180px] h-9 text-sm">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="assigned">Asignado</SelectItem>
-                <SelectItem value="in_progress">En Progreso</SelectItem>
-                <SelectItem value="completed">Completado</SelectItem>
-                <SelectItem value="on_hold">En Espera</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2 w-full md:w-auto">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[140px] h-9 text-sm">
+                    <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="assigned">Asignado</SelectItem>
+                    <SelectItem value="in_progress">En Progreso</SelectItem>
+                    <SelectItem value="completed">Completado</SelectItem>
+                    <SelectItem value="on_hold">En Espera</SelectItem>
+                </SelectContent>
+                </Select>
+            </div>
+          </div>
+
+          {/* Quick Test Navigation */}
+          <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row gap-2 items-center bg-muted/20 p-2 rounded">
+            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Prueba Rápida (ID Real):</span>
+            <Input
+                placeholder="ID de Orden (Ej: cl...)"
+                className="h-8 text-xs w-full sm:w-[200px]"
+                id="quick-test-id"
+            />
+            <div className="flex gap-2 w-full sm:w-auto">
+                <Button variant="outline" size="sm" className="h-8 text-xs flex-1" onClick={() => {
+                    const id = (document.getElementById('quick-test-id') as HTMLInputElement).value;
+                    if(id) window.location.href = `/technician/assignments/${id}/quote`;
+                }}>
+                    Ir a Cotizar
+                </Button>
+                <Button variant="outline" size="sm" className="h-8 text-xs flex-1" onClick={() => {
+                    const id = (document.getElementById('quick-test-id') as HTMLInputElement).value;
+                    if(id) window.location.href = `/technician/assignments/${id}/close`;
+                }}>
+                    Ir a Cerrar
+                </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -11,7 +11,8 @@ import {
   createOrderSchema,
   orderQuerySchema
 } from '@/lib/validations'
-import { ORDER_STATES, generateOrderNumber, USER_ROLES } from '@/lib/constants'
+import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
+import { generateSequentialOrderNumber } from '@/lib/order-utils'
 import { Prisma } from '@prisma/client'
 
 // =============================================
@@ -172,30 +173,8 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
 
     const orderData = validation.data
 
-    // Generar número de orden único
-    let numeroOrden: string
-    let isUnique = false
-    let attempts = 0
-    const maxAttempts = 10
-
-    do {
-      numeroOrden = generateOrderNumber()
-      const existingOrder = await prisma.order.findUnique({
-        where: { orderNumber: numeroOrden }
-      })
-      isUnique = !existingOrder
-      attempts++
-    } while (!isUnique && attempts < maxAttempts)
-
-    if (!isUnique) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'No se pudo generar un número de orden único'
-        },
-        { status: 500 }
-      )
-    }
+    // Generar número de orden secuencial (formato ORD-YYYY-NNNN)
+    const numeroOrden = await generateSequentialOrderNumber()
 
     // Crear la orden vinculada al usuario
     const order = await prisma.order.create({
