@@ -28,3 +28,9 @@ next-env.d.ts
 /lib/generated/prisma
 /debug_files/
 
+# migrations
+*.sql
+
+
+
+prisma_log.txt

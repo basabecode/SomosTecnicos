@@ -26,7 +26,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://somostecnicos.co'), // Set base URL for metadata resolution
+  metadataBase: new URL('https://m'), // Set base URL for metadata resolution
   title: {
     default: 'SomosTécnicos | Servicio Técnico a Domicilio',
     template: '%s | SomosTécnicos',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_CO',
-    url: 'https://somostecnicos.co',
+    url: 'https://somostecnicos.com',
     siteName: 'SomosTécnicos',
     title: 'SomosTécnicos | Servicio Técnico a Domicilio',
     description: 'Expertos en reparación de electrodomésticos con seguimiento en vivo. Confianza y rapidez en la puerta de tu hogar.',

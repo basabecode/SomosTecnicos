@@ -20,6 +20,94 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <SuppressHydrationWarning className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'LocalBusiness',
+            name: 'SomosTécnicos',
+            image: 'https://somostecnicos.com/img-3d/somos_tecnicos.png',
+            '@id': 'https://somostecnicos.com',
+            url: 'https://somostecnicos.com',
+            telephone: '+573000000000',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'Calle False 123',
+              addressLocality: 'Bogotá',
+              postalCode: '110111',
+              addressCountry: 'CO',
+            },
+            priceRange: '$$',
+            openingHoursSpecification: [
+              {
+                '@type': 'OpeningHoursSpecification',
+                dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                opens: '08:00',
+                closes: '18:00',
+              },
+            ],
+            sameAs: [
+              'https://facebook.com/somostecnicos',
+              'https://instagram.com/somostecnicos',
+            ],
+            hasOfferCatalog: {
+              '@type': 'OfferCatalog',
+              name: 'Servicios de Reparación y Mantenimiento',
+              itemListElement: [
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Reparación de Neveras y Nevecones',
+                    description: 'Mantenimiento preventivo y correctivo para refrigeración doméstica.',
+                  },
+                },
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Reparación de Lavadoras',
+                    description: 'Servicio técnico para lavadoras carga frontal y superior.',
+                  },
+                },
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Mantenimiento de Secadoras',
+                    description: 'Reparación de secadoras a gas y eléctricas.',
+                  },
+                },
+                 {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Reparación de Calentadores',
+                    description: 'Mantenimiento de calentadores de paso y acumulación.',
+                  },
+                },
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Servicios de Electricidad',
+                    description: 'Instalaciones eléctricas residenciales y comerciales.',
+                  },
+                },
+                 {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'Service',
+                    name: 'Seguridad Electrónica',
+                    description: 'Instalación y mantenimiento de cámaras CCTV y alarmas.',
+                  },
+                }
+              ],
+            },
+          }),
+        }}
+      />
       <Header />
       <main>
         <HeroSection />

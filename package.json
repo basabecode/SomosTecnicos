@@ -84,7 +84,11 @@
     "vaul": "^1.1.2",
     "zod": "3.25.67"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
+
     "@playwright/test": "^1.57.0",
     "@prisma/config": "^7.2.0",
     "@tailwindcss/postcss": "^4.1.18",
