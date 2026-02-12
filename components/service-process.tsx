@@ -104,7 +104,7 @@ export default function ServiceProcess() {
           transition={{ duration: 0.7 }}
           className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100"
         >
-          <div className="grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Columna de texto */}
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#A50034]/10 border border-[#A50034]/20">
@@ -157,7 +157,7 @@ export default function ServiceProcess() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-96 md:h-[600px] rounded-3xl overflow-hidden shadow-lg"
+                className="relative h-[300px] sm:h-[350px] md:h-[450px] lg:h-[600px] rounded-3xl overflow-hidden shadow-lg w-full"
               >
                 <Image
                   src="/img_3d/moto_roja_tecnico.jpg"
