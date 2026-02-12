@@ -234,7 +234,7 @@ export default function Header() {
               className="flex items-center hover:opacity-80 transition-opacity"
             >
               <Image
-                src="/img_3d/somos_tecnicos.png"
+                src="/img-3d/somos_tecnicos.png"
                 alt="SomosTécnicos"
                 width={100}
                 height={25}

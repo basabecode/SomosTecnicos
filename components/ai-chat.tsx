@@ -741,7 +741,7 @@ export default function AIChat({ className }: AIChatProps) {
             {/* Título y estado */}
             <div className="flex items-center space-x-2">
               <Image
-                src="/img_3d/logo_modificado.jpeg"
+                src="/img-3d/logo_modificado.jpeg"
                 alt="SomosTécnicos"
                 width={32}
                 height={32}

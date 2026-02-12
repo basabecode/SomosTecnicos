@@ -76,7 +76,7 @@ export default function FAQ() {
             <div className="lg:col-span-5 relative flex flex-col items-end">
                 <div className="relative h-[380px] w-full hidden lg:block rounded-xl overflow-hidden bg-gray-50/50 self-center border border-gray-100 shadow-inner">
                      <Image
-                        src="/img_3d/tecnico_whatsapp.png"
+                        src="/img-3d/tecnico_whatsapp.png"
                         alt="Soporte Técnico en línea"
                         fill
                         className="object-contain object-bottom p-4"

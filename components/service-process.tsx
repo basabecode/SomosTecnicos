@@ -178,7 +178,7 @@ export default function ServiceProcess() {
                 className="relative h-64 rounded-2xl overflow-hidden shadow-lg"
               >
                 <Image
-                  src="/img_3d/tecnico_en_vans.png"
+                  src="/img-3d/tecnico_en_vans.png"
                   alt="Técnico en van"
                   fill
                   className="object-cover"
