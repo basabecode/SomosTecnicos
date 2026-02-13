@@ -31,7 +31,8 @@ async function main() {
     log('1. Preparando datos de prueba...', 'yellow')
 
     // Admin
-    const passwordHash = await bcrypt.hash('password123', 10)
+    const auditPassword = process.env.AUDIT_ADMIN_PASSWORD || 'Audit_Secure_Pass_2026!'
+    const passwordHash = await bcrypt.hash(auditPassword, 10)
 
     await prisma.adminUser.upsert({
       where: { email: 'admin@audit.com' },
@@ -50,7 +51,7 @@ async function main() {
     const loginRes = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'admin@audit.com', password: 'password123' })
+      body: JSON.stringify({ email: 'admin@audit.com', password: auditPassword })
     })
 
     let adminToken = ''
