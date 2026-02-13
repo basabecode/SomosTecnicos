@@ -118,7 +118,8 @@ export const USER_ROLES = {
   ADMIN: 'admin',
   TECHNICIAN_MANAGER: 'technician_manager',
   VIEWER: 'viewer',
-  CUSTOMER: 'customer'
+  CUSTOMER: 'customer',
+  TECHNICIAN: 'technician'
 } as const
 
 export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES]

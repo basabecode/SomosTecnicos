@@ -26,16 +26,45 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://m'), // Set base URL for metadata resolution
+  metadataBase: new URL('https://somostecnicos.com'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
-    default: 'SomosTécnicos | Servicio Técnico a Domicilio',
+    default: 'SomosTécnicos | Servicio Técnico a Domicilio en Bogotá y Cali',
     template: '%s | SomosTécnicos',
   },
   description:
-    'Reparación experta de electrodomésticos a domicilio con SomosTécnicos. Rapidez, confianza y seguimiento en tiempo real de tu servicio. ¡Calidad garantizada hoy!',
-  keywords: ['servicio técnico', 'reparación electrodomésticos', 'domicilio', 'seguimiento en tiempo real', 'técnicos certificados'],
-  authors: [{ name: 'SomosTécnicos' }],
+    'Servicio técnico experto para electrodomésticos a domicilio. Reparación de neveras, lavadoras, secadoras y calentadores. Técnicos certificados, garantía y seguimiento en tiempo real.',
+  keywords: [
+    'servicio técnico',
+    'reparación electrodomésticos',
+    'mantenimiento neveras',
+    'arreglo lavadoras',
+    'técnico secadoras',
+    'reparación calentadores',
+    'instalación cámaras seguridad',
+    'electricista domicilio',
+    'bogotá',
+    'cali',
+    'somostecnicos',
+    'técnicos certificados',
+    'reparación a domicilio',
+  ],
+  authors: [{ name: 'SomosTécnicos Team', url: 'https://somostecnicos.com' }],
   creator: 'SomosTécnicos',
+  publisher: 'SomosTécnicos',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: 'website',
     locale: 'es_CO',
@@ -62,6 +91,9 @@ export const metadata: Metadata = {
     icon: '/img-3d/logo_modificado.jpeg',
     shortcut: '/img-3d/logo_modificado.jpeg',
     apple: '/img-3d/logo_modificado.jpeg',
+  },
+  verification: {
+    google: 'verification_token', // Placeholder for user to fill
   },
 }
 

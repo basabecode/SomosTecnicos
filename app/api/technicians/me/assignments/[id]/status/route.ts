@@ -6,10 +6,11 @@ import { USER_ROLES } from '@/lib/constants'
 // PATCH /api/technicians/me/assignments/[id]/status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
-    const assignmentId = parseInt(params.id)
+    const assignmentId = parseInt(id)
     if (isNaN(assignmentId)) {
         return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }

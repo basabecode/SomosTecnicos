@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/private/', '/admin/'],
+      disallow: ['/private/', '/admin/', '/technician/', '/api/', '/customer/'],
     },
     sitemap: 'https://somostecnicos.com/sitemap.xml',
   }

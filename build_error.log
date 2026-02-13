@@ -1,0 +1,109 @@
+
+> somos-tecnicos@0.1.0 build C:\Users\Usuario\Desktop\Servicio_tecnico\somostecnicos_FSM
+> prisma generate && next build
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+ÔöîÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+
+Ô£ö Generated Prisma Client (v6.19.2) to .\node_modules\.pnpm\@prisma+client@6.19.2_prism_6b2b1af085fe6797f5a5ea830937a8e3\node_modules\@prisma\client in 235ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+Ôöé  Update available 6.19.2 -> 7.4.0                       Ôöé
+Ôöé                                                         Ôöé
+Ôöé  This is a major update - please follow the guide at    Ôöé
+Ôöé  https://pris.ly/d/major-version-upgrade                Ôöé
+Ôöé                                                         Ôöé
+Ôöé  Run the following to update                            Ôöé
+Ôöé    npm i --save-dev prisma@latest                       Ôöé
+Ôöé    npm i @prisma/client@latest                          Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+Ôû▓ Next.js 16.1.5 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 3 errors:
+./app/(admin)/admin/layout.tsx:14:14
+Ecmascript file had an error
+  12 | import { Metadata } from 'next'
+  13 |
+> 14 | export const metadata: Metadata = {
+     |              ^^^^^^^^
+  15 |   title: 'Admin Dashboard | SomosT├®cnicos',
+  16 |   robots: {
+  17 |     index: false,
+
+You are attempting to export "metadata" from a component marked with "use client", which is disallowed. Either remove the export, or the "use client" directive. Read more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(admin)/admin/layout.tsx [Client Component Browser]
+    ./app/(admin)/admin/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(admin)/admin/layout.tsx [Client Component SSR]
+    ./app/(admin)/admin/layout.tsx [Server Component]
+
+
+./app/(client)/customer/layout.tsx:17:14
+Ecmascript file had an error
+  15 | import { Metadata } from 'next'
+  16 |
+> 17 | export const metadata: Metadata = {
+     |              ^^^^^^^^
+  18 |   title: 'Portal Cliente | SomosT├®cnicos',
+  19 |   robots: {
+  20 |     index: false,
+
+You are attempting to export "metadata" from a component marked with "use client", which is disallowed. Either remove the export, or the "use client" directive. Read more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(client)/customer/layout.tsx [Client Component Browser]
+    ./app/(client)/customer/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(client)/customer/layout.tsx [Client Component SSR]
+    ./app/(client)/customer/layout.tsx [Server Component]
+
+
+./app/(technician)/technician/layout.tsx:13:14
+Ecmascript file had an error
+  11 | import { Metadata } from 'next'
+  12 |
+> 13 | export const metadata: Metadata = {
+     |              ^^^^^^^^
+  14 |   title: 'Portal T├®cnico | SomosT├®cnicos',
+  15 |   robots: {
+  16 |     index: false,
+
+You are attempting to export "metadata" from a component marked with "use client", which is disallowed. Either remove the export, or the "use client" directive. Read more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(technician)/technician/layout.tsx [Client Component Browser]
+    ./app/(technician)/technician/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(technician)/technician/layout.tsx [Client Component SSR]
+    ./app/(technician)/technician/layout.tsx [Server Component]
+
+
+    at <unknown> (./app/(admin)/admin/layout.tsx:14:14)
+    at <unknown> (./app/(client)/customer/layout.tsx:17:14)
+    at <unknown> (./app/(technician)/technician/layout.tsx:13:14)
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.

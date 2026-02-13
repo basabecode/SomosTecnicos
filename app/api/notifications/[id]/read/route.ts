@@ -9,14 +9,15 @@ import { withAuth, AuthenticatedUser } from '@/lib/auth'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   // withAuth no soporta params directamente en la firma si se usa como HOC simple
   // pero podemos extraer el usuario manualmente o usar withAuth si lo envolvemos bien.
   // Usaremos findUnique para validar que la notificación pertenece al usuario antes de actualizar.
 
   // Nota: params.id es el ID de la notificación
-  const notificationId = parseInt(params.id)
+  const notificationId = parseInt(id)
 
   if (isNaN(notificationId)) {
     return NextResponse.json({ success: false, error: 'ID inválido' }, { status: 400 })

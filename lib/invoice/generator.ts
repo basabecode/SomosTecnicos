@@ -66,7 +66,7 @@ export async function generateInvoicePDF(invoice: any): Promise<string> {
 
   // Crear el elemento React manualmente para evitar problemas de JSX en archivos .ts
   const template = createElement(InvoiceTemplate, { invoice: invoiceData })
-  const stream = await renderToStream(template)
+  const stream = await renderToStream(template as any)
 
   // Definir rutas
   const fileName = `invoice-${invoice.invoiceNumber}.pdf`
