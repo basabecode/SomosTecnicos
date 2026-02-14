@@ -9,9 +9,15 @@ import * as brevo from '@getbrevo/brevo'
 const apiInstance = new brevo.TransactionalEmailsApi()
 
 // Configurar la API key desde las variables de entorno
+const apiKey = process.env.BREVO_API_KEY || ''
+
+if (!apiKey && process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ WARN: BREVO_API_KEY no está definida en las variables de entorno.')
+}
+
 apiInstance.setApiKey(
   brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY || ''
+  apiKey
 )
 
 export { apiInstance, brevo }
@@ -23,4 +29,6 @@ export const defaultSender = {
 }
 
 // URL base de la aplicación
-export const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+// Prioridad: 1. Variable explícita, 2. URL de Vercel (construida), 3. Localhost confiable
+export const appUrl = process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
