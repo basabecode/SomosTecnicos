@@ -1,6 +1,6 @@
 'use client'
 
-import { Phone, Mail, Clock } from 'lucide-react'
+import { Phone, Mail, Clock, Github } from 'lucide-react'
 import Image from 'next/image'
 import { TermsLink } from './terms-link'
 
@@ -80,14 +80,14 @@ export default function Footer() {
                 className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Phone size={20} />
-                <span>+57 300 309 48 54</span>
+                <span>+57 3003094854</span>
               </a>
               <a
-                href="mailto:info@somostecnicos.com"
+                href="mailto:soporte@somostecnicos.com"
                 className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Mail size={20} />
-                <span>somostecnicos.com</span>
+                <span>soporte@somostecnicos.com</span>
               </a>
               <div className="flex items-center gap-3 text-gray-300">
                 <Clock size={20} />
@@ -99,20 +99,39 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-gray-600 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
-            <p>© 2026 somostecnicos. Todos los derechos reservados.</p>
-            <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
-              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false}>
+          <div className="flex flex-col gap-6 text-gray-400">
+            {/* Copyright y créditos */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-center sm:text-left">
+              <p className="whitespace-nowrap">© 2026 somostecnicos. Todos los derechos reservados.</p>
+              <span className="hidden sm:inline text-gray-600">|</span>
+              <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
+                <span>elaborado por</span>
+                <a
+                  href="https://github.com/basabecode"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 hover:text-white transition-colors font-medium"
+                >
+                  <Github size={14} className="mb-0.5" />
+                  <span>@basabecode</span>
+                </a>
+                <span>, Cali Colombia</span>
+              </p>
+            </div>
+
+            {/* Enlaces legales */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
+              <TermsLink className="text-gray-400 hover:text-gray-200 whitespace-nowrap" showIcon={false}>
                 Términos y Condiciones
               </TermsLink>
-              <span className="text-gray-600">•</span>
-              <TermsLink className="text-gray-400 hover:text-gray-200" showIcon={false}>
+              <span className="text-gray-600 hidden sm:inline">•</span>
+              <TermsLink className="text-gray-400 hover:text-gray-200 whitespace-nowrap" showIcon={false}>
                 Política de Privacidad
               </TermsLink>
-              <span className="text-gray-600">•</span>
+              <span className="text-gray-600 hidden sm:inline">•</span>
               <a
                 href="/admin-info"
-                className="text-gray-500 hover:text-gray-300 transition-colors"
+                className="text-gray-500 hover:text-gray-300 transition-colors whitespace-nowrap"
                 title="Información del Panel Administrativo"
               >
                 Información y Funcionamiento
