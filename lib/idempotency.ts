@@ -47,10 +47,7 @@ export async function withIdempotency(
 
   // Si no hay key y es requerida, retornar error
   if (!idempotencyKey && required) {
-    logger.warn('Missing required idempotency key', {
-      url: request.url,
-      method: request.method
-    })
+    logger.warn(`Missing required idempotency key: ${request.method} ${request.url}`)
     return NextResponse.json(
       {
         error: 'Missing idempotency key',
@@ -67,10 +64,7 @@ export async function withIdempotency(
 
   // Validar formato del key (debe tener al menos 10 caracteres)
   if (idempotencyKey.length < 10) {
-    logger.warn('Invalid idempotency key format', {
-      key: idempotencyKey,
-      url: request.url
-    })
+    logger.warn(`Invalid idempotency key format: ${idempotencyKey} for ${request.method} ${request.url}`)
     return NextResponse.json(
       {
         error: 'Invalid idempotency key',
@@ -100,14 +94,10 @@ export async function withIdempotency(
         await prisma.idempotentRequest.delete({
           where: { key: idempotencyKey }
         })
-        logger.info('Expired idempotent request deleted', { key: idempotencyKey })
+        logger.info(`Expired idempotent request deleted: ${idempotencyKey}`)
       } else {
         // Retornar respuesta cacheada
-        logger.info('Returning cached idempotent response', {
-          key: idempotencyKey,
-          statusCode: existingRequest.statusCode,
-          cachedAt: existingRequest.createdAt
-        })
+        logger.info(`Returning cached idempotent response: ${idempotencyKey} (status ${existingRequest.statusCode})`)
 
         return NextResponse.json(
           existingRequest.response,
@@ -123,10 +113,7 @@ export async function withIdempotency(
     }
 
     // Procesar el request por primera vez
-    logger.info('Processing new idempotent request', {
-      key: idempotencyKey,
-      url: request.url
-    })
+    logger.info(`Processing new idempotent request: ${idempotencyKey} for ${request.method} ${request.url}`)
 
     const response = await handler(request)
 
@@ -149,17 +136,10 @@ export async function withIdempotency(
         }
       })
 
-      logger.info('Idempotent request cached', {
-        key: idempotencyKey,
-        statusCode,
-        expiresAt
-      })
+      logger.info(`Idempotent request cached: ${idempotencyKey} (status ${statusCode}, expires ${expiresAt})`)
     } else {
       // No cachear errores 4xx o 5xx
-      logger.info('Not caching error response', {
-        key: idempotencyKey,
-        statusCode
-      })
+      logger.info(`Not caching error response: ${idempotencyKey} (status ${statusCode})`)
     }
 
     // Retornar respuesta original
@@ -171,11 +151,8 @@ export async function withIdempotency(
     })
 
   } catch (error) {
-    logger.error('Error in idempotency middleware', {
-      error: error instanceof Error ? error : new Error(String(error)),
-      key: idempotencyKey,
-      url: request.url
-    })
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    logger.error(`Error in idempotency middleware: ${errorMessage} (key: ${idempotencyKey}, url: ${request.url})`)
 
     // En caso de error del middleware, ejecutar handler sin idempotencia
     return handler(request)
@@ -196,15 +173,12 @@ export async function cleanupExpiredIdempotentRequests(): Promise<number> {
       }
     })
 
-    logger.info('Cleaned up expired idempotent requests', {
-      count: result.count
-    })
+    logger.info(`Cleaned up expired idempotent requests: ${result.count} deleted`)
 
     return result.count
   } catch (error) {
-    logger.error('Error cleaning up expired idempotent requests', {
-      error: error instanceof Error ? error : new Error(String(error))
-    })
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    logger.error(`Error cleaning up expired idempotent requests: ${errorMessage}`)
     return 0
   }
 }
