@@ -7,14 +7,53 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withAuth } from '@/lib/auth'
 import { ORDER_STATES } from '@/lib/constants'
+import { FSMCache, withCache } from '@/lib/cache'
 import logger from '@/lib/logger'
 
 // =============================================
 // GET /api/dashboard/stats - Métricas principales
 // =============================================
 
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (request) => {
   try {
+    // Verificar si se debe usar cache (query param ?nocache=1 lo desactiva)
+    const url = new URL(request.url)
+    const useCache = !url.searchParams.has('nocache')
+
+    // Usar cache para los datos del dashboard
+    const result = await withCache(
+      'dashboard_stats',
+      useCache,
+      async () => await calculateDashboardStats()
+    )
+
+    return NextResponse.json({
+      success: true,
+      data: result.data,
+      metadata: {
+        fromCache: result.fromCache,
+        cacheStatus: result.fromCache ? 'HIT' : 'MISS',
+        timestamp: new Date().toISOString()
+      }
+    })
+
+  } catch (error) {
+    console.error('Error obteniendo estadísticas del dashboard:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Error interno del servidor'
+      },
+      { status: 500 }
+    )
+  }
+})
+
+/**
+ * Función separada para calcular estadísticas del dashboard
+ * Permite reutilización y testing independiente
+ */
+async function calculateDashboardStats() {
     // Fechas para cálculos temporales
     const now = new Date()
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -257,19 +296,5 @@ export const GET = withAuth(async () => {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: dashboardStats
-    })
-
-  } catch (error) {
-    console.error('Error obteniendo estadísticas del dashboard:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Error interno del servidor'
-      },
-      { status: 500 }
-    )
-  }
-})
+    return dashboardStats
+}

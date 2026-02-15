@@ -14,6 +14,8 @@ import {
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 import { generateSequentialOrderNumber } from '@/lib/order-utils'
 import { withIdempotency } from '@/lib/idempotency'
+import { FSMCache } from '@/lib/cache'
+import { enqueueEmail, enqueueNotification } from '@/lib/queue'
 import { Prisma } from '@prisma/client'
 
 // =============================================
@@ -216,24 +218,41 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
         }
       })
 
-      // Enviar notificación por email
+      // ✅ Invalidar cache del dashboard (nueva orden afecta estadísticas)
+      await FSMCache.invalidateOrderCache()
+
+      // ✅ Notificaciones asíncronas (no bloquean la respuesta)
       try {
-        const { sendNewOrderEmail } = await import('@/lib/email')
-        await sendNewOrderEmail({
-          orderNumber: order.orderNumber,
-          customerName: order.nombre,
-          customerEmail: order.email,
-          customerPhone: order.telefono,
-          serviceType: order.tipoServicio,
-          applianceType: order.tipoElectrodomestico,
-          description: order.descripcionProblema || '',
-          address: order.direccion,
-          preferredDate: order.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
-          status: 'Pendiente'
-        })
-      } catch (emailError) {
-        console.error('Error enviando email de confirmación:', emailError)
-        // No fallar la creación de la orden por error de email
+        // Email de confirmación al cliente
+        await enqueueEmail({
+          to: order.email,
+          subject: `Orden Confirmada - #${order.orderNumber}`,
+          template: 'order-created',
+          data: {
+            orderNumber: order.orderNumber,
+            customerName: order.nombre,
+            customerEmail: order.email,
+            customerPhone: order.telefono,
+            serviceType: order.tipoServicio,
+            applianceType: order.tipoElectrodomestico,
+            description: order.descripcionProblema || '',
+            address: order.direccion,
+            preferredDate: order.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
+            status: 'Pendiente'
+          }
+        }, 'high')
+
+        // Notificación a administradores
+        await enqueueNotification({
+          userId: 'admin',
+          title: 'Nueva Orden Creada',
+          message: `Orden #${order.orderNumber} para ${order.tipoElectrodomestico} en ${order.ciudad}`,
+          type_notification: 'status_change'
+        }, 'medium')
+
+      } catch (queueError) {
+        console.error('Error encolando notificaciones de nueva orden:', queueError)
+        // No fallar la creación por errores de notificación
       }
 
       return NextResponse.json({

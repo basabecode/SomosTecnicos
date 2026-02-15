@@ -18,7 +18,11 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "setup": "pnpm docker:up && sleep 5 && pnpm db:push && pnpm db:seed",
-    "reset": "pnpm docker:down && pnpm docker:up && sleep 5 && pnpm db:push && pnpm db:seed"
+    "reset": "pnpm docker:down && pnpm docker:up && sleep 5 && pnpm db:push && pnpm db:seed",
+    "test:phase2": "node scripts/test-phase2.js",
+    "test:load": "npx k6 run scripts/load-test.js",
+    "health": "curl -f http://localhost:3000/api/system/health || exit 1",
+    "monitoring": "node scripts/monitor-system.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^3.0.1",

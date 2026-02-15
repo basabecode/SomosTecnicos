@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { requireTechnicianManager } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { withIdempotency } from '@/lib/idempotency'
+import { enqueueEmail, enqueueNotification, enqueueAudit } from '@/lib/queue'
 import { z } from 'zod'
 
 // Schema de validación para asignación
@@ -61,83 +62,53 @@ export async function POST(
 
     const { technicianId, fechaProgramada, notasAsignacion, tiempoEstimado } = validation.data
 
-    // Verificar que la orden existe
-    const existingOrder = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: {
-        assignments: {
-          where: {
-            estado: { in: ['asignado', 'en_proceso'] }
-          }
-        }
-      }
-    })
-
-    if (!existingOrder) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Orden no encontrada'
-        },
-        { status: 404 }
-      )
-    }
-
-    // Verificar que la orden no esté ya asignada
-    if (existingOrder.assignments.length > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Esta orden ya tiene una asignación activa'
-        },
-        { status: 409 }
-      )
-    }
-
-    // Verificar que el técnico existe y está disponible
-    const technician = await prisma.technician.findUnique({
-      where: { id: technicianId },
-      include: {
-        assignments: {
-          where: {
-            estado: { in: ['asignado', 'en_proceso'] }
-          }
-        }
-      }
-    })
-
-    if (!technician) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Técnico no encontrado'
-        },
-        { status: 404 }
-      )
-    }
-
-    if (!technician.activo) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'El técnico no está activo'
-        },
-        { status: 409 }
-      )
-    }
-
-    if (technician.assignments.length > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'El técnico ya tiene una asignación activa'
-        },
-        { status: 409 }
-      )
-    }
-
-    // Usar transacción para asignar
+    // Usar transacción con aislamiento serializable para evitar race conditions
     const result = await prisma.$transaction(async (tx) => {
+      // ✅ DENTRO DE TRANSACCIÓN: Verificar que la orden existe y no está asignada
+      const existingOrder = await tx.order.findUnique({
+        where: { id: orderId },
+        include: {
+          assignments: {
+            where: {
+              estado: { in: ['asignado', 'en_proceso'] }
+            }
+          }
+        }
+      })
+
+      if (!existingOrder) {
+        throw new Error('ORDEN_NO_ENCONTRADA')
+      }
+
+      // Verificar que la orden no esté ya asignada (protegido por transacción)
+      if (existingOrder.assignments.length > 0) {
+        throw new Error('ORDEN_YA_ASIGNADA')
+      }
+
+      // ✅ DENTRO DE TRANSACCIÓN: Verificar que el técnico existe y está disponible
+      const technician = await tx.technician.findUnique({
+        where: { id: technicianId },
+        include: {
+          assignments: {
+            where: {
+              estado: { in: ['asignado', 'en_proceso'] }
+            }
+          }
+        }
+      })
+
+      if (!technician) {
+        throw new Error('TECNICO_NO_ENCONTRADO')
+      }
+
+      if (!technician.activo) {
+        throw new Error('TECNICO_NO_ACTIVO')
+      }
+
+      // Verificar que el técnico no tenga asignaciones activas (protegido por transacción)
+      if (technician.assignments.length > 0) {
+        throw new Error('TECNICO_YA_ASIGNADO')
+      }
       // Crear la asignación
       const assignment = await tx.assignment.create({
         data: {
@@ -202,25 +173,73 @@ export async function POST(
         }
       })
 
-      return assignment
+      return { assignment, existingOrder, technician }
+    }, {
+      isolationLevel: 'Serializable' // Máximo nivel de aislamiento para evitar race conditions
     })
 
-    // Aquí se puede agregar notificación por email/SMS al técnico
+    // ✅ Notificaciones asíncronas (no bloquean la respuesta)
     try {
-      // TODO: Implementar notificación al técnico
-      logger.audit('technician_assignment', technician.id.toString(), {
-        orderId: existingOrder.id,
-        orderNumber: existingOrder.orderNumber,
-        technicianName: technician.nombre,
-        action: 'technician_assigned'
-      })
-    } catch (notificationError) {
-      logger.error('Error enviando notificación de asignación', notificationError as Error, {
-        component: 'technician-assignment',
+      // Email al técnico con detalles de la asignación
+      await enqueueEmail({
+        to: result.technician.email || `${result.technician.telefono}@sms.provider.com`, // Fallback a SMS
+        subject: `Nueva Asignación - Orden #${result.existingOrder.orderNumber}`,
+        template: 'technician-assignment',
+        data: {
+          technicianName: result.technician.nombre,
+          orderNumber: result.existingOrder.orderNumber,
+          customerName: result.existingOrder.nombre,
+          address: `${result.existingOrder.direccion}, ${result.existingOrder.ciudad}`,
+          appliance: result.existingOrder.tipoElectrodomestico,
+          scheduledDate: result.assignment.fechaProgramada,
+          notes: result.assignment.notasAsignacion
+        }
+      }, 'high')
+
+      // Notificación in-app al técnico
+      await enqueueNotification({
+        userId: result.technician.id.toString(),
+        title: 'Nueva Asignación de Trabajo',
+        message: `Se te ha asignado la orden #${result.existingOrder.orderNumber} para ${result.existingOrder.tipoElectrodomestico}`,
+        type_notification: 'assignment'
+      }, 'high')
+
+      // Email al cliente informando la asignación
+      await enqueueEmail({
+        to: result.existingOrder.email,
+        subject: `Técnico Asignado - Orden #${result.existingOrder.orderNumber}`,
+        template: 'customer-technician-assigned',
+        data: {
+          customerName: result.existingOrder.nombre,
+          orderNumber: result.existingOrder.orderNumber,
+          technicianName: result.technician.nombre,
+          technicianPhone: result.technician.telefono,
+          scheduledDate: result.assignment.fechaProgramada,
+          appliance: result.existingOrder.tipoElectrodomestico
+        }
+      }, 'medium')
+
+      // Audit log asíncrono
+      await enqueueAudit({
+        action: 'technician_assignment',
+        userId: result.technician.id.toString(),
         metadata: {
-          technicianId: technician.id,
-          orderId: existingOrder.id,
-          orderNumber: existingOrder.orderNumber
+          orderId: result.existingOrder.id,
+          orderNumber: result.existingOrder.orderNumber,
+          technicianName: result.technician.nombre,
+          assignedBy: user.id.toString(),
+          assignedAt: new Date().toISOString()
+        }
+      }, 'low')
+
+    } catch (queueError) {
+      // Log error pero no fallar la respuesta (notificaciones son best-effort)
+      logger.error('Error encolando notificaciones de asignación:', queueError as Error, {
+        component: 'technician-assignment-queue',
+        metadata: {
+          technicianId: result.technician.id,
+          orderId: result.existingOrder.id,
+          orderNumber: result.existingOrder.orderNumber
         }
       })
     }
@@ -228,11 +247,58 @@ export async function POST(
       return NextResponse.json({
         success: true,
         message: 'Técnico asignado exitosamente',
-        data: result
+        data: result.assignment
       })
 
     } catch (error) {
       console.error('Error asignando técnico:', error)
+      
+      // Manejo específico de errores de race conditions
+      if (error instanceof Error) {
+        switch (error.message) {
+          case 'ORDEN_NO_ENCONTRADA':
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'Orden no encontrada'
+              },
+              { status: 404 }
+            )
+          case 'ORDEN_YA_ASIGNADA':
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'Esta orden ya tiene una asignación activa'
+              },
+              { status: 409 }
+            )
+          case 'TECNICO_NO_ENCONTRADO':
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'Técnico no encontrado'
+              },
+              { status: 404 }
+            )
+          case 'TECNICO_NO_ACTIVO':
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'El técnico no está activo'
+              },
+              { status: 409 }
+            )
+          case 'TECNICO_YA_ASIGNADO':
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'El técnico ya tiene una asignación activa'
+              },
+              { status: 409 }
+            )
+        }
+      }
+      
       return NextResponse.json(
         {
           success: false,
