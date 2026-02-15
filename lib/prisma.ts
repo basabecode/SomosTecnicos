@@ -22,15 +22,9 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
     db: {
       url: process.env.DATABASE_URL
     }
-  },
-  // ✅ Configuración optimizada del pool de conexiones
-  connectionPool: {
-    timeout: 20, // 20 segundos timeout para queries
-    maxIdleConnections: 5, // Conexiones idle mínimas
-    maxConnections: process.env.NODE_ENV === 'production' ? 25 : 10, // Más conexiones en producción
-  },
-  // ✅ Configuración de query timeouts
-  queryTimeout: 15000, // 15 segundos máximo por query
+  }
+  // Nota: Connection pooling se maneja a nivel de DATABASE_URL en Prisma
+  // Ejemplo: DATABASE_URL="postgresql://user:pass@host/db?connection_limit=25&pool_timeout=20"
 })
 
 // En desarrollo, guardar la instancia en global para reutilizarla
@@ -118,15 +112,16 @@ export async function getDatabaseStats() {
  */
 export function getConnectionPoolStats() {
   return {
-    maxConnections: process.env.NODE_ENV === 'production' ? 25 : 10,
-    maxIdleConnections: 5,
-    queryTimeout: 15000,
-    connectionTimeout: 20,
+    // Configuración recomendada via DATABASE_URL parameters
+    recommendedMaxConnections: process.env.NODE_ENV === 'production' ? 25 : 10,
+    recommendedPoolTimeout: 20,
+    currentUrl: process.env.DATABASE_URL ? 'configured' : 'not_set',
     circuitBreakerState: {
       failures: connectionFailures,
       lastFailureTime: lastFailureTime,
       isActive: connectionFailures >= MAX_FAILURES && Date.now() - lastFailureTime < FAILURE_TIMEOUT
-    }
+    },
+    environment: process.env.NODE_ENV || 'development'
   }
 }
 
