@@ -215,7 +215,7 @@ export function cached(key: CacheKey, ttl?: number) {
   ) {
     const method = descriptor.value!
     
-    descriptor.value = (async function (...args: any[]) {
+    descriptor.value = (async function (this: any, ...args: any[]) {
       const cacheKey = `fsm:${key}:${propertyName}:${JSON.stringify(args).slice(0, 50)}`
       
       const cached = await cacheManager.get(cacheKey)
