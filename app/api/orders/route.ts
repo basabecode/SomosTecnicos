@@ -13,6 +13,7 @@ import {
 } from '@/lib/validations'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 import { generateSequentialOrderNumber } from '@/lib/order-utils'
+import { withIdempotency } from '@/lib/idempotency'
 import { Prisma } from '@prisma/client'
 
 // =============================================
@@ -155,97 +156,101 @@ export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser
 // =============================================
 
 export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUser) => {
-  try {
-    const body = await request.json()
+  // Envolver con idempotencia (no requerida para compatibilidad)
+  return withIdempotency(request, async (req) => {
+    try {
+      const body = await req.json()
 
-    // Validar datos de entrada
-    const validation = validateAndTransform(createOrderSchema, body)
-    if (!validation.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Datos inválidos',
-          details: validation.errors.errors
+      // Validar datos de entrada
+      const validation = validateAndTransform(createOrderSchema, body)
+      if (!validation.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Datos inválidos',
+            details: validation.errors.errors
+          },
+          { status: 400 }
+        )
+      }
+
+      const orderData = validation.data
+
+      // Generar número de orden secuencial (formato ORD-YYYY-NNNN)
+      // MEJORA: Ahora usa OrderSequence para garantizar atomicidad
+      const numeroOrden = await generateSequentialOrderNumber()
+
+      // Crear la orden vinculada al usuario
+      const order = await prisma.order.create({
+        data: {
+          ...orderData,
+          customerId: user.role === USER_ROLES.CUSTOMER ? user.id : undefined,
+          orderNumber: numeroOrden,
+          estado: ORDER_STATES.PENDIENTE,
+          fechaPreferida: orderData.fechaPreferida ? new Date(orderData.fechaPreferida) : null
         },
-        { status: 400 }
-      )
-    }
-
-    const orderData = validation.data
-
-    // Generar número de orden secuencial (formato ORD-YYYY-NNNN)
-    const numeroOrden = await generateSequentialOrderNumber()
-
-    // Crear la orden vinculada al usuario
-    const order = await prisma.order.create({
-      data: {
-        ...orderData,
-        customerId: user.role === USER_ROLES.CUSTOMER ? user.id : undefined,
-        orderNumber: numeroOrden,
-        estado: ORDER_STATES.PENDIENTE,
-        fechaPreferida: orderData.fechaPreferida ? new Date(orderData.fechaPreferida) : null
-      },
-      include: {
-        assignments: {
-          include: {
-            technician: {
-              select: {
-                id: true,
-                nombre: true,
-                telefono: true,
-                especialidades: true
+        include: {
+          assignments: {
+            include: {
+              technician: {
+                select: {
+                  id: true,
+                  nombre: true,
+                  telefono: true,
+                  especialidades: true
+                }
               }
             }
           }
         }
-      }
-    })
-
-    // Crear registro de historial
-    await prisma.orderHistory.create({
-      data: {
-        orderId: order.id,
-        estadoAnterior: null,
-        estadoNuevo: ORDER_STATES.PENDIENTE,
-        notas: 'Orden creada',
-        changedBy: 'system'
-      }
-    })
-
-    // Enviar notificación por email
-    try {
-      const { sendNewOrderEmail } = await import('@/lib/email')
-      await sendNewOrderEmail({
-        orderNumber: order.orderNumber,
-        customerName: order.nombre,
-        customerEmail: order.email,
-        customerPhone: order.telefono,
-        serviceType: order.tipoServicio,
-        applianceType: order.tipoElectrodomestico,
-        description: order.descripcionProblema || '',
-        address: order.direccion,
-        preferredDate: order.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
-        status: 'Pendiente'
       })
-    } catch (emailError) {
-      console.error('Error enviando email de confirmación:', emailError)
-      // No fallar la creación de la orden por error de email
-    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Orden creada exitosamente',
-      data: order
-    }, { status: 201 })
+      // Crear registro de historial
+      await prisma.orderHistory.create({
+        data: {
+          orderId: order.id,
+          estadoAnterior: null,
+          estadoNuevo: ORDER_STATES.PENDIENTE,
+          notas: 'Orden creada',
+          changedBy: 'system'
+        }
+      })
 
-  } catch (error) {
-    console.error('Error creando orden:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Error interno del servidor'
-      },
-      { status: 500 }
+      // Enviar notificación por email
+      try {
+        const { sendNewOrderEmail } = await import('@/lib/email')
+        await sendNewOrderEmail({
+          orderNumber: order.orderNumber,
+          customerName: order.nombre,
+          customerEmail: order.email,
+          customerPhone: order.telefono,
+          serviceType: order.tipoServicio,
+          applianceType: order.tipoElectrodomestico,
+          description: order.descripcionProblema || '',
+          address: order.direccion,
+          preferredDate: order.fechaPreferida?.toLocaleDateString('es-CO') || 'Sin fecha específica',
+          status: 'Pendiente'
+        })
+      } catch (emailError) {
+        console.error('Error enviando email de confirmación:', emailError)
+        // No fallar la creación de la orden por error de email
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Orden creada exitosamente',
+        data: order
+      }, { status: 201 })
+
+    } catch (error) {
+      console.error('Error creando orden:', error)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Error interno del servidor'
+        },
+        { status: 500 }
       )
     }
-  })
+  }, { required: false }) // No requerido para mantener compatibilidad con clientes existentes
+})

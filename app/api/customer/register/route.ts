@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { withIdempotency } from '@/lib/idempotency'
 import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
+  // Envolver con idempotencia para prevenir registros duplicados
+  return withIdempotency(request, async (req) => {
+    try {
+      const body = await req.json()
     const {
       nombre,
       apellido,
@@ -65,21 +68,22 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Cliente registrado exitosamente',
-      customer: {
-        id: customer.id,
-        nombre: customer.nombre,
-        apellido: customer.apellido,
-        email: customer.email,
-      },
-    })
-  } catch (error) {
-    console.error('Error en registro de cliente:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al registrar el cliente' },
-      { status: 500 }
-    )
-  }
+      return NextResponse.json({
+        success: true,
+        message: 'Cliente registrado exitosamente',
+        customer: {
+          id: customer.id,
+          nombre: customer.nombre,
+          apellido: customer.apellido,
+          email: customer.email,
+        },
+      })
+    } catch (error) {
+      console.error('Error en registro de cliente:', error)
+      return NextResponse.json(
+        { success: false, error: 'Error al registrar el cliente' },
+        { status: 500 }
+      )
+    }
+  }, { required: false }) // Idempotencia opcional para compatibilidad
 }

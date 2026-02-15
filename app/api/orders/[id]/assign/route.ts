@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireTechnicianManager } from '@/lib/auth'
 import { logger } from '@/lib/logger'
+import { withIdempotency } from '@/lib/idempotency'
 import { z } from 'zod'
 
 // Schema de validación para asignación
@@ -39,9 +40,11 @@ export async function POST(
 
   const user = authCheck.user
 
-  try {
-    const { id: orderId } = await params
-    const body = await request.json()
+  // Envolver con idempotencia para prevenir asignaciones duplicadas
+  return withIdempotency(request, async (req) => {
+    try {
+      const { id: orderId } = await params
+      const body = await req.json()
 
     // Validar datos de entrada
     const validation = assignTechnicianSchema.safeParse(body)
@@ -222,20 +225,21 @@ export async function POST(
       })
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Técnico asignado exitosamente',
-      data: result
-    })
+      return NextResponse.json({
+        success: true,
+        message: 'Técnico asignado exitosamente',
+        data: result
+      })
 
-  } catch (error) {
-    console.error('Error asignando técnico:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Error interno del servidor'
-      },
-      { status: 500 }
-    )
-  }
+    } catch (error) {
+      console.error('Error asignando técnico:', error)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Error interno del servidor'
+        },
+        { status: 500 }
+      )
+    }
+  }, { required: false }) // Idempotencia opcional para compatibilidad
 }

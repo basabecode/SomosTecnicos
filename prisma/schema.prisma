@@ -620,3 +620,40 @@ model PasswordResetToken {
   @@index([createdAt])
   @@map("password_reset_tokens")
 }
+
+// =============================================
+// MODELO DE SECUENCIAS DE NÚMEROS DE ORDEN
+// =============================================
+// Garantiza generación atómica de orderNumbers sin race conditions
+
+model OrderSequence {
+  year       Int @id
+  lastNumber Int @default(0) @map("last_number")
+
+  // Timestamps
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("order_sequences")
+}
+
+// =============================================
+// MODELO DE SOLICITUDES IDEMPOTENTES
+// =============================================
+// Previene procesamiento duplicado de requests con mismo idempotency key
+
+model IdempotentRequest {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  response   Json
+  statusCode Int      @map("status_code")
+  expiresAt  DateTime @map("expires_at")
+
+  // Timestamps
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Índices
+  @@index([expiresAt])
+  @@index([createdAt])
+  @@map("idempotent_requests")
+}

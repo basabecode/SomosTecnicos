@@ -6,61 +6,38 @@
 import { prisma } from '@/lib/prisma'
 
 /**
- * Genera un número de orden único con formato ORD-YYYY-NNNN
+ * Genera un número de orden único con formato ORD-YYYY-NNNN de forma atómica
  *
  * Ejemplos: ORD-2026-0001, ORD-2026-0042, ORD-2026-1583
  *
  * El número es secuencial dentro del año actual.
  * Se reinicia a 0001 al comenzar cada nuevo año.
  *
+ * MEJORA: Usa tabla OrderSequence para garantizar atomicidad y evitar race conditions.
+ * La operación upsert con increment es atómica y thread-safe.
+ *
  * @returns El número de orden generado (ej: "ORD-2026-0001")
  */
 export async function generateSequentialOrderNumber(): Promise<string> {
   const currentYear = new Date().getFullYear()
-  const prefix = `ORD-${currentYear}-`
 
-  // Buscar la última orden del año actual con formato ORD-YYYY-NNNN
-  const lastOrder = await prisma.order.findFirst({
-    where: {
-      orderNumber: {
-        startsWith: prefix
-      }
+  // Operación atómica: incrementa el contador en una sola transacción
+  const sequence = await prisma.orderSequence.upsert({
+    where: { year: currentYear },
+    update: {
+      lastNumber: { increment: 1 }
     },
-    orderBy: {
-      orderNumber: 'desc'
+    create: {
+      year: currentYear,
+      lastNumber: 1
     },
     select: {
-      orderNumber: true
+      lastNumber: true
     }
   })
 
-  let nextNumber = 1
-
-  if (lastOrder) {
-    // Extraer el número secuencial de la última orden
-    // Formato: ORD-2026-0042 → extraer "0042" → 42
-    const parts = lastOrder.orderNumber.split('-')
-    const lastSequential = parseInt(parts[2], 10)
-
-    if (!isNaN(lastSequential)) {
-      nextNumber = lastSequential + 1
-    }
-  }
-
-  // Generar el nuevo número con padding a 4 dígitos
-  const orderNumber = `${prefix}${nextNumber.toString().padStart(4, '0')}`
-
-  // Verificar unicidad (por seguridad ante race conditions)
-  const existing = await prisma.order.findUnique({
-    where: { orderNumber },
-    select: { id: true }
-  })
-
-  if (existing) {
-    // En caso de colisión (poco probable), intentar con el siguiente
-    const fallbackNumber = `${prefix}${(nextNumber + 1).toString().padStart(4, '0')}`
-    return fallbackNumber
-  }
+  // Formatear con padding de 4 dígitos
+  const orderNumber = `ORD-${currentYear}-${sequence.lastNumber.toString().padStart(4, '0')}`
 
   return orderNumber
 }

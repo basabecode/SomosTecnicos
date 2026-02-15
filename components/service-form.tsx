@@ -39,6 +39,7 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
   const [showSuccess, setShowSuccess] = useState(false)
   const [orderNumber, setOrderNumber] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Color theme from config
   const primaryColor = config.color
@@ -149,11 +150,24 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
   }
 
   const handleSubmit = async () => {
+    // Prevenir múltiples submits (doble click)
+    if (isSubmitting) {
+      return
+    }
+
     if (validateStep(3)) {
+      setIsSubmitting(true)
+
       try {
+        // Generar idempotency key único para esta solicitud
+        const idempotencyKey = `order-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
+
         const response = await fetch('/api/orders', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Idempotency-Key': idempotencyKey
+          },
           body: JSON.stringify({
             clienteNombre: formData.nombre,
             clienteTelefono: formData.telefono,
@@ -196,9 +210,11 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
             urgencia: 'normal',
           })
           setCurrentStep(1)
+          setIsSubmitting(false)
         }, 3000)
       } catch (error) {
         console.error('Error:', error)
+        setIsSubmitting(false)
         const orderNum = `DEMO-${Math.floor(1000 + Math.random() * 9000)}`
         setOrderNumber(orderNum)
         setShowSuccess(true)
@@ -456,9 +472,10 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
                          {currentStep === 3 && (
                             <Button
                                 onClick={handleSubmit}
-                                className="bg-[#27AE60] hover:bg-[#219150] text-white px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all"
+                                disabled={isSubmitting}
+                                className="bg-[#27AE60] hover:bg-[#219150] text-white px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Agendar Visita <CheckCircle className="w-4 h-4 ml-2" />
+                                {isSubmitting ? 'Procesando...' : 'Agendar Visita'} <CheckCircle className="w-4 h-4 ml-2" />
                             </Button>
                         )}
                     </div>
