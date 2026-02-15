@@ -6,13 +6,14 @@
 import { logger } from '@/lib/logger'
 
 // Tipos para los jobs de la cola
+export type QueuePriority = 'high' | 'medium' | 'low'
+
 export interface EmailJob {
   type: 'email'
   to: string
   subject: string
   template: string
   data: Record<string, any>
-  priority?: number
 }
 
 export interface NotificationJob {
@@ -21,7 +22,6 @@ export interface NotificationJob {
   title: string
   message: string
   type_notification: 'assignment' | 'status_change' | 'reminder'
-  priority?: number
 }
 
 export interface PDFJob {
@@ -29,7 +29,6 @@ export interface PDFJob {
   orderId: string
   template: 'invoice' | 'report'
   data: Record<string, any>
-  priority?: number
 }
 
 export interface AuditJob {
@@ -37,7 +36,6 @@ export interface AuditJob {
   action: string
   userId: string
   metadata: Record<string, any>
-  priority?: number
 }
 
 export type Job = EmailJob | NotificationJob | PDFJob | AuditJob
@@ -49,11 +47,19 @@ const QUEUE_CONFIG = {
   timeout: 30000, // 30 segundos
 }
 
+// Tipo interno del job con metadatos
+interface QueuedJob extends Job {
+  id: string
+  enqueuedAt: Date
+  attempts: number
+  priority: QueuePriority
+}
+
 // Simulación del sistema de colas (para desarrollo)
 // En producción, esto sería reemplazado por Vercel Queue real
 class QueueManager {
-  private queues: Map<string, Job[]> = new Map()
-  private processing: Set<string> = new Set()
+  private queues: Map<QueuePriority, QueuedJob[]> = new Map()
+  private processing: Set<QueuePriority> = new Set()
 
   constructor() {
     // Inicializar colas
@@ -68,8 +74,8 @@ class QueueManager {
   /**
    * Agregar job a la cola
    */
-  async enqueue(job: Job, priority: 'high' | 'medium' | 'low' = 'medium'): Promise<void> {
-    const jobWithMeta = {
+  async enqueue(job: Job, priority: QueuePriority = 'medium'): Promise<void> {
+    const jobWithMeta: QueuedJob = {
       ...job,
       id: `${job.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       enqueuedAt: new Date(),
@@ -100,7 +106,7 @@ class QueueManager {
   /**
    * Procesar jobs de una cola específica
    */
-  private async processQueue(priority: string) {
+  private async processQueue(priority: QueuePriority) {
     if (this.processing.has(priority)) {
       return // Ya está procesando esta cola
     }
@@ -127,7 +133,7 @@ class QueueManager {
   /**
    * Procesar un job individual
    */
-  private async processJob(job: Job & { id: string; attempts: number; enqueuedAt: Date }) {
+  private async processJob(job: QueuedJob) {
     try {
       logger.info(`Processing job: ${job.id} (${job.type})`)
       
@@ -245,19 +251,19 @@ class QueueManager {
 const queueManager = new QueueManager()
 
 // Funciones públicas para usar en la aplicación
-export async function enqueueEmail(job: Omit<EmailJob, 'type'>, priority: 'high' | 'medium' | 'low' = 'medium') {
+export async function enqueueEmail(job: Omit<EmailJob, 'type'>, priority: QueuePriority = 'medium') {
   await queueManager.enqueue({ ...job, type: 'email' }, priority)
 }
 
-export async function enqueueNotification(job: Omit<NotificationJob, 'type'>, priority: 'high' | 'medium' | 'low' = 'high') {
+export async function enqueueNotification(job: Omit<NotificationJob, 'type'>, priority: QueuePriority = 'high') {
   await queueManager.enqueue({ ...job, type: 'notification' }, priority)
 }
 
-export async function enqueuePDF(job: Omit<PDFJob, 'type'>, priority: 'high' | 'medium' | 'low' = 'low') {
+export async function enqueuePDF(job: Omit<PDFJob, 'type'>, priority: QueuePriority = 'low') {
   await queueManager.enqueue({ ...job, type: 'pdf' }, priority)
 }
 
-export async function enqueueAudit(job: Omit<AuditJob, 'type'>, priority: 'high' | 'medium' | 'low' = 'low') {
+export async function enqueueAudit(job: Omit<AuditJob, 'type'>, priority: QueuePriority = 'low') {
   await queueManager.enqueue({ ...job, type: 'audit' }, priority)
 }
 
