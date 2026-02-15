@@ -13,8 +13,36 @@ import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
 
 export const metadata: Metadata = {
-  title: 'Reparación de Electrodomésticos y Servicio Técnico Especializado',
-  description: 'Solicita servicio técnico para electrodomésticos, electricidad, computadores y seguridad electrónica. Garantía certificada.',
+  title: 'SomosTécnicos | Servicio Técnico a Domicilio en Bogotá y Cali',
+  description: 'Servicio técnico experto para electrodomésticos a domicilio. Reparación de neveras, lavadoras, secadoras y calentadores. Técnicos certificados, garantía y seguimiento en tiempo real.',
+  keywords: [
+    'servicio técnico',
+    'reparación electrodomésticos',
+    'mantenimiento neveras',
+    'arreglo lavadoras',
+    'técnico secadoras',
+    'reparación calentadores',
+    'instalación cámaras seguridad',
+    'electricista domicilio',
+    'bogotá',
+    'cali',
+    'somostecnicos',
+    'técnicos certificados',
+    'reparación a domicilio',
+  ],
+  openGraph: {
+    title: 'SomosTécnicos | Servicio Técnico a Domicilio',
+    description: 'Expertos en reparación de electrodomésticos con seguimiento en vivo. Confianza y rapidez en la puerta de tu hogar.',
+    url: 'https://somostecnicos.com',
+    type: 'website',
+  },
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function HomePage() {

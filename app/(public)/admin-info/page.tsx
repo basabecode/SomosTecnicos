@@ -30,8 +30,32 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: '¿Cómo funciona? | SomosTécnicos',
-  description: 'Conoce todas las herramientas y beneficios que ofrece la plataforma SomosTécnicos para clientes, técnicos y administración.',
+  title: '¿Cómo Funciona? | SomosTécnicos - Plataforma de Servicios Técnicos',
+  description: 'Descubre cómo funciona SomosTécnicos: plataforma digital para solicitar reparación de electrodomésticos con técnicos certificados. Proceso simple en 4 pasos, seguimiento en tiempo real y garantía de calidad.',
+  keywords: [
+    'cómo funciona somostecnicos',
+    'plataforma servicio técnico',
+    'solicitar reparación electrodomésticos',
+    'técnicos certificados',
+    'proceso reparación',
+    'seguimiento tiempo real',
+    'asistente digital',
+    'beneficios clientes',
+    'herramientas técnicos',
+  ],
+  openGraph: {
+    title: '¿Cómo Funciona SomosTécnicos?',
+    description: 'Conoce el proceso simple de 4 pasos para solicitar servicios técnicos profesionales a domicilio.',
+    url: 'https://somostecnicos.com/admin-info',
+    type: 'website',
+  },
+  alternates: {
+    canonical: '/admin-info',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function AdminInfoPage() {

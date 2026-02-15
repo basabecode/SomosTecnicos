@@ -57,43 +57,58 @@ interface DashboardStats {
 export function DashboardStats() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+
+  const fetchStats = async (isRefresh = false) => {
+    try {
+      if (!isRefresh) {
+        setLoading(true)
+      }
+      setError(null)
+
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch('/api/dashboard/stats', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data.data)
+        setLastUpdate(new Date())
+      } else {
+        throw new Error('Error al obtener estadísticas')
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+      setError('No se pudieron cargar las estadísticas')
+
+      // Si no hay datos previos, inicializar en ceros
+      if (!stats) {
+        setStats({
+          ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
+          tecnicos: { total: 0, activos: 0, disponibles: 0, ocupados: 0 },
+          negocio: { ingresosMes: 0, tasaCompletacion: 0, tiempoPromedioResolucion: 0, satisfaccionPromedio: 0 },
+          alertas: { ordenesVencidas: 0, ordenesUrgentes: 0 },
+        })
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const token = localStorage.getItem('accessToken')
-        const response = await fetch('/api/dashboard/stats', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          setStats(data.data)
-        } else {
-          // Si falla, iniciar en ceros
-          setStats({
-            ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
-            tecnicos: { total: 0, activos: 0, disponibles: 0, ocupados: 0 },
-            negocio: { ingresosMes: 0, tasaCompletacion: 0, tiempoPromedioResolucion: 0, satisfaccionPromedio: 0 },
-            alertas: { ordenesVencidas: 0, ordenesUrgentes: 0 },
-          })
-        }
-      } catch (error) {
-        console.error('Error fetching stats:', error)
-         setStats({
-            ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
-            tecnicos: { total: 0, activos: 0, disponibles: 0, ocupados: 0 },
-            negocio: { ingresosMes: 0, tasaCompletacion: 0, tiempoPromedioResolucion: 0, satisfaccionPromedio: 0 },
-            alertas: { ordenesVencidas: 0, ordenesUrgentes: 0 },
-          })
-      } finally {
-        setLoading(false)
-      }
-    }
-
+    // Carga inicial
     fetchStats()
+
+    // Auto-refresh cada 30 segundos
+    const interval = setInterval(() => {
+      fetchStats(true)
+    }, 30000)
+
+    return () => clearInterval(interval)
   }, [])
 
   if (loading) {
@@ -126,7 +141,32 @@ export function DashboardStats() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+    <div className="space-y-4">
+      {/* Indicador de última actualización */}
+      {lastUpdate && (
+        <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+          <span>
+            Última actualización: {lastUpdate.toLocaleTimeString('es-CO')}
+          </span>
+          <button
+            onClick={() => fetchStats(true)}
+            className="hover:text-foreground transition-colors flex items-center gap-1"
+            disabled={loading}
+          >
+            <TrendingUp className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </button>
+        </div>
+      )}
+
+      {/* Mensaje de error si existe */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       {/* Total Órdenes */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -238,6 +278,7 @@ export function DashboardStats() {
           <p className="text-xs text-muted-foreground">Por servicio</p>
         </CardContent>
       </Card>
+    </div>
     </div>
   )
 }

@@ -3,36 +3,40 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://somostecnicos.com'
 
+  // Fecha base para las páginas (última actualización real del sitio)
+  const lastUpdate = new Date('2026-02-15')
+  const olderUpdate = new Date('2026-02-01')
+
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: lastUpdate,
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/admin-info`,
+      lastModified: lastUpdate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/login`,
-      lastModified: new Date(),
+      lastModified: olderUpdate,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/register`,
-      lastModified: new Date(),
+      lastModified: olderUpdate,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/terminos-y-condiciones`,
-      lastModified: new Date(),
+      lastModified: olderUpdate,
       changeFrequency: 'yearly',
       priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/admin-info`, // Public info page
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
     },
   ]
 }

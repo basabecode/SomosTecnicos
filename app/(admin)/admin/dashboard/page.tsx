@@ -30,6 +30,8 @@ import {
   Clock,
 } from 'lucide-react'
 import { TechnicianAvailabilitySection } from '@/components/admin/technician-availability'
+import { DashboardCharts } from '@/components/admin/dashboard-charts'
+import { DashboardActions } from '@/components/admin/dashboard-export'
 
 // Componente de carga para las estadísticas
 function StatsLoading() {
@@ -299,7 +301,8 @@ export default function AdminDashboard() {
               Resumen general del sistema de servicio técnico
             </p>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <DashboardActions />
             <Badge variant="outline" className="bg-green-50 text-green-700 text-xs md:text-sm">
               <CheckCircle className="mr-1 h-3 w-3" />
               <span className="hidden sm:inline">Sistema Operativo</span>
@@ -332,6 +335,19 @@ export default function AdminDashboard() {
 
         {/* Panel de Asignación / Mapa de Técnicos */}
             <TechnicianAvailabilitySection />
+
+        {/* Gráficos y Visualizaciones */}
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight">Analíticas y Tendencias</h2>
+            <p className="text-sm text-muted-foreground">
+              Visualización de datos y métricas del sistema
+            </p>
+          </div>
+          <Suspense fallback={<CardLoading />}>
+            <DashboardCharts />
+          </Suspense>
+        </div>
 
         {/* Fila Inferior */}
         <div className="grid gap-4 md:gap-6 lg:grid-cols-2">

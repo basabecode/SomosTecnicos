@@ -168,17 +168,9 @@ export default function CustomerDashboard() {
             Gestiona tus reparaciones con SomosTécnicos
           </p>
         </div>
-        <div className="flex items-center gap-2">
-             <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos" className="h-10 w-10 sm:h-9 sm:w-9">
-                <RefreshCw className="h-4 w-4" />
-             </Button>
-            <Button asChild className="active-tap shadow-lg shadow-primary/20 bg-[#A50034] h-11 sm:h-12 rounded-xl text-sm sm:text-base flex-1 sm:flex-none">
-            <Link href="/customer/request">
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-                Nueva Solicitud
-            </Link>
-            </Button>
-        </div>
+        <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos" className="h-10 w-10 sm:h-9 sm:w-9">
+          <RefreshCw className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Stats Overview */}

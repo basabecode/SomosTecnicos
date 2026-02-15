@@ -29,6 +29,9 @@ import { useAuth } from '@/contexts/auth-context'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { NextJobCard, NoAssignmentsEmptyState } from '@/components/domain'
+import { TechnicianStatsCards } from '@/components/technician/technician-stats'
+import { TechnicianPerformanceCharts } from '@/components/technician/technician-charts'
+import { TechnicianExportButton } from '@/components/technician/technician-export'
 
 interface Assignment {
   id: number

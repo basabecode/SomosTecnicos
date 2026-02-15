@@ -13,19 +13,20 @@ export default function ServiceTypes() {
     const videoElement = videoRef.current
     if (!videoElement) return
 
-    let hasPlayed = false // Control para reproducir solo una vez
+    let hasPlayed = false
 
-    // Intersection Observer para reproducir una sola vez cuando sea visible
+    // Marcar como cargado cuando el video tenga metadata
+    const handleLoadedMetadata = () => {
+      setIsVideoLoaded(true)
+    }
+
+    videoElement.addEventListener('loadedmetadata', handleLoadedMetadata)
+
+    // Intersection Observer para reproducir cuando sea visible
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasPlayed) {
-            // Cargar el video si aún no se ha cargado
-            if (!isVideoLoaded) {
-              videoElement.load()
-              setIsVideoLoaded(true)
-            }
-            // Reproducir solo una vez cuando la sección sea visible
             videoElement.play().catch(() => {
               // Silenciar errores de autoplay
             })
@@ -34,17 +35,18 @@ export default function ServiceTypes() {
         })
       },
       {
-        threshold: 0.3, // Activar cuando el 30% del video sea visible
-        rootMargin: '0px'
+        threshold: 0.25, // Activar cuando el 25% del video sea visible
+        rootMargin: '50px' // Empezar a cargar un poco antes
       }
     )
 
     observer.observe(videoElement)
 
     return () => {
+      videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata)
       observer.disconnect()
     }
-  }, [isVideoLoaded])
+  }, [])
 
   const scrollToForm = () => {
     const element = document.getElementById('formulario')
@@ -90,9 +92,9 @@ export default function ServiceTypes() {
               ref={videoRef}
               muted
               playsInline
-              preload="none"
-              className="w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
-              style={{ opacity: isVideoLoaded ? 1 : 0 }}
+              preload="metadata"
+              className="w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out"
+              style={{ opacity: isVideoLoaded ? 1 : 0.3 }}
             >
               <source src="/video/video_reparacion_ok.mp4" type="video/mp4" />
               Tu navegador no soporta videos HTML5.
