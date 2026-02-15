@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get client IP
-  const ip = request.ip || 
+  const ip = 
              request.headers.get('x-forwarded-for')?.split(',')[0] || 
              request.headers.get('x-real-ip') || 
              'unknown'
