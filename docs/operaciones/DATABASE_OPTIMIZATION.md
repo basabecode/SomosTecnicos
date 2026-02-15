@@ -2,7 +2,7 @@
 
 ## 📊 **Tu Configuración Actual**
 
-**DATABASE_URL actual:** `postgresql://neondb_owner:npg_jgF6Hf1qiRAV@ep-shy-tooth-acmt9zh9-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+**DATABASE_URL actual:** `postgresql://<DB_USER>:<DB_PASSWORD>@<NEON_POOLER_HOST>/<DB_NAME>?sslmode=require&channel_binding=require`
 
 ✅ **Ya optimizada parcialmente:**
 - Usas el **pooler de Neon** (`-pooler` en hostname) ✅
@@ -14,12 +14,12 @@
 
 ### **Para Vercel (Producción):**
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_jgF6Hf1qiRAV@ep-shy-tooth-acmt9zh9-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&connection_limit=20&pool_timeout=20&statement_timeout=30000&idle_in_transaction_session_timeout=60000"
+DATABASE_URL="postgresql://<DB_USER>:<DB_PASSWORD>@<NEON_POOLER_HOST>/<DB_NAME>?sslmode=require&channel_binding=require&connection_limit=20&pool_timeout=20&statement_timeout=30000&idle_in_transaction_session_timeout=60000"
 ```
 
 ### **Para Desarrollo Local:**
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_jgF6Hf1qiRAV@ep-shy-tooth-acmt9zh9-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&connection_limit=10&pool_timeout=15&statement_timeout=20000"
+DATABASE_URL="postgresql://<DB_USER>:<DB_PASSWORD>@<NEON_POOLER_HOST>/<DB_NAME>?sslmode=require&channel_binding=require&connection_limit=10&pool_timeout=15&statement_timeout=20000"
 ```
 
 ## 📋 **Parámetros de Optimización Explicados**
@@ -42,7 +42,7 @@ DATABASE_URL="postgresql://neondb_owner:npg_jgF6Hf1qiRAV@ep-shy-tooth-acmt9zh9-p
 ### **1. Actualizar Variable de Entorno:**
 ```bash
 # En Vercel Dashboard > Settings > Environment Variables
-DATABASE_URL=postgresql://neondb_owner:npg_jgF6Hf1qiRAV@ep-shy-tooth-acmt9zh9-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&connection_limit=20&pool_timeout=20&statement_timeout=30000&idle_in_transaction_session_timeout=60000
+DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<NEON_POOLER_HOST>/<DB_NAME>?sslmode=require&channel_binding=require&connection_limit=20&pool_timeout=20&statement_timeout=30000&idle_in_transaction_session_timeout=60000
 ```
 
 ### **2. Variables Adicionales (Opcionales):**
