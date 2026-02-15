@@ -48,7 +48,7 @@ const QUEUE_CONFIG = {
 }
 
 // Tipo interno del job con metadatos
-interface QueuedJob extends Job {
+type QueuedJob = Job & {
   id: string
   enqueuedAt: Date
   attempts: number
