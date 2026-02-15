@@ -1,8 +1,8 @@
 # 🏗️ 01. SISTEMA Y ARQUITECTURA - Única Fuente de Verdad (SSOT)
 
 **Proyecto:** SomosTécnicos - Sistema de Gestión de Servicios Técnicos (Field Service Management - FSM)
-**Última Versión Consolidada:** Enero 2026
-**Estado General:** 90% Completado ✅
+**Última Versión Consolidada:** 15 de Febrero 2026 (Fase 2 Completada)
+**Estado General:** 95% Completado ✅ (Escalabilidad implementada)
 
 ---
 
@@ -14,6 +14,7 @@
 - **Interfaz Móvil Prioritaria:** Optimizado para técnicos en campo y clientes finales.
 - **Transparencia:** Seguimiento del estado de la orden en tiempo real.
 - **Comunicación:** Notificaciones in-app y externas (Email/SMS/WhatsApp).
+- **Alta Concurrencia:** Soporte para 500+ usuarios simultáneos (Implementado en Fase 2).
 
 ---
 
@@ -32,13 +33,20 @@
 4. **COMPLETADO:** Servicio finalizado con éxito.
 5. **CANCELADO:** Orden anulada por el cliente o administrador.
 
-### 🛠️ Stack Tecnológico
+### 🛠️ Stack Tecnológico Actualizado
 - **Frontend:** Next.js 15.2.4 (App Router), React 19, Tailwind CSS, shadcn/ui.
-- **Backend:** Next.js API Routes, TypeScript.
-- **Base de Datos:** PostgreSQL (Prisma ORM).
-- **Seguridad:** JWT (Access/Refresh Tokens), Middleware de protección.
+- **Backend:** Next.js API Routes, TypeScript, Server Actions.
+- **Base de Datos:** PostgreSQL (Neon Tech) con Connection Pooling optimizado.
+- **Caché:** Redis (Resultados de dashboard y listas frecuentes).
+- **Colas (Queues):** Sistema asíncrono para emails, notificaciones y auditoría.
+- **Seguridad:** JWT, Rate Limiting Middleware (Global), Protección de rutas.
 - **Validación:** Zod (Esquemas globales).
-- **Notificaciones:** Resend (Email), Twilio (SMS/WhatsApp - Roadmap), In-App (Polling 60s).
+
+### 🚀 Mejoras Fase 2 (Escalabilidad)
+- **Rate Limiting:** Protección contra DDOS y abuso de API.
+- **Transacciones Atómicas:** Asignaciones libres de race conditions.
+- **ISR:** Dashboard administrativo con regeneración estática incremental.
+- **Health Checks:** Monitoreo continuo de salud del sistema.
 
 ---
 
@@ -51,11 +59,12 @@ app/
 ├── (technician)/       # Portal del técnico
 ├── api/                # Capa de backend (Servicios, Órdenes, Auth)
 lib/
-├── database/           # Cliente Prisma y migraciones
-├── services/           # Lógica de negocio (Notificaciones, Auth)
-├── validations.ts      # Esquemas Zod centralizados
+├── cache.ts            # 🆕 Sistema de caché
+├── queue.ts            # 🆕 Sistema de colas
+├── prisma.ts           # Cliente DB con pooling
+├── validations.ts      # Esquemas Zod
 prisma/
-└── schema.prisma       # Definición de modelos (Orders, Customers, Technicians, etc.)
+└── schema.prisma       # Definición de modelos
 ```
 
 ---
@@ -64,22 +73,22 @@ prisma/
 
 ### 📍 Públicas
 - `/` : Landing Page Premium
-- `/login` : Login Unificado (Detección automática de rol)
-- `/register/customer` : Registro multietapa de clientes
-- `/register/technician` : Solicitud de técnicos (Requiere aprobación)
+- `/login` : Login Unificado
+- `/register/customer` : Registro multietapa
+- `/register/technician` : Solicitud de técnicos
 
 ### 🔐 Privadas
-- `/admin/dashboard` : Métricas y gestión global
-- `/admin/applications` : Aprobación de técnicos pendientes
-- `/customer/dashboard` : Mis servicios y solicitudes
-- `/technician/dashboard` : Mis asignaciones de campo
+- `/admin/dashboard` : Panel de control (Optimizado con ISR)
+- `/admin/applications` : Aprobación de técnicos
+- `/customer/dashboard` : Mis servicios
+- `/technician/dashboard` : Mis asignaciones
 
 ---
 
 ## 5. Diseño y Estética
 - **Paleta:** Rojo corporativo (#A50034), Gris Oscuro (#2C3E50), Fondo Gradiente Soft.
-- **UX:** Animaciones con Framer Motion, Feedbacks visuales con Toasts, Diseño Mobile-First.
-- **AIChat:** Chatbot inteligente integrado para pre-diagnóstico y auto-llenado de solicitudes.
+- **UX:** Animaciones con Framer Motion, Feedbacks visuales, Diseño Mobile-First.
+- **AIChat:** Chatbot inteligente integrado.
 
 ---
-_Documentación consolidada a partir de `SYSTEM_CONSOLIDATED.md` y `ARQUITECTURA_SOFTWARE.md`._
+_Documentación actualizada tras la implementación de la Fase 2 de Escalabilidad._

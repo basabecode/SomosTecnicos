@@ -2,15 +2,16 @@
 
 > ℹ️ **Nota de Rebranding:** Este proyecto, anteriormente conocido como **TecnoCity**, ha sido oficialmente renombrado a **somostecnicos**.
 
-
-[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-6.17.0-2D3748)](https://www.prisma.io/)
-[![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38B2AC)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+ [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
+ [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
+ [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+ [![Prisma](https://img.shields.io/badge/Prisma-6.17.0-2D3748)](https://www.prisma.io/)
+ [![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38B2AC)](https://tailwindcss.com/)
+ [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > 🏠 **Plataforma Integral de Field Service Management (FSM)** diseñada para optimizar la gestión, asignación y seguimiento de servicios técnicos a domicilio para electrodomésticos y tecnología inteligente.
+
+**Actualmente en Producción (Versión 2.1 - Fase 2 Escalabilidad)**
 
 ---
 
@@ -18,16 +19,18 @@
 
 **somostecnicos** centraliza todo el ciclo de vida de un servicio técnico, desde el diagnóstico inicial hasta la finalización del trabajo en campo.
 
-### � Ecosistema de Roles (RBAC)
-*   **Clientes:** Solicitud de servicios mediante formularios guiados o asistente IA, seguimiento en tiempo real y gestión de perfil.
-*   **Técnicos:** Interfaz móvil optimizada para gestionar asignaciones, actualizar estados de órdenes y reportar finalización de servicios.
-*   **Administradores:** Control total sobre el dashboard de operaciones, asignación manual de técnicos, aprobación de nuevas solicitudes de técnicos y análisis de métricas.
+###  Ecosistema de Roles (RBAC)
+*   **Clientes:** Solicitud de servicios, seguimiento en tiempo real y gestión de perfil.
+*   **Técnicos:** Interfaz móvil optimizada para gestionar asignaciones.
+*   **Administradores:** Control total sobre el dashboard, asignación manual y análisis de métricas.
 
 ### 🚀 Características Destacadas
-*   **Asistente IA Diagnóstico:** Chatbot integrado que ayuda al cliente a identificar fallas y pre-vende el servicio técnico adecuado. Enlazado directamente con el sistema de órdenes.
-*   **Flujo de Estados (FSM):** Sistema robusto de estados (Pendiente, Asignado, En Proceso, Completado, Cancelado) que asegura la trazabilidad.
-*   **Notificaciones Multi-canal:** Alertas internas (In-App) y notificaciones externas vía email para cambios de estado en tiempo real.
-*   **Diseño Premium:** Interfaz moderna, rápida y responsiva con animaciones fluidas utilizando Framer Motion y componentes de alta calidad.
+*   **ALTA CONCURRENCIA (Fase 2):**  Soporte optimizado para 500+ usuarios simultáneos mediante Rate Limiting.
+*   **Asistente IA Diagnóstico:** Chatbot integrado que ayuda al cliente a identificar fallas.
+*   **Flujo de Estados (FSM):** Sistema robusto de estados con trazabilidad completa.
+*   **Transacciones Seguras:** Asignaciones atómicas libres de conflictos (Race Conditions).
+*   **Notificaciones Asíncronas:** Sistema de colas para emails y alertas sin bloqueo de UI.
+*   **Diseño Premium:** Interfaz moderna y responsiva.
 
 ---
 
@@ -36,41 +39,34 @@
 ### **Frontend & UX**
 *   **Next.js 15.2.4** (App Router & Server Actions)
 *   **React 19**
-*   **Tailwind CSS 4.0** & **shadcn/ui** (Componentes de interfaz consistentes)
-*   **Framer Motion** (Animaciones fluidas y micro-interacciones)
-*   **Lucide React** (Paquete de iconos vectoriales)
+*   **Tailwind CSS 4.0** & **shadcn/ui**
+*   **Framer Motion** (Animaciones fluidas)
 
 ### **Backend & Infraestructura**
-*   **TypeScript** (Robustez y tipado estático en todo el proyecto)
-*   **Prisma ORM** (Gestión de base de datos eficiente y segura)
-*   **PostgreSQL** (Motor de base de datos relacional para alta disponibilidad)
-*   **JWT & BCrypt** (Seguridad en autenticación y protección de datos)
-*   **Zod** (Validación rigurosa de datos en servidor y cliente)
+*   **TypeScript** (Tipado estricto)
+*   **Prisma ORM** (Connection Pooling configurado)
+*   **PostgreSQL** (Neon Tech)
+*   **Redis** (Caché de alto rendimiento)
+*   **Rate Limiting Middleware**
+*   **Colas de Mensajes** (Background Jobs)
 
 ### **Herramientas de Desarrollo**
-*   **Playwright** (Testing automatizado de flujos críticos de usuario)
-*   **Docker** (Entorno de desarrollo controlado para servicios de base de datos)
-*   **PNPM** (Gestor de dependencias de alto rendimiento)
+*   **Playwright** (Testing E2E)
+*   **Docker** (Entorno local)
+*   **PNPM** (Gestor de dependencias)
 
 ---
 
-## 📂 Estructura Principal del Proyecto
+## 📂 Estructura Principal
 
 ```text
 ├── app/                  # Núcleo de la aplicación (Next.js App Router)
-│   ├── (auth)/           # Flujos de autenticación y acceso
-│   ├── (client)/         # Área exclusiva para clientes
-│   ├── (technician)/     # Portal móvil para personal técnico
-│   ├── admin/            # Panel administrativo centralizado
-│   └── api/              # Endpoints y lógica de servidor (API REST)
-├── components/           # Librería de componentes UI (Atómicos y Moleculares)
-├── docs/                 # Base de conocimientos y manuales técnicos
-├── lib/                  # Servicios de backend, utilidades y lógica compartida
-├── prisma/               # Definición del modelo de datos y migraciones
-├── public/               # Recursos estáticos (Imágenes, Fuentes, etc.)
-├── scripts/              # Scripts de automatización y mantenimiento
-├── styles/               # Definiciones globales de diseño (CSS)
-└── tests/                # Suite de pruebas automatizadas
+├── components/           # Librería de componentes UI
+├── docs/                 # Base de conocimientos (Ver Índice)
+├── lib/                  # Servicios de backend (Cache, Queue, Email)
+├── prisma/               # Esquema de base de datos
+├── public/               # Recursos estáticos
+└── scripts/              # Scripts de mantenimiento
 ```
 
 ---
@@ -81,7 +77,7 @@
     ```bash
     pnpm install
     ```
-2.  **Configuración:** Copiar `.env.example` a `.env` y configurar las credenciales de base de datos y secretos JWT.
+2.  **Configuración:** Copiar `.env.example` a `.env`.
 3.  **Base de Datos (Docker):**
     ```bash
     pnpm docker:up
@@ -106,17 +102,18 @@
 | **Técnico** | `tecnico.demo@somostecnicos.com` | `********` |
 | **Cliente** | `cliente.demo@somostecnicos.com` | `********` |
 
-> 🔒 **Importante:** Las contraseñas reales se encuentran protegidas en el entorno de desarrollo seguro. Para realizar pruebas locales sólidas, consulte `docs/02-TESTING-Y-ACCESO.md`.
+> 🔒 **Importante:** Consulte `docs/pruebas/GUIA_ACCESO_TESTING.md` para más detalles.
 
 ---
 
 ## 📚 Documentación del Sistema
 
-Existen guías detalladas para cada sección del proyecto en la carpeta `docs/`:
+Toda la documentación está organizada en `docs/`. Consulte el **[Índice de Documentación](docs/INDICE.md)** para navegar por:
 
-1.  🏗️ **[Arquitectura](docs/01-SISTEMA-Y-ARQUITECTURA.md)**: Visión técnica profunda.
-2.  🧪 **[Pruebas](docs/02-TESTING-Y-ACCESO.md)**: Cómo ejecutar la suite de tests.
-3.  🗺️ **[Roadmap](docs/03-ROADMAP-Y-PENDIENTES.md)**: Visión de futuro y próximos pasos.
+1.  🏗️ **[Arquitectura](docs/01_ARQUITECTURA_SISTEMA.md)**
+2.  🎨 **[Diseño y UI](docs/diseno/UI_GUIDE.md)**
+3.  🚀 **[Operaciones](docs/operaciones/DEPLOYMENT_VERCEL.md)**
+4.  📝 **[Changelog](docs/registro_cambios/CHANGELOG.md)**
 
 ---
 
