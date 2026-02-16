@@ -218,8 +218,9 @@ export default function TechnicianRegistrationPage() {
       setError('El archivo debe pesar menos de 1MB')
       return false
     }
-    if (!formData.acceptTerms) {
-      setError('Debes aceptar los términos y condiciones para continuar')
+    // Validar tamaño (1MB = 1048576 bytes)
+    if (formData.documentos && formData.documentos.size > 1048576) {
+      setError('El archivo debe pesar menos de 1MB')
       return false
     }
     return true
@@ -242,6 +243,12 @@ export default function TechnicianRegistrationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!formData.acceptTerms) {
+      setError('Debes aceptar los términos y condiciones para continuar')
+      return
+    }
+
     setLoading(true)
 
     try {
