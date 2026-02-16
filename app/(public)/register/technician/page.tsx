@@ -675,10 +675,8 @@ export default function TechnicianRegistrationPage() {
                         <p className="font-medium">{formData.experienciaAnios} años</p>
                       </div>
                     )}
-                  </div>
-
                   {/* Términos y Condiciones */}
-                  <div className="border-t pt-4 space-y-3">
+                  <div className="border-t border-gray-200 pt-4 mt-6">
                     <div className="flex items-start space-x-3">
                       <Checkbox
                         id="acceptTerms"
@@ -687,11 +685,12 @@ export default function TechnicianRegistrationPage() {
                           setFormData(prev => ({ ...prev, acceptTerms: checked as boolean }))
                           setError('')
                         }}
+                        className="mt-1"
                       />
                       <div className="flex-1">
                         <label
                           htmlFor="acceptTerms"
-                          className="text-sm font-medium leading-none cursor-pointer"
+                          className="text-sm font-medium leading-none cursor-pointer block"
                         >
                           Acepto los{' '}
                           <button
@@ -709,6 +708,7 @@ export default function TechnicianRegistrationPage() {
                       </div>
                     </div>
                   </div>
+                </div>
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">
