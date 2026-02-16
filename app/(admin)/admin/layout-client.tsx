@@ -22,6 +22,7 @@ import {
   User,
   Wrench,
   Mail,
+  FileText,
 } from 'lucide-react'
 
 // Items de navegación del sidebar
@@ -50,6 +51,11 @@ const sidebarItems: SidebarItem[] = [
     title: 'Técnicos',
     href: '/admin/technicians',
     icon: Wrench,
+  },
+  {
+    title: 'Solicitudes',
+    href: '/admin/applications',
+    icon: FileText,
   },
   {
     title: 'Reportes',
@@ -89,10 +95,14 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
         if (response.ok) {
           const data = await response.json()
           const pendingOrders = data.data?.ordenes?.pendientes || 0
+          const pendingApplications = data.data?.alertas?.technicianApplicationsPending || 0
 
           setNavItems((prev: SidebarItem[]) => prev.map((item: SidebarItem) => {
             if (item.href === '/admin/orders') {
               return { ...item, badge: pendingOrders }
+            }
+            if (item.href === '/admin/applications') {
+              return { ...item, badge: pendingApplications }
             }
             return item
           }))

@@ -30,7 +30,26 @@ async function handler(request: NextRequest) {
           createdAt: 'desc'
         },
         skip,
-        take: limit
+        take: limit,
+        select: {
+          id: true,
+          nombre: true,
+          apellido: true,
+          cedula: true,
+          email: true,
+          telefono: true,
+          direccion: true,
+          ciudad: true,
+          especialidades: true,
+          zonaPreferida: true,
+          experienciaAnios: true,
+          documentosUrl: true,
+          estado: true,
+          motivoRechazo: true,
+          createdAt: true,
+          updatedAt: true,
+          // Excluimos documentosData y documentosMimeType por performance
+        }
       }),
       prisma.technicianApplication.count({ where })
     ])
