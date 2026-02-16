@@ -45,6 +45,15 @@ export async function POST(request: NextRequest) {
     // Hash de la contraseña
     const passwordHash = await bcrypt.hash(password, 10)
 
+    // Preparar username
+    let finalUsername = username || email.split('@')[0]
+
+    // Verificar si el username existe y ajustar
+    const existingUsername = await prisma.customer.findUnique({ where: { username: finalUsername } })
+    if (existingUsername) {
+      finalUsername = `${finalUsername}${Math.floor(Math.random() * 1000)}`
+    }
+
     // Preparar preferencias con electrodomésticos
     const preferencias = {
       electrodomesticos: electrodomesticos || [],
@@ -54,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Crear el cliente
     const customer = await prisma.customer.create({
       data: {
-        username: username || email.split('@')[0],
+        username: finalUsername,
         email,
         passwordHash,
         nombre,
