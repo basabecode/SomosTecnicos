@@ -518,6 +518,10 @@ model TechnicianApplication {
   estado                String   @default("pendiente") // pendiente, aprobado, rechazado
   motivoRechazo         String?  @map("motivo_rechazo")
 
+  // Archivo (Almacenamiento en DB para compatibilidad serverless)
+  documentosData        Bytes?   @map("documentos_data")
+  documentosMimeType    String?  @map("documentos_mime_type")
+
   // Revisión
   revisadoPor           Int?     @map("revisado_por") // ID del admin que revisó
   fechaRevision         DateTime? @map("fecha_revision")

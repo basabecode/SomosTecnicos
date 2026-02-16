@@ -5,8 +5,9 @@ import { CloseServiceForm } from '@/components/technician/close-service-form'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 import { getCostoVisitaTecnica } from '@/lib/order-utils'
 
-export default async function CloseServicePage({ params }: { params: { id: string } }) {
+export default async function CloseServicePage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser()
+  const { id } = await params
 
   if (!user) {
     redirect('/auth/login')
@@ -20,7 +21,7 @@ export default async function CloseServicePage({ params }: { params: { id: strin
   }
 
   const order = await prisma.order.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       assignments: true
     }

@@ -5,9 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
 import {
   sendTechnicianApplicationReceivedEmail,
   sendNewTechnicianApplicationNotification
@@ -76,104 +73,124 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const especialidades = JSON.parse(especialidadesStr)
+    let especialidades: string[] = []
+    try {
+      especialidades = JSON.parse(especialidadesStr)
+      if (!Array.isArray(especialidades)) {
+        throw new Error('Especialidades debe ser un array')
+      }
+    } catch (e) {
+      console.error('Error parseando especialidades:', e)
+      return NextResponse.json(
+        { success: false, error: 'Formato de especialidades inválido' },
+        { status: 400 }
+      )
+    }
+
     const experienciaAnios = experienciaAniosStr ? parseInt(experienciaAniosStr) : undefined
 
-    // Verificar si ya existe una solicitud con la misma cédula
-    const existingByCedula = await prisma.technicianApplication.findUnique({
-      where: { cedula }
-    })
+    // Verificar cedula duplicada
+    try {
+      const existingByCedula = await prisma.technicianApplication.findUnique({
+        where: { cedula }
+      })
 
-    if (existingByCedula) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Ya existe una solicitud con esta cédula'
-        },
-        { status: 409 }
-      )
-    }
-
-    // Verificar si ya existe una solicitud con el mismo email
-    const existingByEmail = await prisma.technicianApplication.findUnique({
-      where: { email }
-    })
-
-    if (existingByEmail) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Ya existe una solicitud con este email'
-        },
-        { status: 409 }
-      )
-    }
-
-    // Guardar el archivo
-    const bytes = await documentosFile.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    // Crear directorio si no existe
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'technician-docs')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
-
-    // Nombre único para el archivo
-    const timestamp = Date.now()
-    const fileName = `${cedula}_${timestamp}.pdf`
-    const filePath = join(uploadDir, fileName)
-    const publicPath = `/uploads/technician-docs/${fileName}`
-
-    await writeFile(filePath, buffer)
-
-    // Crear la solicitud en la base de datos
-    const application = await prisma.technicianApplication.create({
-      data: {
-        nombre,
-        apellido,
-        cedula,
-        email,
-        telefono,
-        direccion,
-        ciudad,
-        especialidades,
-        zonaPreferida,
-        experienciaAnios,
-        ...(publicPath && { documentosUrl: publicPath }), // Agregar solo si existe
-        estado: 'pendiente'
+      if (existingByCedula) {
+        return NextResponse.json(
+          { success: false, error: 'Ya existe una solicitud con esta cédula' },
+          { status: 409 }
+        )
       }
-    })
 
-    // Enviar email de confirmación al solicitante
-    const confirmationEmail = await sendTechnicianApplicationReceivedEmail(
+      const existingByEmail = await prisma.technicianApplication.findUnique({
+        where: { email }
+      })
+
+      if (existingByEmail) {
+        return NextResponse.json(
+          { success: false, error: 'Ya existe una solicitud con este email' },
+          { status: 409 }
+        )
+      }
+    } catch (dbError) {
+      console.error('Error verificando duplicados en DB:', dbError)
+      return NextResponse.json(
+        { success: false, error: 'Error verificando datos existentes' },
+        { status: 500 }
+      )
+    }
+
+    // Procesar archivo para DB
+    let fileBuffer: Buffer
+    let mimeType: string
+
+    try {
+      const bytes = await documentosFile.arrayBuffer()
+      fileBuffer = Buffer.from(bytes)
+      mimeType = documentosFile.type || 'application/pdf'
+    } catch (fileError) {
+      console.error('Error procesando archivo:', fileError)
+      return NextResponse.json(
+        { success: false, error: 'Error al procesar el archivo. Intente nuevamente.' },
+        { status: 500 }
+      )
+    }
+
+    // Crear solicitud en DB
+    let application
+    try {
+      application = await prisma.technicianApplication.create({
+        data: {
+          nombre,
+          apellido,
+          cedula,
+          email,
+          telefono,
+          direccion,
+          ciudad,
+          especialidades,
+          zonaPreferida,
+          experienciaAnios,
+          // Almacenar archivo en DB
+          // @ts-expect-error - Prisma generates Bytes type which might mismatch with Buffer in strict mode
+          documentosData: fileBuffer,
+          documentosMimeType: mimeType,
+          // Url provisional (se generará dinámicamente o se actualizará)
+          documentosUrl: null,
+          estado: 'pendiente'
+        }
+      })
+
+      // Actualizar URL con el ID generado para referencia fácil
+      await prisma.technicianApplication.update({
+        where: { id: application.id },
+        data: { documentosUrl: `/api/technician/documents/${application.id}` }
+      })
+
+    } catch (createError) {
+      console.error('Error creando solicitud en DB:', createError)
+      return NextResponse.json(
+        { success: false, error: 'Error guardando la solicitud en base de datos.' },
+        { status: 500 }
+      )
+    }
+
+    // Enviar emails (no bloqueante para el response)
+    const confirmationEmail = await sendTechnicianApplicationReceivedEmail(email, nombre)
+    if (!confirmationEmail.success) console.error('Error email confirmación:', confirmationEmail.error)
+
+    const adminNotification = await sendNewTechnicianApplicationNotification(ADMIN_EMAIL, {
+      nombre,
+      apellido,
       email,
-      nombre
-    )
-
-    if (!confirmationEmail.success) {
-      console.error('Error enviando email de confirmación:', confirmationEmail.error)
-    }
-
-    // Enviar notificación al administrador
-    const adminNotification = await sendNewTechnicianApplicationNotification(
-      ADMIN_EMAIL,
-      {
-        nombre,
-        apellido,
-        email,
-        telefono,
-        cedula,
-        ciudad,
-        especialidades,
-        zonaPreferida,
-        experienciaAnios
-      }
-    )
-
-    if (!adminNotification.success) {
-      console.error('Error enviando notificación al admin:', adminNotification.error)
-    }
+      telefono,
+      cedula,
+      ciudad,
+      especialidades,
+      zonaPreferida,
+      experienciaAnios
+    })
+    if (!adminNotification.success) console.error('Error email admin:', adminNotification.error)
 
     return NextResponse.json(
       {
@@ -188,13 +205,12 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
 
-  } catch (error) {
-    console.error('Error procesando solicitud de técnico:', error)
-
+  } catch (error: any) {
+    console.error('Error CRÍTICO no manejado en API technician/apply:', error)
     return NextResponse.json(
       {
         success: false,
-        error: 'Error interno del servidor al procesar la solicitud'
+        error: error.message || 'Error interno del servidor no especificado'
       },
       { status: 500 }
     )

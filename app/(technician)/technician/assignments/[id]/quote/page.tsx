@@ -4,8 +4,9 @@ import { getCurrentUser } from '@/lib/auth'
 import { QuoteForm } from '@/components/technician/quote-form'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 
-export default async function QuotePage({ params }: { params: { id: string } }) {
+export default async function QuotePage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser()
+  const { id } = await params
 
   if (!user) {
     redirect('/auth/login')
@@ -19,7 +20,7 @@ export default async function QuotePage({ params }: { params: { id: string } }) 
   }
 
   const order = await prisma.order.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       assignments: true
     }
