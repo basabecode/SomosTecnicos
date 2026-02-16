@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withRoles, hashPassword } from '@/lib/auth'
 import { USER_ROLES } from '@/lib/constants'
-import { sendSimpleEmail } from '@/lib/email'
+import { sendTechnicianApprovedEmail } from '@/lib/email'
 
 async function handler(
   request: NextRequest,
@@ -86,35 +86,11 @@ async function handler(
     })
 
     // Enviar email al técnico con credenciales
-    await sendSimpleEmail(
+    await sendTechnicianApprovedEmail(
       application.email,
-      '🎉 Solicitud Aprobada - Bienvenido a SomosTécnicos',
-      `
-        <h2>¡Felicitaciones ${application.nombre}!</h2>
-        <p>Tu solicitud para unirte a SomosTécnicos ha sido <strong>aprobada</strong>.</p>
-
-        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">🔑 Tus Credenciales de Acceso</h3>
-          <p><strong>Usuario:</strong> ${username}</p>
-          <p><strong>Contraseña temporal:</strong> ${tempPassword}</p>
-          <p><strong>URL de acceso:</strong> <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login">${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login</a></p>
-        </div>
-
-        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>⚠️ Importante:</strong> Por seguridad, cambia tu contraseña al iniciar sesión por primera vez.</p>
-        </div>
-
-        <h3>📋 Próximos Pasos:</h3>
-        <ol>
-          <li>Inicia sesión con tus credenciales</li>
-          <li>Cambia tu contraseña temporal</li>
-          <li>Completa tu perfil</li>
-          <li>Revisa tu panel de técnico</li>
-          <li>Espera asignaciones de servicio</li>
-        </ol>
-
-        <p>¡Bienvenido al equipo de SomosTécnicos!</p>
-      `
+      `${application.nombre} ${application.apellido}`,
+      username,
+      tempPassword
     )
 
     return NextResponse.json({

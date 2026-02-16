@@ -126,6 +126,7 @@ function SystemAlerts() {
     asignadas: number
     urgentes: number
     vencidas: number
+    technicianApplications: number
   } | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -145,7 +146,8 @@ function SystemAlerts() {
             pendientes: data.data.ordenes.pendientes,
             asignadas: data.data.ordenes.asignadas, // Usamos asignadas como proxy de "programados"
             urgentes: data.data.alertas.ordenesUrgentes,
-            vencidas: data.data.alertas.ordenesVencidas
+            vencidas: data.data.alertas.ordenesVencidas,
+            technicianApplications: data.data.alertas.technicianApplicationsPending
           })
         }
       } catch (error) {
@@ -177,7 +179,7 @@ function SystemAlerts() {
   }
 
   // Si no hay datos, mostrar estado vacío o datos por defecto seguros
-  const data = alertsData || { pendientes: 0, asignadas: 0, urgentes: 0, vencidas: 0 }
+  const data = alertsData || { pendientes: 0, asignadas: 0, urgentes: 0, vencidas: 0, technicianApplications: 0 }
 
   const alerts = [
     {
@@ -188,6 +190,15 @@ function SystemAlerts() {
       action: 'Asignar Técnicos',
       href: '/admin/orders?status=pendiente',
       show: data.pendientes > 0
+    },
+    {
+      type: 'info',
+      icon: Users,
+      title: 'Solicitudes de Técnicos',
+      message: `${data.technicianApplications} técnicos esperando aprobación`,
+      action: 'Revisar',
+      href: '/admin/applications?estado=pendiente',
+      show: data.technicianApplications > 0
     },
     {
       type: 'critical',

@@ -87,7 +87,11 @@ async function calculateDashboardStats() {
       ordenesRecientes,
 
       // Técnicos con mejor rendimiento
-      mejoresTecnicos
+      // Técnicos con mejor rendimiento
+      mejoresTecnicos,
+
+      // Solicitudes de técnicos pendientes
+      technicianApplicationsPending
     ] = await Promise.all([
       // Órdenes por estado
       prisma.order.count({ where: { estado: ORDER_STATES.PENDIENTE } }),
@@ -209,6 +213,11 @@ async function calculateDashboardStats() {
             }
           }
         }
+      }),
+
+      // Solicitudes pendientes
+      prisma.technicianApplication.count({
+        where: { estado: 'pendiente' }
       })
     ])
 
@@ -258,6 +267,7 @@ async function calculateDashboardStats() {
       alertas: {
         ordenesVencidas,
         ordenesUrgentes,
+        technicianApplicationsPending,
         tecnicosSobrecargados: 0 // Se puede calcular técnicos con >3 asignaciones
       },
 

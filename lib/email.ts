@@ -49,51 +49,60 @@ function getNewOrderTemplate(data: OrderEmailData): string {
         <meta charset="utf-8">
         <title>Nueva Orden de Servicio - SomosTécnicos</title>
         <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #A50034; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; background: #f9f9f9; }
-            .order-details { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
-            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
-            .button { background: #A50034; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+            .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
+            .header-icon { font-size: 40px; margin-bottom: 10px; }
+            .content { padding: 40px 30px; }
+            .order-card { background: #f8f9fa; padding: 25px; margin: 20px 0; border-radius: 8px; border: 1px solid #e9ecef; }
+            .order-number { color: #A50034; font-size: 24px; font-weight: bold; display: block; margin-top: 5px; }
+            .details-list p { margin: 8px 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+            .details-list p:last-child { border-bottom: none; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
+            .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
+            .help-text { font-size: 14px; color: #666; margin-top: 30px; text-align: center; }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔧 SomosTécnicos</h1>
-                <h2>Confirmación de Servicio</h2>
+                <div class="header-icon">✅</div>
+                <h1 style="margin: 0; font-size: 24px;">Confirmación de Servicio</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">SomosTécnicos</p>
             </div>
 
             <div class="content">
-                <h3>¡Hola ${data.customerName}!</h3>
-                <p>Hemos recibido tu solicitud de servicio técnico. Aquí están los detalles:</p>
+                <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${data.customerName},</h2>
+                <p>Hemos recibido tu solicitud correctamente. Un técnico especializado revisará tu caso en breve.</p>
 
-                <div class="order-details">
-                    <h4>📋 Detalles del Servicio</h4>
-                    <p><strong>Número de Orden:</strong> ${data.orderNumber}</p>
-                    <p><strong>Tipo de Servicio:</strong> ${data.serviceType}</p>
-                    <p><strong>Electrodoméstico:</strong> ${data.applianceType}</p>
-                    <p><strong>Descripción:</strong> ${data.description}</p>
-                    <p><strong>Dirección:</strong> ${data.address}</p>
-                    <p><strong>Fecha Preferida:</strong> ${data.preferredDate}</p>
-                    <p><strong>Estado:</strong> <span style="color: #A50034; font-weight: bold;">${data.status}</span></p>
+                <div class="order-card">
+                    <span style="font-size: 12px; text-transform: uppercase; color: #666; letter-spacing: 1px;">Número de Orden</span>
+                    <span class="order-number">${data.orderNumber}</span>
+
+                    <div class="details-list" style="margin-top: 20px;">
+                        <p><strong>Servicio:</strong> ${data.serviceType}</p>
+                        <p><strong>Electrodoméstico:</strong> ${data.applianceType}</p>
+                        <p><strong>Fecha Preferida:</strong> ${data.preferredDate}</p>
+                        <p><strong>Dirección:</strong> ${data.address}</p>
+                    </div>
                 </div>
 
-                <p>Nuestro equipo se pondrá en contacto contigo pronto para coordinar la visita.</p>
+                <div style="text-align: center;">
+                    <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
+                        Seguir mi Orden
+                    </a>
+                </div>
 
-                <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
-                    📱 Seguir mi Orden
-                </a>
-
-                <p><strong>📞 ¿Necesitas ayuda?</strong><br>
-                Llámanos al: <strong>(+57) 300 123 4567</strong><br>
-                Email: <strong>soporte@somostecnicos.com</strong></p>
+                <div class="help-text">
+                    <p><strong>¿Necesitas ayuda?</strong><br>
+                    Llámanos al: <strong>(+57) 3003094854</strong><br>
+                    Email: <strong>soporte@somostecnicos.com</strong></p>
+                </div>
             </div>
 
             <div class="footer">
-                <p>© 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
-                <p>Este es un email automático, no responder directamente.</p>
+                <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
+                <p>Este es un email automático, por favor no responder directamente.</p>
             </div>
         </div>
     </body>
@@ -122,53 +131,56 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
         <meta charset="utf-8">
         <title>Actualización de Orden - SomosTécnicos</title>
         <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #A50034; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; background: #f9f9f9; }
-            .status-update { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #A50034; }
-            .technician-info { background: #e8f5e8; padding: 15px; margin: 15px 0; border-radius: 5px; }
-            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
-            .button { background: #A50034; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+            .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
+            .header-icon { font-size: 40px; margin-bottom: 10px; }
+            .content { padding: 40px 30px; }
+            .status-card { background: #fff5f5; padding: 25px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #A50034; }
+            .technician-card { background: #f8f9fa; padding: 20px; margin-top: 20px; border-radius: 8px; border: 1px solid #e9ecef; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
+            .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔧 SomosTécnicos</h1>
-                <h2>Actualización de tu Servicio</h2>
+                <div class="header-icon">📢</div>
+                <h1 style="margin: 0; font-size: 24px;">Actualización de Estado</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Orden #${data.orderNumber}</p>
             </div>
 
             <div class="content">
-                <h3>¡Hola ${data.customerName}!</h3>
+                <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${data.customerName},</h2>
 
-                <div class="status-update">
-                    <h4>📢 Estado Actualizado</h4>
-                    <p><strong>Orden:</strong> ${data.orderNumber}</p>
-                    <p><strong>Nuevo Estado:</strong> <span style="color: #A50034; font-weight: bold;">${data.status}</span></p>
-                    <p>${statusMessage}</p>
-                    ${data.notes ? `<p><strong>Notas:</strong> ${data.notes}</p>` : ''}
+                <div class="status-card">
+                    <h3 style="margin: 0 0 10px 0; color: #A50034;">${statusMessage}</h3>
+                    <p style="margin: 0;">El estado de tu orden ha cambiado a: <strong>${data.status}</strong></p>
+                    ${data.notes ? `<p style="margin-top: 10px; font-style: italic;">"${data.notes}"</p>` : ''}
                 </div>
 
                 ${data.technicianName ? `
-                <div class="technician-info">
-                    <h4>👨‍🔧 Información del Técnico</h4>
-                    <p><strong>Técnico:</strong> ${data.technicianName}</p>
-                    <p><strong>Teléfono:</strong> ${data.technicianPhone}</p>
-                    ${data.estimatedCost ? `<p><strong>Costo Estimado:</strong> $${data.estimatedCost.toLocaleString()}</p>` : ''}
+                <div class="technician-card">
+                    <h4 style="margin: 0 0 10px 0;">Datos del Técnico Asignado</h4>
+                    <p style="margin: 5px 0;"><strong>Nombre:</strong> ${data.technicianName}</p>
+                    <p style="margin: 5px 0;"><strong>Teléfono:</strong> ${data.technicianPhone}</p>
+                    ${data.estimatedCost ? `<p style="margin: 5px 0;"><strong>Costo Estimado:</strong> $${data.estimatedCost.toLocaleString()}</p>` : ''}
                 </div>
                 ` : ''}
 
-                <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
-                    📱 Ver Detalles Completos
-                </a>
+                <div style="text-align: center;">
+                    <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
+                        Ver Detalles Completos
+                    </a>
+                </div>
 
-                <p><strong>📞 ¿Preguntas?</strong><br>
-                Contáctanos: <strong>(+57) 300 123 4567</strong></p>
+                <p style="text-align: center; font-size: 14px; color: #666; margin-top: 30px;">
+                    ¿Tienes dudas? Llámanos al <strong>(+57) 3003094854</strong>
+                </p>
             </div>
 
             <div class="footer">
-                <p>© 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
+                <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
             </div>
         </div>
     </body>
@@ -244,13 +256,14 @@ export async function sendSimpleEmail(
     const sendSmtpEmail = new brevo.SendSmtpEmail()
     sendSmtpEmail.subject = subject
     sendSmtpEmail.htmlContent = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2 style="color: #A50034;">🔧 SomosTécnicos</h2>
-          <p>${message}</p>
-          <hr style="margin: 20px 0;">
-          <p style="font-size: 12px; color: #666;">
-            © 2025 SomosTécnicos - Servicio Técnico de Electrodomésticos
-          </p>
+        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+          <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px;">
+            <h2 style="color: #A50034; text-align: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 20px;">🔧 SomosTécnicos</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #333;">${message}</p>
+            <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 12px; color: #999;">
+              <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
+            </div>
+          </div>
         </div>
       `
     sendSmtpEmail.sender = defaultSender
@@ -288,55 +301,59 @@ export async function sendTechnicianApplicationReceivedEmail(
             <meta charset="utf-8">
             <title>Solicitud Recibida - SomosTécnicos</title>
             <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-                .content { padding: 30px; background: #f9fafb; border-radius: 0 0 8px 8px; }
-                .info-box { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #2563eb; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
-                .icon { font-size: 48px; margin-bottom: 10px; }
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+                .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; position: relative; overflow: hidden; }
+                .header-circle { width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+                .content { padding: 40px 30px; }
+                .info-box { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 8px; border: 1px solid #e9ecef; }
+                .steps { margin: 0; padding: 0; list-style: none; }
+                .step-item { display: flex; margin-bottom: 15px; }
+                .step-number { background: #A50034; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 15px; flex-shrink: 0; margin-top: 2px; }
+                .contact-box { text-align: center; border-top: 1px solid #eee; margin-top: 30px; padding-top: 30px; color: #666; }
+                .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; background: #f4f4f4; }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="icon">🔧</div>
-                    <h1 style="margin: 0;">SomosTécnicos</h1>
-                    <p style="margin: 10px 0 0 0;">Servicio Técnico Profesional</p>
+                    <div class="header-circle">�</div>
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Solicitud Recibida</h1>
+                    <p style="margin: 5px 0 0 0; opacity: 0.9;">Gracias por postularte a SomosTécnicos</p>
                 </div>
 
                 <div class="content">
-                    <h2 style="color: #2563eb; margin-top: 0;">¡Hola ${applicantName}!</h2>
-
-                    <p>Hemos recibido tu solicitud para unirte a nuestro equipo de técnicos profesionales.</p>
+                    <h2 style="margin-top: 0; color: #1a1a1a;">¡Hola ${applicantName}!</h2>
+                    <p style="color: #4a4a4a; font-size: 16px;">Hemos recibido tus documentos y datos correctamente. Tu solicitud para unirte a nuestro equipo está en proceso.</p>
 
                     <div class="info-box">
-                        <h3 style="margin-top: 0; color: #2563eb;">📋 Próximos Pasos</h3>
-                        <ol style="margin: 0; padding-left: 20px;">
-                            <li><strong>Revisión:</strong> Nuestro equipo evaluará tu solicitud en las próximas 24-48 horas.</li>
-                            <li><strong>Verificación:</strong> Validaremos tus datos y experiencia.</li>
-                            <li><strong>Notificación:</strong> Te contactaremos por email con la decisión.</li>
-                            <li><strong>Credenciales:</strong> Si eres aprobado, recibirás tus credenciales de acceso.</li>
-                        </ol>
+                        <h3 style="margin-top: 0; color: #A50034; font-size: 18px; margin-bottom: 20px;">�️ Próximos Pasos</h3>
+                        <div class="steps">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div><strong>Revisión:</strong> Evaluaremos tu perfil en 24-48 horas.</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div><strong>Validación:</strong> Verificaremos tus antecedentes y certificaciones.</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div><strong>Respuesta:</strong> Te enviaremos un email con la decisión final.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="info-box" style="background: #fef3c7; border-left-color: #f59e0b;">
-                        <p style="margin: 0;"><strong>⏰ Tiempo de Respuesta:</strong> 24-48 horas hábiles</p>
+                    <div class="contact-box">
+                        <p style="margin-bottom: 5px;"><strong>¿Tienes alguna pregunta?</strong></p>
+                        <p style="margin: 5px 0;">Email: <a href="mailto:soporte@somostecnicos.com" style="color: #A50034; text-decoration: none;">soporte@somostecnicos.com</a></p>
+                        <p style="margin: 5px 0;">Teléfono: <strong>(+57) 3003094854</strong></p>
                     </div>
-
-                    <p><strong>📞 ¿Preguntas?</strong><br>
-                    Si tienes alguna duda, contáctanos:<br>
-                    Email: <strong>rrhh@somostecnicos.com</strong><br>
-                    Teléfono: <strong>(+57) 300 123 4567</strong></p>
-
-                    <p style="color: #666; font-size: 14px; margin-top: 30px;">
-                        Gracias por tu interés en formar parte de SomosTécnicos.
-                    </p>
                 </div>
 
                 <div class="footer">
-                    <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
-                    <p>Este es un email automático, no responder directamente.</p>
+                    <p>© 2026 SomosTécnicos - Red de Profesionales</p>
+                    <p>Bogotá, Colombia</p>
                 </div>
             </div>
         </body>
@@ -353,6 +370,106 @@ export async function sendTechnicianApplicationReceivedEmail(
     }
   } catch (error: any) {
     console.error('Error enviando confirmación de solicitud:', error)
+    return {
+      success: false,
+      error: error?.body?.message || error.message || 'Error desconocido'
+    }
+  }
+}
+
+/**
+ * Envía email de aprobación de solicitud de técnico
+ */
+export async function sendTechnicianApprovedEmail(
+  technicianEmail: string,
+  technicianName: string,
+  username: string,
+  tempPassword: string
+): Promise<NotificationResult> {
+  try {
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = '🎉 Solicitud Aprobada - Bienvenido a SomosTécnicos'
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: technicianEmail, name: technicianName }]
+    sendSmtpEmail.htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Solicitud Aprobada - SomosTécnicos</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+                .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
+                .header-icon { font-size: 40px; margin-bottom: 10px; }
+                .content { padding: 40px 30px; }
+                .credentials-card { background: #f3f4f6; padding: 25px; margin: 20px 0; border-radius: 8px; border: 1px solid #e5e7eb; border-left: 4px solid #A50034; }
+                .warning-card { background: #fffbeb; padding: 15px; margin: 20px 0; border-radius: 8px; border: 1px solid #fcd34d; color: #92400e; font-size: 14px; }
+                .step-list { margin: 0; padding: 0; list-style: none; }
+                .step-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
+                .step-list li:before { content: "✓"; color: #A50034; position: absolute; left: 0; font-weight: bold; }
+                .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
+                .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="header-icon">🎉</div>
+                    <h1 style="margin: 0; font-size: 24px;">Confirmación de Aprobación</h1>
+                    <p style="margin: 5px 0 0 0; opacity: 0.9;">¡Bienvenido al Equipo de SomosTécnicos!</p>
+                </div>
+
+                <div class="content">
+                    <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${technicianName},</h2>
+                    <p>Nos complace informarte que tu solicitud para unirte a <strong>SomosTécnicos</strong> ha sido aprobada exitosamente.</p>
+
+                    <p>A partir de ahora eres parte de nuestra red de profesionales de confianza.</p>
+
+                    <div class="credentials-card">
+                        <h3 style="margin-top: 0; color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">🔑 Tus Credenciales de Acceso</h3>
+                        <p style="margin: 10px 0 5px;"><strong>Usuario / Email:</strong></p>
+                        <p style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin: 0;">${username}</p>
+
+                        <p style="margin: 15px 0 5px;"><strong>Contraseña Temporal:</strong></p>
+                        <p style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin: 0; font-family: monospace; font-size: 16px;">${tempPassword}</p>
+                    </div>
+
+                    <div class="warning-card">
+                        <strong>⚠️ Importante:</strong> Por motivos de seguridad, el sistema te pedirá cambiar tu contraseña al iniciar sesión por primera vez.
+                    </div>
+
+                    <h3 style="color: #A50034;">🚀 Próximos Pasos</h3>
+                    <ul class="step-list">
+                        <li>Ingresa al panel de técnicos con tus credenciales.</li>
+                        <li>Configura tu disponibilidad en el calendario.</li>
+                        <li>Mantente atento a las notificaciones de nuevos servicios en tu zona.</li>
+                    </ul>
+
+                    <div style="text-align: center;">
+                        <a href="${APP_URL}/login" class="button">
+                            Iniciar Sesión en el Portal
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <p>© 2026 SomosTécnicos - Red de Profesionales</p>
+                    <p>Si tienes problemas para acceder, contacta a soporte@somostecnicos.com</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
+
+    return {
+      success: true,
+      messageId: result.body.messageId
+    }
+  } catch (error: any) {
+    console.error('Error enviando email de aprobación:', error)
     return {
       success: false,
       error: error?.body?.message || error.message || 'Error desconocido'
@@ -391,90 +508,81 @@ export async function sendNewTechnicianApplicationNotification(
             <meta charset="utf-8">
             <title>Nueva Solicitud de Técnico</title>
             <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-                .content { padding: 30px; background: #f9fafb; border-radius: 0 0 8px 8px; }
-                .applicant-info { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
-                .info-row { display: flex; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
-                .info-label { font-weight: bold; width: 150px; color: #6b7280; }
-                .info-value { flex: 1; color: #111827; }
-                .button { background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
-                .alert { background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 6px; margin: 20px 0; }
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+                .header { background: #111827; color: white; padding: 25px; text-align: center; }
+                .content { padding: 30px; }
+                .data-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin: 20px 0; }
+                .data-row { display: flex; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; }
+                .data-row:last-child { border-bottom: none; }
+                .data-label { width: 140px; font-weight: bold; color: #666; }
+                .data-value { flex: 1; color: #333; }
+                .section-title { color: #A50034; border-bottom: 2px solid #A50034; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; font-size: 16px; }
+                .button { background: #A50034; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 10px; }
+                .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; background: #f4f4f4; }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <h1 style="margin: 0;">🆕 Nueva Solicitud de Técnico</h1>
-                    <p style="margin: 10px 0 0 0;">Requiere Revisión y Aprobación</p>
+                    <h1 style="margin: 0; font-size: 22px;">Nueva Solicitud Recibida</h1>
+                    <p style="margin: 5px 0 0 0; color: #9ca3af; font-size: 14px;">Panel Administrativo SomosTécnicos</p>
                 </div>
 
                 <div class="content">
-                    <div class="alert">
-                        <strong>⚠️ Acción Requerida:</strong> Una nueva solicitud de técnico ha sido recibida y está pendiente de revisión.
+                    <p><strong>Atención Admin:</strong> Se ha registrado una nueva postulación para técnico.</p>
+
+                    <h3 class="section-title">👤 Información del Solicitante</h3>
+                    <div class="data-card">
+                        <div class="data-row">
+                            <span class="data-label">Nombre:</span>
+                            <span class="data-value">${applicationData.nombre} ${applicationData.apellido}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Cédula:</span>
+                            <span class="data-value">${applicationData.cedula}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Email:</span>
+                            <span class="data-value"><a href="mailto:${applicationData.email}">${applicationData.email}</a></span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Teléfono:</span>
+                            <span class="data-value">${applicationData.telefono}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Ciudad:</span>
+                            <span class="data-value">${applicationData.ciudad}</span>
+                        </div>
                     </div>
 
-                    <div class="applicant-info">
-                        <h3 style="margin-top: 0; color: #dc2626;">👤 Datos del Solicitante</h3>
-
-                        <div class="info-row">
-                            <div class="info-label">Nombre Completo:</div>
-                            <div class="info-value">${applicationData.nombre} ${applicationData.apellido}</div>
+                    <h3 class="section-title">🛠️ Perfil Profesional</h3>
+                    <div class="data-card">
+                        <div class="data-row">
+                            <span class="data-label">Especialidades:</span>
+                            <span class="data-value">${especialidadesText}</span>
                         </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Cédula:</div>
-                            <div class="info-value">${applicationData.cedula}</div>
+                        <div class="data-row">
+                            <span class="data-label">Zona Preferida:</span>
+                            <span class="data-value">${applicationData.zonaPreferida}</span>
                         </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Email:</div>
-                            <div class="info-value">${applicationData.email}</div>
-                        </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Teléfono:</div>
-                            <div class="info-value">${applicationData.telefono}</div>
-                        </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Ciudad:</div>
-                            <div class="info-value">${applicationData.ciudad}</div>
-                        </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Zona Preferida:</div>
-                            <div class="info-value">${applicationData.zonaPreferida}</div>
-                        </div>
-
-                        <div class="info-row">
-                            <div class="info-label">Especialidades:</div>
-                            <div class="info-value">${especialidadesText}</div>
-                        </div>
-
                         ${applicationData.experienciaAnios ? `
-                        <div class="info-row">
-                            <div class="info-label">Experiencia:</div>
-                            <div class="info-value">${applicationData.experienciaAnios} años</div>
+                        <div class="data-row">
+                            <span class="data-label">Experiencia:</span>
+                            <span class="data-value">${applicationData.experienciaAnios} Años</span>
                         </div>
                         ` : ''}
                     </div>
 
-                    <div style="text-align: center;">
+                    <div style="text-align: center; margin-top: 30px;">
                         <a href="${APP_URL}/admin/applications" class="button">
-                            📋 Revisar Solicitud en el Panel
+                            Revisar en el Panel
                         </a>
                     </div>
-
-                    <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                        <strong>Nota:</strong> Por favor revisa esta solicitud lo antes posible. El solicitante está esperando una respuesta.
-                    </p>
                 </div>
 
                 <div class="footer">
-                    <p>© 2026 SomosTécnicos - Sistema de Gestión de Técnicos</p>
+                    <p>© 2026 Admin Panel - SomosTécnicos</p>
                 </div>
             </div>
         </body>
