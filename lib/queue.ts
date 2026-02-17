@@ -17,7 +17,7 @@ export interface EmailJob {
 }
 
 export interface NotificationJob {
-  type: 'notification' 
+  type: 'notification'
   userId: string
   title: string
   message: string
@@ -66,7 +66,7 @@ class QueueManager {
     this.queues.set('high', [])
     this.queues.set('medium', [])
     this.queues.set('low', [])
-    
+
     // Procesador en background
     this.startProcessor()
   }
@@ -136,7 +136,7 @@ class QueueManager {
   private async processJob(job: QueuedJob) {
     try {
       logger.info(`Processing job: ${job.id} (${job.type})`)
-      
+
       switch (job.type) {
         case 'email':
           await this.processEmailJob(job as EmailJob)
@@ -157,7 +157,7 @@ class QueueManager {
       logger.info(`Job completed: ${job.id}`)
     } catch (error) {
       job.attempts++
-      
+
       if (job.attempts < QUEUE_CONFIG.maxRetries) {
         // Reencolar con backoff exponencial
         const delay = Math.pow(2, job.attempts) * 1000 // 2^attempts * 1000ms
@@ -185,27 +185,100 @@ class QueueManager {
    * Procesadores específicos por tipo de job
    */
   private async processEmailJob(job: EmailJob): Promise<void> {
-    // TODO: Integrar con servicio de email (Brevo, SendGrid, etc.)
-    logger.info(`Sending email to ${job.to}: ${job.subject}`)
-    
-    // Simulación de envío de email
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // Aquí iría la integración real:
-    // await emailService.send({
-    //   to: job.to,
-    //   subject: job.subject,
-    //   template: job.template,
-    //   data: job.data
-    // })
+    try {
+      const { sendNewOrderEmail, sendStatusUpdateEmail, sendTechnicianAssignmentEmail, sendCustomerAssignmentEmail, sendTechnicianApplicationReceivedEmail, sendTechnicianApprovedEmail, sendNewTechnicianApplicationNotification, sendSimpleEmail } = await import('./email')
+
+      logger.info(`Sending email to ${job.to}: ${job.subject} [Template: ${job.template}]`)
+
+      let result;
+
+      switch (job.template) {
+        case 'technician-assignment':
+          result = await sendTechnicianAssignmentEmail({
+             technicianName: job.data.technicianName,
+             technicianEmail: job.to, // Assuming job.to is the technician email
+             orderNumber: job.data.orderNumber,
+             customerName: job.data.customerName,
+             address: job.data.address,
+             appliance: job.data.appliance,
+             scheduledDate: job.data.scheduledDate,
+             notes: job.data.notes
+          });
+          break;
+        case 'customer-technician-assigned':
+          result = await sendCustomerAssignmentEmail({
+            customerName: job.data.customerName,
+            customerEmail: job.to,
+            orderNumber: job.data.orderNumber,
+            technicianName: job.data.technicianName,
+            technicianPhone: job.data.technicianPhone,
+            appliance: job.data.appliance,
+            scheduledDate: job.data.scheduledDate
+          });
+          break;
+        case 'new-order':
+          result = await sendNewOrderEmail({
+              orderNumber: job.data.orderNumber,
+              customerName: job.data.customerName,
+              customerEmail: job.to,
+              customerPhone: job.data.customerPhone || '',
+              serviceType: job.data.serviceType || '',
+              applianceType: job.data.applianceType || '',
+              description: job.data.description || '',
+              address: job.data.address || '',
+              preferredDate: job.data.preferredDate || '',
+              status: 'pendiente'
+          });
+          break;
+        case 'status-update':
+          result = await sendStatusUpdateEmail({
+              orderNumber: job.data.orderNumber,
+              customerName: job.data.customerName,
+              customerEmail: job.to,
+              status: job.data.newStatus,
+              // Required fields for type safety, even if unused in this specific template logic
+              customerPhone: '',
+              serviceType: '',
+              applianceType: '',
+              description: '',
+              address: '',
+              preferredDate: '',
+              notes: job.data.notes,
+              technicianName: job.data.technicianName,
+              technicianPhone: job.data.technicianPhone
+          });
+          break;
+        case 'technician-application-received':
+            result = await sendTechnicianApplicationReceivedEmail(job.to, job.data.applicantName);
+            break;
+        case 'technician-approved':
+            result = await sendTechnicianApprovedEmail(job.to, job.data.technicianName, job.data.username, job.data.tempPassword);
+            break;
+        case 'new-technician-application-notification':
+            result = await sendNewTechnicianApplicationNotification(job.to, job.data.applicationData);
+            break;
+        default:
+          // Fallback generic email
+          result = await sendSimpleEmail(job.to, job.subject, JSON.stringify(job.data, null, 2));
+      }
+
+      if (!result.success) {
+          throw new Error(result.error);
+      }
+
+      logger.info(`Email sent successfully: ${result.messageId}`);
+    } catch (error) {
+       console.error('Failed to process email job', error);
+       throw error;
+    }
   }
 
   private async processNotificationJob(job: NotificationJob): Promise<void> {
     logger.info(`Sending notification to user ${job.userId}: ${job.title}`)
-    
+
     // Simulación de notificación push
     await new Promise(resolve => setTimeout(resolve, 300))
-    
+
     // Aquí iría la integración real:
     // await notificationService.send({
     //   userId: job.userId,
@@ -217,10 +290,10 @@ class QueueManager {
 
   private async processPDFJob(job: PDFJob): Promise<void> {
     logger.info(`Generating PDF for order ${job.orderId}`)
-    
+
     // Simulación de generación de PDF
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     // Aquí iría la generación real:
     // await pdfService.generate({
     //   orderId: job.orderId,

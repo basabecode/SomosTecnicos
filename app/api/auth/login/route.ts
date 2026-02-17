@@ -107,7 +107,10 @@ export async function POST(request: NextRequest) {
         nombre: user.nombre,
         apellido: user.apellido,
         role: user.role || user.userType,
-        activo: user.activo
+        activo: user.activo,
+        telefono: user.telefono,
+        direccion: user.direccion,
+        ciudad: user.ciudad
       },
       accessToken,
       refreshToken,

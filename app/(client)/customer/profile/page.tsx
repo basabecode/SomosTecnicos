@@ -36,8 +36,9 @@ export default function CustomerProfile() {
     nombre: user?.nombre || '',
     apellido: user?.apellido || '',
     email: user?.email || '',
-    phone: (user as any)?.phone || '+57 300 123 4567',
-    address: (user as any)?.address || 'Calle 123 #45-67, Bogotá',
+    telefono: user?.telefono || '',
+    direccion: user?.direccion || '',
+    ciudad: user?.ciudad || '',
   })
 
   const handleInputChange = (field: string, value: string) => {
@@ -58,8 +59,9 @@ export default function CustomerProfile() {
       nombre: user?.nombre || '',
       apellido: user?.apellido || '',
       email: user?.email || '',
-      phone: (user as any)?.phone || '+57 300 123 4567',
-      address: (user as any)?.address || 'Calle 123 #45-67, Bogotá',
+      telefono: user?.telefono || '',
+      direccion: user?.direccion || '',
+      ciudad: user?.ciudad || '',
     })
     setIsEditing(false)
   }
@@ -167,23 +169,33 @@ export default function CustomerProfile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Teléfono</Label>
+                <Label htmlFor="telefono">Teléfono</Label>
                 <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={e => handleInputChange('phone', e.target.value)}
+                  id="telefono"
+                  value={formData.telefono}
+                  onChange={e => handleInputChange('telefono', e.target.value)}
                   disabled={!isEditing}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Dirección</Label>
+                <Label htmlFor="direccion">Dirección</Label>
                 <Textarea
-                  id="address"
-                  value={formData.address}
-                  onChange={e => handleInputChange('address', e.target.value)}
+                  id="direccion"
+                  value={formData.direccion}
+                  onChange={e => handleInputChange('direccion', e.target.value)}
                   disabled={!isEditing}
                   rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ciudad">Ciudad</Label>
+                <Input
+                  id="ciudad"
+                  value={formData.ciudad}
+                  onChange={e => handleInputChange('ciudad', e.target.value)}
+                  disabled={!isEditing}
                 />
               </div>
 
@@ -288,11 +300,11 @@ export default function CustomerProfile() {
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Phone className="h-4 w-4 text-gray-600" />
-                <span>{formData.phone}</span>
+                <span>{formData.telefono}</span>
               </div>
               <div className="flex items-start gap-3 text-sm">
                 <MapPin className="h-4 w-4 text-gray-600 mt-0.5" />
-                <span>{formData.address}</span>
+                <span>{formData.direccion}, {formData.ciudad}</span>
               </div>
             </CardContent>
           </Card>

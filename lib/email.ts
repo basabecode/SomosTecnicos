@@ -605,6 +605,145 @@ export async function sendNewTechnicianApplicationNotification(
 }
 
 /**
+ * Envía email al técnico con los detalles de la asignación
+ */
+export async function sendTechnicianAssignmentEmail(data: {
+  technicianName: string
+  technicianEmail: string
+  orderNumber: string
+  customerName: string
+  address: string
+  appliance: string
+  scheduledDate?: string | null
+  notes?: string
+}): Promise<NotificationResult> {
+  try {
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = `🔔 Nueva Asignación - Orden ${data.orderNumber}`
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: data.technicianEmail, name: data.technicianName }]
+
+    sendSmtpEmail.htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <style>
+              body { font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; }
+              .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; border-top: 5px solid #A50034; }
+              .header { text-align: center; margin-bottom: 20px; }
+              .details { background-color: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #eee; }
+              .label { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; }
+              .value { margin-bottom: 10px; font-size: 16px; }
+              .button { display: inline-block; background-color: #A50034; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin-top: 20px; text-align: center; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="header">
+                  <h2>Nueva Orden Asignada</h2>
+                  <p>Hola ${data.technicianName}, se te ha asignado un nuevo servicio.</p>
+              </div>
+
+              <div class="details">
+                  <div class="label">Orden</div>
+                  <div class="value">#${data.orderNumber}</div>
+
+                  <div class="label">Cliente</div>
+                  <div class="value">${data.customerName}</div>
+
+                  <div class="label">Dirección</div>
+                  <div class="value">${data.address}</div>
+
+                  <div class="label">Equipo</div>
+                  <div class="value">${data.appliance}</div>
+
+                  <div class="label">Fecha Programada</div>
+                  <div class="value">${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</div>
+
+                  ${data.notes ? `
+                  <div class="label">Notas Internas</div>
+                  <div class="value">${data.notes}</div>
+                  ` : ''}
+              </div>
+
+              <div style="text-align: center;">
+                  <a href="${APP_URL}/technician/orders/${data.orderNumber}" class="button">Ver Detalles</a>
+              </div>
+          </div>
+      </body>
+      </html>
+    `
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
+    return { success: true, messageId: result.body.messageId }
+  } catch (error: any) {
+    console.error('Error enviando email al técnico:', error)
+    return { success: false, error: error?.message || 'Error desconocido' }
+  }
+}
+
+/**
+ * Envía email al cliente informando que un técnico ha sido asignado
+ */
+export async function sendCustomerAssignmentEmail(data: {
+  customerName: string
+  customerEmail: string
+  orderNumber: string
+  technicianName: string
+  technicianPhone: string
+  scheduledDate?: string | null
+  appliance: string
+}): Promise<NotificationResult> {
+  try {
+    const sendSmtpEmail = new brevo.SendSmtpEmail()
+    sendSmtpEmail.subject = `👨‍🔧 Técnico Asignado - Orden ${data.orderNumber}`
+    sendSmtpEmail.sender = defaultSender
+    sendSmtpEmail.to = [{ email: data.customerEmail, name: data.customerName }]
+
+    sendSmtpEmail.htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <style>
+              body { font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; }
+              .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; border-top: 5px solid #A50034; }
+              .header { text-align: center; margin-bottom: 20px; }
+              .technician-card { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="header">
+                  <h2>¡Técnico en Camino!</h2>
+                  <p>Hola ${data.customerName}, hemos asignado un profesional para revisar tu ${data.appliance}.</p>
+              </div>
+
+              <div class="technician-card">
+                  <h3>Datos del Técnico</h3>
+                  <p><strong>Nombre:</strong> ${data.technicianName}</p>
+                  <p><strong>Teléfono:</strong> ${data.technicianPhone}</p>
+                  <p><strong>Fecha Programada:</strong> ${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</p>
+              </div>
+
+              <p style="text-align: center; font-size: 14px; color: #666;">
+                  Si tienes alguna duda, puedes contactar directamente al técnico o a nuestro soporte.
+              </p>
+          </div>
+      </body>
+      </html>
+    `
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
+    return { success: true, messageId: result.body.messageId }
+  } catch (error: any) {
+    console.error('Error enviando email al cliente:', error)
+    return { success: false, error: error?.message || 'Error desconocido' }
+  }
+}
+
+/**
  * Valida configuración de email
  */
 export function validateEmailConfig(): { isValid: boolean; errors: string[] } {

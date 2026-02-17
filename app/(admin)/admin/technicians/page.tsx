@@ -66,7 +66,7 @@ interface Technician {
   nombre: string
   telefono: string
   email: string
-  ciudad: string
+  zonaTrabajoArea: string
   especialidades: string[]
   disponible: boolean
   estado: 'activo' | 'inactivo' | 'ocupado' | 'descanso'
@@ -279,7 +279,7 @@ export default function TechniciansPage() {
     return stars
   }
 
-  const cities = Array.from(new Set(technicians.map(t => t.ciudad)))
+  const cities = Array.from(new Set(technicians.map(t => t.zonaTrabajoArea)))
 
   return (
     <ProtectedRoute
@@ -482,7 +482,7 @@ export default function TechniciansPage() {
                               </div>
                               <div className="text-sm text-muted-foreground flex items-center">
                                 <MapPin className="mr-1 h-3 w-3" />
-                                {technician.ciudad}
+                                {technician.zonaTrabajoArea}
                               </div>
                             </div>
                           </TableCell>

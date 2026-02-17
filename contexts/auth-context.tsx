@@ -23,6 +23,7 @@ interface User {
   activo: boolean
   telefono?: string
   direccion?: string
+  ciudad?: string
 }
 
 interface AuthContextType {

@@ -50,6 +50,7 @@ interface Order {
   costoEstimado?: number
   costoFinal?: number
   assignments: {
+    estado: string
     technician: {
       nombre: string
       telefono: string
@@ -228,7 +229,8 @@ export default function CustomerDashboard() {
               ) : (
                 <div className="space-y-6">
                   {activeServices.map(service => {
-                    const technician = service.assignments[0]?.technician
+                    const activeAssignment = service.assignments.find(a => ['asignado', 'en_proceso', 'completado'].includes(a.estado as any)) || service.assignments[0]
+                    const technician = activeAssignment?.technician
 
                     // Mapear estado a paso del timeline
                     const currentStep = service.estado === 'pendiente' ? 'pendiente' :

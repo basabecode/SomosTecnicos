@@ -188,7 +188,7 @@ import { useToast } from '@/hooks/use-toast'
             telefono: user?.telefono || '',
             email: user?.email || '',
             direccion: user?.direccion || '',
-            ciudad: 'Bogotá',
+            ciudad: user?.ciudad || '',
             customerId: user?.id,
 
             // Información del Electrodoméstico y Servicio
@@ -504,6 +504,12 @@ import { useToast } from '@/hooks/use-toast'
                   <Label>Dirección</Label>
                   <p className="text-sm font-medium mt-1">
                     {user?.direccion || 'No registrada'}
+                  </p>
+                </div>
+                <div>
+                  <Label>Ciudad</Label>
+                  <p className="text-sm font-medium mt-1">
+                    {user?.ciudad || 'No registrada'}
                   </p>
                 </div>
                 <Button variant="outline" size="sm" className="w-full">

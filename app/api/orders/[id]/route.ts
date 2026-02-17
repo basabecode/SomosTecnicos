@@ -282,18 +282,6 @@ export async function DELETE(
       })
     })
 
-    // Crear registro de auditoría
-    await prisma.orderHistory.create({
-      data: {
-        orderId: id,
-        estadoAnterior: existingOrder.estado,
-        estadoNuevo: ORDER_STATES.CANCELADO,
-        notas: `Orden eliminada por ${user.nombre}`,
-        changedBy: 'admin',
-        changedById: user.id.toString()
-      }
-    })
-
     return NextResponse.json({
       success: true,
       message: 'Orden eliminada exitosamente'

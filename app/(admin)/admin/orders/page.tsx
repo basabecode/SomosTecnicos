@@ -54,6 +54,7 @@ import {
   MapPin,
   Calendar,
 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface Order {
   id: string
@@ -68,12 +69,13 @@ interface Order {
   estado: string
   urgencia: string
   createdAt: string
-  assignment?: {
+  assignments: {
+    estado: string // Ensure we can access this
     technician: {
       id: number
       nombre: string
     }
-  }
+  }[]
   costoEstimado?: number
   costoFinal?: number
 }
@@ -180,6 +182,7 @@ export default function OrdersPage() {
             estado: 'pendiente',
             urgencia: 'alta',
             createdAt: new Date().toISOString(),
+            assignments: [],
             costoEstimado: 150000,
           },
           {
@@ -195,12 +198,13 @@ export default function OrdersPage() {
             estado: 'en_proceso',
             urgencia: 'media',
             createdAt: new Date(Date.now() - 3600000).toISOString(),
-            assignment: {
+            assignments: [{
+              estado: 'asignado',
               technician: {
                 id: 1,
                 nombre: 'Juan Pérez',
               },
-            },
+            }],
             costoEstimado: 120000,
           },
           {
@@ -216,12 +220,13 @@ export default function OrdersPage() {
             estado: 'completado',
             urgencia: 'baja',
             createdAt: new Date(Date.now() - 7200000).toISOString(),
-            assignment: {
+            assignments: [{
+              estado: 'completado',
               technician: {
                 id: 2,
                 nombre: 'María García',
               },
-            },
+            }],
             costoEstimado: 200000,
             costoFinal: 180000,
           },
@@ -254,6 +259,46 @@ export default function OrdersPage() {
       hour: '2-digit',
       minute: '2-digit',
     })
+  }
+
+  const { toast } = useToast()
+
+  const handleDelete = async (orderId: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta orden? Esta acción no se puede deshacer.')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        toast({
+          title: 'Orden eliminada',
+          description: 'La orden ha sido eliminada exitosamente.',
+        })
+        fetchOrders() // Recargar la lista
+      } else {
+        const data = await response.json()
+        toast({
+          title: 'Error',
+          description: data.error || 'No se pudo eliminar la orden.',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error)
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al intentar eliminar la orden.',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (
@@ -433,18 +478,22 @@ export default function OrdersPage() {
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              {order.assignment ? (
+                              {(() => {
+                                const activeAssignment = order.assignments?.find(a => ['asignado', 'en_proceso'].includes(order.estado)) || order.assignments?.[0];
+                                const tech = activeAssignment?.technician;
+                                return tech ? (
                                 <div className="flex items-center">
                                   <User className="mr-1 h-3 w-3" />
                                   <span className="text-sm">
-                                    {order.assignment.technician.nombre}
+                                    {tech.nombre}
                                   </span>
                                 </div>
                               ) : (
                                 <span className="text-sm text-muted-foreground">
                                   Sin asignar
                                 </span>
-                              )}
+                              )
+                              })()}
                             </TableCell>
                             <TableCell>
                               <div className="text-sm">
@@ -490,7 +539,7 @@ export default function OrdersPage() {
                                       Editar
                                     </Link>
                                   </DropdownMenuItem>
-                                  {order.estado === 'pendiente' && (
+                                  {['pendiente', 'asignado', 'en_proceso'].includes(order.estado) && (
                                     <>
                                       <DropdownMenuSeparator />
                                       <DropdownMenuItem asChild>
@@ -498,13 +547,16 @@ export default function OrdersPage() {
                                           href={`/admin/orders/${order.id}/assign`}
                                         >
                                           <User className="mr-2 h-4 w-4" />
-                                          Asignar Técnico
+                                          {order.estado === 'pendiente' ? 'Asignar Técnico' : 'Cambiar Técnico'}
                                         </Link>
                                       </DropdownMenuItem>
                                     </>
                                   )}
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="text-red-600">
+                                  <DropdownMenuItem
+                                    className="text-red-600 cursor-pointer"
+                                    onClick={() => handleDelete(order.id)}
+                                  >
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     Eliminar
                                   </DropdownMenuItem>
@@ -558,6 +610,14 @@ export default function OrdersPage() {
                                     Editar
                                 </Link>
                                 </DropdownMenuItem>
+                                {['pendiente', 'asignado', 'en_proceso'].includes(order.estado) && (
+                                    <DropdownMenuItem asChild>
+                                    <Link href={`/admin/orders/${order.id}/assign`}>
+                                        <User className="mr-2 h-4 w-4" />
+                                        {order.estado === 'pendiente' ? 'Asignar Técnico' : 'Cambiar Técnico'}
+                                    </Link>
+                                    </DropdownMenuItem>
+                                )}
                             </DropdownMenuContent>
                          </DropdownMenu>
                       </div>
@@ -584,12 +644,16 @@ export default function OrdersPage() {
                              <MapPin className="w-4 h-4 ml-0.5" />
                              <span className="text-xs">{order.direccion}, {order.ciudad}</span>
                           </div>
-                          {order.assignment && (
-                              <div className="flex items-center gap-2 text-blue-600 pt-1 border-t border-gray-100 mt-2">
-                                  <User className="w-4 h-4 ml-0.5" />
-                                  <span className="text-xs font-medium">Téc: {order.assignment.technician.nombre}</span>
-                              </div>
-                          )}
+                          {(() => {
+                              const activeAssignment = order.assignments?.find(a => ['asignado', 'en_proceso'].includes(order.estado)) || order.assignments?.[0];
+                              const tech = activeAssignment?.technician;
+                              return tech ? (
+                                <div className="flex items-center gap-2 text-blue-600 pt-1 border-t border-gray-100 mt-2">
+                                    <User className="w-4 h-4 ml-0.5" />
+                                    <span className="text-xs font-medium">Téc: {tech.nombre}</span>
+                                </div>
+                              ) : null
+                          })()}
                       </div>
 
                       <Button asChild className="w-full bg-[#A50034] hover:bg-[#8B0028] text-white" size="default">

@@ -16,7 +16,8 @@ const assignTechnicianSchema = z.object({
   technicianId: z.number().int().positive('ID de técnico inválido'),
   fechaProgramada: z.string().datetime().optional(),
   notasAsignacion: z.string().max(500).optional(),
-  tiempoEstimado: z.number().int().positive().optional()
+  tiempoEstimado: z.number().int().positive().optional(),
+  reassign: z.boolean().optional()
 })
 
 // =============================================
@@ -60,17 +61,20 @@ export async function POST(
       )
     }
 
-    const { technicianId, fechaProgramada, notasAsignacion, tiempoEstimado } = validation.data
+    const { technicianId, fechaProgramada, notasAsignacion, tiempoEstimado, reassign } = validation.data
 
     // Usar transacción con aislamiento serializable para evitar race conditions
     const result = await prisma.$transaction(async (tx) => {
-      // ✅ DENTRO DE TRANSACCIÓN: Verificar que la orden existe y no está asignada
+      // ✅ DENTRO DE TRANSACCIÓN: Verificar que la orden existe y buscar asignaciones activas
       const existingOrder = await tx.order.findUnique({
         where: { id: orderId },
         include: {
           assignments: {
             where: {
               estado: { in: ['asignado', 'en_proceso'] }
+            },
+            include: {
+                technician: true
             }
           }
         }
@@ -80,12 +84,50 @@ export async function POST(
         throw new Error('ORDEN_NO_ENCONTRADA')
       }
 
-      // Verificar que la orden no esté ya asignada (protegido por transacción)
+      // Lógica de Reasignación
+      let oldTechnician = null;
       if (existingOrder.assignments.length > 0) {
-        throw new Error('ORDEN_YA_ASIGNADA')
+        if (!reassign) {
+             throw new Error('ORDEN_YA_ASIGNADA')
+        }
+
+        // Procesar reasignación
+        const currentAssignment = existingOrder.assignments[0];
+        oldTechnician = currentAssignment.technician;
+
+        // 1. Marcar asignación anterior como reasignada/cancelada
+        await tx.assignment.update({
+            where: { id: currentAssignment.id },
+            data: {
+                estado: 'reasignado', // O 'cancelado' si no existe el estado 'reasignado' en el enum
+                updatedAt: new Date()
+            }
+        });
+
+        // 2. Liberar al técnico anterior
+        await tx.technician.update({
+            where: { id: oldTechnician.id },
+            data: {
+                disponible: true,
+                updatedAt: new Date()
+            }
+        });
+
+        // 3. Registrar en historial
+         await tx.orderHistory.create({
+            data: {
+              orderId,
+              estadoAnterior: existingOrder.estado,
+              estadoNuevo: 'asignado', // Se mantiene igual o cambia momentaneamente
+              notas: `Reasignación: Técnico ${oldTechnician.nombre} removido.`,
+              changedBy: 'admin',
+              changedById: user.id.toString()
+            }
+          })
       }
 
-      // ✅ DENTRO DE TRANSACCIÓN: Verificar que el técnico existe y está disponible
+
+      // ✅ DENTRO DE TRANSACCIÓN: Verificar que el NUEVO técnico existe y está disponible
       const technician = await tx.technician.findUnique({
         where: { id: technicianId },
         include: {
@@ -109,7 +151,8 @@ export async function POST(
       if (technician.assignments.length > 0) {
         throw new Error('TECNICO_YA_ASIGNADO')
       }
-      // Crear la asignación
+
+      // Crear la NUEVA asignación
       const assignment = await tx.assignment.create({
         data: {
           orderId,
@@ -128,6 +171,7 @@ export async function POST(
               id: true,
               nombre: true,
               telefono: true,
+              email: true, // Asegurar que traemos email
               especialidades: true
             }
           },
@@ -136,6 +180,8 @@ export async function POST(
               id: true,
               orderNumber: true,
               nombre: true,
+              email: true, // Asegurar que traemos email
+              direccion: true,
               tipoElectrodomestico: true,
               ciudad: true
             }
@@ -143,7 +189,7 @@ export async function POST(
         }
       })
 
-      // Actualizar estado de la orden
+      // Actualizar estado de la orden (confirmar asignado)
       await tx.order.update({
         where: { id: orderId },
         data: {
@@ -152,7 +198,7 @@ export async function POST(
         }
       })
 
-      // Marcar técnico como no disponible
+      // Marcar NUEVO técnico como no disponible
       await tx.technician.update({
         where: { id: technicianId },
         data: {
@@ -161,7 +207,7 @@ export async function POST(
         }
       })
 
-      // Crear registro de historial
+      // Crear registro de historial para la nueva asignación
       await tx.orderHistory.create({
         data: {
           orderId,
@@ -173,16 +219,16 @@ export async function POST(
         }
       })
 
-      return { assignment, existingOrder, technician }
+      return { assignment, existingOrder, technician, oldTechnician }
     }, {
       isolationLevel: 'Serializable' // Máximo nivel de aislamiento para evitar race conditions
     })
 
     // ✅ Notificaciones asíncronas (no bloquean la respuesta)
     try {
-      // Email al técnico con detalles de la asignación
+      // Email al NUEVO técnico con detalles de la asignación
       await enqueueEmail({
-        to: result.technician.email || `${result.technician.telefono}@sms.provider.com`, // Fallback a SMS
+        to: result.technician.email || 'soporte@somostecnicos.com', // Fallback
         subject: `Nueva Asignación - Orden #${result.existingOrder.orderNumber}`,
         template: 'technician-assignment',
         data: {
@@ -195,6 +241,21 @@ export async function POST(
           notes: result.assignment.notasAsignacion
         }
       }, 'high')
+
+      // Si hubo reasignación, notificar al técnico anterior (Opcional, pero recomendado)
+      if (result.oldTechnician && result.oldTechnician.email) {
+          await enqueueEmail({
+            to: result.oldTechnician.email,
+            subject: `Asignación Cancelada - Orden #${result.existingOrder.orderNumber}`,
+            template: 'status-update', // Reusing status update or creating a specific one
+            data: {
+                orderNumber: result.existingOrder.orderNumber,
+                customerName: result.existingOrder.nombre, // Not really needed for tech but template asks
+                newStatus: 'reasignado (cancelado para usted)',
+                notes: 'Esta orden ha sido reasignada a otro técnico.'
+            }
+          }, 'medium')
+      }
 
       // Notificación in-app al técnico
       await enqueueNotification({
@@ -221,14 +282,15 @@ export async function POST(
 
       // Audit log asíncrono
       await enqueueAudit({
-        action: 'technician_assignment',
+        action: reassign ? 'technician_reassignment' : 'technician_assignment',
         userId: result.technician.id.toString(),
         metadata: {
           orderId: result.existingOrder.id,
           orderNumber: result.existingOrder.orderNumber,
           technicianName: result.technician.nombre,
           assignedBy: user.id.toString(),
-          assignedAt: new Date().toISOString()
+          assignedAt: new Date().toISOString(),
+          reassign: !!reassign
         }
       }, 'low')
 
@@ -246,13 +308,13 @@ export async function POST(
 
       return NextResponse.json({
         success: true,
-        message: 'Técnico asignado exitosamente',
+        message: reassign ? 'Técnico reasignado exitosamente' : 'Técnico asignado exitosamente',
         data: result.assignment
       })
 
     } catch (error) {
       console.error('Error asignando técnico:', error)
-      
+
       // Manejo específico de errores de race conditions
       if (error instanceof Error) {
         switch (error.message) {
@@ -268,7 +330,7 @@ export async function POST(
             return NextResponse.json(
               {
                 success: false,
-                error: 'Esta orden ya tiene una asignación activa'
+                error: 'Esta orden ya tiene una asignación activa. Use la opción de reasignar.'
               },
               { status: 409 }
             )
@@ -298,11 +360,12 @@ export async function POST(
             )
         }
       }
-      
+
       return NextResponse.json(
         {
           success: false,
-          error: 'Error interno del servidor'
+          error: 'Error interno del servidor',
+          details: error instanceof Error ? error.message : String(error)
         },
         { status: 500 }
       )

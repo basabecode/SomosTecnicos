@@ -63,7 +63,7 @@ interface OrderDetail {
   descripcionProblema: string
   createdAt: string
   updatedAt: string
-  assignment?: {
+  assignments: {
     id: number
     assignedAt: string
     technician: {
@@ -72,7 +72,7 @@ interface OrderDetail {
       telefono: string
       especialidades: string[]
     }
-  }
+  }[]
   costoEstimado?: number
   costoFinal?: number
   fechaVisita?: string
@@ -192,7 +192,7 @@ export default function OrderDetailPage() {
             'La nevera no enfría correctamente. Hace ruidos extraños y se escucha como si el motor trabajara de más. El problema comenzó hace 3 días.',
           createdAt: new Date(Date.now() - 86400000).toISOString(),
           updatedAt: new Date().toISOString(),
-          assignment: {
+          assignments: [{
             id: 1,
             assignedAt: new Date(Date.now() - 43200000).toISOString(),
             technician: {
@@ -201,7 +201,7 @@ export default function OrderDetailPage() {
               telefono: '+573005551234',
               especialidades: ['nevera', 'lavadora', 'estufa'],
             },
-          },
+          }],
           costoEstimado: 180000,
           fechaVisita: '2024-01-15',
           horaVisita: '14:00',
@@ -542,59 +542,94 @@ export default function OrderDetailPage() {
           </Card>
 
           {/* Información del Técnico */}
-          {order.assignment && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <UserCheck className="mr-2 h-5 w-5" />
-                  Técnico Asignado
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Nombre
-                  </label>
-                  <p className="text-lg font-semibold">
-                    {order.assignment.technician.nombre}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Teléfono
-                  </label>
-                  <p className="flex items-center">
-                    <Phone className="mr-2 h-4 w-4" />
-                    {order.assignment.technician.telefono}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Especialidades
-                  </label>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {order.assignment.technician.especialidades.map(
-                      (especialidad, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="text-xs capitalize"
-                        >
-                          {especialidad}
-                        </Badge>
-                      )
-                    )}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="flex items-center text-lg font-semibold">
+                <UserCheck className="mr-2 h-5 w-5" />
+                Técnico Asignado
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild className="ml-auto bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary">
+                  <Link href={`/admin/orders/${order.id}/assign`}>
+                  {(() => {
+                    const activeAssignment = order.assignments?.find(a => ['asignado', 'en_proceso'].includes(order.estado)) || order.assignments?.[0];
+                    return activeAssignment ? (
+                    <>
+                      <Edit className="mr-2 h-3 w-3" />
+                      Cambiar
+                    </>
+                  ) : (
+                    <>
+                      <User className="mr-2 h-3 w-3" />
+                      Asignar
+                    </>
+                  )
+                  })()}
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-4">
+              {(() => {
+                 const activeAssignment = order.assignments?.find(a => ['asignado', 'en_proceso'].includes(order.estado)) || order.assignments?.[0];
+                 const tech = activeAssignment?.technician;
+
+                 return tech ? (
+                <>
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Nombre
+                    </label>
+                    <p className="text-lg font-semibold">
+                      {tech.nombre}
+                    </p>
                   </div>
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Teléfono
+                    </label>
+                    <p className="flex items-center">
+                      <Phone className="mr-2 h-4 w-4" />
+                      {tech.telefono}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Especialidades
+                    </label>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {tech.especialidades.map(
+                        (especialidad, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs capitalize"
+                          >
+                            {especialidad}
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  {activeAssignment && (
+                    <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                        Asignado el
+                        </label>
+                        <p>{formatDateTime(activeAssignment.assignedAt)}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-6 bg-muted/30 rounded-lg border border-dashed">
+                  <UserCheck className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground">No hay técnico asignado a esta orden.</p>
+                  <Button variant="link" asChild className="mt-1 text-[#A50034]">
+                     <Link href={`/admin/orders/${order.id}/assign`}>Asignar ahora</Link>
+                  </Button>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Asignado el
-                  </label>
-                  <p>{formatDateTime(order.assignment.assignedAt)}</p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+              )
+              })()}
+            </CardContent>
+          </Card>
 
           {/* Información de Costos */}
           <Card>

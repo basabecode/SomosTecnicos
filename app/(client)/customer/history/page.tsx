@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Card,
   CardContent,
@@ -22,7 +22,10 @@ import {
   Star,
   Download,
   Eye,
+  Loader2,
 } from 'lucide-react'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 interface HistoryService {
   id: string
@@ -31,7 +34,7 @@ interface HistoryService {
   appliance: string
   brand: string
   model: string
-  status: 'completed' | 'cancelled'
+  status: string
   technician: string
   date: string
   completedDate?: string
@@ -44,85 +47,100 @@ interface HistoryService {
   }
 }
 
-const mockHistoryServices: HistoryService[] = [
-  {
-    id: 'HIST-001',
-    orderNumber: 'ORD-2024-0123',
-    serviceType: 'Reparación',
-    appliance: 'Lavadora',
-    brand: 'LG',
-    model: 'WM3488HW',
-    status: 'completed',
-    technician: 'Carlos Mendoza',
-    date: '2024-01-15',
-    completedDate: '2024-01-16',
-    cost: 280000,
-    rating: 5,
-    description: 'Reparación de bomba de drenaje y reemplazo de mangueras',
-    warranty: {
-      active: true,
-      expiresAt: '2024-04-16',
-    },
-  },
-  {
-    id: 'HIST-002',
-    orderNumber: 'ORD-2024-0089',
-    serviceType: 'Mantenimiento',
-    appliance: 'Nevera',
-    brand: 'Samsung',
-    model: 'RF23R6201SR',
-    status: 'completed',
-    technician: 'Ana Rodríguez',
-    date: '2023-12-10',
-    completedDate: '2023-12-10',
-    cost: 150000,
-    rating: 4,
-    description: 'Mantenimiento preventivo y limpieza de condensador',
-    warranty: {
-      active: false,
-      expiresAt: '2024-03-10',
-    },
-  },
-  {
-    id: 'HIST-003',
-    orderNumber: 'ORD-2023-0567',
-    serviceType: 'Reparación',
-    appliance: 'Microondas',
-    brand: 'Panasonic',
-    model: 'NN-SB428S',
-    status: 'cancelled',
-    technician: 'Juan Torres',
-    date: '2023-11-20',
-    cost: 0,
-    description: 'Servicio cancelado por cliente - equipo irreparable',
-    warranty: {
-      active: false,
-      expiresAt: '2024-02-20',
-    },
-  },
-]
-
 export default function CustomerHistory() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | 'completed' | 'cancelled'
-  >('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'cancelled'>('all')
+  const [services, setServices] = useState<HistoryService[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const filteredServices = mockHistoryServices.filter(service => {
+  const fetchHistory = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const token = localStorage.getItem('accessToken')
+      // Fetch all orders, filtering for completed/cancelled could be done API side but let's fetch recent
+      // The API supports status filter, but we want "history" which implies completed/cancelled usually,
+      // but the UI filter allows "all". Let's fetch a reasonable limit.
+      const response = await fetch('/api/orders?limit=50', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+           const mappedServices: HistoryService[] = data.data.orders.map((order: any) => {
+              // Find active technician from assignments
+              const activeAssignment = order.assignments?.find((a: any) =>
+                ['asignado', 'en_proceso', 'completado'].includes(a.estado)
+              ) || order.assignments?.[0];
+
+              const technicianName = activeAssignment?.technician?.nombre || 'Sin asignar';
+
+              // Mock warranty logic (3 months from creation or completion)
+              const date = new Date(order.createdAt);
+              const warrantyExpires = new Date(date);
+              warrantyExpires.setMonth(date.getMonth() + 3);
+              const isWarrantyActive = new Date() < warrantyExpires && order.estado === 'completado';
+
+              return {
+                id: order.id,
+                orderNumber: order.orderNumber,
+                serviceType: order.tipoServicio,
+                appliance: order.tipoElectrodomestico,
+                brand: order.marca || 'N/A',
+                model: order.modelo || 'N/A',
+                status: order.estado,
+                technician: technicianName,
+                date: order.createdAt,
+                completedDate: order.estado === 'completado' ? order.updatedAt : undefined,
+                cost: Number(order.costoFinal) || Number(order.costoEstimado) || 0,
+                rating: undefined, // Rating logic would need another table/field
+                description: order.descripcionProblema,
+                warranty: {
+                  active: isWarrantyActive,
+                  expiresAt: warrantyExpires.toISOString()
+                }
+              }
+           });
+           setServices(mappedServices);
+        }
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Error cargando el historial')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchHistory()
+  }, [])
+
+  const filteredServices = services.filter(service => {
     const matchesSearch =
       service.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.appliance.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.technician.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesStatus =
-      statusFilter === 'all' || service.status === statusFilter
+    // Map internal status to filter
+    const isCompleted = service.status === 'completado';
+    const isCancelled = service.status === 'cancelado';
+
+    let matchesStatus = true;
+    if (statusFilter === 'completed') matchesStatus = isCompleted;
+    if (statusFilter === 'cancelled') matchesStatus = isCancelled;
 
     return matchesSearch && matchesStatus
   })
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case 'completado':
       case 'completed':
         return (
           <Badge
@@ -133,6 +151,7 @@ export default function CustomerHistory() {
             Completado
           </Badge>
         )
+      case 'cancelado':
       case 'cancelled':
         return (
           <Badge
@@ -144,7 +163,11 @@ export default function CustomerHistory() {
           </Badge>
         )
       default:
-        return null
+        return (
+           <Badge variant="outline" className="bg-gray-100 text-gray-700">
+             {status.replace('_', ' ')}
+           </Badge>
+        )
     }
   }
 
@@ -157,6 +180,15 @@ export default function CustomerHistory() {
         }`}
       />
     ))
+  }
+
+  if (loading) {
+      return (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+            <p className="text-muted-foreground">Cargando historial...</p>
+          </div>
+      )
   }
 
   return (
@@ -328,14 +360,16 @@ export default function CustomerHistory() {
                       <p className="text-sm font-medium">
                         {service.warranty.active
                           ? 'Garantía Activa'
-                          : 'Garantía Vencida'}
+                          : service.status === 'completado' ? 'Garantía Vencida' : 'Garantía Pendiente'}
                       </p>
-                      <p className="text-xs text-gray-600">
-                        Vence:{' '}
-                        {new Date(
-                          service.warranty.expiresAt
-                        ).toLocaleDateString('es-CO')}
-                      </p>
+                      {service.status === 'completado' && (
+                        <p className="text-xs text-gray-600">
+                            Vence:{' '}
+                            {new Date(
+                            service.warranty.expiresAt
+                            ).toLocaleDateString('es-CO')}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -344,7 +378,7 @@ export default function CustomerHistory() {
                       <Eye className="h-4 w-4 mr-2" />
                       Ver Detalles
                     </Button>
-                    {service.status === 'completed' && (
+                    {service.status === 'completado' && (
                       <Button variant="outline" size="sm">
                         <Download className="h-4 w-4 mr-2" />
                         Factura
@@ -364,7 +398,7 @@ export default function CustomerHistory() {
           <CardContent className="p-4 text-center">
             <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
             <p className="text-2xl font-bold">
-              {mockHistoryServices.filter(s => s.status === 'completed').length}
+              {services.filter(s => s.status === 'completado').length}
             </p>
             <p className="text-sm text-gray-600">Servicios Completados</p>
           </CardContent>
@@ -375,10 +409,10 @@ export default function CustomerHistory() {
             <Star className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
             <p className="text-2xl font-bold">
               {(
-                mockHistoryServices
+                services
                   .filter(s => s.rating)
                   .reduce((acc, s) => acc + (s.rating || 0), 0) /
-                  mockHistoryServices.filter(s => s.rating).length || 0
+                  (services.filter(s => s.rating).length || 1)
               ).toFixed(1)}
             </p>
             <p className="text-sm text-gray-600">Calificación Promedio</p>
@@ -389,14 +423,10 @@ export default function CustomerHistory() {
           <CardContent className="p-4 text-center">
             <Badge className="h-8 w-8 bg-blue-100 text-blue-600 mx-auto mb-2 flex items-center justify-center">
               $
-              {Math.floor(
-                mockHistoryServices.reduce((acc, s) => acc + s.cost, 0) / 1000
-              )}
-              K
             </Badge>
             <p className="text-2xl font-bold">
               $
-              {mockHistoryServices
+              {services
                 .reduce((acc, s) => acc + s.cost, 0)
                 .toLocaleString('es-CO')}
             </p>

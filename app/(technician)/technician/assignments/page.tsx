@@ -1,23 +1,10 @@
-/**
- * Página de Asignaciones - Panel Técnico
- * Vista de trabajos asignados para técnicos
- */
-
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import {
   Select,
   SelectContent,
@@ -31,7 +18,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import {
   Search,
@@ -46,105 +32,146 @@ import {
   Navigation,
   FileText,
   MessageCircle,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react'
+import { useAuth } from '@/contexts/auth-context'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 interface Assignment {
-  id: string
+  id: number
+  orderNumber: string
   orderId: string
-  clientName: string
-  clientPhone: string
-  clientAddress: string
-  serviceType: string
-  priority: 'low' | 'medium' | 'high' | 'urgent'
-  status: 'assigned' | 'in_progress' | 'completed' | 'on_hold'
-  scheduledDate: string
-  estimatedDuration: string
-  description: string
-  clientNotes?: string
-  assignedDate: string
+  cliente: string
+  telefono: string
+  direccion: string
+  distrito: string
+  tipoElectrodomestico: string
+  problema: string
+  urgencia: string
+  fechaProgramada: string
+  estado: string
+  notas: string
 }
 
-const mockAssignments: Assignment[] = [
-  {
-    id: '1',
-    orderId: 'ORD-001',
-    clientName: 'María García',
-    clientPhone: '+57 300 123 4567',
-    clientAddress: 'Calle 123 #45-67, Bogotá Norte',
-    serviceType: 'Reparación Lavadora',
-    priority: 'high',
-    status: 'assigned',
-    scheduledDate: '2024-01-17T09:00:00',
-    estimatedDuration: '2 horas',
-    description: 'Lavadora no centrifuga correctamente',
-    clientNotes: 'Llamar antes de llegar. Portería requiere autorización.',
-    assignedDate: '2024-01-16T14:30:00',
-  },
-  {
-    id: '2',
-    orderId: 'ORD-003',
-    clientName: 'Ana Rodríguez',
-    clientPhone: '+57 300 234 5678',
-    clientAddress: 'Avenida 68 #23-45, Bogotá Centro',
-    serviceType: 'Reparación Refrigerador',
-    priority: 'urgent',
-    status: 'in_progress',
-    scheduledDate: '2024-01-16T10:00:00',
-    estimatedDuration: '3 horas',
-    description: 'Refrigerador no enfría, posible fuga de refrigerante',
-    assignedDate: '2024-01-16T08:15:00',
-  },
-  {
-    id: '3',
-    orderId: 'ORD-005',
-    clientName: 'Pedro Martínez',
-    clientPhone: '+57 300 345 6789',
-    clientAddress: 'Carrera 15 #78-90, Bogotá Sur',
-    serviceType: 'Mantenimiento Aire Acondicionado',
-    priority: 'medium',
-    status: 'assigned',
-    scheduledDate: '2024-01-17T14:00:00',
-    estimatedDuration: '1.5 horas',
-    description: 'Mantenimiento preventivo programado',
-    assignedDate: '2024-01-16T16:45:00',
-  },
-]
-
-const priorityColors = {
-  low: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-orange-100 text-orange-800',
-  urgent: 'bg-red-100 text-red-800',
+const priorityColors: Record<string, string> = {
+  baja: 'bg-green-100 text-green-800',
+  media: 'bg-yellow-100 text-yellow-800',
+  alta: 'bg-orange-100 text-orange-800',
+  urgente: 'bg-red-100 text-red-800',
 }
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   assigned: 'bg-blue-100 text-blue-800',
+  asignado: 'bg-blue-100 text-blue-800',
   in_progress: 'bg-yellow-100 text-yellow-800',
+  en_proceso: 'bg-yellow-100 text-yellow-800',
   completed: 'bg-green-100 text-green-800',
+  completado: 'bg-green-100 text-green-800',
   on_hold: 'bg-gray-100 text-gray-800',
+  pendiente: 'bg-orange-100 text-orange-800',
 }
 
-const statusIcons = {
+const statusIcons: Record<string, any> = {
   assigned: Clock,
+  asignado: Clock,
   in_progress: PlayCircle,
+  en_proceso: PlayCircle,
   completed: CheckCircle,
+  completado: CheckCircle,
   on_hold: XCircle,
 }
 
 export default function TechnicianAssignmentsPage() {
+  const [loading, setLoading] = useState(true)
+  const [assignments, setAssignments] = useState<Assignment[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [selectedAssignment, setSelectedAssignment] =
-    useState<Assignment | null>(null)
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [error, setError] = useState('')
 
-  const filteredAssignments = mockAssignments.filter(assignment => {
+  const fetchAssignments = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch('/api/technicians/me/assignments', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const data = await response.json()
+
+      if (data.success) {
+        setAssignments(data.assignments)
+      } else {
+        setError(data.error || 'Error cargando asignaciones')
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Error de conexión al cargar datos')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAssignments()
+  }, [])
+
+  const updateStatus = async (assignmentId: number, orderId: string, newStatus: string) => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch(`/api/technicians/me/assignments/${assignmentId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        fetchAssignments()
+      } else {
+        alert('Error actualizando estado: ' + (data.error || 'Desconocido'))
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Error de conexión al actualizar estado')
+    }
+  }
+
+  const startJob = (assignment: Assignment) => {
+    if (confirm('¿Deseas iniciar este servicio?')) {
+        updateStatus(assignment.id, assignment.orderId, 'en_proceso')
+    }
+  }
+
+  const completeJob = (assignment: Assignment) => {
+    if (confirm('¿Deseas finalizar este servicio?')) {
+        updateStatus(assignment.id, assignment.orderId, 'completado')
+    }
+  }
+
+  const filteredAssignments = assignments.filter(assignment => {
     const matchesSearch =
-      assignment.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.serviceType.toLowerCase().includes(searchTerm.toLowerCase())
+      assignment.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assignment.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assignment.tipoElectrodomestico.toLowerCase().includes(searchTerm.toLowerCase())
+
+    // Normalize status for filtering (API returns Spanish status usually)
+    const normalizedStatus = assignment.estado === 'asignado' ? 'assigned' :
+                             assignment.estado === 'en_proceso' ? 'in_progress' :
+                             assignment.estado === 'completado' ? 'completed' :
+                             assignment.estado;
+
     const matchesStatus =
-      statusFilter === 'all' || assignment.status === statusFilter
+      statusFilter === 'all' || normalizedStatus === statusFilter || assignment.estado === statusFilter
 
     return matchesSearch && matchesStatus
   })
@@ -154,20 +181,22 @@ export default function TechnicianAssignmentsPage() {
     setIsDetailDialogOpen(true)
   }
 
-  const startJob = (assignmentId: string) => {
-    // Logic to start the job
-    console.log('Starting job:', assignmentId)
-  }
-
-  const completeJob = (assignmentId: string) => {
-    // Logic to complete the job
-    console.log('Completing job:', assignmentId)
+  if (loading && assignments.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+        <p className="text-muted-foreground">Cargando asignaciones...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-       <div className="flex items-center justify-between space-y-2">
+    <div className="flex-1 space-y-4 p-3 md:p-8 pt-6">
+       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <h2 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900">Mis Asignaciones</h2>
+        <Button variant="outline" size="sm" onClick={fetchAssignments}>
+            <RefreshCw className="mr-2 h-4 w-4" /> Actualizar
+        </Button>
       </div>
 
       {/* Filters */}
@@ -190,7 +219,7 @@ export default function TechnicianAssignmentsPage() {
             </div>
             <div className="flex gap-2 w-full md:w-auto">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[140px] h-9 text-sm">
+                <SelectTrigger className="w-full md:w-[160px] h-9 text-sm">
                     <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -198,33 +227,8 @@ export default function TechnicianAssignmentsPage() {
                     <SelectItem value="assigned">Asignado</SelectItem>
                     <SelectItem value="in_progress">En Progreso</SelectItem>
                     <SelectItem value="completed">Completado</SelectItem>
-                    <SelectItem value="on_hold">En Espera</SelectItem>
                 </SelectContent>
                 </Select>
-            </div>
-          </div>
-
-          {/* Quick Test Navigation */}
-          <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row gap-2 items-center bg-muted/20 p-2 rounded">
-            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Prueba Rápida (ID Real):</span>
-            <Input
-                placeholder="ID de Orden (Ej: cl...)"
-                className="h-8 text-xs w-full sm:w-[200px]"
-                id="quick-test-id"
-            />
-            <div className="flex gap-2 w-full sm:w-auto">
-                <Button variant="outline" size="sm" className="h-8 text-xs flex-1" onClick={() => {
-                    const id = (document.getElementById('quick-test-id') as HTMLInputElement).value;
-                    if(id) window.location.href = `/technician/assignments/${id}/quote`;
-                }}>
-                    Ir a Cotizar
-                </Button>
-                <Button variant="outline" size="sm" className="h-8 text-xs flex-1" onClick={() => {
-                    const id = (document.getElementById('quick-test-id') as HTMLInputElement).value;
-                    if(id) window.location.href = `/technician/assignments/${id}/close`;
-                }}>
-                    Ir a Cerrar
-                </Button>
             </div>
           </div>
         </CardContent>
@@ -232,11 +236,15 @@ export default function TechnicianAssignmentsPage() {
 
       {/* Assignments Cards */}
       <div className="grid gap-4">
-        {filteredAssignments.map(assignment => {
-          const StatusIcon = statusIcons[assignment.status]
-          const isToday =
-            new Date(assignment.scheduledDate).toDateString() ===
-            new Date().toDateString()
+        {filteredAssignments.length === 0 ? (
+             <div className="text-center py-10 bg-muted/20 rounded-lg border border-dashed">
+                <p className="text-muted-foreground">No se encontraron asignaciones</p>
+             </div>
+        ) : (
+        filteredAssignments.map(assignment => {
+          const StatusIcon = statusIcons[assignment.estado] || Clock
+          const isToday = assignment.fechaProgramada &&
+            new Date(assignment.fechaProgramada).toDateString() === new Date().toDateString()
 
           return (
             <Card
@@ -249,26 +257,20 @@ export default function TechnicianAssignmentsPage() {
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-semibold">{assignment.orderId}</h3>
-                      {isToday && <Badge variant="outline">Hoy</Badge>}
+                        <h3 className="font-semibold">{assignment.orderNumber}</h3>
+                        {isToday && <Badge variant="outline">Hoy</Badge>}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {assignment.serviceType}
+                      {assignment.tipoElectrodomestico}
                     </p>
                   </div>
                   <div className="flex space-x-2">
-                    <Badge className={priorityColors[assignment.priority]}>
-                      {assignment.priority === 'low' && 'Baja'}
-                      {assignment.priority === 'medium' && 'Media'}
-                      {assignment.priority === 'high' && 'Alta'}
-                      {assignment.priority === 'urgent' && 'Urgente'}
+                    <Badge className={priorityColors[assignment.urgencia] || 'bg-gray-100'}>
+                      {assignment.urgencia?.toUpperCase() || 'NORMAL'}
                     </Badge>
-                    <Badge className={statusColors[assignment.status]}>
+                    <Badge className={statusColors[assignment.estado] || 'bg-gray-100'}>
                       <StatusIcon className="w-3 h-3 mr-1" />
-                      {assignment.status === 'assigned' && 'Asignado'}
-                      {assignment.status === 'in_progress' && 'En Progreso'}
-                      {assignment.status === 'completed' && 'Completado'}
-                      {assignment.status === 'on_hold' && 'En Espera'}
+                      {assignment.estado.replace('_', ' ').toUpperCase()}
                     </Badge>
                   </div>
                 </div>
@@ -277,54 +279,33 @@ export default function TechnicianAssignmentsPage() {
                 <div className="space-y-3">
                   <div className="grid gap-3 md:grid-cols-2">
                     <div>
-                      <p className="font-medium">{assignment.clientName}</p>
+                      <p className="font-medium">{assignment.cliente}</p>
                       <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                         <Phone className="w-3 h-3" />
-                        <span>{assignment.clientPhone}</span>
+                        <span>{assignment.telefono}</span>
                       </div>
                       <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                         <MapPin className="w-3 h-3" />
-                        <span>{assignment.clientAddress}</span>
+                        <span>{assignment.direccion}, {assignment.distrito}</span>
                       </div>
                     </div>
                     <div>
                       <div className="flex items-center space-x-1 text-sm">
                         <Calendar className="w-3 h-3" />
                         <span>
-                          {new Date(
-                            assignment.scheduledDate
-                          ).toLocaleDateString()}{' '}
-                          -{' '}
-                          {new Date(
-                            assignment.scheduledDate
-                          ).toLocaleTimeString()}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span>
-                          Duración estimada: {assignment.estimatedDuration}
+                          {assignment.fechaProgramada ? format(new Date(assignment.fechaProgramada), 'PP p', { locale: es }) : 'Sin fecha'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm">{assignment.description}</p>
-
-                  {assignment.clientNotes && (
-                    <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-sm text-yellow-800">
-                        <strong>Nota del cliente:</strong>{' '}
-                        {assignment.clientNotes}
-                      </p>
-                    </div>
-                  )}
+                  <p className="text-sm italic text-gray-600 bg-muted/30 p-2 rounded">{assignment.problema}</p>
 
                   <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100/50 mt-2">
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="flex-1 min-w-[120px] active-tap bg-white/50"
+                      className="flex-1 min-w-[100px]"
                       onClick={() => openDetailDialog(assignment)}
                     >
                       <FileText className="w-4 h-4 mr-1.5" />
@@ -334,10 +315,10 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[120px] active-tap border-green-200 text-green-700 hover:bg-green-50"
+                      className="flex-1 min-w-[100px] text-green-700 hover:bg-green-50"
                       asChild
                     >
-                      <a href={`tel:${assignment.clientPhone.replace(/\s+/g, '')}`}>
+                      <a href={`tel:${assignment.telefono?.replace(/\s+/g, '')}`}>
                         <Phone className="w-4 h-4 mr-1.5" />
                         Llamar
                       </a>
@@ -346,51 +327,51 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[120px] active-tap border-green-500 text-green-600 hover:bg-green-50"
+                      className="flex-1 min-w-[100px] text-green-600 hover:bg-green-50"
                       asChild
                     >
                       <a
-                        href={`https://wa.me/${assignment.clientPhone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${assignment.clientName}, soy su técnico de SomosTécnicos. Me comunico con usted para coordinar el servicio de ${assignment.serviceType} programado para hoy.`)}`}
+                        href={`https://wa.me/${assignment.telefono?.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${assignment.cliente}, soy su técnico de SomosTécnicos.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <MessageCircle className="w-4 h-4 mr-1.5" />
-                        WhatsApp
+                         <MessageCircle className="w-4 h-4 mr-1.5" />
+                         Chat
                       </a>
                     </Button>
 
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[120px] active-tap"
+                      className="flex-1 min-w-[100px]"
                       asChild
                     >
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.clientAddress)}`}
+                       <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${assignment.direccion}, ${assignment.distrito}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <Navigation className="w-4 h-4 mr-1.5" />
-                        Navegar
+                        Ir
                       </a>
                     </Button>
 
-                    {assignment.status === 'assigned' && (
+                    {assignment.estado === 'asignado' && (
                       <Button
                         size="sm"
-                        className="w-full active-tap bg-green-600 hover:bg-green-700 mt-2"
-                        onClick={() => startJob(assignment.id)}
+                        className="w-full mt-2 bg-green-600 hover:bg-green-700"
+                        onClick={() => startJob(assignment)}
                       >
                         <PlayCircle className="w-4 h-4 mr-1.5" />
                         Iniciar Servicio
                       </Button>
                     )}
 
-                    {assignment.status === 'in_progress' && (
+                    {assignment.estado === 'en_proceso' && (
                       <Button
                         size="sm"
-                        className="w-full active-tap bg-[#A50034] hover:bg-[#8B002B] mt-2"
-                        onClick={() => completeJob(assignment.id)}
+                        className="w-full mt-2 bg-[#A50034] hover:bg-[#8B002B]"
+                        onClick={() => completeJob(assignment)}
                       >
                         <CheckCircle className="w-4 h-4 mr-1.5" />
                         Finalizar Trabajo
@@ -401,7 +382,7 @@ export default function TechnicianAssignmentsPage() {
               </CardContent>
             </Card>
           )
-        })}
+        }))}
       </div>
 
       {/* Assignment Detail Dialog */}
@@ -409,7 +390,7 @@ export default function TechnicianAssignmentsPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              Detalles de Asignación - {selectedAssignment?.orderId}
+              Detalles de Asignación - {selectedAssignment?.orderNumber}
             </DialogTitle>
             <DialogDescription>
               Información completa de la orden de servicio
@@ -422,15 +403,19 @@ export default function TechnicianAssignmentsPage() {
                   <h4 className="font-medium mb-2">Información del Cliente</h4>
                   <div className="space-y-2 text-sm">
                     <p>
-                      <strong>Nombre:</strong> {selectedAssignment.clientName}
+                      <strong>Nombre:</strong> {selectedAssignment.cliente}
                     </p>
                     <p>
                       <strong>Teléfono:</strong>{' '}
-                      {selectedAssignment.clientPhone}
+                      {selectedAssignment.telefono}
                     </p>
                     <p>
                       <strong>Dirección:</strong>{' '}
-                      {selectedAssignment.clientAddress}
+                      {selectedAssignment.direccion}
+                    </p>
+                     <p>
+                      <strong>Ciudad/Barrio:</strong>{' '}
+                      {selectedAssignment.distrito}
                     </p>
                   </div>
                 </div>
@@ -438,17 +423,16 @@ export default function TechnicianAssignmentsPage() {
                   <h4 className="font-medium mb-2">Información del Servicio</h4>
                   <div className="space-y-2 text-sm">
                     <p>
-                      <strong>Tipo:</strong> {selectedAssignment.serviceType}
+                      <strong>Tipo:</strong> {selectedAssignment.tipoElectrodomestico}
+                    </p>
+                    <p>
+                      <strong>Urgencia:</strong> {selectedAssignment.urgencia}
                     </p>
                     <p>
                       <strong>Fecha programada:</strong>{' '}
-                      {new Date(
-                        selectedAssignment.scheduledDate
-                      ).toLocaleString()}
-                    </p>
-                    <p>
-                      <strong>Duración estimada:</strong>{' '}
-                      {selectedAssignment.estimatedDuration}
+                      {selectedAssignment.fechaProgramada ? new Date(
+                        selectedAssignment.fechaProgramada
+                      ).toLocaleString() : 'Sin fecha'}
                     </p>
                   </div>
                 </div>
@@ -457,15 +441,15 @@ export default function TechnicianAssignmentsPage() {
               <div>
                 <h4 className="font-medium mb-2">Descripción del Problema</h4>
                 <p className="text-sm bg-gray-50 p-3 rounded">
-                  {selectedAssignment.description}
+                  {selectedAssignment.problema}
                 </p>
               </div>
 
-              {selectedAssignment.clientNotes && (
+              {selectedAssignment.notas && (
                 <div>
-                  <h4 className="font-medium mb-2">Notas del Cliente</h4>
+                  <h4 className="font-medium mb-2">Notas de Asignación</h4>
                   <p className="text-sm bg-yellow-50 p-3 rounded border border-yellow-200">
-                    {selectedAssignment.clientNotes}
+                    {selectedAssignment.notas}
                   </p>
                 </div>
               )}
