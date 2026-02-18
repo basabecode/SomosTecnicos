@@ -222,7 +222,7 @@ export default function WarrantyPage() {
         </div>
       </div>
 
-      {/* Warranty Info */}
+      {/* Warranty Info
       <Card className="border-blue-200 bg-blue-50/50">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -256,7 +256,7 @@ export default function WarrantyPage() {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card>*/}
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">

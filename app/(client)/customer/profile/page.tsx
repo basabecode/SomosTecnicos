@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import {
   Card,
@@ -66,15 +66,32 @@ export default function CustomerProfile() {
     setIsEditing(false)
   }
 
-  // Mock data for user stats
-  const userStats = {
-    totalServices: 8,
-    completedServices: 6,
-    activeServices: 2,
-    averageRating: 4.8,
-    memberSince: '2023-03-15',
-    totalSpent: 1250000,
-  }
+  // Real data for user stats
+  const [userStats, setUserStats] = useState({
+    totalServices: 0,
+    completedServices: 0,
+    activeServices: 0,
+    averageRating: 0,
+    memberSince: new Date().toISOString(),
+    totalSpent: 0,
+  })
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/customer/stats')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success) {
+            setUserStats(data.stats)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error)
+      }
+    }
+    fetchStats()
+  }, [])
 
   return (
     <div className="space-y-6">

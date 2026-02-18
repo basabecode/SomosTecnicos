@@ -183,7 +183,7 @@ export default function CustomerDashboard() {
       <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#A50034] to-[#2C3E50] bg-clip-text text-transparent">
-            ¡Hola, {user?.nombre || 'Cliente'}! 👋
+            Hola, {user?.nombre || 'Cliente'}
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
             Gestiona tus reparaciones con SomosTécnicos

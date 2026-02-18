@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +43,7 @@ import {
   Award,
   DollarSign,
   Eye,
+  Loader2,
 } from 'lucide-react'
 
 interface CompletedJob {
@@ -61,83 +62,6 @@ interface CompletedJob {
   priority: 'low' | 'medium' | 'high' | 'urgent'
 }
 
-const mockCompletedJobs: CompletedJob[] = [
-  {
-    id: '1',
-    orderId: 'ORD-098',
-    clientName: 'María González',
-    clientAddress: 'Calle 45 #12-34, Bogotá Norte',
-    serviceType: 'Reparación Lavadora',
-    completedDate: '2024-01-15T16:30:00',
-    duration: '2.5 horas',
-    rating: 5,
-    clientFeedback: 'Excelente servicio, muy profesional y rápido',
-    earnings: 85000,
-    parts: ['Correa de transmisión', 'Rodamientos'],
-    notes: 'Cambio de correa y rodamientos. Cliente muy satisfecho.',
-    priority: 'high',
-  },
-  {
-    id: '2',
-    orderId: 'ORD-097',
-    clientName: 'Carlos Pérez',
-    clientAddress: 'Carrera 68 #23-45, Bogotá Centro',
-    serviceType: 'Mantenimiento Aire Acondicionado',
-    completedDate: '2024-01-14T14:15:00',
-    duration: '1.5 horas',
-    rating: 4,
-    clientFeedback: 'Buen trabajo, el aire quedó funcionando bien',
-    earnings: 65000,
-    parts: ['Filtros', 'Refrigerante R410A'],
-    notes:
-      'Mantenimiento preventivo completo. Recomendé cambio de filtros cada 3 meses.',
-    priority: 'medium',
-  },
-  {
-    id: '3',
-    orderId: 'ORD-096',
-    clientName: 'Ana Rodríguez',
-    clientAddress: 'Avenida 19 #78-90, Bogotá Sur',
-    serviceType: 'Reparación Refrigerador',
-    completedDate: '2024-01-13T11:45:00',
-    duration: '3.2 horas',
-    rating: 5,
-    clientFeedback: 'Técnico muy conocedor, solucionó el problema rápidamente',
-    earnings: 120000,
-    parts: ['Compresor', 'Termostato'],
-    notes: 'Reemplazo de compresor dañado. Pruebas de funcionamiento exitosas.',
-    priority: 'urgent',
-  },
-  {
-    id: '4',
-    orderId: 'ORD-095',
-    clientName: 'Luis Martínez',
-    clientAddress: 'Calle 127 #15-67, Bogotá Norte',
-    serviceType: 'Reparación Horno Microondas',
-    completedDate: '2024-01-12T09:30:00',
-    duration: '1.8 horas',
-    rating: 4,
-    earnings: 75000,
-    notes: 'Reparación de magnetrón. Funcionamiento normal restaurado.',
-    priority: 'medium',
-  },
-  {
-    id: '5',
-    orderId: 'ORD-094',
-    clientName: 'Patricia López',
-    clientAddress: 'Carrera 45 #89-12, Bogotá Occidente',
-    serviceType: 'Instalación Lavaplatos',
-    completedDate: '2024-01-11T15:20:00',
-    duration: '2.0 horas',
-    rating: 5,
-    clientFeedback: 'Instalación perfecta, muy limpio el trabajo',
-    earnings: 95000,
-    parts: ['Mangueras', 'Conectores'],
-    notes: 'Instalación completa con pruebas de funcionamiento.',
-    priority: 'low',
-  },
-]
-
 const priorityColors = {
   low: 'bg-green-100 text-green-800',
   medium: 'bg-yellow-100 text-yellow-800',
@@ -150,8 +74,46 @@ export default function TechnicianHistoryPage() {
   const [timeFilter, setTimeFilter] = useState('all')
   const [selectedJob, setSelectedJob] = useState<CompletedJob | null>(null)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [jobs, setJobs] = useState<CompletedJob[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filteredJobs = mockCompletedJobs.filter(job => {
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch('/api/technicians/me/assignments')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success && data.assignments) {
+            const completed = data.assignments
+              .filter((a: any) => a.estado === 'completado')
+              .map((a: any) => ({
+                id: a.id.toString(),
+                orderId: a.orderNumber,
+                clientName: a.cliente,
+                clientAddress: a.direccion,
+                serviceType: `${a.tipoElectrodomestico} - ${a.problema?.substring(0, 30)}...`, // Better description
+                completedDate: a.fechaCompletada || new Date().toISOString(),
+                duration: a.duration,
+                rating: a.rating,
+                clientFeedback: a.clientFeedback,
+                earnings: a.earnings,
+                parts: a.parts,
+                notes: a.notas || 'Sin notas adicionales',
+                priority: a.priority
+              }))
+            setJobs(completed)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchJobs()
+  }, [])
+
+  const filteredJobs = jobs.filter(job => {
     const matchesSearch =
       job.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -189,13 +151,23 @@ export default function TechnicianHistoryPage() {
   }
 
   // Calculate summary stats
+  // Calculate summary stats
   const totalEarnings = filteredJobs.reduce((sum, job) => sum + job.earnings, 0)
-  const averageRating =
-    filteredJobs.reduce((sum, job) => sum + job.rating, 0) / filteredJobs.length
+  const averageRating = filteredJobs.length > 0
+    ? filteredJobs.reduce((sum, job) => sum + job.rating, 0) / filteredJobs.length
+    : 0
   const totalHours = filteredJobs.reduce((sum, job) => {
     const hours = parseFloat(job.duration)
     return sum + (isNaN(hours) ? 0 : hours)
   }, 0)
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -230,7 +202,7 @@ export default function TechnicianHistoryPage() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{averageRating.toFixed(1)}</div>
+            <div className="text-2xl font-bold">{isNaN(averageRating) ? '0.0' : averageRating.toFixed(1)}</div>
             <div className="flex items-center space-x-1">
               {[1, 2, 3, 4, 5].map(star => (
                 <Star
@@ -326,13 +298,13 @@ export default function TechnicianHistoryPage() {
               <div className="flex justify-between">
                 <span className="text-sm">Promedio por trabajo:</span>
                 <span className="font-medium">
-                  ${(totalEarnings / filteredJobs.length).toLocaleString()}
+                  ${filteredJobs.length ? (totalEarnings / filteredJobs.length).toLocaleString() : '0'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm">Tiempo promedio:</span>
                 <span className="font-medium">
-                  {(totalHours / filteredJobs.length).toFixed(1)}h
+                  {filteredJobs.length ? (totalHours / filteredJobs.length).toFixed(1) : '0'}h
                 </span>
               </div>
               <div className="flex justify-between">
@@ -354,7 +326,7 @@ export default function TechnicianHistoryPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {mockCompletedJobs
+              {jobs
                 .filter(job => job.rating === 5)
                 .slice(0, 3)
                 .map(job => (

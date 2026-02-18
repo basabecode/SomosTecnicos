@@ -47,7 +47,8 @@ export async function GET(request: NextRequest) {
     const assignments = await prisma.assignment.findMany({
       where: whereClause,
       include: {
-        order: true // Incluir detalles de la orden
+        order: true, // Incluir detalles de la orden
+        visitReports: true // Incluir reportes de visita para detalles de cierre
       },
       orderBy: {
         fechaProgramada: 'asc'
@@ -74,21 +75,32 @@ export async function GET(request: NextRequest) {
         especialidades: technician.especialidades,
         zona: technician.zonaTrabajoArea
       },
-      assignments: assignments.map(a => ({
-        id: a.id,
-        orderNumber: a.order.orderNumber, // Usar orderNumber para mostrar
-        orderId: a.order.id, // ID interno
-        cliente: a.order.nombre,
-        telefono: a.order.telefono,
-        direccion: a.order.direccion,
-        distrito: a.order.ciudad,
-        tipoElectrodomestico: a.order.tipoElectrodomestico,
-        problema: a.order.descripcionProblema,
-        urgencia: a.order.urgencia,
-        fechaProgramada: a.fechaProgramada,
-        estado: a.estado,
-        notas: a.notasAsignacion
-      })),
+      assignments: assignments.map(a => {
+        const report = a.visitReports?.[0]
+        return {
+          id: a.id,
+          orderNumber: a.order.orderNumber,
+          orderId: a.order.id,
+          cliente: a.order.nombre,
+          telefono: a.order.telefono,
+          direccion: a.order.direccion,
+          distrito: a.order.ciudad,
+          tipoElectrodomestico: a.order.tipoElectrodomestico,
+          problema: a.order.descripcionProblema,
+          urgencia: a.order.urgencia,
+          fechaProgramada: a.fechaProgramada,
+          fechaCompletada: a.fechaCompletada,
+          estado: a.estado,
+          notas: a.notasAsignacion,
+          // Campos adicionales para historial
+          duration: a.tiempoReal ? `${(a.tiempoReal / 60).toFixed(1)} horas` : 'N/A',
+          earnings: report?.costoTotal ? Number(report.costoTotal) : 0,
+          parts: report?.repuestos ? (report.repuestos as any[]).map((r: any) => r.nombre) : [],
+          rating: 5, // Placeholder ya que no existe campo de calificación por orden en el esquema actual
+          clientFeedback: report?.recomendaciones || '', // Usamos recomendaciones como proxy o dejamos vacío
+          priority: a.order.urgencia === 'alta' ? 'high' : a.order.urgencia === 'media' ? 'medium' : a.order.urgencia === 'baja' ? 'low' : 'urgent'
+        }
+      }),
       stats
     })
 
