@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 
-// PATCH /api/orders/[id]/close - Cerrar Servicio (Técnico)
+// PATCH /api/orders/[id]/close - Cerrar Servicio (Técnico o Admin)
 export const PATCH = withAuth(async (req: NextRequest, user: AuthenticatedUser, { params }: { params: { id: string } }) => {
   try {
     const orderId = params.id
@@ -14,15 +14,32 @@ export const PATCH = withAuth(async (req: NextRequest, user: AuthenticatedUser, 
       estadoCierre // 'reparado' | 'no_reparable' | 'seguimiento'
     } = body
 
-    // 1. Validaciones básicas
-    if (!descripcion || costoFinal === undefined || costoFinal === null) {
+    // 1. Validar descripción
+    if (!descripcion || typeof descripcion !== 'string' || descripcion.trim().length < 10) {
       return NextResponse.json(
-        { success: false, error: 'Faltan datos requeridos (descripción o costo)' },
+        { success: false, error: 'La descripción del cierre debe tener al menos 10 caracteres' },
         { status: 400 }
       )
     }
 
-    // 2. Verificar orden
+    // 2. Validar costoFinal: número finito no negativo (en pesos colombianos)
+    const numCostoFinal = parseFloat(String(costoFinal))
+    if (costoFinal === undefined || costoFinal === null || isNaN(numCostoFinal) || numCostoFinal < 0) {
+      return NextResponse.json(
+        { success: false, error: 'El costo final debe ser un valor en pesos colombianos mayor o igual a $0' },
+        { status: 400 }
+      )
+    }
+
+    // 3. Validar estadoCierre
+    if (!['reparado', 'no_reparable', 'seguimiento'].includes(estadoCierre)) {
+      return NextResponse.json(
+        { success: false, error: 'Estado de cierre inválido. Use: reparado, no_reparable o seguimiento' },
+        { status: 400 }
+      )
+    }
+
+    // 4. Obtener la orden con asignaciones
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: { assignments: true }
@@ -35,15 +52,16 @@ export const PATCH = withAuth(async (req: NextRequest, user: AuthenticatedUser, 
       )
     }
 
-    // 3. Verificar permisos (Técnico asignado o Admin)
-    let isAssignedTechnician = false
-    if (user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN) {
-      isAssignedTechnician = true
-    } else {
+    // 5. Verificar permisos (Técnico asignado o Admin)
+    const isAdmin = user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN
+    let isAssignedTechnician = isAdmin
+
+    if (!isAdmin) {
       const tech = await prisma.technician.findUnique({ where: { email: user.email } })
       if (tech) {
-        // Buscar asignación activa
-        const assignment = order.assignments.find(a => a.technicianId === tech.id && a.estado !== 'cancelado')
+        const assignment = order.assignments.find(a =>
+          a.technicianId === tech.id && !['cancelado', 'completado'].includes(a.estado)
+        )
         if (assignment) isAssignedTechnician = true
       }
     }
@@ -55,88 +73,120 @@ export const PATCH = withAuth(async (req: NextRequest, user: AuthenticatedUser, 
       )
     }
 
-    // Mapear el estadoCierre a ORDER_STATES
+    // 6. Determinar nuevo estado de la orden
     let newOrderState: string
-    let newAssignmentState = 'completado'
     let notasHistorial = ''
 
     switch (estadoCierre) {
       case 'reparado':
         newOrderState = ORDER_STATES.REPARADO
-        notasHistorial = `Servicio completado exitosamente. Costo final: $${costoFinal}`
-        // Flujo feliz: orden pasa a REPARADO (luego admin la pasará a COMPLETADO tras pago/factura?)
-        // O directamente COMPLETADO si ya se cobró.
-        // Asumiremos REPARADO como estado intermedio antes de cierre administrativo, o COMPLETADO si el flujo es simple.
-        // Usaremos REPARADO si existe, si no COMPLETADO.
-        // Revisando constantes... ORDER_STATES.COMPLETADO suele ser el final.
-        // Si ORDER_STATES.REPARADO no existe, usar COMPLETADO.
-        // Voy a asurmir que REPARADO existe o usar COMPLETADO.
-        // El usuario mencionó: "reparado -> entregado -> completado".
-        newOrderState = 'reparado' // Usaré el string literal si no está en enum, o revisaré constants.ts
-        break;
-
+        notasHistorial = `Reparación exitosa. Costo final: $${numCostoFinal.toLocaleString('es-CO')} COP`
+        break
       case 'no_reparable':
         newOrderState = ORDER_STATES.CANCELADO
-        notasHistorial = `Servicio cerrado como NO REPARABLE. Se cobró revisión: $${costoFinal}`
-        break;
-
+        notasHistorial = `Equipo no reparable. Se cobró revisión: $${numCostoFinal.toLocaleString('es-CO')} COP`
+        break
       case 'seguimiento':
-        newOrderState = ORDER_STATES.REAGENDADO // O PENDIENTE
-        newAssignmentState = 'en_proceso' // La asignación sigue abierta? O se cierra esta y se abre otra?
-        // Si requiere seguimiento, la asignación actual termina pero la orden queda abierta.
-        newAssignmentState = 'completado' // Esta visita terminó.
-        notasHistorial = `Servicio requiere seguimiento. Visita completada.`
-        break;
-
+        newOrderState = ORDER_STATES.REAGENDADO
+        notasHistorial = `Requiere seguimiento. Visita completada. Costo parcial: $${numCostoFinal.toLocaleString('es-CO')} COP`
+        break
       default:
         return NextResponse.json({ success: false, error: 'Estado de cierre inválido' }, { status: 400 })
     }
 
-    // Ejecutar transacción
+    // 7. Ejecutar transacción
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Actualizar Orden
+      // Actualizar la Orden
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
         data: {
           estado: newOrderState,
-          costoFinal: parseFloat(costoFinal),
-          fechaCompletado: new Date() // Fecha de cierre técnico
+          costoFinal: numCostoFinal,
+          fechaCompletado: new Date()
         }
       })
 
-      // 2. Actualizar Asignación(es) activa(s)
-      // Cerrar todas las asignaciones abiertas para este técnico en esta orden
-      // (aunque debería ser una sola)
-      if (user.role !== USER_ROLES.CUSTOMER) { // Si es técnico/admin
-         const tech = await tx.technician.findUnique({ where: { email: user.email } })
-         if (tech) {
-            await tx.assignment.updateMany({
-              where: {
-                orderId: orderId,
-                technicianId: tech.id,
-                estado: { in: ['asignado', 'en_camino', 'en_proceso'] }
+      // Actualizar la asignación activa buscando por id de asignación (no por email del usuario)
+      // Esto funciona correctamente tanto para técnicos como para admins
+      const activeAssignment = order.assignments.find(a =>
+        !['cancelado', 'completado'].includes(a.estado)
+      )
+
+      if (activeAssignment) {
+        await tx.assignment.update({
+          where: { id: activeAssignment.id },
+          data: {
+            estado: 'completado',
+            fechaCompletada: new Date(),
+            notasTecnico: `[${estadoCierre.toUpperCase()}] ${descripcion.trim()}`
+          }
+        })
+
+        // Liberar al técnico si ya no tiene más asignaciones activas
+        const otherActive = await tx.assignment.count({
+          where: {
+            technicianId: activeAssignment.technicianId,
+            estado: { in: ['asignado', 'en_camino', 'en_proceso'] },
+            id: { not: activeAssignment.id }
+          }
+        })
+
+        if (otherActive === 0) {
+          await tx.technician.update({
+            where: { id: activeAssignment.technicianId },
+            data: { disponible: true, estadoActual: 'disponible' }
+          })
+        }
+
+        // Notificar al cliente sobre el resultado del servicio
+        if (order.customerId) {
+          const clienteMensaje =
+            estadoCierre === 'reparado'
+              ? `Tu equipo fue reparado exitosamente. Costo final: $${numCostoFinal.toLocaleString('es-CO')} COP.`
+              : estadoCierre === 'no_reparable'
+                ? `Tu equipo no pudo ser reparado. Se cobró únicamente la visita técnica: $${numCostoFinal.toLocaleString('es-CO')} COP.`
+                : `El técnico completó la visita. El servicio requiere seguimiento adicional. Nos contactaremos pronto.`
+
+          const clienteAsunto =
+            estadoCierre === 'reparado'
+              ? `Servicio completado — Orden ${order.orderNumber}`
+              : estadoCierre === 'no_reparable'
+                ? `Servicio cerrado — Orden ${order.orderNumber}`
+                : `Servicio en seguimiento — Orden ${order.orderNumber}`
+
+          await tx.notification.create({
+            data: {
+              userId: order.customerId.toString(),
+              userType: 'customer',
+              tipo: 'system',
+              canal: 'system',
+              destinatario: order.email,
+              asunto: clienteAsunto,
+              mensaje: clienteMensaje,
+              metadata: {
+                link: `/customer/services`,
+                orderId: order.id,
+                orderNumber: order.orderNumber
               },
-              data: {
-                estado: newAssignmentState,
-                fechaCompletada: new Date(),
-                notasTecnico: `[${estadoCierre.toUpperCase()}] ${descripcion}`
-              }
-            })
-         }
+              enviado: true,
+              fechaEnvio: new Date(),
+            }
+          })
+        }
       }
 
-      // 3. Historial
+      // Historial del cambio
       await tx.orderHistory.create({
         data: {
           orderId,
           estadoAnterior: order.estado,
           estadoNuevo: newOrderState,
-          changedBy: 'technician',
+          changedBy: isAdmin ? 'admin' : 'technician',
           changedById: user.id.toString(),
           notas: notasHistorial,
           metadata: {
-            descripcionCierre: descripcion,
-            costo: costoFinal,
+            descripcionCierre: descripcion.trim(),
+            costoFinalCOP: numCostoFinal,
             tipoCierre: estadoCierre
           }
         }
@@ -148,7 +198,7 @@ export const PATCH = withAuth(async (req: NextRequest, user: AuthenticatedUser, 
     return NextResponse.json({
       success: true,
       data: result,
-      message: 'Servicio cerrado exitosamente'
+      message: `Servicio cerrado. Costo registrado: $${numCostoFinal.toLocaleString('es-CO')} COP`
     })
 
   } catch (error) {

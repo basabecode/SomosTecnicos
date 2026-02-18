@@ -2,13 +2,21 @@ import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/private/', '/admin/', '/technician/', '/api/', '/customer/'],
-    },
-    // ✅ CORRECCIÓN: Usar www.somostecnicos.com (tu dominio principal)
+    rules: [
+      {
+        // Motores de búsqueda tradicionales (Google, Bing, etc.)
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/private/', '/admin/', '/technician/', '/api/', '/customer/'],
+      },
+      {
+        // Rastreadores de IA (ChatGPT, Perplexity, Claude, Gemini, etc.)
+        // Pueden indexar el contenido público y el llms.txt
+        userAgent: ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Googlebot-Extended', 'anthropic-ai', 'cohere-ai'],
+        allow: ['/', '/llms.txt'],
+        disallow: ['/admin/', '/technician/', '/api/', '/customer/'],
+      },
+    ],
     sitemap: 'https://www.somostecnicos.com/sitemap.xml',
-    // ❌ ANTES: sitemap: 'https://somostecnicos.com/sitemap.xml' (sin www)
   }
 }

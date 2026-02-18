@@ -17,6 +17,7 @@ import { withIdempotency } from '@/lib/idempotency'
 import { FSMCache } from '@/lib/cache'
 import { enqueueEmail, enqueueNotification } from '@/lib/queue'
 import { Prisma } from '@prisma/client'
+import { notifyAdminsNewOrder } from '@/lib/services/notification.service'
 
 // =============================================
 // GET /api/orders - Obtener órdenes con filtros
@@ -258,13 +259,16 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
           }
         }, 'high')
 
-        // Notificación a administradores
+        // Notificación a administradores (cola legacy)
         await enqueueNotification({
           userId: 'admin',
           title: 'Nueva Orden Creada',
           message: `Orden #${order.orderNumber} para ${order.tipoElectrodomestico} en ${order.ciudad}`,
           type_notification: 'status_change'
         }, 'medium')
+
+        // Notificación en-app en tiempo real para admins (SSE)
+        void notifyAdminsNewOrder(order.id, order.orderNumber, order.nombre)
 
       } catch (queueError) {
         console.error('Error encolando notificaciones de nueva orden:', queueError)

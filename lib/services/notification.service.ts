@@ -85,6 +85,64 @@ export async function notifyOrderStateChange(
 }
 
 /**
+ * Notificar a todos los admins activos sobre una nueva orden de servicio
+ */
+export async function notifyAdminsNewOrder(
+  orderId: string,
+  orderNumber: string,
+  clientName: string
+) {
+  const admins = await prisma.adminUser.findMany({
+    where: {
+      activo: true,
+      role: { in: ['admin', 'super_admin', 'technician_manager'] }
+    },
+    select: { id: true, email: true, role: true }
+  })
+
+  for (const admin of admins) {
+    await sendNotification({
+      userId: admin.id.toString(),
+      userType: admin.role,
+      to: admin.email,
+      subject: `Nueva Solicitud #${orderNumber}`,
+      message: `${clientName} ha creado una nueva solicitud de servicio que requiere atención.`,
+      type: 'SYSTEM',
+      orderId,
+      metadata: { link: `/admin/orders/${orderId}`, orderNumber }
+    })
+  }
+}
+
+/**
+ * Notificar a todos los admins activos sobre una nueva solicitud de registro de técnico
+ */
+export async function notifyAdminsNewApplication(
+  applicationId: string,
+  applicantName: string
+) {
+  const admins = await prisma.adminUser.findMany({
+    where: {
+      activo: true,
+      role: { in: ['admin', 'super_admin', 'technician_manager'] }
+    },
+    select: { id: true, email: true, role: true }
+  })
+
+  for (const admin of admins) {
+    await sendNotification({
+      userId: admin.id.toString(),
+      userType: admin.role,
+      to: admin.email,
+      subject: 'Nueva Solicitud de Técnico',
+      message: `${applicantName} ha enviado una solicitud de registro como técnico que requiere aprobación.`,
+      type: 'SYSTEM',
+      metadata: { link: `/admin/applications/${applicationId}` }
+    })
+  }
+}
+
+/**
  * Notificar asignación a técnico
  */
 export async function notifyAssignment(

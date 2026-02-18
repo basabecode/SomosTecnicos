@@ -3,6 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
 
+// Estados válidos en los que el técnico puede enviar una cotización
+const STATES_VALID_FOR_QUOTE = [
+  ORDER_STATES.ASIGNADO,
+  ORDER_STATES.EN_CAMINO,
+  ORDER_STATES.EN_PROCESO,
+  ORDER_STATES.REVISADO,
+]
+
 // POST /api/orders/[id]/quote - Enviar cotización
 export const POST = withAuth(async (req: NextRequest, user: AuthenticatedUser, { params }: { params: { id: string } }) => {
   try {
@@ -10,15 +18,22 @@ export const POST = withAuth(async (req: NextRequest, user: AuthenticatedUser, {
     const body = await req.json()
     const { diagnostico, costoEstimado } = body
 
-    // Validar datos básicos
-    if (!diagnostico || typeof costoEstimado !== 'number') {
+    // 1. Validar datos básicos
+    if (!diagnostico || typeof diagnostico !== 'string' || diagnostico.trim().length < 20) {
       return NextResponse.json(
-        { success: false, error: 'Faltan datos requeridos (diagnóstico o costo)' },
+        { success: false, error: 'El diagnóstico debe tener al menos 20 caracteres' },
         { status: 400 }
       )
     }
 
-    // Verificar permisos: Solo técnicos asignados o admins
+    if (typeof costoEstimado !== 'number' || !isFinite(costoEstimado) || costoEstimado <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'El costo estimado debe ser un valor en pesos colombianos mayor a $0' },
+        { status: 400 }
+      )
+    }
+
+    // 2. Obtener la orden
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: { assignments: true }
@@ -31,12 +46,30 @@ export const POST = withAuth(async (req: NextRequest, user: AuthenticatedUser, {
       )
     }
 
-    // Verificar si es técnico asignado
+    // 3. Validar estado: solo se puede cotizar en estados específicos
+    if (!STATES_VALID_FOR_QUOTE.includes(order.estado as any)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `No se puede enviar cotización en el estado actual (${order.estado}). Estados válidos: ${STATES_VALID_FOR_QUOTE.join(', ')}`
+        },
+        { status: 400 }
+      )
+    }
+
+    // 4. Rechazar si ya hay una cotización pendiente de aprobación del cliente
+    if (order.estado === ORDER_STATES.COTIZADO) {
+      return NextResponse.json(
+        { success: false, error: 'Ya existe una cotización pendiente de aprobación por parte del cliente. No se puede sobreescribir.' },
+        { status: 409 }
+      )
+    }
+
+    // 5. Verificar permisos: Solo técnico asignado o admin
     let isAssignedTechnician = false
     if (user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN) {
       isAssignedTechnician = true
     } else {
-      // Buscar ID de técnico del usuario actual
       const tech = await prisma.technician.findUnique({ where: { email: user.email } })
       if (tech) {
         isAssignedTechnician = order.assignments.some(a => a.technicianId === tech.id && a.estado !== 'cancelado')
@@ -50,48 +83,52 @@ export const POST = withAuth(async (req: NextRequest, user: AuthenticatedUser, {
       )
     }
 
-    // Ejecutar transacción
+    // 6. Ejecutar transacción
     const updatedOrder = await prisma.$transaction(async (tx) => {
-      // 1. Actualizar Orden
+      // Actualizar la orden: solo el estado y el costoEstimado
+      // NO se sobreescribe descripcionProblema (pertenece al cliente)
       const updated = await tx.order.update({
         where: { id: orderId },
         data: {
           estado: ORDER_STATES.COTIZADO,
           costoEstimado: costoEstimado,
-          descripcionProblema: diagnostico, // Actualizamos con el diagnóstico técnico más preciso
         }
       })
 
-      // 2. Registrar en Historial
+      // Registrar en Historial con diagnóstico completo en metadata
       await tx.orderHistory.create({
         data: {
           orderId,
           estadoAnterior: order.estado,
           estadoNuevo: ORDER_STATES.COTIZADO,
-          changedBy: 'technician', // O 'admin' si fuera el caso, simplificado a quien ejecuta
+          changedBy: user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN ? 'admin' : 'technician',
           changedById: user.id.toString(),
-          notas: `Cotización enviada: $${costoEstimado.toLocaleString('es-CO')}. Diagnóstico: ${diagnostico.substring(0, 50)}...`,
+          notas: `Cotización enviada: $${costoEstimado.toLocaleString('es-CO')} COP`,
           metadata: {
-            diagnosticoFull: diagnostico,
-            costo: costoEstimado
+            diagnosticoTecnico: diagnostico,
+            costoEstimadoCOP: costoEstimado
           }
         }
       })
 
-      // 3. Crear Notificación para el cliente
+      // Notificar al cliente para que apruebe/rechace
       if (order.customerId) {
         await tx.notification.create({
           data: {
             userId: order.customerId.toString(),
             userType: 'customer',
             tipo: 'system',
-            destinatario: order.email, // Campo requerido faltante
-            asunto: `Cotización recibida para orden ${order.orderNumber}`,
-            mensaje: `El técnico ha enviado una cotización de $${costoEstimado.toLocaleString('es-CO')} para tu servicio. Por favor revísala y apruébala para continuar.`,
+            canal: 'system',
+            destinatario: order.email,
+            asunto: `Cotización recibida — Orden ${order.orderNumber}`,
+            mensaje: `El técnico ha enviado una cotización de $${costoEstimado.toLocaleString('es-CO')} COP. Ingresa a "Mis Servicios" para aprobarla o rechazarla.`,
             metadata: {
-              actionUrl: `/customer/services?order=${order.orderNumber}`,
-              orderId: order.id
-            }
+              link: `/customer/services`,
+              orderId: order.id,
+              orderNumber: order.orderNumber
+            },
+            enviado: true,
+            fechaEnvio: new Date(),
           }
         })
       }
@@ -102,7 +139,7 @@ export const POST = withAuth(async (req: NextRequest, user: AuthenticatedUser, {
     return NextResponse.json({
       success: true,
       data: updatedOrder,
-      message: 'Cotización enviada exitosamente'
+      message: `Cotización de $${costoEstimado.toLocaleString('es-CO')} COP enviada exitosamente. El cliente recibirá una notificación.`
     })
 
   } catch (error) {

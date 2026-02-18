@@ -9,6 +9,7 @@ import {
   sendTechnicianApplicationReceivedEmail,
   sendNewTechnicianApplicationNotification
 } from '@/lib/email'
+import { notifyAdminsNewApplication } from '@/lib/services/notification.service'
 
 // Email del administrador (puedes moverlo a variables de entorno)
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin.demo@somostecnicos.com'
@@ -174,6 +175,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Notificación en-app en tiempo real para admins (SSE) — no bloquea el response
+    void notifyAdminsNewApplication(application.id, `${nombre} ${apellido}`)
 
     // Enviar emails (no bloqueante para el response)
     const confirmationEmail = await sendTechnicianApplicationReceivedEmail(email, nombre)
