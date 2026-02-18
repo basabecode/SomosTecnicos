@@ -13,7 +13,7 @@ import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
 
 export const metadata: Metadata = {
-  title: 'SomosTécnicos | Servicio Técnico a Domicilio en Bogotá y Cali',
+  title: 'SomosTécnicos | Servicio Técnico a Domicilio en Cali y sus alrededores',
   description: 'Servicio técnico experto para electrodomésticos a domicilio. Reparación de neveras, lavadoras, secadoras y calentadores. Técnicos certificados, garantía y seguimiento en tiempo real.',
   keywords: [
     'servicio técnico',
@@ -24,7 +24,6 @@ export const metadata: Metadata = {
     'reparación calentadores',
     'instalación cámaras seguridad',
     'electricista domicilio',
-    'bogotá',
     'cali',
     'somostecnicos',
     'técnicos certificados',
