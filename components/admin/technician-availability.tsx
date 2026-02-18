@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Users, Star } from 'lucide-react'
+import { Users, Star, MapPin, Wrench } from 'lucide-react'
 
 /**
  * Panel de Disponibilidad de Técnicos (Admin View)
@@ -102,22 +102,38 @@ export function TechnicianAvailabilitySection() {
                 key={tech.id}
                 className={`p-3 md:p-4 rounded-lg border-2 transition-all ${getStatusColor(tech.status)}`}
                 >
+                {/* Nombre y Estado */}
                 <div className="flex items-center justify-between mb-2 gap-2">
                     <div className="font-semibold text-sm md:text-base text-[#2C3E50] truncate flex-1 min-w-0">
                     {tech.name}
                     </div>
-                    <div className="flex items-center text-xs md:text-sm bg-white px-1.5 md:px-2 py-0.5 rounded border border-gray-100 flex-shrink-0">
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 mr-1" />
-                    <span className="text-[#2C3E50] font-medium">{tech.rating.toFixed(1)}</span>
+                    <div className="flex-shrink-0">
+                        {getStatusBadge(tech.status)}
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 gap-2">
-                    <div className="text-xs md:text-sm font-medium text-gray-600 bg-white px-2 py-0.5 rounded border border-gray-100 truncate flex-1 min-w-0" title={tech.specialty}>
-                        {tech.specialty}
+                {/* Ciudad */}
+                <div className="flex items-center gap-1.5 mb-2 text-gray-600">
+                    <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="text-xs md:text-sm truncate">{tech.city}</span>
+                    <div className="ml-auto flex items-center text-xs bg-white px-1.5 py-0.5 rounded border border-gray-100 flex-shrink-0">
+                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 mr-1" />
+                        <span className="text-[#2C3E50] font-medium">{tech.rating.toFixed(1)}</span>
                     </div>
-                    <div className="flex-shrink-0">
-                        {getStatusBadge(tech.status)}
+                </div>
+
+                {/* Tipos de electrodomésticos */}
+                <div className="flex items-start gap-1.5 mt-2">
+                    <Wrench className="w-3.5 h-3.5 text-gray-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex flex-wrap gap-1">
+                        {(tech.specialties || []).map((spec: string, idx: number) => (
+                            <span
+                                key={idx}
+                                className="text-[10px] md:text-xs bg-white text-gray-700 px-1.5 py-0.5 rounded border border-gray-200 capitalize"
+                            >
+                                {spec.replace(/_/g, ' ')}
+                            </span>
+                        ))}
                     </div>
                 </div>
                 </div>

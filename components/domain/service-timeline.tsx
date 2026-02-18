@@ -6,12 +6,22 @@
 
 'use client'
 
-import { Check, Clock, User, Wrench, CheckCircle, Package } from 'lucide-react'
+import { Check, Clock, User, Wrench, CheckCircle, Package, Search, AlertCircle } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 
-type ServiceStep = 'pendiente' | 'asignado' | 'en_camino' | 'en_proceso' | 'completado'
+type ServiceStep = 'pendiente' | 'asignado' | 'en_camino' | 'en_proceso' | 'revisado' | 'esperando_repuestos' | 'reparado' | 'completado'
+
+interface VisitReportInfo {
+  diagnostico: string
+  resultado: string
+  costoTotal: number
+  costoVisita?: number
+  repuestos?: Array<{ nombre: string; cantidad: number; costoEstimado: number }>
+  recomendaciones?: string
+}
 
 interface ServiceTimelineProps {
   currentStep: ServiceStep
@@ -28,14 +38,17 @@ interface ServiceTimelineProps {
     startedAt?: string
     completedAt?: string
   }
+  visitReport?: VisitReportInfo
 }
 
-const steps: Array<{
+interface StepDef {
   id: ServiceStep
   label: string
   icon: typeof Clock
   description: string
-}> = [
+}
+
+const allSteps: StepDef[] = [
   {
     id: 'pendiente',
     label: 'Solicitud Recibida',
@@ -56,9 +69,27 @@ const steps: Array<{
   },
   {
     id: 'en_proceso',
-    label: 'Reparación en Curso',
+    label: 'Revisión en Curso',
     icon: Wrench,
-    description: 'El técnico está trabajando en tu equipo',
+    description: 'El técnico está revisando tu equipo',
+  },
+  {
+    id: 'revisado',
+    label: 'Diagnóstico Completado',
+    icon: Search,
+    description: 'El técnico ha completado el diagnóstico',
+  },
+  {
+    id: 'esperando_repuestos',
+    label: 'Esperando Repuestos',
+    icon: Package,
+    description: 'Se están gestionando las piezas necesarias',
+  },
+  {
+    id: 'reparado',
+    label: 'Reparado',
+    icon: Wrench,
+    description: 'Tu equipo ha sido reparado exitosamente',
   },
   {
     id: 'completado',
@@ -68,9 +99,45 @@ const steps: Array<{
   },
 ]
 
-const stepOrder: ServiceStep[] = ['pendiente', 'asignado', 'en_camino', 'en_proceso', 'completado']
+function buildVisibleSteps(currentStep: ServiceStep, visitReport?: VisitReportInfo): StepDef[] {
+  // Siempre mostrar: pendiente, asignado, en_camino, en_proceso
+  const base: ServiceStep[] = ['pendiente', 'asignado', 'en_camino', 'en_proceso']
 
-export function ServiceTimeline({ currentStep, order }: ServiceTimelineProps) {
+  // Mostrar revisado si el estado actual es revisado o posterior, o si hay visitReport
+  const postRevision: ServiceStep[] = ['revisado', 'esperando_repuestos', 'reparado', 'completado']
+  const isPostRevision = postRevision.includes(currentStep) || visitReport
+
+  if (isPostRevision) {
+    base.push('revisado')
+  }
+
+  // Mostrar esperando_repuestos solo si el estado actual es ese, o el visitReport indica pendiente_repuesto
+  if (
+    currentStep === 'esperando_repuestos' ||
+    visitReport?.resultado === 'pendiente_repuesto'
+  ) {
+    base.push('esperando_repuestos')
+  }
+
+  // Mostrar reparado si el estado actual es reparado o completado
+  const postReparado: ServiceStep[] = ['reparado', 'completado']
+  if (postReparado.includes(currentStep) || visitReport?.resultado === 'reparado') {
+    base.push('reparado')
+  }
+
+  // Siempre mostrar completado como meta final
+  base.push('completado')
+
+  // Deduplicar y mantener orden
+  const ordered: ServiceStep[] = ['pendiente', 'asignado', 'en_camino', 'en_proceso', 'revisado', 'esperando_repuestos', 'reparado', 'completado']
+  const unique = ordered.filter(s => base.includes(s))
+
+  return unique.map(id => allSteps.find(s => s.id === id)!).filter(Boolean)
+}
+
+export function ServiceTimeline({ currentStep, order, visitReport }: ServiceTimelineProps) {
+  const visibleSteps = buildVisibleSteps(currentStep, visitReport)
+  const stepOrder = visibleSteps.map(s => s.id)
   const currentStepIndex = stepOrder.indexOf(currentStep)
 
   const getStepStatus = (stepId: ServiceStep): 'completed' | 'current' | 'upcoming' => {
@@ -108,7 +175,7 @@ export function ServiceTimeline({ currentStep, order }: ServiceTimelineProps) {
 
         {/* Steps */}
         <div className="space-y-6 sm:space-y-8">
-          {steps.map((step) => {
+          {visibleSteps.map((step) => {
             const status = getStepStatus(step.id)
             const StepIcon = step.icon
 
@@ -293,6 +360,40 @@ export function ServiceTimeline({ currentStep, order }: ServiceTimelineProps) {
                     </div>
                   )}
 
+                  {/* Diagnostico del tecnico */}
+                  {step.id === 'revisado' && visitReport && status !== 'upcoming' && (
+                    <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 rounded-lg bg-teal-50 border border-teal-200">
+                      <p className="text-xs font-semibold text-teal-900 mb-1">Diagnóstico del Técnico</p>
+                      <p className="text-xs sm:text-sm text-teal-800 line-clamp-3">{visitReport.diagnostico}</p>
+                      {visitReport.costoTotal > 0 && (
+                        <p className="text-xs font-medium text-teal-900 mt-2">
+                          Costo estimado: {formatCurrency(visitReport.costoTotal)}
+                        </p>
+                      )}
+                      {visitReport.recomendaciones && (
+                        <div className="mt-2 pt-2 border-t border-teal-200">
+                          <p className="text-xs font-semibold text-teal-900">Recomendaciones:</p>
+                          <p className="text-xs text-teal-700">{visitReport.recomendaciones}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Repuestos pendientes */}
+                  {step.id === 'esperando_repuestos' && visitReport?.repuestos && status !== 'upcoming' && (
+                    <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 rounded-lg bg-orange-50 border border-orange-200">
+                      <p className="text-xs font-semibold text-orange-900 mb-1">Repuestos necesarios</p>
+                      <ul className="text-xs text-orange-800 space-y-1">
+                        {visitReport.repuestos.map((r, i) => (
+                          <li key={i} className="flex justify-between">
+                            <span>{r.nombre} (x{r.cantidad})</span>
+                            <span className="font-medium">{formatCurrency(r.costoEstimado * r.cantidad)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {step.id === 'completado' && order.completedAt && status === 'completed' && (
                     <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 rounded-lg bg-checkmark-green/5 border border-checkmark-green/20">
                       <div className="flex items-center gap-2">
@@ -320,7 +421,7 @@ export function ServiceTimeline({ currentStep, order }: ServiceTimelineProps) {
       </div>
 
       {/* Footer - Next action */}
-      {currentStep !== 'completado' && (
+      {currentStep !== 'completado' && currentStep !== 'reparado' && (
         <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-border-light">
           <div className="flex items-center gap-2 text-xs sm:text-small text-text-secondary">
             <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -328,7 +429,9 @@ export function ServiceTimeline({ currentStep, order }: ServiceTimelineProps) {
               {currentStep === 'pendiente' && 'Estamos buscando el mejor técnico para ti...'}
               {currentStep === 'asignado' && 'El técnico se pondrá en contacto contigo pronto'}
               {currentStep === 'en_camino' && 'Prepara el área de trabajo para el técnico'}
-              {currentStep === 'en_proceso' && 'El técnico está trabajando en tu equipo'}
+              {currentStep === 'en_proceso' && 'El técnico está revisando tu equipo'}
+              {currentStep === 'revisado' && 'El diagnóstico está listo. Revisa los detalles arriba.'}
+              {currentStep === 'esperando_repuestos' && 'Estamos gestionando los repuestos necesarios para tu equipo'}
             </span>
           </div>
         </div>

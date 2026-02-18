@@ -62,6 +62,7 @@ model Order {
   customer              Customer?         @relation(fields: [customerId], references: [id])
   invoices              Invoice[]
   messages              Message[]
+  visitReports          VisitReport[]
 
   // Índices
   @@index([estado])
@@ -85,6 +86,7 @@ model Technician {
 
   // Especialidades y Ubicación
   especialidades        Json     // Array de especialidades: ["nevera", "lavadora"]
+  ciudad                String?
   zonaTrabajoArea       String?  @map("zona_trabajo")
   activo                Boolean  @default(true)
   disponible            Boolean  @default(true)
@@ -109,6 +111,7 @@ model Technician {
 
   // Relaciones
   assignments           Assignment[]
+  visitReports          VisitReport[]
 
   // Índices
   @@index([activo])
@@ -153,6 +156,7 @@ model Assignment {
   // Relaciones
   order                 Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
   technician            Technician @relation(fields: [technicianId], references: [id])
+  visitReports          VisitReport[]
 
   // Índices
   @@index([orderId])
@@ -194,6 +198,53 @@ model OrderHistory {
   @@index([createdAt])
   @@index([changedBy])
   @@map("order_history")
+}
+
+// =============================================
+// MODELO DE INFORMES DE VISITA
+// =============================================
+
+model VisitReport {
+  id                Int       @id @default(autoincrement())
+  assignmentId      Int       @map("assignment_id")
+  orderId           String    @map("order_id")
+  technicianId      Int       @map("technician_id")
+
+  // Hallazgos del Diagnóstico
+  diagnostico       String    @db.Text
+
+  // Resultado de la Visita
+  resultado         String    // 'revisado', 'reparado', 'pendiente_repuesto', 'no_reparable'
+
+  // Costos
+  costoVisita       Decimal   @map("costo_visita") @db.Decimal(10,2)
+  costoReparacion   Decimal?  @map("costo_reparacion") @db.Decimal(10,2)
+  costoRepuestos    Decimal?  @map("costo_repuestos") @db.Decimal(10,2)
+  costoTotal        Decimal   @map("costo_total") @db.Decimal(10,2)
+
+  // Repuestos Necesarios (JSON array)
+  repuestos         Json?     // [{nombre, cantidad, costoEstimado, descripcion?}]
+
+  // Documentación Adicional
+  notasAdicionales  String?   @map("notas_adicionales") @db.Text
+  recomendaciones   String?   @db.Text
+
+  // Timestamps
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  assignment        Assignment @relation(fields: [assignmentId], references: [id])
+  order             Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  technician        Technician @relation(fields: [technicianId], references: [id])
+
+  // Índices
+  @@index([assignmentId])
+  @@index([orderId])
+  @@index([technicianId])
+  @@index([resultado])
+  @@index([createdAt])
+  @@map("visit_reports")
 }
 
 // =============================================

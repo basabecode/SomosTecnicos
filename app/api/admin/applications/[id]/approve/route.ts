@@ -93,6 +93,7 @@ async function handler(
           telefono: application.telefono,
           cedula: application.cedula,
           especialidades: application.especialidades as any,
+          ciudad: application.ciudad,
           zonaTrabajoArea: application.zonaPreferida,
           activo: true,
           disponible: true

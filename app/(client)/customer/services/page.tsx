@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -39,74 +39,33 @@ import {
   PlayCircle,
   User,
   RefreshCw,
+  Loader2,
 } from 'lucide-react'
 
-// Mock data para servicios del cliente
-const customerServices = [
-  {
-    id: 'SRV-001',
-    type: 'Reparación Lavadora',
-    status: 'in_progress',
-    priority: 'high',
-    technician: {
-      name: 'Juan Pérez',
-      phone: '+57 300 123 4567',
-      rating: 4.8,
-      photo: '/placeholder-user.jpg',
-    },
-    scheduledDate: '2025-10-07T14:00:00',
-    estimatedDuration: '2 horas',
-    actualStartTime: '2025-10-07T14:15:00',
-    address: 'Calle 123 #45-67, Bogotá Norte',
-    description: 'Lavadora no centrifuga correctamente',
-    progress: 75,
-    lastUpdate: '2025-10-07T15:30:00',
-    cost: 120000,
-    parts: ['Correa de transmisión', 'Rodamientos'],
-    notes: [
-      { time: '14:15', message: 'Técnico llegó al sitio' },
-      { time: '14:30', message: 'Diagnóstico inicial completado' },
-      { time: '15:00', message: 'Iniciando reemplazo de partes' },
-      { time: '15:30', message: 'Instalación de nueva correa completada' },
-    ],
-  },
-  {
-    id: 'SRV-002',
-    type: 'Mantenimiento Aire Acondicionado',
-    status: 'scheduled',
-    priority: 'medium',
-    technician: {
-      name: 'Ana López',
-      phone: '+57 300 234 5678',
-      rating: 4.6,
-      photo: '/placeholder-user.jpg',
-    },
-    scheduledDate: '2025-10-08T09:00:00',
-    estimatedDuration: '1.5 horas',
-    address: 'Calle 123 #45-67, Bogotá Norte',
-    description: 'Mantenimiento preventivo programado',
-    cost: 85000,
-    parts: ['Filtros', 'Refrigerante R410A'],
-  },
-  {
-    id: 'SRV-003',
-    type: 'Reparación Refrigerador',
-    status: 'confirmed',
-    priority: 'urgent',
-    technician: {
-      name: 'Carlos Ruiz',
-      phone: '+57 300 345 6789',
-      rating: 4.2,
-      photo: '/placeholder-user.jpg',
-    },
-    scheduledDate: '2025-10-07T16:00:00',
-    estimatedDuration: '3 horas',
-    address: 'Calle 123 #45-67, Bogotá Norte',
-    description: 'Refrigerador no enfría, posible fuga de refrigerante',
-    cost: 180000,
-    parts: ['Compresor', 'Termostato', 'Refrigerante'],
-  },
-]
+// Interface based on UI requirements, mapped from API
+interface Service {
+  id: string
+  type: string
+  status: string
+  priority: string
+  technician: {
+    name: string
+    phone: string
+    rating: number
+    photo: string
+  }
+  scheduledDate: string
+  estimatedDuration: string
+  actualStartTime?: string
+  address: string
+  description: string
+  progress?: number
+  lastUpdate?: string
+  cost: number
+  parts?: string[]
+  notes?: { time: string; message: string }[]
+  orderId: string // API ID
+}
 
 const statusColors = {
   scheduled: 'bg-blue-100 text-blue-800',
@@ -136,12 +95,79 @@ const priorityColors = {
 export default function CustomerServicesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [selectedService, setSelectedService] = useState<
-    (typeof customerServices)[0] | null
-  >(null)
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filteredServices = customerServices.filter(service => {
+  const fetchServices = async () => {
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      const response = await fetch('/api/orders?limit=20', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          const mappedServices = data.data.orders.map((order: any) => {
+            // Determine status mapping
+            let uiStatus = 'scheduled'
+            if (order.estado === 'asignado') uiStatus = 'confirmed'
+            else if (order.estado === 'en_proceso') uiStatus = 'in_progress'
+            else if (order.estado === 'completado') uiStatus = 'completed'
+            else if (order.estado === 'cancelado') uiStatus = 'cancelled'
+            else if (order.estado === 'pendiente') uiStatus = 'scheduled'
+
+            // Find active technician
+            const activeAssignment = order.assignments?.find((a: any) =>
+                ['asignado', 'en_proceso', 'completado'].includes(a.estado)
+            ) || order.assignments?.[0]
+
+            const technicianName = activeAssignment?.technician?.nombre || 'Por asignar'
+            const technicianPhone = activeAssignment?.technician?.telefono || ''
+
+            return {
+              id: order.orderNumber, // Display ID
+              orderId: order.id, // Internal ID
+              type: `${order.tipoServicio} - ${order.tipoElectrodomestico}`,
+              status: uiStatus,
+              priority: 'medium', // Default as API doesn't seem to have priority
+              technician: {
+                name: technicianName,
+                phone: technicianPhone,
+                rating: 0, // Not in API
+                photo: '/placeholder-user.jpg',
+              },
+              scheduledDate: order.fechaPreferida || order.createdAt,
+              estimatedDuration: 'N/A',
+              address: order.direccion,
+              description: order.descripcionProblema,
+              progress: order.estado === 'en_proceso' ? 50 : order.estado === 'completado' ? 100 : 0,
+              lastUpdate: order.updatedAt,
+              cost: Number(order.costoFinal) || Number(order.costoEstimado) || 0,
+              parts: [], // Not in list API
+              notes: [], // Not in list API
+            }
+          })
+          setServices(mappedServices)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const filteredServices = services.filter(service => {
     const matchesSearch =
       service.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -150,7 +176,7 @@ export default function CustomerServicesPage() {
     return matchesSearch && matchesStatus
   })
 
-  const openDetailDialog = (service: (typeof customerServices)[0]) => {
+  const openDetailDialog = (service: Service) => {
     setSelectedService(service)
     setIsDetailDialogOpen(true)
   }
@@ -177,6 +203,15 @@ export default function CustomerServicesPage() {
     return priorityMap[priority as keyof typeof priorityMap] || priority
   }
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+        <p className="text-muted-foreground">Cargando tus servicios...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -186,7 +221,7 @@ export default function CustomerServicesPage() {
             Estado y seguimiento de tus servicios activos
           </p>
         </div>
-        <Button onClick={() => window.location.reload()} size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
+        <Button onClick={fetchServices} size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
           <RefreshCw className="w-3.5 h-3.5 mr-2" />
           Actualizar
         </Button>
@@ -202,7 +237,7 @@ export default function CustomerServicesPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{customerServices.length}</div>
+            <div className="text-2xl font-bold">{services.length}</div>
             <p className="text-xs text-muted-foreground">En mi lista</p>
           </CardContent>
         </Card>
@@ -214,7 +249,7 @@ export default function CustomerServicesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {customerServices.filter(s => s.status === 'in_progress').length}
+              {services.filter(s => s.status === 'in_progress').length}
             </div>
             <p className="text-xs text-muted-foreground">Trabajando ahora</p>
           </CardContent>
@@ -228,7 +263,7 @@ export default function CustomerServicesPage() {
           <CardContent>
             <div className="text-2xl font-bold">
               {
-                customerServices.filter(
+                services.filter(
                   s => s.status === 'scheduled' || s.status === 'confirmed'
                 ).length
               }
@@ -244,7 +279,7 @@ export default function CustomerServicesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {customerServices.filter(s => s.priority === 'urgent').length}
+              {services.filter(s => s.priority === 'urgent').length}
             </div>
             <p className="text-xs text-muted-foreground">
               Atención prioritaria
@@ -355,7 +390,7 @@ export default function CustomerServicesPage() {
                         <div className="flex items-center space-x-1">
                           <Star className="w-3 h-3 text-yellow-500 fill-current" />
                           <span className="text-sm">
-                            {service.technician.rating}
+                            {service.technician.rating > 0 ? service.technician.rating : 'N/A'}
                           </span>
                         </div>
                       </div>
@@ -364,7 +399,7 @@ export default function CustomerServicesPage() {
                         <span className="text-sm">
                           {new Date(service.scheduledDate).toLocaleDateString()}{' '}
                           -{' '}
-                          {new Date(service.scheduledDate).toLocaleTimeString()}
+                          {new Date(service.scheduledDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
@@ -384,7 +419,7 @@ export default function CustomerServicesPage() {
                       <p className="text-sm font-medium mb-2">
                         Costo estimado: ${service.cost.toLocaleString()}
                       </p>
-                      {service.parts && (
+                      {service.parts && service.parts.length > 0 && (
                         <div>
                           <p className="text-sm font-medium mb-1">
                             Partes incluidas:
@@ -415,7 +450,7 @@ export default function CustomerServicesPage() {
                       <Progress value={service.progress} className="h-2" />
                       <p className="text-xs text-muted-foreground">
                         Última actualización:{' '}
-                        {new Date(service.lastUpdate!).toLocaleTimeString()}
+                        {service.lastUpdate ? new Date(service.lastUpdate).toLocaleTimeString() : 'Reciente'}
                       </p>
                     </div>
                   )}
@@ -430,15 +465,17 @@ export default function CustomerServicesPage() {
                       Ver Detalles
                     </Button>
 
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={`tel:${service.technician.phone}`}>
-                        <Phone className="w-4 h-4 mr-1" />
-                        Llamar Técnico
-                      </a>
-                    </Button>
+                    {service.technician.phone && (
+                        <Button variant="outline" size="sm" asChild>
+                        <a href={`tel:${service.technician.phone}`}>
+                            <Phone className="w-4 h-4 mr-1" />
+                            Llamar Técnico
+                        </a>
+                        </Button>
+                    )}
 
                     <Button variant="outline" size="sm" asChild>
-                      <a href="/customer/messages">
+                      <a href={`/customer/messages?orderId=${service.orderId}`}>
                         <MessageSquare className="w-4 h-4 mr-1" />
                         Mensajes
                       </a>
@@ -551,14 +588,14 @@ export default function CustomerServicesPage() {
                         <div className="flex items-center space-x-1">
                           <Star className="w-3 h-3 text-yellow-500 fill-current" />
                           <span>
-                            {selectedService.technician.rating} estrellas
+                            {selectedService.technician.rating > 0 ? selectedService.technician.rating : 'N/A'}
                           </span>
                         </div>
                       </div>
                     </div>
                     <p>
                       <strong>Teléfono:</strong>{' '}
-                      {selectedService.technician.phone}
+                      {selectedService.technician.phone || 'No disponible'}
                     </p>
                   </div>
                 </div>
@@ -591,7 +628,7 @@ export default function CustomerServicesPage() {
               </div>
 
               {/* Parts */}
-              {selectedService.parts && (
+              {selectedService.parts && selectedService.parts.length > 0 && (
                 <div>
                   <h4 className="font-medium mb-3">Partes y Materiales</h4>
                   <div className="flex flex-wrap gap-2">
@@ -605,7 +642,7 @@ export default function CustomerServicesPage() {
               )}
 
               {/* Progress Notes */}
-              {selectedService.notes && (
+              {selectedService.notes && selectedService.notes.length > 0 && (
                 <div>
                   <h4 className="font-medium mb-3">Seguimiento del Servicio</h4>
                   <div className="space-y-2">
@@ -635,10 +672,12 @@ export default function CustomerServicesPage() {
                 >
                   Cerrar
                 </Button>
-                <Button variant="outline">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Llamar Técnico
-                </Button>
+                {selectedService.technician.phone && (
+                    <Button variant="outline">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Llamar Técnico
+                    </Button>
+                )}
                 <Button variant="outline">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Enviar Mensaje

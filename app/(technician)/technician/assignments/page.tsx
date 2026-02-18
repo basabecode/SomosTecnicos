@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -84,6 +85,7 @@ const statusIcons: Record<string, any> = {
 }
 
 export default function TechnicianAssignmentsPage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -146,16 +148,15 @@ export default function TechnicianAssignmentsPage() {
     }
   }
 
-  const startJob = (assignment: Assignment) => {
+  const startJob = async (assignment: Assignment) => {
     if (confirm('¿Deseas iniciar este servicio?')) {
-        updateStatus(assignment.id, assignment.orderId, 'en_proceso')
+        await updateStatus(assignment.id, assignment.orderId, 'en_proceso')
+        router.push(`/technician/assignments/${assignment.id}/execute`)
     }
   }
 
   const completeJob = (assignment: Assignment) => {
-    if (confirm('¿Deseas finalizar este servicio?')) {
-        updateStatus(assignment.id, assignment.orderId, 'completado')
-    }
+    router.push(`/technician/assignments/${assignment.id}/execute`)
   }
 
   const filteredAssignments = assignments.filter(assignment => {

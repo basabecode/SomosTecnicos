@@ -115,6 +115,22 @@ export const GET = withAuth(async (request: NextRequest, user: AuthenticatedUser
                 }
               }
             }
+          },
+          visitReports: {
+            orderBy: { createdAt: 'desc' as const },
+            take: 1,
+            select: {
+              id: true,
+              diagnostico: true,
+              resultado: true,
+              costoVisita: true,
+              costoReparacion: true,
+              costoRepuestos: true,
+              costoTotal: true,
+              repuestos: true,
+              recomendaciones: true,
+              createdAt: true,
+            }
           }
         }
       }),

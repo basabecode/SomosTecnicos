@@ -66,7 +66,7 @@ import {
 
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
-import { calculateReplyReceiver, getThreadKey } from '@/lib/chat-logic'
+import { calculateReplyReceiver, getThreadKey, isOwnMessage, isMessageForMe } from '@/lib/chat-logic'
 
 // =============================================
 // TYPES
@@ -227,7 +227,7 @@ export default function CustomerMessages() {
     const grouped: Record<string, Thread> = {}
 
     messages.forEach(msg => {
-      const isMe = String(msg.senderId) === String(user?.id)
+      const isMe = isOwnMessage(msg, user)
 
       // DETERMINE THREAD KEY
       const threadKey = getThreadKey(msg, user)
@@ -291,7 +291,7 @@ export default function CustomerMessages() {
       }
 
       // Count Unread
-      if (!msg.read && msg.receiverId === user.id.toString()) {
+      if (!msg.read && isMessageForMe(msg, user)) {
         thread.unreadCount++
       }
     })
@@ -323,7 +323,7 @@ export default function CustomerMessages() {
        if (!thread) return
 
        const unreadIds = thread.messages
-          .filter(m => !m.read && String(m.receiverId) === String(user.id))
+          .filter(m => !m.read && isMessageForMe(m, user))
           .map(m => m.id)
 
        if (unreadIds.length > 0) {
@@ -591,7 +591,7 @@ export default function CustomerMessages() {
                                </div>
 
                                <p className={`text-xs truncate ${thread.unreadCount > 0 ? 'font-semibold text-gray-800' : 'text-gray-500'}`}>
-                                 {thread.lastMessage.senderId === user?.id?.toString() && 'Tú: '}
+                                 {isOwnMessage(thread.lastMessage, user!) && 'Tú: '}
                                  {thread.lastMessage.content}
                                </p>
                              </div>
@@ -674,7 +674,7 @@ export default function CustomerMessages() {
                     {[...selectedThread.messages]
                       .sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
                       .map((msg, index, arr) => {
-                        const isMe = String(msg.senderId) === String(user?.id)
+                        const isMe = isOwnMessage(msg, user!)
                         const showAvatar = !isMe && (index === 0 || arr[index-1].senderId !== msg.senderId)
 
                         return (

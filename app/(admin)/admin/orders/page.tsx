@@ -354,9 +354,14 @@ export default function OrdersPage() {
                   <SelectItem value="all">Todos los estados</SelectItem>
                   <SelectItem value="pendiente">Pendiente</SelectItem>
                   <SelectItem value="asignado">Asignado</SelectItem>
-                  <SelectItem value="en_proceso">En Proceso</SelectItem>
+                  <SelectItem value="en_camino">En Camino</SelectItem>
+                  <SelectItem value="en_proceso">En Revisión</SelectItem>
+                  <SelectItem value="revisado">Diagnosticado</SelectItem>
+                  <SelectItem value="esperando_repuestos">Esp. Repuestos</SelectItem>
+                  <SelectItem value="reparado">Reparado</SelectItem>
                   <SelectItem value="completado">Completado</SelectItem>
                   <SelectItem value="cancelado">Cancelado</SelectItem>
+                  <SelectItem value="reagendado">Reagendado</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={urgencyFilter} onValueChange={setUrgencyFilter}>

@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -18,7 +18,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import {
   Table,
@@ -31,9 +30,7 @@ import {
 import {
   Shield,
   Clock,
-  CheckCircle,
   AlertTriangle,
-  Calendar,
   FileText,
   Star,
   Camera,
@@ -41,6 +38,7 @@ import {
   Plus,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 
 // Tipos para el estado de reclamos
 type ClaimStatus = 'under_review' | 'approved' | 'rejected' | 'completed'
@@ -55,61 +53,19 @@ interface WarrantyClaim {
   scheduledDate: string | null
 }
 
-// Mock data para servicios con garantía
-const warrantyServices = [
-  {
-    id: 'SRV-098',
-    type: 'Reparación Refrigerador',
-    completedDate: '2025-09-15T16:30:00',
-    warrantyExpires: '2025-12-14T16:30:00',
-    technician: 'Carlos Ruiz',
-    rating: 5,
-    cost: 150000,
-    description: 'Reemplazo de compresor y termostato',
-    partsReplaced: ['Compresor', 'Termostato', 'Filtro'],
-    status: 'active',
-    warrantyType: 'parts_and_labor',
-  },
-  {
-    id: 'SRV-097',
-    type: 'Instalación Lavaplatos',
-    completedDate: '2025-08-20T11:45:00',
-    warrantyExpires: '2025-11-18T11:45:00',
-    technician: 'Juan Pérez',
-    rating: 4,
-    cost: 95000,
-    description: 'Instalación completa con conexiones',
-    partsReplaced: ['Mangueras', 'Conectores', 'Válvula'],
-    status: 'active',
-    warrantyType: 'installation',
-  },
-  {
-    id: 'SRV-089',
-    type: 'Reparación Lavadora',
-    completedDate: '2025-06-10T14:20:00',
-    warrantyExpires: '2025-09-08T14:20:00',
-    technician: 'Ana López',
-    rating: 5,
-    cost: 120000,
-    description: 'Cambio de motor y transmisión',
-    partsReplaced: ['Motor', 'Transmisión', 'Correa'],
-    status: 'expired',
-    warrantyType: 'parts_and_labor',
-  },
-]
-
-// Mock data para reclamos de garantía
-const warrantyClaims: WarrantyClaim[] = [
-  {
-    id: 'WCL-001',
-    serviceId: 'SRV-098',
-    claimDate: '2025-10-05T10:30:00',
-    status: 'under_review',
-    description: 'El refrigerador volvió a presentar el mismo problema',
-    response: null,
-    scheduledDate: null,
-  },
-]
+interface WarrantyService {
+    id: string
+    type: string
+    completedDate: string
+    warrantyExpires: string
+    technician: string
+    rating: number
+    cost: number
+    description: string
+    partsReplaced: string[]
+    status: 'active' | 'expiring' | 'expired'
+    warrantyType: string
+}
 
 const getWarrantyStatus = (expiryDate: string) => {
   const now = new Date()
@@ -141,12 +97,66 @@ const statusColors: Record<ClaimStatus, string> = {
 
 export default function WarrantyPage() {
   const { toast } = useToast()
-  const [selectedService, setSelectedService] = useState<
-    (typeof warrantyServices)[0] | null
-  >(null)
+  const [selectedService, setSelectedService] = useState<WarrantyService | null>(null)
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false)
   const [claimDescription, setClaimDescription] = useState('')
   const [claimImages, setClaimImages] = useState<File[]>([])
+
+  const [warrantyServices, setWarrantyServices] = useState<WarrantyService[]>([])
+  const [warrantyClaims, setWarrantyClaims] = useState<WarrantyClaim[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchWarranties = async () => {
+    setLoading(true)
+    try {
+        const token = localStorage.getItem('accessToken')
+        const response = await fetch('/api/orders?limit=50', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        if (response.ok) {
+            const data = await response.json()
+            if (data.success) {
+                const services: WarrantyService[] = data.data.orders
+                    .filter((order: any) => order.estado === 'completado')
+                    .map((order: any) => {
+                        const completedDate = new Date(order.updatedAt || order.createdAt)
+                        const expiryDate = new Date(completedDate)
+                        expiryDate.setDate(expiryDate.getDate() + 90) // 90 days warranty
+
+                        // Find technician
+                        const assignment = order.assignments?.find((a: any) => a.estado === 'completado')
+                        const technicianName = assignment?.technician?.nombre || 'Técnico'
+
+                        return {
+                            id: order.orderNumber,
+                            type: `${order.tipoServicio} - ${order.tipoElectrodomestico}`,
+                            completedDate: completedDate.toISOString(),
+                            warrantyExpires: expiryDate.toISOString(),
+                            technician: technicianName,
+                            rating: 0, // Not in API
+                            cost: Number(order.costoFinal) || 0,
+                            description: order.descripcionProblema,
+                            partsReplaced: [], // Not in API
+                            status: getWarrantyStatus(expiryDate.toISOString()).status as any,
+                            warrantyType: 'parts_and_labor'
+                        }
+                    })
+                setWarrantyServices(services)
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching warranties:", error)
+    } finally {
+        setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchWarranties()
+  }, [])
 
   const activeWarranties = warrantyServices.filter(service => {
     const warranty = getWarrantyStatus(service.warrantyExpires)
@@ -190,6 +200,15 @@ export default function WarrantyPage() {
     setClaimDescription('')
     setClaimImages([])
     setSelectedService(null)
+  }
+
+  if (loading) {
+      return (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+            <p className="text-muted-foreground">Cargando garantías...</p>
+          </div>
+      )
   }
 
   return (
@@ -363,7 +382,7 @@ export default function WarrantyPage() {
                         </p>
                         <p>
                           <strong>Partes:</strong>{' '}
-                          {service.partsReplaced.join(', ')}
+                          {(service.partsReplaced && service.partsReplaced.length > 0) ? service.partsReplaced.join(', ') : 'Ninguna'}
                         </p>
                       </div>
                     </div>
@@ -578,7 +597,7 @@ export default function WarrantyPage() {
                   </p>
                   <p>
                     <strong>Partes instaladas:</strong>{' '}
-                    {selectedService.partsReplaced.join(', ')}
+                    {(selectedService.partsReplaced && selectedService.partsReplaced.length > 0) ? selectedService.partsReplaced.join(', ') : 'Ninguna'}
                   </p>
                 </div>
               </div>

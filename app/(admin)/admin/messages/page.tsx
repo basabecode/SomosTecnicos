@@ -49,7 +49,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
-import { calculateReplyReceiver, getThreadKey } from '@/lib/chat-logic'
+import { calculateReplyReceiver, getThreadKey, isOwnMessage, isMessageForMe } from '@/lib/chat-logic'
 
 interface Message {
   id: string
@@ -165,7 +165,7 @@ export default function AdminMessages() {
     const grouped: Record<string, Thread> = {}
 
     messages.forEach(msg => {
-      const isMe = String(msg.senderId) === String(user?.id)
+      const isMe = isOwnMessage(msg, user)
 
       // 1. DETERMINE THREAD KEY
       const threadKey = getThreadKey(msg, user)
@@ -228,7 +228,7 @@ export default function AdminMessages() {
       }
 
       // 4. COUNT UNREAD
-      if (!msg.read && String(msg.receiverId) === String(user?.id)) {
+      if (!msg.read && isMessageForMe(msg, user)) {
         thread.unreadCount++
       }
     })
@@ -249,7 +249,7 @@ export default function AdminMessages() {
       thread.lastMessage.content.toLowerCase().includes(searchTerm.toLowerCase())
 
     // Status filter logic (simplified: check if last message is unread and received)
-    const isUnread = !thread.lastMessage.read && String(thread.lastMessage.receiverId) === String(user?.id)
+    const isUnread = !thread.lastMessage.read && isMessageForMe(thread.lastMessage, user!)
 
     if (statusFilter === 'unread' && !isUnread) return false
     if (statusFilter === 'read' && isUnread) return false
@@ -264,7 +264,7 @@ export default function AdminMessages() {
        if (!thread) return
 
        const unreadIds = thread.messages
-          .filter(m => !m.read && String(m.receiverId) === String(user.id))
+          .filter(m => !m.read && isMessageForMe(m, user))
           .map(m => m.id)
 
        if (unreadIds.length > 0) {
@@ -512,7 +512,7 @@ export default function AdminMessages() {
                filteredThreads.map(thread => {
                  const lastMsg = thread.lastMessage
                  const isSelected = selectedThreadId === thread.id
-                 const isUnread = !lastMsg.read && lastMsg.receiverId === user?.id?.toString()
+                 const isUnread = !lastMsg.read && isMessageForMe(lastMsg, user!)
 
                  return (
                    <Card
@@ -535,7 +535,7 @@ export default function AdminMessages() {
                        )}
 
                        <p className={`text-xs line-clamp-2 ${isUnread ? 'font-medium text-gray-900' : 'text-gray-500'}`}>
-                         {lastMsg.senderId === user?.id?.toString() && 'Tú: '}
+                         {isOwnMessage(lastMsg, user!) && 'Tú: '}
                          {lastMsg.content}
                        </p>
                      </CardContent>
@@ -589,7 +589,7 @@ export default function AdminMessages() {
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
                  {/* Sort chronological for display */}
                   {[...selectedThread.messages].sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((msg) => {
-                    const isMe = String(msg.senderId) === String(user?.id)
+                    const isMe = isOwnMessage(msg, user!)
                    return (
                      <div key={msg.id} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'} mb-4`}>
                        <div className={`flex flex-col max-w-[80%] ${isMe ? 'items-end' : 'items-start'}`}>

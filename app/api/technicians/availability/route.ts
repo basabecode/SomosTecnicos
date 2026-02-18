@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         // @ts-ignore
         estadoActual: true, // Nuevo campo
         disponible: true,
+        ciudad: true,
         zonaTrabajoArea: true,
         ordenesCompletadas: true
       }
@@ -49,10 +50,10 @@ export async function GET(request: NextRequest) {
         id: t.id,
         name: t.nombre,
         rating: Number(t.calificacionPromedio),
-        specialty: Array.isArray(t.especialidades) ? t.especialidades[0] : 'General', // Tomar la primera como principal
+        specialties: Array.isArray(t.especialidades) ? t.especialidades : ['General'],
         status: t.estadoActual || (t.disponible ? 'disponible' : 'ocupado'), // Fallback
         disponible: t.disponible,
-        zone: t.zonaTrabajoArea
+        city: t.ciudad || 'Sin asignar'
       })),
       stats
     })

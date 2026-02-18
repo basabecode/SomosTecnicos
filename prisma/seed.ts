@@ -12,14 +12,15 @@ async function main() {
   console.log('🌱 Iniciando siembra de datos optimizada para producción...')
 
   try {
+
     // =============================================
     // 1. CREAR USUARIO ADMINISTRADOR POR DEFECTO
     // =============================================
     console.log('👤 Creando usuario administrador...')
 
-    const adminEmail = 'admin.demo@somostecnicos.com'
-    const adminPassword = process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!'
-    const adminName = 'Administrador Demo'
+    const adminEmail = 'admin@somostecnicos.com'
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin2026!'
+    const adminName = 'Administrador Sistema'
 
     const hashedPassword = await bcrypt.hash(adminPassword, 12)
 
@@ -30,7 +31,7 @@ async function main() {
         nombre: adminName,
       },
       create: {
-        username: 'admin_demo',
+        username: 'admin',
         email: adminEmail,
         passwordHash: hashedPassword,
         nombre: adminName,
@@ -44,54 +45,6 @@ async function main() {
       }
     })
     console.log(`✅ Usuario administrador creado/actualizado: ${adminEmail}`)
-
-    // =============================================
-    // 2. CREAR CLIENTES DE PRUEBA
-    // =============================================
-    console.log('👥 Creando clientes de prueba...')
-
-    const customersData = [
-      {
-        username: 'cliente_demo',
-        email: 'cliente.demo@somostecnicos.com',
-        nombre: 'Camila',
-        apellido: 'Suárez',
-        telefono: '3005557788',
-        direccion: 'Carrera 45 #12-34',
-        ciudad: 'Bogotá',
-        password: process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!'
-      }
-    ]
-
-    const seededCustomers: any[] = []
-
-    for (const customer of customersData) {
-      const hashedPassword = await bcrypt.hash(customer.password, 12)
-      const created = await prisma.customer.upsert({
-        where: { email: customer.email },
-        update: {
-          passwordHash: hashedPassword,
-          nombre: customer.nombre,
-          apellido: customer.apellido,
-        },
-        create: {
-          username: customer.username,
-          email: customer.email,
-          nombre: customer.nombre,
-          apellido: customer.apellido,
-          telefono: customer.telefono,
-          direccion: customer.direccion,
-          ciudad: customer.ciudad,
-          passwordHash: hashedPassword,
-          preferencias: {
-            tema: 'light',
-            notificaciones: true,
-          }
-        }
-      })
-      console.log(`✅ Cliente creado/actualizado: ${customer.email}`)
-      seededCustomers.push(created)
-    }
 
     // =============================================
     // 3. CREAR TIPOS DE SERVICIOS
@@ -165,48 +118,6 @@ async function main() {
     }
 
     // =============================================
-    // 5. CREAR TÉCNICOS DE EJEMPLO
-    // =============================================
-    console.log('👷 Creando técnicos de ejemplo...')
-
-    const techPassword = await bcrypt.hash(process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!', 12)
-
-    const technician = {
-      nombre: 'Carlos Mendoza',
-      telefono: '3151234567',
-      email: 'tecnico.demo@somostecnicos.com',
-      cedula: '12345678',
-      especialidades: ['nevera', 'congelador', 'aire_acondicionado'],
-      zonaTrabajoArea: 'Zona Norte',
-      activo: true,
-      disponible: true,
-    }
-
-    const createdTech = await prisma.technician.upsert({
-      where: { email: technician.email },
-      update: technician,
-      create: technician
-    })
-    console.log(`✅ Técnico creado/actualizado: ${technician.nombre}`)
-
-    // Crear cuenta de login para el técnico
-    await prisma.adminUser.upsert({
-      where: { email: technician.email },
-      update: {
-        passwordHash: techPassword,
-        nombre: technician.nombre,
-      },
-      create: {
-        username: 'tecnico_demo',
-        email: technician.email,
-        passwordHash: techPassword,
-        nombre: technician.nombre,
-        role: 'technician',
-        activo: true
-      }
-    })
-
-    // =============================================
     // 6. CREAR CONFIGURACIONES DEL SISTEMA
     // =============================================
     console.log('⚙️ Creando configuraciones del sistema...')
@@ -235,67 +146,6 @@ async function main() {
         create: setting
       })
       console.log(`✅ Configuración creada/actualizada: ${setting.key}`)
-    }
-
-    // =============================================
-    // 7. CREAR ÓRDENES DE PRUEBA
-    // =============================================
-    console.log('🧾 Creando órdenes de prueba...')
-
-    const customer = seededCustomers[0]
-
-    const orders = [
-      {
-        orderNumber: 'DEMO-001',
-        tipoElectrodomestico: 'lavadora',
-        tipoServicio: 'Reparación',
-        descripcionProblema: 'Reparación de lavadora - Demo',
-        urgencia: 'media',
-        estado: 'completado',
-        fechaCompletado: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
-      },
-      {
-        orderNumber: 'DEMO-002',
-        tipoElectrodomestico: 'aire_acondicionado',
-        tipoServicio: 'Instalación',
-        descripcionProblema: 'Instalación de aire acondicionado - Demo',
-        urgencia: 'baja',
-        estado: 'pendiente'
-      }
-    ]
-
-    for (const order of orders) {
-      const createdOrder = await prisma.order.upsert({
-        where: { orderNumber: order.orderNumber },
-        update: {
-          ...order,
-          customerId: customer.id,
-          nombre: `${customer.nombre} ${customer.apellido ?? ''}`.trim(),
-          telefono: customer.telefono,
-          email: customer.email,
-          direccion: customer.direccion ?? 'Bogotá',
-          ciudad: customer.ciudad ?? 'Bogotá',
-        },
-        create: {
-          ...order,
-          customerId: customer.id,
-          nombre: `${customer.nombre} ${customer.apellido ?? ''}`.trim(),
-          telefono: customer.telefono,
-          email: customer.email,
-          direccion: customer.direccion ?? 'Bogotá',
-          ciudad: customer.ciudad ?? 'Bogotá',
-        }
-      })
-
-      await prisma.orderHistory.create({
-        data: {
-          orderId: createdOrder.id,
-          estadoNuevo: order.estado,
-          changedBy: 'system',
-          notas: 'Orden demo creada para producción'
-        }
-      })
-      console.log(`✅ Orden creada/actualizada: ${order.orderNumber}`)
     }
 
     console.log('\n🎉 ¡Siembra de datos para producción completada exitosamente!')

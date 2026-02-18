@@ -555,7 +555,7 @@ export function withRoles(
 export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
   const { cookies } = await import('next/headers')
   const cookieStore = await cookies()
-  const token = cookieStore.get('token')?.value
+  const token = cookieStore.get('auth-token')?.value || cookieStore.get('token')?.value
 
   if (!token) return null
 

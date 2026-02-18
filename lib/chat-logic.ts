@@ -34,7 +34,55 @@ export interface ChatThread {
 
 export interface ChatUser {
   id: string | number
+  role?: string
+  userType?: string
   [key: string]: any
+}
+
+/**
+ * Normalizes a user's role to the senderType format used in messages.
+ * Admin/super_admin/technician_manager → 'admin'
+ * Technician → 'technician'
+ * Customer → 'customer'
+ */
+export function getNormalizedUserType(user: ChatUser): string {
+  const role = (user.role || user.userType || 'customer').toLowerCase()
+  if (role === 'technician') return 'technician'
+  if (['admin', 'super_admin', 'technician_manager'].includes(role)) return 'admin'
+  return 'customer'
+}
+
+/**
+ * Determines if a message was sent by the current user.
+ * Compares BOTH senderId AND senderType to avoid ID collisions
+ * between Customer and AdminUser tables (both use autoincrement).
+ */
+export function isOwnMessage(msg: ChatMessage, currentUser: ChatUser): boolean {
+  const idMatch = String(msg.senderId) === String(currentUser.id)
+  const typeMatch = msg.senderType === getNormalizedUserType(currentUser)
+  return idMatch && typeMatch
+}
+
+/**
+ * Determines if a message is addressed to the current user.
+ * Checks both receiverId AND receiverType to avoid ID collisions.
+ * Also handles 'support' messages being visible to all admins.
+ */
+export function isMessageForMe(msg: ChatMessage, currentUser: ChatUser): boolean {
+  const myType = getNormalizedUserType(currentUser)
+  const myId = String(currentUser.id)
+
+  // Direct match: receiverId + receiverType
+  if (String(msg.receiverId) === myId && msg.receiverType === myType) {
+    return true
+  }
+
+  // Support inbox: all admins can see messages sent to support
+  if (myType === 'admin' && (msg.receiverType === 'support' || msg.receiverType === 'admin')) {
+    return true
+  }
+
+  return false
 }
 
 /**
@@ -46,8 +94,7 @@ export function calculateReplyReceiver(
   currentUser: ChatUser,
   thread?: ChatThread | null
 ) {
-  const currentUserId = String(currentUser.id)
-  const amISender = String(lastMsg.senderId) === currentUserId
+  const amISender = isOwnMessage(lastMsg, currentUser)
 
   // 1. Initial Deduction
   // If I sent the last one, I keep talking to the same receiver.
@@ -89,8 +136,7 @@ export function calculateReplyReceiver(
  * Generates the unique key for grouping messages into threads.
  */
 export function getThreadKey(msg: ChatMessage, currentUser: ChatUser): string {
-  const currentUserId = String(currentUser.id)
-  const isMe = String(msg.senderId) === currentUserId
+  const isMe = isOwnMessage(msg, currentUser)
 
   // Priority 1: Order ID
   if (msg.orderId) {

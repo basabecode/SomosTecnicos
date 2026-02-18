@@ -95,6 +95,27 @@ export default function TechnicianDashboard() {
     }
   }
 
+  const handlePauseService = async () => {
+      const nextAssignment = assignments[0]
+      if (nextAssignment) {
+          await updateStatus(nextAssignment.id, nextAssignment.orderId, 'esperando_repuestos')
+      }
+  }
+
+  const handleCompleteService = () => {
+      const nextAssignment = assignments[0]
+      if (nextAssignment) {
+          router.push(`/technician/assignments/${nextAssignment.id}/close`)
+      }
+  }
+
+  const handleReportService = () => {
+      const nextAssignment = assignments[0]
+      if (nextAssignment) {
+          router.push(`/technician/assignments/${nextAssignment.id}/execute`)
+      }
+  }
+
   const fetchAssignments = async () => {
     setLoading(true)
     setError('')
@@ -352,10 +373,14 @@ export default function TechnicianDashboard() {
                         urgencia: assignments[0].urgencia as 'alta' | 'media' | 'baja',
                         fechaProgramada: assignments[0].fechaProgramada,
                         estimatedDuration: '2h', // Estimado por defecto
+                        estado: assignments[0].estado // Pass state to card for isInProgress check
                       }}
                       onNavigate={handleNavigate}
                       onCall={handleCall}
                       onStart={handleStartService}
+                      onPause={handlePauseService}
+                      onComplete={handleCompleteService}
+                      onReport={handleReportService}
                     />
                   )}
 
@@ -430,27 +455,30 @@ export default function TechnicianDashboard() {
                                 Llamar
                               </a>
                             </Button>
-                            <Button
-                              size="sm"
-                              variant={service.estado === 'en_proceso' ? "secondary" : "outline"}
-                              className="flex-1 sm:flex-none"
-                              onClick={() => {
-                                const nextStatus = service.estado === 'asignado' ? 'en_proceso' : 'completado'
-                                updateStatus(service.id, service.orderId, nextStatus)
-                              }}
-                            >
-                              {service.estado === 'en_proceso' ? (
-                                <>
-                                  <CheckCircle className="h-4 w-4 mr-1" />
-                                  Finalizar
-                                </>
-                              ) : (
-                                <>
-                                  <Wrench className="h-4 w-4 mr-1" />
-                                  Iniciar
-                                </>
-                              )}
-                            </Button>
+                            {service.estado === 'en_proceso' ? (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                className="flex-1 sm:flex-none bg-[#A50034] text-white hover:bg-[#8B002B]"
+                                onClick={() => router.push(`/technician/assignments/${service.id}/execute`)}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Completar Informe
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 sm:flex-none"
+                                onClick={async () => {
+                                  await updateStatus(service.id, service.orderId, 'en_proceso')
+                                  router.push(`/technician/assignments/${service.id}/execute`)
+                                }}
+                              >
+                                <Wrench className="h-4 w-4 mr-1" />
+                                Iniciar
+                              </Button>
+                            )}
                           </div>
                         </div>
                       ))}

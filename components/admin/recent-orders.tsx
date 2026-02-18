@@ -27,6 +27,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Wrench,
+  FileText,
+  Search,
 } from 'lucide-react'
 import { UrgentOrderBanner } from '@/components/domain/urgent-order-banner'
 
@@ -46,22 +48,55 @@ interface Order {
       nombre: string
     }
   }
+  visitReports?: {
+    resultado: string
+    diagnostico: string
+    costoTotal: number
+  }[]
 }
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   pendiente: 'bg-orange-100 text-orange-800',
   asignado: 'bg-blue-100 text-blue-800',
+  en_camino: 'bg-indigo-100 text-indigo-800',
   en_proceso: 'bg-purple-100 text-purple-800',
+  revisado: 'bg-teal-100 text-teal-800',
+  cotizado: 'bg-cyan-100 text-cyan-800',
+  esperando_repuestos: 'bg-amber-100 text-amber-800',
+  reparado: 'bg-lime-100 text-lime-800',
+  entregado: 'bg-green-100 text-green-800',
   completado: 'bg-green-100 text-green-800',
   cancelado: 'bg-red-100 text-red-800',
+  reagendado: 'bg-gray-100 text-gray-800',
 }
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
   pendiente: 'Pendiente',
   asignado: 'Asignado',
-  en_proceso: 'En Proceso',
+  en_camino: 'En Camino',
+  en_proceso: 'En Revisión',
+  revisado: 'Diagnosticado',
+  cotizado: 'Cotizado',
+  esperando_repuestos: 'Esp. Repuestos',
+  reparado: 'Reparado',
+  entregado: 'Entregado',
   completado: 'Completado',
   cancelado: 'Cancelado',
+  reagendado: 'Reagendado',
+}
+
+const visitResultLabels: Record<string, string> = {
+  revisado: 'Diagnosticado',
+  reparado: 'Reparado',
+  pendiente_repuesto: 'Esp. Repuestos',
+  no_reparable: 'No Reparable',
+}
+
+const visitResultColors: Record<string, string> = {
+  revisado: 'bg-teal-100 text-teal-700',
+  reparado: 'bg-green-100 text-green-700',
+  pendiente_repuesto: 'bg-amber-100 text-amber-700',
+  no_reparable: 'bg-red-100 text-red-700',
 }
 
 const urgencyColors = {
@@ -308,6 +343,21 @@ export function RecentOrders() {
                             <div className="flex items-center text-blue-600">
                               <Wrench className="mr-1 h-3 w-3" />
                               Técnico: {order.assignment.technician.nombre}
+                            </div>
+                          )}
+
+                          {order.visitReports && order.visitReports.length > 0 && (
+                            <div className="flex items-center gap-2 mt-1">
+                              <FileText className="h-3 w-3 text-teal-600" />
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] px-1.5 py-0 ${visitResultColors[order.visitReports[0].resultado] || 'bg-gray-100 text-gray-700'}`}
+                              >
+                                {visitResultLabels[order.visitReports[0].resultado] || order.visitReports[0].resultado}
+                              </Badge>
+                              <span className="text-[10px] text-muted-foreground truncate max-w-[150px]">
+                                {order.visitReports[0].diagnostico.substring(0, 50)}...
+                              </span>
                             </div>
                           )}
                         </div>

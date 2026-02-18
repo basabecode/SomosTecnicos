@@ -37,7 +37,20 @@ import {
 } from 'lucide-react'
 
 // Tipos para el estado de servicios
-type ServiceStatus = 'pendiente' | 'asignado' | 'en_proceso' | 'completado' | 'cancelado'
+type ServiceStatus = 'pendiente' | 'asignado' | 'en_camino' | 'en_proceso' | 'revisado' | 'cotizado' | 'esperando_repuestos' | 'reparado' | 'entregado' | 'completado' | 'cancelado' | 'reagendado'
+
+interface VisitReportData {
+  id: number
+  diagnostico: string
+  resultado: string
+  costoVisita: number
+  costoReparacion?: number
+  costoRepuestos?: number
+  costoTotal: number
+  repuestos?: Array<{ nombre: string; cantidad: number; costoEstimado: number }>
+  recomendaciones?: string
+  createdAt: string
+}
 
 interface Order {
   id: string
@@ -49,6 +62,7 @@ interface Order {
   descripcionProblema: string
   costoEstimado?: number
   costoFinal?: number
+  fechaCompletado?: string
   assignments: {
     estado: string
     technician: {
@@ -56,43 +70,41 @@ interface Order {
       telefono: string
     }
   }[]
+  visitReports?: VisitReportData[]
   createdAt: string
 }
 
-// Promociones y publicidad (Estático por ahora, idealmente vendría de un CMS)
-const promotions = [
-  {
-    id: 'promo-1',
-    title: '20% OFF en Mantenimientos',
-    description: 'Descuento especial en mantenimientos preventivos',
-    discount: 20,
-    validUntil: '2025-12-31',
-    category: 'Mantenimiento',
-  },
-  {
-    id: 'promo-2',
-    title: 'Plan de Mantenimiento Anual',
-    description: 'Contrata el plan anual y ahorra hasta 30%',
-    discount: 30,
-    validUntil: '2025-12-31',
-    category: 'Planes',
-  },
-]
+// Promociones y publicidad
+const promotions: any[] = []
 
 const statusColors: Record<ServiceStatus, string> = {
   pendiente: 'bg-orange-100 text-orange-800',
   asignado: 'bg-blue-100 text-blue-800',
+  en_camino: 'bg-indigo-100 text-indigo-800',
   en_proceso: 'bg-purple-100 text-purple-800',
+  revisado: 'bg-teal-100 text-teal-800',
+  cotizado: 'bg-cyan-100 text-cyan-800',
+  esperando_repuestos: 'bg-amber-100 text-amber-800',
+  reparado: 'bg-lime-100 text-lime-800',
+  entregado: 'bg-green-100 text-green-800',
   completado: 'bg-green-100 text-green-800',
   cancelado: 'bg-red-100 text-red-800',
+  reagendado: 'bg-gray-100 text-gray-800',
 }
 
 const statusLabels: Record<ServiceStatus, string> = {
   pendiente: 'Pendiente',
   asignado: 'Técnico Asignado',
-  en_proceso: 'En Reparación',
+  en_camino: 'Técnico en Camino',
+  en_proceso: 'Revisión en Curso',
+  revisado: 'Diagnóstico Listo',
+  cotizado: 'Cotizado',
+  esperando_repuestos: 'Esperando Repuestos',
+  reparado: 'Reparado',
+  entregado: 'Entregado',
   completado: 'Finalizado',
   cancelado: 'Cancelado',
+  reagendado: 'Reagendado',
 }
 
 type StatusIconComponent = ComponentType<SVGProps<SVGSVGElement>>
@@ -100,9 +112,16 @@ type StatusIconComponent = ComponentType<SVGProps<SVGSVGElement>>
 const statusIcons: Record<ServiceStatus, StatusIconComponent> = {
   pendiente: Clock,
   asignado: Users,
+  en_camino: Clock,
   en_proceso: AlertCircle,
+  revisado: CheckCircle,
+  cotizado: CheckCircle,
+  esperando_repuestos: Clock,
+  reparado: CheckCircle,
+  entregado: CheckCircle,
   completado: CheckCircle,
   cancelado: AlertCircle,
+  reagendado: Clock,
 }
 
 export default function CustomerDashboard() {
@@ -145,8 +164,9 @@ export default function CustomerDashboard() {
   }, [])
 
   // Filtrar servicios activos e históricos
-  const activeServices = orders.filter(o => ['pendiente', 'asignado', 'en_proceso'].includes(o.estado))
-  const historyServices = orders.filter(o => ['completado', 'cancelado'].includes(o.estado))
+  const terminalStates = ['completado', 'cancelado']
+  const activeServices = orders.filter(o => !terminalStates.includes(o.estado))
+  const historyServices = orders.filter(o => terminalStates.includes(o.estado))
 
   if (loading) {
      return (
@@ -232,11 +252,32 @@ export default function CustomerDashboard() {
                     const activeAssignment = service.assignments.find(a => ['asignado', 'en_proceso', 'completado'].includes(a.estado as any)) || service.assignments[0]
                     const technician = activeAssignment?.technician
 
-                    // Mapear estado a paso del timeline
-                    const currentStep = service.estado === 'pendiente' ? 'pendiente' :
-                                      service.estado === 'asignado' ? 'asignado' :
-                                      service.estado === 'en_proceso' ? 'en_proceso' :
-                                      'completado'
+                    // Mapear estado de orden a paso del timeline
+                    const stepMap: Record<string, string> = {
+                      pendiente: 'pendiente',
+                      asignado: 'asignado',
+                      en_camino: 'en_camino',
+                      en_proceso: 'en_proceso',
+                      revisado: 'revisado',
+                      cotizado: 'revisado',
+                      esperando_repuestos: 'esperando_repuestos',
+                      reparado: 'reparado',
+                      entregado: 'completado',
+                      completado: 'completado',
+                      reagendado: 'asignado',
+                    }
+                    const currentStep = stepMap[service.estado] || 'pendiente'
+
+                    // Obtener datos del visit report si existe
+                    const latestReport = service.visitReports?.[0]
+                    const visitReportData = latestReport ? {
+                      diagnostico: latestReport.diagnostico,
+                      resultado: latestReport.resultado,
+                      costoTotal: Number(latestReport.costoTotal) || 0,
+                      costoVisita: Number(latestReport.costoVisita) || 0,
+                      repuestos: latestReport.repuestos as any,
+                      recomendaciones: latestReport.recomendaciones || undefined,
+                    } : undefined
 
                     return (
                       <div key={service.id} className="space-y-4">
@@ -255,7 +296,9 @@ export default function CustomerDashboard() {
                                 hour: '2-digit',
                                 minute: '2-digit',
                               }) : undefined,
+                            completedAt: service.fechaCompletado || undefined,
                           }}
+                          visitReport={visitReportData}
                         />
 
                         {/* Acciones rápidas */}

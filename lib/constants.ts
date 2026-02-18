@@ -110,6 +110,19 @@ export const ASSIGNMENT_STATES = {
 export type AssignmentState = typeof ASSIGNMENT_STATES[keyof typeof ASSIGNMENT_STATES]
 
 // =============================================
+// RESULTADOS DE VISITA TÉCNICA
+// =============================================
+
+export const VISIT_RESULTS = {
+  REVISADO: 'revisado',
+  REPARADO: 'reparado',
+  PENDIENTE_REPUESTO: 'pendiente_repuesto',
+  NO_REPARABLE: 'no_reparable',
+} as const
+
+export type VisitResult = typeof VISIT_RESULTS[keyof typeof VISIT_RESULTS]
+
+// =============================================
 // ROLES DE USUARIOS
 // =============================================
 
@@ -437,6 +450,19 @@ export function getOrderStateText(state: OrderState): string {
     [ORDER_STATES.REAGENDADO]: 'Reagendado'
   }
   return stateTexts[state] || state
+}
+
+/**
+ * Obtiene el texto legible para un resultado de visita
+ */
+export function getVisitResultText(result: VisitResult): string {
+  const texts = {
+    [VISIT_RESULTS.REVISADO]: 'Revisado - Pendiente aprobación',
+    [VISIT_RESULTS.REPARADO]: 'Reparado en sitio',
+    [VISIT_RESULTS.PENDIENTE_REPUESTO]: 'Esperando repuestos',
+    [VISIT_RESULTS.NO_REPARABLE]: 'No reparable',
+  }
+  return texts[result] || result
 }
 
 /**

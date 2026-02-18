@@ -215,9 +215,7 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
       } catch (error) {
         console.error('Error:', error)
         setIsSubmitting(false)
-        const orderNum = `DEMO-${Math.floor(1000 + Math.random() * 9000)}`
-        setOrderNumber(orderNum)
-        setShowSuccess(true)
+        // toast.error('Hubo un error al crear la orden. Por favor intenta de nuevo.')
       }
     }
   }
