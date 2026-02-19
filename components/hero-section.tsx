@@ -85,7 +85,7 @@ export default function HeroSection() {
 
               {/* Descripción */}
               <p className="text-base sm:text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium animate-fade-in-up text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]" style={{ animationDelay: '200ms' }}>
-                Plataforma digital para solicitar reparaciones de equipos con técnicos especializados, si eres técnico capacitado puedes ofrecer tus servicios en la plataforma.
+                Plataforma digital para solicitar servicio técnico especializados, si eres técnico capacitado puedes ofrecer tus servicios en la plataforma.
                 <span className="block mt-2 font-semibold text-white">
                   Garantía, seguridad y conocimiento en un solo lugar.
                 </span>

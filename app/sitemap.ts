@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // ✅ CORRECCIÓN #1: Usar www.somostecnicos.com (tu dominio principal)
-  const baseUrl = 'https://www.somostecnicos.com'
+  const baseUrl = 'https://somostecnicos.com'
 
   // Fecha base para las páginas (última actualización real del sitio)
   const lastUpdate = new Date('2026-02-15')

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   title: {
-    default: 'SomosTécnicos | Servicio Técnico a Domicilio en Bogotá y Cali',
+    default: 'SomosTécnicos | Servicio Técnico a Domicilio en Cali',
     template: '%s | SomosTécnicos',
   },
   description:

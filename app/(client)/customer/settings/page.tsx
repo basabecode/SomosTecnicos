@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Card,
   CardContent,
@@ -20,24 +20,41 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Bell,
-  Mail,
-  Phone,
   Shield,
-  Eye,
   Globe,
   Palette,
-  Clock,
   Save,
   Trash2,
-  Download,
-  Upload,
   AlertTriangle,
+  User,
+  Lock,
+  Loader2,
 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
-interface NotificationSettings {
+// ─── Tipos ────────────────────────────────────────────────────────────────────
+
+interface ProfileData {
+  nombre: string
+  apellido: string
+  telefono: string
+  direccion: string
+  ciudad: string
+  email: string
+  username: string
+}
+
+interface NotifPrefs {
   emailNotifications: boolean
   smsNotifications: boolean
   pushNotifications: boolean
@@ -46,14 +63,56 @@ interface NotificationSettings {
   reminders: boolean
 }
 
-interface PrivacySettings {
+interface PrivacyPrefs {
   profileVisibility: 'public' | 'private'
   shareDataWithPartners: boolean
   allowAnalytics: boolean
 }
 
+// ─── Helpers de fetch ─────────────────────────────────────────────────────────
+
+async function apiFetch(url: string, options: RequestInit = {}) {
+  const token = document.cookie
+    .split('; ')
+    .find(r => r.startsWith('auth-token='))
+    ?.split('=')[1]
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string>),
+  }
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(url, { ...options, headers })
+  return res
+}
+
+// ─── Componente ───────────────────────────────────────────────────────────────
+
 export default function CustomerSettings() {
-  const [notifications, setNotifications] = useState<NotificationSettings>({
+  const { toast } = useToast()
+
+  // Estado de carga
+  const [loading, setLoading] = useState(true)
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [savingNotif, setSavingNotif] = useState(false)
+  const [savingPrefs, setSavingPrefs] = useState(false)
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [deletingAccount, setDeletingAccount] = useState(false)
+
+  // Datos del perfil
+  const [profile, setProfile] = useState<ProfileData>({
+    nombre: '',
+    apellido: '',
+    telefono: '',
+    direccion: '',
+    ciudad: '',
+    email: '',
+    username: '',
+  })
+
+  // Preferencias
+  const [notifications, setNotifications] = useState<NotifPrefs>({
     emailNotifications: true,
     smsNotifications: true,
     pushNotifications: false,
@@ -62,7 +121,7 @@ export default function CustomerSettings() {
     reminders: true,
   })
 
-  const [privacy, setPrivacy] = useState<PrivacySettings>({
+  const [privacy, setPrivacy] = useState<PrivacyPrefs>({
     profileVisibility: 'private',
     shareDataWithPartners: false,
     allowAnalytics: true,
@@ -72,45 +131,202 @@ export default function CustomerSettings() {
   const [timezone, setTimezone] = useState('America/Bogota')
   const [theme, setTheme] = useState('light')
 
-  const handleNotificationChange = (
-    key: keyof NotificationSettings,
-    value: boolean
-  ) => {
-    setNotifications(prev => ({
-      ...prev,
-      [key]: value,
-    }))
+  // Modal cambiar contraseña
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+
+  // Modal eliminar cuenta
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
+
+  // ─── Cargar datos desde la API ──────────────────────────────────────────────
+
+  const loadProfile = useCallback(async () => {
+    try {
+      const res = await apiFetch('/api/auth/me')
+      if (!res.ok) return
+      const json = await res.json()
+      if (!json.success) return
+
+      const d = json.data
+      setProfile({
+        nombre: d.nombre ?? '',
+        apellido: d.apellido ?? '',
+        telefono: d.telefono ?? '',
+        direccion: d.direccion ?? '',
+        ciudad: d.ciudad ?? '',
+        email: d.email ?? '',
+        username: d.username ?? '',
+      })
+
+      const prefs = (d.preferencias as Record<string, any>) ?? {}
+      if (prefs.notificaciones) {
+        setNotifications(prev => ({ ...prev, ...prefs.notificaciones }))
+      }
+      if (prefs.privacidad) {
+        setPrivacy(prev => ({ ...prev, ...prefs.privacidad }))
+      }
+      if (prefs.idioma) setLanguage(prefs.idioma)
+      if (prefs.zonaHoraria) setTimezone(prefs.zonaHoraria)
+      if (prefs.tema) setTheme(prefs.tema)
+    } catch {
+      // sin conexión: mantener valores vacíos
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadProfile()
+  }, [loadProfile])
+
+  // ─── Guardar información personal ───────────────────────────────────────────
+
+  const handleSaveProfile = async () => {
+    if (!profile.nombre.trim()) {
+      toast({ title: 'Error', description: 'El nombre es requerido', variant: 'destructive' })
+      return
+    }
+    setSavingProfile(true)
+    try {
+      const res = await apiFetch('/api/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          nombre: profile.nombre,
+          apellido: profile.apellido,
+          telefono: profile.telefono,
+          direccion: profile.direccion,
+          ciudad: profile.ciudad,
+        }),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Perfil actualizado', description: 'Tu información personal fue guardada correctamente.' })
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo guardar el perfil', variant: 'destructive' })
+    } finally {
+      setSavingProfile(false)
+    }
   }
 
-  const handlePrivacyChange = (
-    key: keyof PrivacySettings,
-    value: boolean | string
-  ) => {
-    setPrivacy(prev => ({
-      ...prev,
-      [key]: value,
-    }))
+  // ─── Guardar notificaciones ──────────────────────────────────────────────────
+
+  const handleSaveNotifications = async () => {
+    setSavingNotif(true)
+    try {
+      const res = await apiFetch('/api/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          preferencias: { notificaciones: notifications },
+        }),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Notificaciones guardadas', description: 'Tus preferencias de notificación fueron actualizadas.' })
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo guardar', variant: 'destructive' })
+    } finally {
+      setSavingNotif(false)
+    }
   }
 
-  const handleSaveSettings = () => {
-    // Aquí se guardarían las configuraciones
-    console.log('Guardando configuraciones:', {
-      notifications,
-      privacy,
-      language,
-      timezone,
-      theme,
-    })
+  // ─── Guardar preferencias (idioma, zona, tema, privacidad) ──────────────────
+
+  const handleSavePreferences = async () => {
+    setSavingPrefs(true)
+    try {
+      const res = await apiFetch('/api/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          preferencias: {
+            notificaciones: notifications,
+            privacidad: privacy,
+            idioma: language,
+            zonaHoraria: timezone,
+            tema: theme,
+          },
+        }),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Preferencias guardadas', description: 'Tus preferencias fueron actualizadas.' })
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo guardar', variant: 'destructive' })
+    } finally {
+      setSavingPrefs(false)
+    }
   }
 
-  const handleExportData = () => {
-    // Lógica para exportar datos del usuario
-    console.log('Exportando datos del usuario...')
+  // ─── Cambiar contraseña ──────────────────────────────────────────────────────
+
+  const handleChangePassword = async () => {
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      toast({ title: 'Error', description: 'Todos los campos son requeridos', variant: 'destructive' })
+      return
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast({ title: 'Error', description: 'Las contraseñas nuevas no coinciden', variant: 'destructive' })
+      return
+    }
+    if (passwordForm.newPassword.length < 8) {
+      toast({ title: 'Error', description: 'La contraseña debe tener al menos 8 caracteres', variant: 'destructive' })
+      return
+    }
+
+    setChangingPassword(true)
+    try {
+      const res = await apiFetch('/api/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify(passwordForm),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Contraseña actualizada', description: 'Tu contraseña fue cambiada correctamente.' })
+      setShowPasswordModal(false)
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo cambiar la contraseña', variant: 'destructive' })
+    } finally {
+      setChangingPassword(false)
+    }
   }
 
-  const handleDeleteAccount = () => {
-    // Lógica para eliminar cuenta (con confirmación)
-    console.log('Iniciando proceso de eliminación de cuenta...')
+  // ─── Eliminar cuenta ─────────────────────────────────────────────────────────
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      toast({ title: 'Error', description: 'Ingresa tu contraseña para confirmar', variant: 'destructive' })
+      return
+    }
+    setDeletingAccount(true)
+    try {
+      const res = await apiFetch('/api/customer/account', {
+        method: 'DELETE',
+        body: JSON.stringify({ password: deletePassword }),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Cuenta eliminada', description: 'Tu cuenta ha sido eliminada. Serás redirigido.' })
+      setTimeout(() => { window.location.href = '/' }, 2000)
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo eliminar la cuenta', variant: 'destructive' })
+    } finally {
+      setDeletingAccount(false)
+    }
+  }
+
+  // ─── Render ──────────────────────────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-100">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    )
   }
 
   return (
@@ -118,146 +334,152 @@ export default function CustomerSettings() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Configuración</h1>
-        <p className="text-gray-600 mt-2">
-          Personaliza tu experiencia y gestiona tu privacidad
-        </p>
+        <p className="text-gray-600 mt-2">Personaliza tu experiencia y gestiona tu privacidad</p>
       </div>
 
+      {/* ── Información Personal ─────────────────────────────────────────────── */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            <CardTitle>Información Personal</CardTitle>
+          </div>
+          <CardDescription>Edita tus datos de contacto. Se guardan en la base de datos.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nombre">Nombre *</Label>
+              <Input
+                id="nombre"
+                value={profile.nombre}
+                onChange={e => setProfile(p => ({ ...p, nombre: e.target.value }))}
+                placeholder="Tu nombre"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="apellido">Apellido</Label>
+              <Input
+                id="apellido"
+                value={profile.apellido}
+                onChange={e => setProfile(p => ({ ...p, apellido: e.target.value }))}
+                placeholder="Tu apellido"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input id="email" value={profile.email} disabled className="bg-gray-50" />
+              <p className="text-xs text-gray-500">El email no se puede cambiar desde aquí</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                value={profile.telefono}
+                onChange={e => setProfile(p => ({ ...p, telefono: e.target.value }))}
+                placeholder="+57 300 000 0000"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="direccion">Dirección</Label>
+              <Input
+                id="direccion"
+                value={profile.direccion}
+                onChange={e => setProfile(p => ({ ...p, direccion: e.target.value }))}
+                placeholder="Calle 123 #45-67"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ciudad">Ciudad</Label>
+              <Input
+                id="ciudad"
+                value={profile.ciudad}
+                onChange={e => setProfile(p => ({ ...p, ciudad: e.target.value }))}
+                placeholder="Bogotá"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button onClick={handleSaveProfile} disabled={savingProfile}>
+              {savingProfile ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              Guardar información personal
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Notifications */}
+        {/* ── Notificaciones ─────────────────────────────────────────────────── */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
               <CardTitle>Notificaciones</CardTitle>
             </div>
-            <CardDescription>
-              Controla cómo y cuándo recibir notificaciones
-            </CardDescription>
+            <CardDescription>Controla cómo y cuándo recibir notificaciones</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">
-                  Notificaciones por Email
-                </Label>
-                <p className="text-sm text-gray-600">
-                  Recibir actualizaciones por correo electrónico
-                </p>
+            {[
+              { key: 'emailNotifications', label: 'Notificaciones por Email', desc: 'Recibir actualizaciones por correo electrónico' },
+              { key: 'smsNotifications', label: 'Notificaciones SMS', desc: 'Recibir mensajes de texto importantes' },
+              { key: 'pushNotifications', label: 'Notificaciones Push', desc: 'Recibir notificaciones en el navegador' },
+            ].map(({ key, label, desc }) => (
+              <div key={key} className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>{label}</Label>
+                  <p className="text-sm text-gray-600">{desc}</p>
+                </div>
+                <Switch
+                  checked={notifications[key as keyof NotifPrefs] as boolean}
+                  onCheckedChange={v => setNotifications(p => ({ ...p, [key]: v }))}
+                />
               </div>
-              <Switch
-                id="email-notifications"
-                checked={notifications.emailNotifications}
-                onCheckedChange={value =>
-                  handleNotificationChange('emailNotifications', value)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="sms-notifications">Notificaciones SMS</Label>
-                <p className="text-sm text-gray-600">
-                  Recibir mensajes de texto importantes
-                </p>
-              </div>
-              <Switch
-                id="sms-notifications"
-                checked={notifications.smsNotifications}
-                onCheckedChange={value =>
-                  handleNotificationChange('smsNotifications', value)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">Notificaciones Push</Label>
-                <p className="text-sm text-gray-600">
-                  Recibir notificaciones en el navegador
-                </p>
-              </div>
-              <Switch
-                id="push-notifications"
-                checked={notifications.pushNotifications}
-                onCheckedChange={value =>
-                  handleNotificationChange('pushNotifications', value)
-                }
-              />
-            </div>
+            ))}
 
             <Separator />
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="service-updates">
-                  Actualizaciones de Servicio
-                </Label>
-                <p className="text-sm text-gray-600">
-                  Notificaciones sobre el estado de tus servicios
-                </p>
+            {[
+              { key: 'serviceUpdates', label: 'Actualizaciones de Servicio', desc: 'Notificaciones sobre el estado de tus servicios' },
+              { key: 'promotions', label: 'Promociones y Ofertas', desc: 'Recibir información sobre descuentos' },
+              { key: 'reminders', label: 'Recordatorios', desc: 'Recordatorios de citas y mantenimiento' },
+            ].map(({ key, label, desc }) => (
+              <div key={key} className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>{label}</Label>
+                  <p className="text-sm text-gray-600">{desc}</p>
+                </div>
+                <Switch
+                  checked={notifications[key as keyof NotifPrefs] as boolean}
+                  onCheckedChange={v => setNotifications(p => ({ ...p, [key]: v }))}
+                />
               </div>
-              <Switch
-                id="service-updates"
-                checked={notifications.serviceUpdates}
-                onCheckedChange={value =>
-                  handleNotificationChange('serviceUpdates', value)
-                }
-              />
-            </div>
+            ))}
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="promotions">Promociones y Ofertas</Label>
-                <p className="text-sm text-gray-600">
-                  Recibir información sobre descuentos
-                </p>
-              </div>
-              <Switch
-                id="promotions"
-                checked={notifications.promotions}
-                onCheckedChange={value =>
-                  handleNotificationChange('promotions', value)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="reminders">Recordatorios</Label>
-                <p className="text-sm text-gray-600">
-                  Recordatorios de citas y mantenimiento
-                </p>
-              </div>
-              <Switch
-                id="reminders"
-                checked={notifications.reminders}
-                onCheckedChange={value =>
-                  handleNotificationChange('reminders', value)
-                }
-              />
+            <div className="flex justify-end pt-2">
+              <Button variant="outline" onClick={handleSaveNotifications} disabled={savingNotif}>
+                {savingNotif ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Guardar notificaciones
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Privacy & Security */}
+        {/* ── Privacidad y Seguridad ──────────────────────────────────────────── */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
               <CardTitle>Privacidad y Seguridad</CardTitle>
             </div>
-            <CardDescription>
-              Controla tu privacidad y la seguridad de tu cuenta
-            </CardDescription>
+            <CardDescription>Controla tu privacidad y la seguridad de tu cuenta</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="profile-visibility">Visibilidad del Perfil</Label>
+              <Label>Visibilidad del Perfil</Label>
               <Select
                 value={privacy.profileVisibility}
-                onValueChange={(value: 'public' | 'private') =>
-                  handlePrivacyChange('profileVisibility', value)
+                onValueChange={(v: 'public' | 'private') =>
+                  setPrivacy(p => ({ ...p, profileVisibility: v }))
                 }
               >
                 <SelectTrigger>
@@ -268,38 +490,27 @@ export default function CustomerSettings() {
                   <SelectItem value="private">Privado</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-sm text-gray-600">
-                Controla quién puede ver tu información básica
-              </p>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Compartir Datos con Socios</Label>
-                <p className="text-sm text-gray-600">
-                  Permitir compartir datos para mejorar servicios
-                </p>
+                <p className="text-sm text-gray-600">Permitir compartir datos para mejorar servicios</p>
               </div>
               <Switch
                 checked={privacy.shareDataWithPartners}
-                onCheckedChange={value =>
-                  handlePrivacyChange('shareDataWithPartners', value)
-                }
+                onCheckedChange={v => setPrivacy(p => ({ ...p, shareDataWithPartners: v }))}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Permitir Analytics</Label>
-                <p className="text-sm text-gray-600">
-                  Ayudar a mejorar la plataforma con datos anónimos
-                </p>
+                <p className="text-sm text-gray-600">Ayudar a mejorar la plataforma con datos anónimos</p>
               </div>
               <Switch
                 checked={privacy.allowAnalytics}
-                onCheckedChange={value =>
-                  handlePrivacyChange('allowAnalytics', value)
-                }
+                onCheckedChange={v => setPrivacy(p => ({ ...p, allowAnalytics: v }))}
               />
             </div>
 
@@ -307,38 +518,30 @@ export default function CustomerSettings() {
 
             <div className="space-y-3">
               <Label>Seguridad de la Cuenta</Label>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Cambiar Contraseña
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Configurar 2FA
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Eye className="h-4 w-4 mr-2" />
-                  Ver Sesiones Activas
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => setShowPasswordModal(true)}
+              >
+                <Lock className="h-4 w-4 mr-2" />
+                Cambiar Contraseña
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Preferences */}
+        {/* ── Preferencias ───────────────────────────────────────────────────── */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Palette className="h-5 w-5" />
               <CardTitle>Preferencias</CardTitle>
             </div>
-            <CardDescription>
-              Personaliza la apariencia y comportamiento
-            </CardDescription>
+            <CardDescription>Personaliza la apariencia y el idioma</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="language">Idioma</Label>
+              <Label>Idioma</Label>
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger>
                   <SelectValue />
@@ -351,23 +554,21 @@ export default function CustomerSettings() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="timezone">Zona Horaria</Label>
+              <Label>Zona Horaria</Label>
               <Select value={timezone} onValueChange={setTimezone}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="America/Bogota">Bogotá (GMT-5)</SelectItem>
-                  <SelectItem value="America/Caracas">
-                    Caracas (GMT-4)
-                  </SelectItem>
+                  <SelectItem value="America/Caracas">Caracas (GMT-4)</SelectItem>
                   <SelectItem value="America/Lima">Lima (GMT-5)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="theme">Tema</Label>
+              <Label>Tema</Label>
               <Select value={theme} onValueChange={setTheme}>
                 <SelectTrigger>
                   <SelectValue />
@@ -379,74 +580,125 @@ export default function CustomerSettings() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="flex justify-end pt-2">
+              <Button variant="outline" onClick={handleSavePreferences} disabled={savingPrefs}>
+                {savingPrefs ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Guardar preferencias
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Data Management */}
-        <Card>
+        {/* ── Zona Peligrosa ─────────────────────────────────────────────────── */}
+        <Card className="border-red-200">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Download className="h-5 w-5" />
-              <CardTitle>Gestión de Datos</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              <CardTitle className="text-red-600">Zona Peligrosa</CardTitle>
             </div>
-            <CardDescription>Controla tus datos personales</CardDescription>
+            <CardDescription>Acciones irreversibles sobre tu cuenta</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={handleExportData}
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Exportar Mis Datos
-            </Button>
-
-            <Button variant="outline" className="w-full justify-start">
-              <Upload className="h-4 w-4 mr-2" />
-              Importar Configuración
-            </Button>
-
-            <Separator />
-
+          <CardContent>
             <div className="space-y-2">
-              <Label className="text-red-600 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                Zona Peligrosa
-              </Label>
+              <p className="text-sm text-gray-600">
+                Eliminar tu cuenta borrará permanentemente todos tus datos, historial de servicios y no se puede deshacer.
+              </p>
               <Button
                 variant="destructive"
                 className="w-full justify-start"
-                onClick={handleDeleteAccount}
+                onClick={() => setShowDeleteModal(true)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar Cuenta
+                Eliminar mi cuenta
               </Button>
-              <p className="text-xs text-gray-600">
-                Esta acción no se puede deshacer. Todos tus datos serán
-                eliminados permanentemente.
-              </p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Save Button */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold">Guardar Configuración</h3>
-              <p className="text-sm text-gray-600">
-                Los cambios se aplicarán inmediatamente
-              </p>
+      {/* ── Modal Cambiar Contraseña ─────────────────────────────────────────── */}
+      <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cambiar Contraseña</DialogTitle>
+            <DialogDescription>
+              Ingresa tu contraseña actual y la nueva contraseña. Mínimo 8 caracteres.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Contraseña actual</Label>
+              <Input
+                type="password"
+                value={passwordForm.currentPassword}
+                onChange={e => setPasswordForm(p => ({ ...p, currentPassword: e.target.value }))}
+                placeholder="Tu contraseña actual"
+              />
             </div>
-            <Button onClick={handleSaveSettings}>
-              <Save className="h-4 w-4 mr-2" />
-              Guardar Cambios
-            </Button>
+            <div className="space-y-2">
+              <Label>Nueva contraseña</Label>
+              <Input
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={e => setPasswordForm(p => ({ ...p, newPassword: e.target.value }))}
+                placeholder="Mínimo 8 caracteres"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Confirmar nueva contraseña</Label>
+              <Input
+                type="password"
+                value={passwordForm.confirmPassword}
+                onChange={e => setPasswordForm(p => ({ ...p, confirmPassword: e.target.value }))}
+                placeholder="Repite la nueva contraseña"
+              />
+            </div>
           </div>
-        </CardContent>
-      </Card>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPasswordModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleChangePassword} disabled={changingPassword}>
+              {changingPassword ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+              Actualizar contraseña
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Modal Eliminar Cuenta ────────────────────────────────────────────── */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">¿Eliminar tu cuenta?</DialogTitle>
+            <DialogDescription>
+              Esta acción es <strong>irreversible</strong>. Se eliminarán todos tus datos,
+              historial de servicios y no podrás recuperarlos. Ingresa tu contraseña para confirmar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Contraseña de confirmación</Label>
+              <Input
+                type="password"
+                value={deletePassword}
+                onChange={e => setDeletePassword(e.target.value)}
+                placeholder="Tu contraseña actual"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteAccount} disabled={deletingAccount}>
+              {deletingAccount ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Eliminar cuenta definitivamente
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

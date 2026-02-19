@@ -4,12 +4,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { withAuth } from '@/lib/auth'
+import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // =============================================
 // GET /api/auth/me
 // =============================================
+
 
 export const GET = withAuth(async (request: NextRequest, user) => {
   try {
@@ -94,6 +95,96 @@ export const GET = withAuth(async (request: NextRequest, user) => {
         success: false,
         error: 'Error interno del servidor'
       },
+      { status: 500 }
+    )
+  }
+})
+
+// =============================================
+// PATCH /api/auth/me — Actualizar perfil
+// =============================================
+
+export const PATCH = withAuth(async (request: NextRequest, user: AuthenticatedUser) => {
+  try {
+    const body = await request.json()
+
+    if (user.userType === 'customer') {
+      const { nombre, apellido, telefono, direccion, ciudad, preferencias } = body
+
+      if (!nombre || nombre.trim() === '') {
+        return NextResponse.json(
+          { success: false, error: 'El nombre es requerido' },
+          { status: 400 }
+        )
+      }
+
+      const updated = await prisma.customer.update({
+        where: { id: user.id },
+        data: {
+          ...(nombre && { nombre: nombre.trim() }),
+          ...(apellido !== undefined && { apellido: apellido?.trim() || null }),
+          ...(telefono !== undefined && { telefono: telefono.trim() }),
+          ...(direccion !== undefined && { direccion: direccion?.trim() || null }),
+          ...(ciudad !== undefined && { ciudad: ciudad?.trim() || null }),
+          ...(preferencias !== undefined && { preferencias }),
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          nombre: true,
+          apellido: true,
+          telefono: true,
+          direccion: true,
+          ciudad: true,
+          preferencias: true,
+          updatedAt: true,
+        }
+      })
+
+      return NextResponse.json({ success: true, data: updated })
+    }
+
+    // Admin / Technician (AdminUser table)
+    const { nombre, apellido, telefono, preferencias, idioma, zona } = body
+
+    if (!nombre || nombre.trim() === '') {
+      return NextResponse.json(
+        { success: false, error: 'El nombre es requerido' },
+        { status: 400 }
+      )
+    }
+
+    const updated = await prisma.adminUser.update({
+      where: { id: user.id },
+      data: {
+        ...(nombre && { nombre: nombre.trim() }),
+        ...(apellido !== undefined && { apellido: apellido?.trim() || null }),
+        ...(telefono !== undefined && { telefono: telefono?.trim() || null }),
+        ...(preferencias !== undefined && { preferencias }),
+        ...(idioma !== undefined && { idioma }),
+        ...(zona !== undefined && { zona }),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        nombre: true,
+        apellido: true,
+        telefono: true,
+        role: true,
+        preferencias: true,
+        idioma: true,
+        zona: true,
+        updatedAt: true,
+      }
+    })
+
+    return NextResponse.json({ success: true, data: updated })
+  } catch (error) {
+    console.error('Error actualizando perfil:', error)
+    return NextResponse.json(
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

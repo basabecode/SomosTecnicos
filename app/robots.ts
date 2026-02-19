@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/technician/', '/api/', '/customer/'],
       },
     ],
-    sitemap: 'https://www.somostecnicos.com/sitemap.xml',
+    sitemap: 'https://somostecnicos.com/sitemap.xml',
   }
 }
