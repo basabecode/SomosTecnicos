@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import {
   Card,
@@ -14,10 +15,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { useToast } from '@/hooks/use-toast'
 import {
-  User,
   Mail,
   Phone,
   MapPin,
@@ -27,11 +27,18 @@ import {
   Star,
   CheckCircle,
   History,
+  Loader2,
+  Bell,
+  Lock,
+  Settings,
 } from 'lucide-react'
 
 export default function CustomerProfile() {
   const { user } = useAuth()
+  const router = useRouter()
+  const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
     nombre: user?.nombre || '',
     apellido: user?.apellido || '',
@@ -41,6 +48,30 @@ export default function CustomerProfile() {
     ciudad: user?.ciudad || '',
   })
 
+  // Cargar datos frescos desde la API al montar
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch('/api/auth/me')
+        if (!res.ok) return
+        const json = await res.json()
+        if (!json.success) return
+        const d = json.data
+        setFormData({
+          nombre: d.nombre ?? '',
+          apellido: d.apellido ?? '',
+          email: d.email ?? '',
+          telefono: d.telefono ?? '',
+          direccion: d.direccion ?? '',
+          ciudad: d.ciudad ?? '',
+        })
+      } catch {
+        // mantener datos del contexto
+      }
+    }
+    fetchProfile()
+  }, [])
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -48,10 +79,33 @@ export default function CustomerProfile() {
     }))
   }
 
-  const handleSave = () => {
-    // Aquí se enviarían los datos al servidor
-    console.log('Guardando datos:', formData)
-    setIsEditing(false)
+  const handleSave = async () => {
+    if (!formData.nombre.trim()) {
+      toast({ title: 'Error', description: 'El nombre es requerido', variant: 'destructive' })
+      return
+    }
+    setIsSaving(true)
+    try {
+      const res = await fetch('/api/auth/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          telefono: formData.telefono,
+          direccion: formData.direccion,
+          ciudad: formData.ciudad,
+        }),
+      })
+      const json = await res.json()
+      if (!json.success) throw new Error(json.error)
+      toast({ title: 'Perfil actualizado', description: 'Tu información personal fue guardada correctamente.' })
+      setIsEditing(false)
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message ?? 'No se pudo guardar el perfil', variant: 'destructive' })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleCancel = () => {
@@ -218,11 +272,15 @@ export default function CustomerProfile() {
 
               {isEditing && (
                 <div className="flex gap-2 pt-4">
-                  <Button onClick={handleSave}>
-                    <Save className="h-4 w-4 mr-2" />
+                  <Button onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     Guardar Cambios
                   </Button>
-                  <Button variant="outline" onClick={handleCancel}>
+                  <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
                     Cancelar
                   </Button>
                 </div>
@@ -290,17 +348,29 @@ export default function CustomerProfile() {
               <CardTitle>Acciones Rápidas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">
-                <User className="h-4 w-4 mr-2" />
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push('/customer/settings')}
+              >
+                <Lock className="h-4 w-4 mr-2" />
                 Cambiar Contraseña
               </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Mail className="h-4 w-4 mr-2" />
-                Preferencias de Email
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push('/customer/settings')}
+              >
+                <Bell className="h-4 w-4 mr-2" />
+                Preferencias de Notificaciones
               </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Phone className="h-4 w-4 mr-2" />
-                Configurar Notificaciones
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push('/customer/settings')}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Configuración de Cuenta
               </Button>
             </CardContent>
           </Card>

@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from 'lucide-react'
@@ -15,12 +16,18 @@ export default function ServiceTypes() {
 
     let hasPlayed = false
 
-    // Marcar como cargado cuando el video tenga metadata
-    const handleLoadedMetadata = () => {
+    // Usar 'canplay' en vez de 'loadedmetadata': garantiza que el video
+    // tiene frames listos para renderizar, evitando el parpadeo blanco
+    const handleCanPlay = () => {
       setIsVideoLoaded(true)
     }
 
-    videoElement.addEventListener('loadedmetadata', handleLoadedMetadata)
+    videoElement.addEventListener('canplay', handleCanPlay)
+
+    // Si el video ya estaba en caché y canplay no se dispara
+    if (videoElement.readyState >= 3) {
+      setIsVideoLoaded(true)
+    }
 
     // Intersection Observer para reproducir cuando sea visible
     const observer = new IntersectionObserver(
@@ -35,15 +42,15 @@ export default function ServiceTypes() {
         })
       },
       {
-        threshold: 0.25, // Activar cuando el 25% del video sea visible
-        rootMargin: '50px' // Empezar a cargar un poco antes
+        threshold: 0.25,
+        rootMargin: '50px'
       }
     )
 
     observer.observe(videoElement)
 
     return () => {
-      videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      videoElement.removeEventListener('canplay', handleCanPlay)
       observer.disconnect()
     }
   }, [])
@@ -93,17 +100,27 @@ export default function ServiceTypes() {
               muted
               playsInline
               preload="metadata"
-              className="w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out"
-              style={{ opacity: isVideoLoaded ? 1 : 0.3 }}
+              className="w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+              style={{ opacity: isVideoLoaded ? 1 : 0 }}
             >
               <source src="/video/video_reparacion_ok.mp4" type="video/mp4" />
               Tu navegador no soporta videos HTML5.
             </video>
 
-            {/* Placeholder mientras carga el video */}
-            {!isVideoLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
-            )}
+            {/* Poster: imagen visible mientras el video no esté listo, fade-out al cargar */}
+            <div
+              className="absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none"
+              style={{ opacity: isVideoLoaded ? 0 : 1 }}
+            >
+              <Image
+                src="/video/postal-video.png"
+                alt="Técnico reparando electrodoméstico en el hogar"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 85vw"
+                className="object-cover object-center"
+              />
+            </div>
 
             {/* Gradiente */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />

@@ -36,23 +36,12 @@ import {
   Save,
   Trash2,
   AlertTriangle,
-  User,
   Lock,
   Loader2,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
-
-interface ProfileData {
-  nombre: string
-  apellido: string
-  telefono: string
-  direccion: string
-  ciudad: string
-  email: string
-  username: string
-}
 
 interface NotifPrefs {
   emailNotifications: boolean
@@ -94,22 +83,10 @@ export default function CustomerSettings() {
 
   // Estado de carga
   const [loading, setLoading] = useState(true)
-  const [savingProfile, setSavingProfile] = useState(false)
   const [savingNotif, setSavingNotif] = useState(false)
   const [savingPrefs, setSavingPrefs] = useState(false)
   const [changingPassword, setChangingPassword] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState(false)
-
-  // Datos del perfil
-  const [profile, setProfile] = useState<ProfileData>({
-    nombre: '',
-    apellido: '',
-    telefono: '',
-    direccion: '',
-    ciudad: '',
-    email: '',
-    username: '',
-  })
 
   // Preferencias
   const [notifications, setNotifications] = useState<NotifPrefs>({
@@ -153,16 +130,6 @@ export default function CustomerSettings() {
       if (!json.success) return
 
       const d = json.data
-      setProfile({
-        nombre: d.nombre ?? '',
-        apellido: d.apellido ?? '',
-        telefono: d.telefono ?? '',
-        direccion: d.direccion ?? '',
-        ciudad: d.ciudad ?? '',
-        email: d.email ?? '',
-        username: d.username ?? '',
-      })
-
       const prefs = (d.preferencias as Record<string, any>) ?? {}
       if (prefs.notificaciones) {
         setNotifications(prev => ({ ...prev, ...prefs.notificaciones }))
@@ -183,35 +150,6 @@ export default function CustomerSettings() {
   useEffect(() => {
     loadProfile()
   }, [loadProfile])
-
-  // ─── Guardar información personal ───────────────────────────────────────────
-
-  const handleSaveProfile = async () => {
-    if (!profile.nombre.trim()) {
-      toast({ title: 'Error', description: 'El nombre es requerido', variant: 'destructive' })
-      return
-    }
-    setSavingProfile(true)
-    try {
-      const res = await apiFetch('/api/auth/me', {
-        method: 'PATCH',
-        body: JSON.stringify({
-          nombre: profile.nombre,
-          apellido: profile.apellido,
-          telefono: profile.telefono,
-          direccion: profile.direccion,
-          ciudad: profile.ciudad,
-        }),
-      })
-      const json = await res.json()
-      if (!json.success) throw new Error(json.error)
-      toast({ title: 'Perfil actualizado', description: 'Tu información personal fue guardada correctamente.' })
-    } catch (e: any) {
-      toast({ title: 'Error', description: e.message ?? 'No se pudo guardar el perfil', variant: 'destructive' })
-    } finally {
-      setSavingProfile(false)
-    }
-  }
 
   // ─── Guardar notificaciones ──────────────────────────────────────────────────
 
@@ -336,77 +274,6 @@ export default function CustomerSettings() {
         <h1 className="text-3xl font-bold text-gray-900">Configuración</h1>
         <p className="text-gray-600 mt-2">Personaliza tu experiencia y gestiona tu privacidad</p>
       </div>
-
-      {/* ── Información Personal ─────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            <CardTitle>Información Personal</CardTitle>
-          </div>
-          <CardDescription>Edita tus datos de contacto. Se guardan en la base de datos.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre *</Label>
-              <Input
-                id="nombre"
-                value={profile.nombre}
-                onChange={e => setProfile(p => ({ ...p, nombre: e.target.value }))}
-                placeholder="Tu nombre"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="apellido">Apellido</Label>
-              <Input
-                id="apellido"
-                value={profile.apellido}
-                onChange={e => setProfile(p => ({ ...p, apellido: e.target.value }))}
-                placeholder="Tu apellido"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" value={profile.email} disabled className="bg-gray-50" />
-              <p className="text-xs text-gray-500">El email no se puede cambiar desde aquí</p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="telefono">Teléfono</Label>
-              <Input
-                id="telefono"
-                value={profile.telefono}
-                onChange={e => setProfile(p => ({ ...p, telefono: e.target.value }))}
-                placeholder="+57 300 000 0000"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="direccion">Dirección</Label>
-              <Input
-                id="direccion"
-                value={profile.direccion}
-                onChange={e => setProfile(p => ({ ...p, direccion: e.target.value }))}
-                placeholder="Calle 123 #45-67"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ciudad">Ciudad</Label>
-              <Input
-                id="ciudad"
-                value={profile.ciudad}
-                onChange={e => setProfile(p => ({ ...p, ciudad: e.target.value }))}
-                placeholder="Bogotá"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end pt-2">
-            <Button onClick={handleSaveProfile} disabled={savingProfile}>
-              {savingProfile ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              Guardar información personal
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Notificaciones ─────────────────────────────────────────────────── */}
