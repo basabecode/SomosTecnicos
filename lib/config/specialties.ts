@@ -140,26 +140,25 @@ export const SPECIALTIES_CONFIG: Record<string, SpecialtyConfig> = {
 
 export const SPECIALIST_BRANDS = [
   // Electricidad
-  { name: 'Schneider', logo: 'https://logos-world.net/wp-content/uploads/2020/11/Schneider-Electric-Logo.png', alt: 'Schneider Electric' },
-  { name: 'Legrand', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Legrand_logo.svg/2560px-Legrand_logo.svg.png', alt: 'Legrand' },
-  { name: 'Siemens', logo: 'https://logos-world.net/wp-content/uploads/2020/06/Siemens-Logo.png', alt: 'Siemens' },
-  { name: 'Centelsa', logo: 'https://seeklogo.com/images/C/centelsa-logo-50D57077E3-seeklogo.com.png', alt: 'Centelsa' },
-  { name: 'Philips', logo: 'https://logos-world.net/wp-content/uploads/2020/06/Philips-Logo.png', alt: 'Philips' },
-  { name: 'Veto', logo: 'https://brandfetch.com/veto-electric.com.ec/fallback-logo', alt: 'Veto' },
+  { name: 'Schneider', logo: '/logos/schneider.svg', alt: 'Logo Schneider Electric' },
+  { name: 'Legrand',   logo: '/logos/legrand.svg',   alt: 'Logo Legrand' },
+  { name: 'Siemens',   logo: '/logos/siemens.svg',   alt: 'Logo Siemens' },
+  { name: 'Centelsa',  logo: '/logos/centelsa.svg',  alt: 'Logo Centelsa' },
+  { name: 'Philips',   logo: '/logos/philips.svg',   alt: 'Logo Philips' },
 
   // Computación
-  { name: 'HP', logo: 'https://logos-world.net/wp-content/uploads/2020/11/HP-Logo.png', alt: 'HP' },
-  { name: 'Dell', logo: 'https://logos-world.net/wp-content/uploads/2020/11/Dell-Logo.png', alt: 'Dell' },
-  { name: 'Lenovo', logo: 'https://logos-world.net/wp-content/uploads/2022/07/Lenovo-Logo.png', alt: 'Lenovo' },
-  { name: 'Asus', logo: 'https://logos-world.net/wp-content/uploads/2020/07/Asus-Logo.png', alt: 'Asus' },
-  { name: 'Apple', logo: 'https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png', alt: 'Apple' },
-  { name: 'Cisco', logo: 'https://logos-world.net/wp-content/uploads/2020/11/Cisco-Logo.png', alt: 'Cisco' },
+  { name: 'HP',     logo: '/logos/hp.svg',     alt: 'Logo HP' },
+  { name: 'Dell',   logo: '/logos/dell.svg',   alt: 'Logo Dell' },
+  { name: 'Lenovo', logo: '/logos/lenovo.svg', alt: 'Logo Lenovo' },
+  { name: 'Asus',   logo: '/logos/asus.svg',   alt: 'Logo Asus' },
+  { name: 'Apple',  logo: '/logos/apple.svg',  alt: 'Logo Apple' },
+  { name: 'Cisco',  logo: '/logos/cisco.svg',  alt: 'Logo Cisco' },
 
   // Seguridad
-  { name: 'Hikvision', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Hikvision_logo.svg/2560px-Hikvision_logo.svg.png', alt: 'Hikvision' },
-  { name: 'Dahua', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Dahua_Technology_logo.svg/2560px-Dahua_Technology_logo.svg.png', alt: 'Dahua' },
-  { name: 'ZKTeco', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/ZKTeco_Logo.svg/1200px-ZKTeco_Logo.svg.png', alt: 'ZKTeco' },
-  { name: 'DSC', logo: 'https://seeklogo.com/images/D/dsc-logo-8A18476F87-seeklogo.com.png', alt: 'DSC' },
-  { name: 'Honeywell', logo: 'https://logos-world.net/wp-content/uploads/2020/11/Honeywell-Logo.png', alt: 'Honeywell' },
-  { name: 'Bosch', logo: 'https://logos-world.net/wp-content/uploads/2020/08/Bosch-Logo.png', alt: 'Bosch Security' }
+  { name: 'Hikvision', logo: '/logos/hikvision.svg', alt: 'Logo Hikvision' },
+  { name: 'Dahua',     logo: '/logos/dahua.svg',     alt: 'Logo Dahua' },
+  { name: 'ZKTeco',    logo: '/logos/zkteco.svg',    alt: 'Logo ZKTeco' },
+  { name: 'DSC',       logo: '/logos/dsc.svg',       alt: 'Logo DSC' },
+  { name: 'Honeywell', logo: '/logos/honeywell.svg', alt: 'Logo Honeywell' },
+  { name: 'Bosch',     logo: '/logos/bosch.svg',     alt: 'Logo Bosch Security' },
 ];

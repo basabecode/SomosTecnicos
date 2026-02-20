@@ -15,66 +15,18 @@ export interface Brand {
 }
 
 export const APPLIANCE_BRANDS: Brand[] = [
-  {
-    name: 'Samsung',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/04/Samsung-Logo.png',
-    alt: 'Samsung logo',
-  },
-  {
-    name: 'LG',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/07/LG-Logo.png',
-    alt: 'LG logo',
-  },
-  {
-    name: 'Whirlpool',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/02/Whirlpool-Logo.png',
-    alt: 'Whirlpool logo',
-  },
-  {
-    name: 'Electrolux',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/02/Electrolux-Logo.png',
-    alt: 'Electrolux logo',
-  },
-  {
-    name: 'GE',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/12/General-Electric-Logo.png',
-    alt: 'GE logo',
-  },
-  {
-    name: 'Bosch',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/08/Bosch-Logo.png',
-    alt: 'Bosch logo',
-  },
-  {
-    name: 'Frigidaire',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/02/Frigidaire-Logo.png',
-    alt: 'Frigidaire logo',
-  },
-  {
-    name: 'Maytag',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/02/Maytag-Logo.png',
-    alt: 'Maytag logo',
-  },
-  {
-    name: 'KitchenAid',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/02/KitchenAid-Logo.png',
-    alt: 'KitchenAid logo',
-  },
-  {
-    name: 'Siemens',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Siemens-Logo.png',
-    alt: 'Siemens logo',
-  },
-  {
-    name: 'Panasonic',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/04/Panasonic-Logo.png',
-    alt: 'Panasonic logo',
-  },
-  {
-    name: 'Sony',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png',
-    alt: 'Sony logo',
-  },
+  { name: 'Samsung',    logo: '/logos/samsung.svg',    alt: 'Logo Samsung' },
+  { name: 'LG',         logo: '/logos/lg.svg',         alt: 'Logo LG' },
+  { name: 'Whirlpool',  logo: '/logos/whirlpool.svg',  alt: 'Logo Whirlpool' },
+  { name: 'Electrolux', logo: '/logos/electrolux.svg', alt: 'Logo Electrolux' },
+  { name: 'Bosch',      logo: '/logos/bosch.svg',      alt: 'Logo Bosch' },
+  { name: 'Mabe',       logo: '/logos/mabe.svg',       alt: 'Logo Mabe' },
+  { name: 'Haceb',      logo: '/logos/haceb.svg',      alt: 'Logo Haceb' },
+  { name: 'Challenger', logo: '/logos/challenger.svg', alt: 'Logo Challenger' },
+  { name: 'Kalley',     logo: '/logos/kalley.svg',     alt: 'Logo Kalley' },
+  { name: 'Frigidaire', logo: '/logos/frigidaire.svg', alt: 'Logo Frigidaire' },
+  { name: 'Panasonic',  logo: '/logos/panasonic.svg',  alt: 'Logo Panasonic' },
+  { name: 'Sony',       logo: '/logos/sony.svg',       alt: 'Logo Sony' },
 ]
 
 interface BrandsSliderProps {
@@ -146,7 +98,6 @@ export default function BrandsSlider({
                       height={50}
                       className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                       onError={() => handleImageError(brand.name)}
-                      unoptimized // Para evitar problemas con URLs externas
                     />
                   </div>
                 )}
