@@ -129,7 +129,7 @@ export default function ForgotPasswordPage() {
                     alt="Seguridad"
                     fill
                     className="object-cover"
-                    priority
+                    sizes="(max-width: 1024px) 320px, 448px"
                   />
                 </div>
               </div>

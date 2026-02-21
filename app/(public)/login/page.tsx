@@ -215,6 +215,7 @@ export default function LoginPage() {
                 fill
                 className="object-cover"
                 priority
+                sizes="(max-width: 1024px) 320px, 448px"
               />
               <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                 <p className="text-white font-bold text-2xl lg:text-3xl mb-2 drop-shadow-lg">Confianza y Calidad</p>

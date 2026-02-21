@@ -14,14 +14,16 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Registro de Cliente | SomosTécnicos',
     description: 'Únete a SomosTécnicos y accede a técnicos expertos para reparación de electrodomésticos.',
-    url: 'https://somostecnicos.com/register',
+    url: 'https://somostecnicos.com/register/customer',
     type: 'website',
   },
   alternates: {
-    canonical: '/register',
+    // Canónica propia: esta página tiene contenido específico para clientes
+    canonical: '/register/customer',
   },
   robots: {
-    index: true,
-    follow: true,
+    // Bloqueada en robots.txt; se agrega noindex como segunda capa de seguridad
+    index: false,
+    follow: false,
   },
 }
