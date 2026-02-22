@@ -38,7 +38,7 @@ Tú creas direcciones como `soporte@somostecnicos.com`, y Cloudflare redirige lo
 Dado que Cloudflare solo *recibe*, necesitas un servidor externo para *enviar*. Usaremos **Brevo** (que ya tienes configurado) o **Gmail**.
 
 #### Opción A: Usando Gmail (Web)
-1. Ve a **Google Account** > Seguridad > Verificación en 2 pasos > **Contraseñas de aplicaciones**. nzyz bfba fzaw yosx
+1. Ve a **Google Account** > Seguridad > Verificación en 2 pasos > **Contraseñas de aplicaciones**.
 2. Crea una para "Correo" y copia la contraseña de 16 letras.
 3. En Gmail: **Configuración** > **Cuentas e importación** > **Enviar mensaje como** > **Añadir otra dirección**.
 4. Datos SMTP:

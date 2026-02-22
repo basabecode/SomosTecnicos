@@ -40,19 +40,24 @@ export async function GET(request: NextRequest) {
         orderId
     })
 
-    // Construir filtro
+    // Construir filtro excluyendo mensajes soft-deleted para este usuario
     const whereClause: any = {
       OR: [
         {
           senderId: user.id.toString(),
-          senderType: userType
+          senderType: userType,
+          deletedBySender: false
         },
         {
           receiverId: user.id.toString(),
-          receiverType: userType
+          receiverType: userType,
+          deletedByReceiver: false
         },
-        // Admins ven mensajes a soporte
-        ...(userType === MSG_ROLES.ADMIN ? [{ receiverType: MSG_ROLES.SUPPORT }] : [])
+        // Admins ven mensajes a soporte (no borrados como receptor)
+        ...(userType === MSG_ROLES.ADMIN ? [{
+          receiverType: MSG_ROLES.SUPPORT,
+          deletedByReceiver: false
+        }] : [])
       ]
     }
 

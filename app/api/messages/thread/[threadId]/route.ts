@@ -4,8 +4,8 @@ import { authenticateRequest } from '@/lib/auth'
 
 /**
  * DELETE /api/messages/thread/[threadId]
- * Elimina todos los mensajes de una conversación específica
- * Solo el propietario de los mensajes puede eliminarlos
+ * Soft-delete de una conversación para el usuario que hace la petición.
+ * El otro participante conserva sus mensajes intactos.
  */
 export async function DELETE(
   request: NextRequest,
@@ -21,91 +21,85 @@ export async function DELETE(
     const { user } = auth
     const { threadId } = params
 
-    console.log('[DELETE Thread] User:', user.id, 'ThreadId:', threadId)
+    // Normalizar el tipo de usuario
+    let userType = 'customer'
+    if (user.role === 'technician') userType = 'technician'
+    if (['admin', 'super_admin', 'technician_manager'].includes(user.role)) userType = 'admin'
 
-    // Decodificar el threadId para obtener los IDs relevantes
-    // Formato esperado: "order-{orderId}" o "direct-{userId}"
-    let deleteCondition: any = {}
+    const isAdmin = userType === 'admin'
+    const myIds = [String(user.id)]
+    if (isAdmin) myIds.push('0')
+
+    let deletedCount = 0
 
     if (threadId.startsWith('order-')) {
       const orderId = threadId.replace('order-', '')
-      console.log('[DELETE Thread] Order-based deletion, orderId:', orderId)
 
-      // Eliminar mensajes de esta orden donde el usuario es sender o receiver
-      deleteCondition = {
-        AND: [
-          { orderId: orderId },
-          {
-            OR: [
-              { senderId: String(user.id) },
-              { receiverId: String(user.id) }
-            ]
-          }
-        ]
-      }
+      // Marcar como borrado para el remitente (mensajes que yo envié)
+      const asSender = await prisma.message.updateMany({
+        where: {
+          orderId,
+          senderId: { in: myIds },
+          senderType: userType,
+          deletedBySender: false
+        },
+        data: { deletedBySender: true }
+      })
+
+      // Marcar como borrado para el receptor (mensajes que yo recibí)
+      const asReceiver = await prisma.message.updateMany({
+        where: {
+          orderId,
+          receiverId: { in: myIds },
+          deletedByReceiver: false
+        },
+        data: { deletedByReceiver: true }
+      })
+
+      deletedCount = asSender.count + asReceiver.count
+
     } else if (threadId.startsWith('direct-')) {
       const partnerId = threadId.replace('direct-', '')
-      console.log('[DELETE Thread] Direct deletion, partnerId:', partnerId)
-
-      // Normalizar partnerId para soporte
       const normalizedPartnerId = partnerId === 'support' ? '0' : partnerId
 
-      // Si el usuario es ADMIN, también debe poder eliminar mensajes enviados a/desde '0' (Soporte)
-      const isAdmin = ['admin', 'super_admin', 'technician_manager'].includes(user.role)
+      // Mensajes que YO envié al partner → soy el remitente
+      const asSender = await prisma.message.updateMany({
+        where: {
+          senderId: { in: myIds },
+          receiverId: normalizedPartnerId,
+          deletedBySender: false
+        },
+        data: { deletedBySender: true }
+      })
 
-      // Array de IDs que representan al usuario actual
-      const myIds = [String(user.id)]
-      if (isAdmin) {
-          myIds.push('0') // El admin también es '0' (Soporte)
-      }
+      // Mensajes que el partner me envió → soy el receptor
+      const asReceiver = await prisma.message.updateMany({
+        where: {
+          senderId: normalizedPartnerId,
+          receiverId: { in: myIds },
+          deletedByReceiver: false
+        },
+        data: { deletedByReceiver: true }
+      })
 
-      deleteCondition = {
-        OR: [
-          // Mensajes que YO envié al Partner
-          {
-            AND: [
-              { senderId: { in: myIds } },
-              { receiverId: normalizedPartnerId }
-            ]
-          },
-          // Mensajes que el Partner ME envió
-          {
-            AND: [
-              { senderId: normalizedPartnerId },
-              { receiverId: { in: myIds } }
-            ]
-          }
-        ]
-      }
+      deletedCount = asSender.count + asReceiver.count
+
     } else {
-      console.error('[DELETE Thread] Invalid threadId format:', threadId)
       return NextResponse.json(
         { error: 'Formato de threadId inválido' },
         { status: 400 }
       )
     }
 
-    console.log('[DELETE Thread] Delete condition:', JSON.stringify(deleteCondition, null, 2))
-
-    // Eliminar los mensajes
-    const result = await prisma.message.deleteMany({
-      where: deleteCondition
-    })
-
-    console.log('[DELETE Thread] Deleted count:', result.count)
-
     return NextResponse.json({
       success: true,
-      message: `${result.count} mensaje(s) eliminado(s)`,
-      deletedCount: result.count
+      message: `${deletedCount} mensaje(s) eliminado(s) de tu vista`,
+      deletedCount
     })
+
   } catch (error) {
     console.error('[DELETE Thread] Error:', error)
-    // Mostrar más detalles del error
     const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-    const errorStack = error instanceof Error ? error.stack : ''
-    console.error('[DELETE Thread] Error details:', errorMessage, errorStack)
-
     return NextResponse.json(
       {
         error: 'Error al eliminar la conversación',

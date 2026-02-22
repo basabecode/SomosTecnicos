@@ -11,8 +11,8 @@ Recomendamos:
 *   [Neon Database](https://neon.tech)
 *   [Railway](https://railway.app)
 
-Obtén la **URL de conexión** (Connection String) de tu proveedor. Ejemplo:
-`postgres://usuario:password@host.supabase.co:5432/postgres`
+Obtén la **URL de conexión** (Connection String) de tu proveedor. Tiene la forma:
+`postgres://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:<PORT>/<DB_NAME>`
 
 ## 2. Configuración en Vercel
 

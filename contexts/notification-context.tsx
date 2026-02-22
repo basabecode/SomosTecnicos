@@ -22,6 +22,7 @@ interface NotificationContextType {
   fetchNotifications: () => Promise<void>
   markAsRead: (id: number) => Promise<void>
   markAllAsRead: () => Promise<void>
+  clearReadNotifications: () => Promise<void>
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
@@ -97,16 +98,38 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }
 
   const markAllAsRead = async () => {
+    // Optimistic update
     setNotifications(prev => prev.map(n => ({ ...n, read: true })))
     setUnreadCount(0)
     try {
       const token = localStorage.getItem('accessToken')
-      await fetch('/api/notifications/read-all', {
+      const res = await fetch('/api/notifications/read-all', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       })
+      if (!res.ok) {
+        // Si falló, re-sincronizar desde servidor para estado correcto
+        await fetchNotifications()
+      }
     } catch (error) {
       console.error('Error marking all as read:', error)
+      await fetchNotifications()
+    }
+  }
+
+  const clearReadNotifications = async () => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      const res = await fetch('/api/notifications/clear', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        // Remover notificaciones leídas del estado local
+        setNotifications(prev => prev.filter(n => !n.read))
+      }
+    } catch (error) {
+      console.error('Error clearing notifications:', error)
     }
   }
 
@@ -179,7 +202,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         loading,
         fetchNotifications,
         markAsRead,
-        markAllAsRead
+        markAllAsRead,
+        clearReadNotifications
       }}
     >
       {children}

@@ -621,6 +621,10 @@ model Message {
   read            Boolean   @default(false)
   readAt          DateTime? @map("read_at")
 
+  // Soft-delete por usuario: cada participante puede borrar su vista sin afectar al otro
+  deletedBySender   Boolean @default(false) @map("deleted_by_sender")
+  deletedByReceiver Boolean @default(false) @map("deleted_by_receiver")
+
   // Timestamps
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")

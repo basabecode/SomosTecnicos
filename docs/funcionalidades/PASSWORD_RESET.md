@@ -226,8 +226,8 @@ Restablecimiento de contraseña.
 **Request:**
 ```json
 {
-  "token": "xxx-xxx-xxx",
-  "newPassword": "NuevaPassword123!"
+  "token": "<token-recibido-por-email>",
+  "newPassword": "<nueva-contraseña>"
 }
 ```
 
@@ -397,16 +397,16 @@ Página de restablecimiento con token.
 **Archivo: `.env`**
 ```env
 # Base de Datos
-DATABASE_URL=postgresql://admin:password@localhost:5432/servicio_tecnico?schema=public
+DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:5432/<DB_NAME>?schema=public
 
 # Email (Brevo)
-BREVO_API_KEY=xkeysib-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXX
+BREVO_API_KEY=<tu-api-key-de-brevo>
 BREVO_SENDER_EMAIL=noreply@somostecnicos.com
 BREVO_SENDER_NAME=SomosTécnicos
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Autenticación
-JWT_SECRET=tu_secret_key_aqui
+JWT_SECRET=<clave-secreta-aleatoria-min-32-chars>
 JWT_EXPIRES_IN=7d
 ```
 
@@ -487,7 +487,7 @@ pnpm run dev
 **Paso 1: Solicitar Recuperación**
 1. Ir a `http://localhost:3000/login`
 2. Click "¿Olvidaste tu contraseña?"
-3. Ingresar: `admin.demo@somostecnicos.com`
+3. Ingresar el email de la cuenta demo configurada en `.env`
 4. Click "Enviar Instrucciones"
 5. ✅ Verificar mensaje de éxito
 
@@ -498,11 +498,11 @@ pnpm run dev
 4. Copiar token del enlace
 
 **Paso 3: Restablecer Contraseña**
-1. Abrir: `http://localhost:3000/reset-password?token=TU_TOKEN`
+1. Abrir: `http://localhost:3000/reset-password?token=<TOKEN_DEL_EMAIL>`
 2. ✅ Página carga correctamente
 3. ✅ Muestra email del usuario
-4. Ingresar: `TestPassword123!`
-5. Confirmar: `TestPassword123!`
+4. Ingresar nueva contraseña segura
+5. Confirmar la contraseña
 6. Click "Restablecer Contraseña"
 7. ✅ Mensaje de éxito
 8. ✅ Redirección automática (3s)
@@ -522,8 +522,8 @@ pnpm run dev
 
 **Paso 5: Login con Nueva Contraseña**
 1. En `/login`
-2. Email: `admin.demo@somostecnicos.com`
-3. Password: `TestPassword123!`
+2. Email: el correo demo configurado en `.env`
+3. Password: la nueva contraseña establecida
 4. ✅ Login exitoso
 5. ✅ Redirigido al dashboard
 

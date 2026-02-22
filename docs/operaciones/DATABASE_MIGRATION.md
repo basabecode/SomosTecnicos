@@ -64,12 +64,10 @@ Abre o crea tu archivo `.env.local` (o `.env` para producción) y actualiza/agre
 # .env
 
 # URL con Pooling (para la APP)
-# Normalmente puerto 5432. Verifica si dice pgbouncer o pooler en el host.
-DATABASE_URL="postgres://usuario:password@ep-pooler-xyz.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgres://<DB_USER>:<DB_PASSWORD>@<NEON_POOLER_HOST>/<DB_NAME>?sslmode=require"
 
 # URL Directa (para MIGRACIONES y PRISMA STUDIO)
-# Es la misma pero sin el pooler (o puerto 5432 directo a la instancia)
-DIRECT_URL="postgres://usuario:password@ep-direct-xyz.neon.tech/neondb?sslmode=require"
+DIRECT_URL="postgres://<DB_USER>:<DB_PASSWORD>@<NEON_DIRECT_HOST>/<DB_NAME>?sslmode=require"
 ```
 
 ### Paso 4.2: Actualizar Schema Prisma

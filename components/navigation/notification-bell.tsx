@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Bell, CheckCircle2, Inbox } from 'lucide-react'
+import { Bell, CheckCircle2, Inbox, RefreshCw, Trash2 } from 'lucide-react'
 import { useNotifications } from '@/contexts/notification-context'
 import {
   DropdownMenu,
@@ -21,7 +21,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 
 export function NotificationBell() {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, fetchNotifications, clearReadNotifications } = useNotifications()
   const { user } = useAuth()
   const [open, setOpen] = useState(false)
 
@@ -57,19 +57,48 @@ export function NotificationBell() {
       <DropdownMenuContent align="end" className="w-80 p-0 shadow-xl border-gray-100 rounded-xl overflow-hidden">
         <DropdownMenuLabel className="p-4 flex items-center justify-between bg-gray-50/50">
           <span className="font-bold text-gray-900">Notificaciones</span>
-          {unreadCount > 0 && (
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
-              size="sm"
-              className="text-xs h-7 text-[#A50034] hover:text-[#8B002B] hover:bg-red-50"
+              size="icon"
+              className="h-7 w-7 text-gray-400 hover:text-gray-700"
+              title="Actualizar notificaciones"
               onClick={(e) => {
                 e.stopPropagation()
-                markAllAsRead()
+                fetchNotifications()
               }}
+              disabled={loading}
             >
-              Marcar todo como leído
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
             </Button>
-          )}
+            {notifications.some(n => n.read) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-gray-400 hover:text-red-600"
+                title="Limpiar notificaciones leídas"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  clearReadNotifications()
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs h-7 text-[#A50034] hover:text-[#8B002B] hover:bg-red-50"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  markAllAsRead()
+                }}
+              >
+                Marcar todo leído
+              </Button>
+            )}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="m-0" />
 

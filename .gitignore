@@ -1,37 +1,76 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ============================================================
+# DEPENDENCIAS Y BUILD
+# ============================================================
 /node_modules
-
-# next.js
 /.next/
 /out/
-
-# production
 /build
 
-# debug
+# ============================================================
+# VARIABLES DE ENTORNO Y CREDENCIALES — NUNCA COMMITEAR
+# ============================================================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.staging
+# Permitir solo el template de ejemplo (sin valores reales)
+!.env.example
+
+# ============================================================
+# CLAVES PRIVADAS Y CERTIFICADOS
+# ============================================================
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+id_rsa
+id_ed25519
+*.asc
+
+# ============================================================
+# BACKUPS Y EXPORTS DE BASE DE DATOS
+# ============================================================
+*.sql
+*.dump
+*.bak
+neon_migration.sql
+backup_*.sql
+prisma_log.txt
+
+# ============================================================
+# LOGS Y DEBUG
+# ============================================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+/debug_files/
+/logs/
 
-# env files
-.env*
-!.env.example
-
-# vercel
+# ============================================================
+# HERRAMIENTAS DE DESARROLLO LOCAL (configuración privada)
+# ============================================================
 .vercel
-
-# typescript
 *.tsbuildinfo
 next-env.d.ts
 /lib/generated/prisma
-/debug_files/
+.claude/settings.local.json
 
-# migrations
-*.sql
-
-
-
-prisma_log.txt
+# ============================================================
+# SO Y EDITORES
+# ============================================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
