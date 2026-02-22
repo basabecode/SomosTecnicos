@@ -7,7 +7,8 @@
       "Bash(ls:*)",
       "Bash(test:*)",
       "Bash(npx tsc:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --tree-filter 'if [ -f \"\"NEON-OPTIMIZATION.md\"\" ]; then sed -i \"\"s/npg_[A-Za-z0-9]*/REDACTED_PASSWORD/g; s/neondb_owner/REDACTED_USER/g; s/ep-[a-z0-9-]*\\\\.sa-east-1\\\\.aws\\\\.neon\\\\.tech/REDACTED_HOST.neon.tech/g\"\" NEON-OPTIMIZATION.md; fi' -f --all)"
     ]
   }
 }
