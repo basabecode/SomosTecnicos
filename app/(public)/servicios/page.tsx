@@ -62,7 +62,7 @@ export default function ServiciosPage() {
 
       <Header />
 
-      <main>
+      <main className="pt-16 md:pt-20">
         {/* Hero */}
         <section className="bg-[#1a0a0f] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

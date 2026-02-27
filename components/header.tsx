@@ -213,7 +213,7 @@ export default function Header() {
   }
 
   const navLinks = [
-    { label: 'Inicio', id: 'hero', href: null },
+    { label: 'Inicio', id: null, href: '/' },
     { label: 'Servicios', id: null, href: '/servicios' },
     { label: 'Seguimiento', id: 'seguimiento', href: null },
     { label: 'Contacto', id: null, href: '/contacto' },
