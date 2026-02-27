@@ -62,21 +62,12 @@ export function MobileChatWidget() {
     setIsOpen(false)
   }
 
-  // ============================================================================
-  // FUNCIONES DESHABILITADAS - Pueden reactivarse en el futuro
-  // ============================================================================
-  /*
-  const callNow = () => {
-    window.location.href = 'tel:+573001234567'
-  }
-
   const openWhatsApp = () => {
     window.open(
-      'https://wa.me/573001234567?text=Hola, necesito servicio técnico',
+      'https://wa.me/573003094854?text=Hola%2C%20necesito%20servicio%20t%C3%A9cnico',
       '_blank'
     )
   }
-  */
 
   return (
     <>
@@ -136,19 +127,6 @@ export function MobileChatWidget() {
               </Button>
             </Link>
 
-            {/* ============================================================================
-                BOTONES DESHABILITADOS - Pueden reactivarse en el futuro
-                ============================================================================ */}
-            {/*
-            <Button
-              onClick={callNow}
-              variant="outline"
-              className="w-full border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white justify-start"
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Llamar Ahora
-            </Button>
-
             <Button
               onClick={openWhatsApp}
               variant="outline"
@@ -157,7 +135,6 @@ export function MobileChatWidget() {
               <MessageCircle className="w-4 h-4 mr-2" />
               WhatsApp
             </Button>
-            */}
           </div>
         </div>
       )}

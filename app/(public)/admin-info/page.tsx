@@ -2,27 +2,26 @@ import { Metadata } from 'next'
 import InfoView from './info-view'
 
 export const metadata: Metadata = {
-  title: 'Guía de Usuario y Cobertura | SomosTécnicos Colombia',
-  description: 'Aprenda a usar la plataforma SomosTécnicos para solicitar reparaciones en Bogotá, Medellín, Cali y toda Colombia. Valide su perfil de Cliente, Técnico o Administrador.',
+  title: 'Guía de Usuario y Cobertura | SomosTécnicos',
+  description: 'Aprenda a usar la plataforma SomosTécnicos para solicitar reparaciones a domicilio en Cali y municipios cercanos. Valide su perfil de Cliente, Técnico o Administrador.',
   keywords: [
-    'somostecnicos colombia',
-    'reparación electrodomésticos bogota',
-    'técnico lavadoras medellin',
+    'somostecnicos plataforma',
+    'cómo solicitar servicio técnico',
     'mantenimiento neveras cali',
-    'servicio tecnico haceb',
-    'servicio tecnico samsung',
-    'trabajo para tecnicos colombia',
-    'app reparaciones',
-    'soporte tecnico a domicilio',
+    'servicio tecnico haceb cali',
+    'servicio tecnico samsung cali',
+    'trabajo para tecnicos cali',
+    'app reparaciones cali',
+    'soporte tecnico a domicilio cali',
     'guía de usuario somostecnicos',
-    'validar tecnico',
-    'cobertura nacional',
-    'reparación estufas',
-    'instalacion calentadores'
+    'validar tecnico cali',
+    'cobertura somostecnicos',
+    'reparación estufas cali',
+    'instalacion calentadores cali'
   ],
   openGraph: {
     title: 'Guía de Usuario y Cobertura - SomosTécnicos',
-    description: 'Plataforma líder en servicios técnicos domiciliarios en Colombia. Conectamos usuarios con expertos certificados.',
+    description: 'Plataforma de servicios técnicos domiciliarios en Cali y municipios cercanos. Conectamos usuarios con técnicos certificados.',
     url: 'https://somostecnicos.com/admin-info',
     siteName: 'SomosTécnicos',
     locale: 'es_CO',

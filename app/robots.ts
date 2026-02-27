@@ -14,12 +14,12 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/customer/',
           '/manager/',
+          // Autenticación: no aportan valor SEO
+          '/login',
+          '/register',
           // Páginas transaccionales: no aportan valor SEO y tienen contenido dinámico
           '/forgot-password',
           '/reset-password',
-          // Sub-rutas de registro (la canónica preferida es /register)
-          '/register/customer',
-          '/register/technician',
         ],
       },
       {
@@ -32,10 +32,10 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/customer/',
           '/manager/',
+          '/login',
+          '/register',
           '/forgot-password',
           '/reset-password',
-          '/register/customer',
-          '/register/technician',
         ],
       },
     ],

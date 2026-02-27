@@ -2,6 +2,7 @@
 
 import { Phone, Mail, Clock, Github } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { TermsLink } from './terms-link'
 
 /**
@@ -44,30 +45,30 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
             <nav className="flex flex-col gap-3">
-              <button
-                onClick={() => scrollToSection('hero')}
-                className="text-gray-300 hover:text-white transition-colors text-left"
+              <Link
+                href="/"
+                className="text-gray-300 hover:text-white transition-colors"
               >
                 Inicio
-              </button>
-              <button
-                onClick={() => scrollToSection('servicios')}
-                className="text-gray-300 hover:text-white transition-colors text-left"
+              </Link>
+              <Link
+                href="/servicios"
+                className="text-gray-300 hover:text-white transition-colors"
               >
                 Servicios
-              </button>
-              <button
-                onClick={() => scrollToSection('seguimiento')}
-                className="text-gray-300 hover:text-white transition-colors text-left"
+              </Link>
+              <Link
+                href="/sobre-nosotros"
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                Seguimiento
-              </button>
-              <button
-                onClick={() => scrollToSection('footer')}
-                className="text-gray-300 hover:text-white transition-colors text-left"
+                Sobre Nosotros
+              </Link>
+              <Link
+                href="/contacto"
+                className="text-gray-300 hover:text-white transition-colors"
               >
                 Contacto
-              </button>
+              </Link>
             </nav>
           </div>
 

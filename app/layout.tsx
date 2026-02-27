@@ -71,7 +71,8 @@ export const metadata: Metadata = {
     url: 'https://somostecnicos.com',
     siteName: 'SomosTécnicos',
     title: 'SomosTécnicos | Servicio Técnico a Domicilio',
-    description: 'Expertos en reparación de electrodomésticos con seguimiento en vivo. Confianza y rapidez en la puerta de tu hogar.',
+    description:
+      'Expertos en reparación de electrodomésticos con seguimiento en vivo. Confianza y rapidez en la puerta de tu hogar.',
     images: [
       {
         url: '/og-image.png',
@@ -84,7 +85,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SomosTécnicos | Servicio Técnico a Domicilio',
-    description: 'Reparación de electrodomésticos con seguimiento en tiempo real.',
+    description:
+      'Reparación de electrodomésticos con seguimiento en tiempo real.',
     images: ['/og-image.png'],
   },
   icons: {
@@ -93,7 +95,7 @@ export const metadata: Metadata = {
     apple: '/img-3d/logo_modificado.jpeg',
   },
   verification: {
-    google: 'verification_token', // Placeholder for user to fill
+    google: 'geutOlRYLvqkZ5QpsYNSq0B7k0gXTOBSq-yot0RsDR8', // Placeholder for user to fill
   },
 }
 
@@ -104,7 +106,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`} suppressHydrationWarning={true}>
+      <body
+        className={`${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`}
+        suppressHydrationWarning={true}
+      >
         <ClientAuthProvider>
           <NotificationProvider>
             <InternalToastProvider>

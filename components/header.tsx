@@ -213,10 +213,10 @@ export default function Header() {
   }
 
   const navLinks = [
-    { label: 'Inicio', id: 'hero' },
-    { label: 'Servicios', id: 'servicios' },
-    { label: 'Seguimiento', id: 'seguimiento' },
-    { label: 'Contacto', id: 'footer' },
+    { label: 'Inicio', id: 'hero', href: null },
+    { label: 'Servicios', id: null, href: '/servicios' },
+    { label: 'Seguimiento', id: 'seguimiento', href: null },
+    { label: 'Contacto', id: null, href: '/contacto' },
   ]
 
   return (
@@ -246,13 +246,23 @@ export default function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map(link => (
-                <button
-                  key={link.id}
-                  onClick={() => handleNavClick(link.id)}
-                  className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium"
-                >
-                  {link.label}
-                </button>
+                link.href ? (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id!)}
+                    className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium"
+                  >
+                    {link.label}
+                  </button>
+                )
               ))}
               <Button
                 onClick={() => scrollToSection('formulario')}
@@ -278,13 +288,24 @@ export default function Header() {
             <nav className="lg:hidden py-4 border-t border-[#E0E0E0] animate-fade-in">
               <div className="flex flex-col gap-4">
                 {navLinks.map(link => (
-                  <button
-                    key={link.id}
-                    onClick={() => handleNavClick(link.id)}
-                    className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium text-left py-2"
-                  >
-                    {link.label}
-                  </button>
+                  link.href ? (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium text-left py-2"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={link.id}
+                      onClick={() => handleNavClick(link.id!)}
+                      className="text-[#2C3E50] hover:text-[#A50034] transition-colors font-medium text-left py-2"
+                    >
+                      {link.label}
+                    </button>
+                  )
                 ))}
                 <Button
                   onClick={() => scrollToSection('formulario')}

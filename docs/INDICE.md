@@ -38,6 +38,7 @@ Guías para despliegue, configuración de servidores y mantenimiento.
 - **[DEPLOYMENT_VERCEL.md](./operaciones/DEPLOYMENT_VERCEL.md)**: Guía de despliegue en Vercel.
 - **[MCP_SETUP.md](./operaciones/MCP_SETUP.md)**: Configuración del Model Context Protocol.
 - **[SEO_STRATEGY.md](./operaciones/SEO_STRATEGY.md)**: Estrategia y configuración de SEO.
+- **[SEO_CONFIGURACION_MANUAL.md](./operaciones/SEO_CONFIGURACION_MANUAL.md)**: Pasos manuales post-deploy: Google Search Console, Google Business Profile, validación de schemas y monitoreo.
 - **[SMTP_SETUP.md](./operaciones/SMTP_SETUP.md)**: Configuración de emails corporativos.
 
 ---

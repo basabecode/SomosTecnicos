@@ -75,6 +75,13 @@ export default function HomePage() {
                   closes: '18:00',
                 },
               ],
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.8',
+                reviewCount: '47',
+                bestRating: '5',
+                worstRating: '1',
+              },
               sameAs: [
                 'https://facebook.com/somostecnicos',
                 'https://instagram.com/somostecnicos',
@@ -143,7 +150,75 @@ export default function HomePage() {
               uploadDate: '2026-02-23T08:00:00+00:00',
               contentUrl: 'https://somostecnicos.com/video/video_reparacion_ok.mp4',
               embedUrl: 'https://somostecnicos.com',
-            }
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: [
+                {
+                  '@type': 'Question',
+                  name: '¿Cuál es el costo del servicio técnico a domicilio?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'La visita de diagnóstico tiene un costo de $50.000 pesos dentro de la ciudad, valor que se descuenta del total de la reparación si decides proceder. El costo final varía según el tipo de falla y la complejidad del trabajo requerido.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: '¿Cuánto tiempo tarda la reparación?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Depende del problema. Reparaciones simples como cambio de piezas comunes se realizan el mismo día. Reparaciones complejas o que requieren repuestos especiales pueden tomar entre 2 y 3 días hábiles. Instalaciones de seguridad o redes pueden tomar 1 a 2 días según la complejidad.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: '¿Qué servicios técnicos ofrecen en Cali?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Ofrecemos reparación de electrodomésticos (neveras, lavadoras, secadoras, estufas, hornos, calentadores, televisores), servicios de electricidad residencial y comercial (cableado, tableros, iluminación), soporte técnico en computadores y redes, e instalación de sistemas de seguridad electrónica (cámaras CCTV, alarmas, control de acceso).',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: '¿Qué marcas de electrodomésticos atienden?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Atendemos todas las marcas de electrodomésticos: LG, Samsung, Whirlpool, Mabe, Electrolux, Haceb, Challenger, Frigidaire, y más. En especialidades técnicas también trabajamos con Schneider y Legrand (electricidad), HP, Dell, Lenovo y Apple (computación), Hikvision y Dahua (seguridad).',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: '¿Tienen garantía en sus reparaciones?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Sí, ofrecemos garantía en todos nuestros servicios: 30 días en reparaciones de electrodomésticos, 90 días en instalaciones eléctricas y de seguridad electrónica, y 60 días en servicios de computación y redes. Si el problema vuelve dentro del período de garantía, lo atendemos sin costo adicional.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: '¿Cómo puedo pagar el servicio técnico?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Aceptamos pago en efectivo y transferencias bancarias. El pago se realiza al finalizar el servicio, una vez usted esté satisfecho con el trabajo realizado.',
+                  },
+                },
+              ],
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'SomosTécnicos',
+              url: 'https://somostecnicos.com',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: 'https://somostecnicos.com/?q={search_term_string}',
+                },
+                'query-input': 'required name=search_term_string',
+              },
+            },
           ]),
         }}
       />

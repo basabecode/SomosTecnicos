@@ -8,8 +8,14 @@
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
-import { UnifiedSidebar, SidebarItem } from '@/components/layout/unified-sidebar'
-import { UnifiedHeader, HeaderMenuItem } from '@/components/layout/unified-header'
+import {
+  UnifiedSidebar,
+  SidebarItem,
+} from '@/components/layout/unified-sidebar'
+import {
+  UnifiedHeader,
+  HeaderMenuItem,
+} from '@/components/layout/unified-header'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import {
@@ -95,17 +101,20 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
         if (response.ok) {
           const data = await response.json()
           const pendingOrders = data.data?.ordenes?.pendientes || 0
-          const pendingApplications = data.data?.alertas?.technicianApplicationsPending || 0
+          const pendingApplications =
+            data.data?.alertas?.technicianApplicationsPending || 0
 
-          setNavItems((prev: SidebarItem[]) => prev.map((item: SidebarItem) => {
-            if (item.href === '/admin/orders') {
-              return { ...item, badge: pendingOrders }
-            }
-            if (item.href === '/admin/applications') {
-              return { ...item, badge: pendingApplications }
-            }
-            return item
-          }))
+          setNavItems((prev: SidebarItem[]) =>
+            prev.map((item: SidebarItem) => {
+              if (item.href === '/admin/orders') {
+                return { ...item, badge: pendingOrders }
+              }
+              if (item.href === '/admin/applications') {
+                return { ...item, badge: pendingApplications }
+              }
+              return item
+            })
+          )
         }
       } catch (error) {
         console.error('Error fetching stats for sidebar:', error)
@@ -126,7 +135,9 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
 
   // Datos del usuario
   const userData = {
-    name: user ? `${user.nombre} ${user.apellido || ''}`.trim() : 'Administrador',
+    name: user
+      ? `${user.nombre} ${user.apellido || ''}`.trim()
+      : 'Administrador',
     email: user?.email || 'admin@somostecnicos.com',
     initials: user
       ? `${user.nombre?.[0] || ''}${user.apellido?.[0] || ''}`
@@ -189,12 +200,16 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
             <div className="md:hidden">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="-ml-3 h-10 w-10 text-gray-500 hover:text-gray-900">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="-ml-3 h-10 w-10 text-gray-500 hover:text-gray-900"
+                  >
                     <Menu className="h-6 w-6" />
                     <span className="sr-only">Abrir menú</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-[240px]">
+                <SheetContent side="left" className="p-0 w-60">
                   <SidebarContent />
                 </SheetContent>
               </Sheet>
