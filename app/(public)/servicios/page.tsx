@@ -107,9 +107,9 @@ export default function ServiciosPage() {
                 <Link
                   key={servicio.slug}
                   href={servicio.canonicalPath}
-                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#A50034]/30 transition-all overflow-hidden"
+                  className="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-[#A50034]/30 transition-all overflow-hidden"
                 >
-                  <div className="relative h-48 bg-gray-100 overflow-hidden">
+                  <div className="relative h-48 bg-white overflow-hidden">
                     <Image
                       src={servicio.heroImage}
                       alt={servicio.heroImageAlt}
