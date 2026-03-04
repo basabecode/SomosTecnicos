@@ -65,8 +65,16 @@ export default function ServiceForm({ config = SPECIALTIES_CONFIG.ELECTRODOMESTI
 
   // Reset form when config changes (e.g. switching tabs if we had them, OR if rendered in different sections)
   useEffect(() => {
-    // Optional: Reset logic if needed when props change significantly
-  }, [config])
+    // Lectura de parámetro en URL para autoseleccionar desde páginas de servicio
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const equipoUrl = urlParams.get('equipo')
+      if (equipoUrl) {
+        setFormData(prev => ({ ...prev, tipoElectrodomestico: equipoUrl }))
+        setTimeout(() => setCurrentStep(2), 600)
+      }
+    }
+  }, [])
 
   // Escuchar evento del AIChat para pre-llenar el formulario
   useEffect(() => {

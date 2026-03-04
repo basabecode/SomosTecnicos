@@ -78,7 +78,7 @@ export default function ServiceProcess() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="relative group"
             >
-              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="bg-white rounded-2xl p-6 pt-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full">
                 {/* Número del paso */}
                 <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-gradient-to-br from-[#A50034] to-[#c9003f] flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-lg">{step.number}</span>
@@ -152,20 +152,24 @@ export default function ServiceProcess() {
               </div>
             </div>
 
-            {/* Columna de imágenes */}
+              {/* Columna de imágenes: la imagen se contiene SIEMPRE dentro del wrapper */}
             <div className="grid grid-cols-1 gap-2">
+              {/* overflow-hidden en el motion.div para que el scale(1.02) no desborde */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-[300px] sm:h-[350px] md:h-[450px] lg:h-[600px] rounded-3xl overflow-hidden shadow-lg w-full"
+                className="relative rounded-3xl overflow-hidden shadow-lg w-full
+                           aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5]
+                           max-h-[420px] lg:max-h-none"
               >
                 <Image
                   src="/img-3d/moto-roja.jpg"
-                  alt="Técnico en moto"
+                  alt="Técnico de SomosTécnicos en moto, listo para servicio a domicilio en Cali"
                   fill
-                  className="object-cover"
+                  className="object-contain object-center"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <p className="text-white font-semibold text-lg drop-shadow-lg">Servicio Rápido</p>
                   <p className="text-white/90 text-sm drop-shadow-md">Técnico en moto</p>

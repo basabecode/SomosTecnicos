@@ -91,7 +91,7 @@ export default function ServiceTypes() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Contenedor Principal Adaptable */}
-        <div className="flex flex-col md:block md:relative md:h-[480px] items-center">
+        <div className="flex flex-col md:block md:relative md:min-h-[480px] items-center">
 
           {/* Video: Full width en mobile (250px alto), 85% width en desktop (full alto) */}
           <div className="relative w-full h-[250px] md:absolute md:left-0 md:top-0 md:bottom-0 md:h-full md:w-[85%] rounded-3xl overflow-hidden shadow-xl z-10 order-1 md:order-none">
@@ -137,7 +137,7 @@ export default function ServiceTypes() {
           </div>
 
           {/* Columna de Tarjetas: Grid en mobile, Columna absoluta en desktop */}
-          <div className="w-full px-2 mt-4 md:mt-0 md:absolute md:right-0 md:top-0 md:bottom-0 md:w-[28%] z-20 flex flex-col gap-3 md:justify-between md:gap-0 md:py-6 md:pr-2 order-2 md:order-none">
+          <div className="w-full px-0 mt-4 md:mt-0 md:absolute md:right-0 md:top-0 md:bottom-0 md:w-[28%] z-20 flex flex-col gap-3 md:justify-between md:gap-0 md:py-6 md:pr-2 order-2 md:order-none">
             {services.map((service, index) => (
               <Card
                 key={index}

@@ -118,32 +118,54 @@ export default function SobreNosotrosPage() {
       <Header />
 
       <main className="pt-16 md:pt-20">
-        {/* Hero */}
-        <section className="bg-[#1a0a0f] text-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
-              <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-gray-200">Sobre Nosotros</span>
-            </nav>
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                  Llevamos soluciones técnicas a tu hogar en Cali
-                </h1>
-                <p className="text-lg text-gray-300 leading-relaxed">
-                  SomosTécnicos es una plataforma digital de servicios técnicos a domicilio en Cali, Valle del Cauca. Conectamos hogares y empresas con técnicos certificados en electrodomésticos, electricidad, computación y seguridad electrónica.
-                </p>
+        {/* Hero - Split Design */}
+        <section className="relative overflow-hidden flex flex-col lg:block">
+          {/* Fondos absolutos solo para Desktop (LG y superiores) */}
+          <div className="absolute inset-y-0 left-0 hidden lg:block w-1/2 bg-[#1a0a0f]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0f] via-[#2d0a15] to-[#1a0a0f] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
+          </div>
+          {/* Fondo blanco a la derecha con el borde rojo separador exacto al 50% de la pantalla */}
+          <div className="absolute inset-y-0 right-0 hidden lg:block w-1/2 bg-white border-l-2 border-[#A50034]" />
+
+          {/* Contenedor centralizado y responsivo */}
+          <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-8 relative z-10 w-full flex-grow">
+            <div className="grid lg:grid-cols-2">
+
+              {/* Lado Contenido (Izquierda - Oscuro) */}
+              <div className="py-16 px-4 sm:px-6 lg:px-0 lg:pr-12 text-white bg-[#1a0a0f] lg:bg-transparent relative shadow-none">
+                {/* Degradados decorativos en mobile que imitan al de desktop */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0f] via-[#2d0a15] to-[#1a0a0f] pointer-events-none lg:hidden" />
+
+                <div className="relative z-10">
+                  <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
+                    <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
+                    <ChevronRight className="w-4 h-4" />
+                    <span className="text-gray-200">Sobre Nosotros</span>
+                  </nav>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                    Llevamos soluciones técnicas a tu hogar en Cali
+                  </h1>
+                  <p className="text-lg text-gray-300 leading-relaxed">
+                    SomosTécnicos es una plataforma digital de servicios técnicos a domicilio en Cali, Valle del Cauca. Conectamos hogares y empresas con técnicos certificados en electrodomésticos, electricidad, computación y seguridad electrónica.
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-center">
-                <Image
-                  src="/img-3d/somos_tecnicos.png"
-                  alt="SomosTécnicos - Servicio técnico a domicilio en Cali"
-                  width={400}
-                  height={400}
-                  className="object-contain"
-                />
+
+              {/* Lado Imagen (Derecha - Blanco centralizado) */}
+              <div className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center items-center bg-white lg:bg-transparent border-t-2 border-[#A50034] lg:border-t-0">
+                <div className="relative w-full max-w-[500px] aspect-[16/9] flex items-center justify-center">
+                  <Image
+                    src="/img-3d/somos_tecnicos.png"
+                    alt="SomosTécnicos - Servicio técnico a domicilio en Cali"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 1024px) 90vw, 45vw"
+                    priority
+                  />
+                </div>
               </div>
+
             </div>
           </div>
         </section>
@@ -219,10 +241,10 @@ export default function SobreNosotrosPage() {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {values.map((val) => (
-                <div key={val.title} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                <div key={val.title} className="bg-gray-50 hover:bg-white rounded-xl p-6 border border-gray-100 hover:border-[#A50034]/20 hover:shadow-md transition-all duration-200 group">
                   <div className="flex items-center gap-2 mb-3">
                     <CheckCircle className="w-5 h-5 text-[#A50034] shrink-0" />
-                    <h3 className="font-bold text-[#2C3E50]">{val.title}</h3>
+                    <h3 className="font-bold text-[#2C3E50] group-hover:text-[#A50034] transition-colors">{val.title}</h3>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed">{val.description}</p>
                 </div>

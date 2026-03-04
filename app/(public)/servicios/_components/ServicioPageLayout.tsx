@@ -11,6 +11,19 @@ interface ServicioPageLayoutProps {
   jsonLd: object[]
 }
 
+const getEquipoIdFromSlug = (slug: string) => {
+  if (slug.includes('nevera')) return 'nevera'
+  if (slug.includes('lavadora')) return 'lavadora'
+  if (slug.includes('secadora')) return 'secadora'
+  if (slug.includes('estufa') || slug.includes('horno')) return 'estufa'
+  if (slug.includes('calentador')) return 'calentador'
+  if (slug.includes('televisor') || slug.includes('tv')) return 'televisor'
+  if (slug.includes('electricista')) return 'electricidad_general'
+  if (slug.includes('computador') || slug.includes('redes')) return 'sistemas_general'
+  if (slug.includes('camara') || slug.includes('alarma') || slug.includes('seguridad')) return 'seguridad_general'
+  return ''
+}
+
 export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutProps) {
   return (
     <>
@@ -46,7 +59,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
-                    href="/#formulario"
+                    href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
                     className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-semibold px-8 py-4 rounded-lg transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
@@ -203,7 +216,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
-                href="/#formulario"
+                href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034] hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />

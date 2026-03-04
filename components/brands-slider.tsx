@@ -106,32 +106,6 @@ export default function BrandsSlider({
           </div>
         </div>
       </div>
-
-      {/* CSS personalizado para la animación */}
-      <style jsx>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
-        .animate-scroll {
-          animation: scroll 40s linear infinite; /* Un poco más lento para mejor lectura de texto */
-        }
-
-        .animate-scroll:hover {
-          animation-play-state: paused;
-        }
-
-        @media (max-width: 768px) {
-          .animate-scroll {
-            animation-duration: 25s;
-          }
-        }
-      `}</style>
     </section>
   )
 }

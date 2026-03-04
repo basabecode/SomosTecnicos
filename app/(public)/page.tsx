@@ -8,9 +8,15 @@ import FAQ from '@/components/faq'
 import Footer from '@/components/footer'
 import MobileOptimizations from '@/components/mobile-optimizations'
 import AiChat from '@/components/ai-chat'
+import SitelinksNav from '@/components/sitelinks-nav'
 import { SuppressHydrationWarning } from '@/components/no-ssr'
 import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
+import { buildSiteNavigationSchema } from '@/lib/seo/schema-builders'
+import { BLOG_POSTS } from '@/lib/seo/blog-data'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Clock, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'SomosTécnicos | Servicio Técnico a Domicilio en Cali y sus alrededores',
@@ -160,7 +166,7 @@ export default function HomePage() {
                   name: '¿Cuál es el costo del servicio técnico a domicilio?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'La visita de diagnóstico tiene un costo de $50.000 pesos dentro de la ciudad, valor que se descuenta del total de la reparación si decides proceder. El costo final varía según el tipo de falla y la complejidad del trabajo requerido.',
+                    text: 'La visita de diagnóstico tiene un costo de $50.000 pesos. El precio de la reparación varía según la complejidad, los repuestos y la tecnología del equipo — no existe tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, esos $50.000 se abonan al total.',
                   },
                 },
                 {
@@ -219,6 +225,7 @@ export default function HomePage() {
                 'query-input': 'required name=search_term_string',
               },
             },
+            buildSiteNavigationSchema(),
           ]),
         }}
       />
@@ -246,6 +253,91 @@ export default function HomePage() {
         {/* Proceso de Servicio - Cómo funciona */}
         <ServiceProcess />
         <FAQ />
+
+        {/* ── Blog preview ─────────────────────────────────────────── */}
+        {(() => {
+          const posts = Object.values(BLOG_POSTS).slice(0, 3)
+          const CATEGORY_COLORS: Record<string, string> = {
+            mantenimiento: 'bg-blue-50 text-blue-700',
+            reparacion: 'bg-red-50 text-red-700',
+            consejos: 'bg-green-50 text-green-700',
+            guias: 'bg-purple-50 text-purple-700',
+          }
+          return (
+            <section className="bg-white py-14 px-4">
+              <div className="max-w-6xl mx-auto">
+                <div className="flex items-end justify-between mb-8 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-[#A50034] mb-1">
+                      Blog técnico
+                    </p>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                      Consejos de nuestros técnicos
+                    </h2>
+                  </div>
+                  <Link
+                    href="/blog"
+                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-[#A50034] hover:underline flex-shrink-0"
+                  >
+                    Ver todos <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+
+                {/* Grid vertical: 1 col mobile, 3 col desktop  */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {posts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={`/blog/${post.slug}`}
+                      className="group rounded-xl border border-[#E8EAED] overflow-hidden bg-white
+                                 hover:shadow-md hover:border-slate-300 transition-all duration-200"
+                    >
+                    <div className="relative h-56 md:h-48 bg-white overflow-hidden border-b border-[#E8EAED]">
+                        <Image
+                          src={post.heroImage}
+                          alt={post.heroImageAlt}
+                          fill
+                          className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, 33vw"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'}`}>
+                            {post.categoryLabel}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-slate-400">
+                            <Clock className="w-3 h-3" />{post.readTime} min
+                          </span>
+                        </div>
+                        <p className="text-sm md:text-[13px] font-semibold text-slate-900 leading-snug
+                                      group-hover:text-[#A50034] transition-colors line-clamp-2">
+                          {post.title}
+                        </p>
+                        {post.excerpt && (
+                          <p className="hidden md:block text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1">
+                            {post.excerpt}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="mt-6 text-center sm:hidden">
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#A50034] hover:underline"
+                  >
+                    Ver todos los artículos <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )
+        })()}
+
+        <SitelinksNav />
       </main>
       <Footer />
 

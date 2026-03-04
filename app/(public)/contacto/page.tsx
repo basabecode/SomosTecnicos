@@ -88,8 +88,13 @@ export default function ContactoPage() {
 
       <main className="pt-16 md:pt-20">
         {/* Hero */}
-        <section className="bg-[#1a0a0f] text-white py-16">
+        <section className="relative bg-[#1a0a0f] text-white py-16 overflow-hidden">
+          {/* Decorative gradients */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0f] via-[#2d0a15] to-[#1a0a0f] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#A50034]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative z-10">
             <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
               <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
               <ChevronRight className="w-4 h-4" />
@@ -101,6 +106,7 @@ export default function ContactoPage() {
             <p className="text-lg text-gray-300 max-w-2xl">
               Estamos disponibles de lunes a sábado de 8am a 6pm para atender tu solicitud de servicio técnico a domicilio.
             </p>
+            </div>
           </div>
         </section>
 
@@ -201,9 +207,9 @@ export default function ContactoPage() {
               {zones.map((zone) => (
                 <span
                   key={zone}
-                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm font-medium shadow-sm"
+                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm hover:bg-[#A50034] hover:text-white hover:border-[#A50034] transition-colors duration-200 cursor-default min-h-[44px]"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[#A50034]" />
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                   {zone}
                 </span>
               ))}

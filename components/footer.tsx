@@ -1,6 +1,4 @@
-'use client'
-
-import { Phone, Mail, Clock, Github } from 'lucide-react'
+import { Phone, Mail, Clock } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { TermsLink } from './terms-link'
@@ -13,19 +11,12 @@ import { TermsLink } from './terms-link'
  * - Copyright
  */
 export default function Footer() {
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <footer id="footer" className="bg-[#2C3E50] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
           {/* Columna 1: Logo y descripción */}
-          <div>
+          <div className="sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <Image
                 src="/img-3d/logo_modificado.jpeg"
@@ -36,45 +27,63 @@ export default function Footer() {
               />
               <h3 className="text-2xl font-bold text-white">somostecnicos</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed">
-           Servicio Técnico Especializado en reparación, instalación y mantenimiento de equipos domésticos y tecnológicos. Con más de 5 años de experiencia, brindando soluciones en los hogares colombianos.
+            <p className="text-gray-300 leading-relaxed text-sm">
+              Servicio Técnico Especializado en reparación, instalación y mantenimiento de equipos domésticos y tecnológicos. Con más de 5 años de experiencia en los hogares colombianos.
             </p>
           </div>
 
-          {/* Columna 2: Enlaces */}
+          {/* Columna 2: Navegación */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
-            <nav className="flex flex-col gap-3">
-              <Link
-                href="/"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Inicio
-              </Link>
-              <Link
-                href="/servicios"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Servicios
-              </Link>
-              <Link
-                href="/sobre-nosotros"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Sobre Nosotros
-              </Link>
-              <Link
-                href="/contacto"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Contacto
-              </Link>
+            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Navegación</h4>
+            <nav className="flex flex-col gap-2.5">
+              {[
+                { href: '/', label: 'Inicio' },
+                { href: '/servicios', label: 'Servicios' },
+                { href: '/blog', label: 'Blog técnico' },
+                { href: '/barrios', label: 'Barrios que cubrimos' },
+                { href: '/sobre-nosotros', label: 'Sobre Nosotros' },
+                { href: '/contacto', label: 'Contacto' },
+                { href: '/admin-info', label: 'Seguimiento de Órdenes' },
+              ].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  {label}
+                </Link>
+              ))}
             </nav>
           </div>
 
-          {/* Columna 3: Contacto */}
+          {/* Columna 3: Servicios */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contacto</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Servicios</h4>
+            <nav className="flex flex-col gap-2.5">
+              {[
+                { href: '/servicios/reparacion-neveras-cali', label: 'Neveras' },
+                { href: '/servicios/reparacion-lavadoras-cali', label: 'Lavadoras' },
+                { href: '/servicios/reparacion-calentadores-cali', label: 'Calentadores' },
+                { href: '/servicios/reparacion-estufas-hornos-cali', label: 'Estufas y Hornos' },
+                { href: '/servicios/reparacion-televisores-cali', label: 'Televisores' },
+                { href: '/servicios/electricista-a-domicilio-cali', label: 'Electricista' },
+                { href: '/servicios/tecnico-computadores-redes-cali', label: 'Computadores' },
+                { href: '/servicios/camaras-seguridad-alarmas-cali', label: 'Cámaras y Alarmas' },
+              ].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Columna 4: Contacto */}
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Contacto</h4>
             <div className="flex flex-col gap-3">
               <a
                 href="tel:+573003094854"
@@ -102,22 +111,8 @@ export default function Footer() {
         <div className="border-t border-gray-600 mt-12 pt-8">
           <div className="flex flex-col gap-6 text-gray-400">
             {/* Copyright y créditos */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-center sm:text-left">
-              <p className="whitespace-nowrap">© 2026 somostecnicos. Todos los derechos reservados.</p>
-              <span className="hidden sm:inline text-gray-600">|</span>
-              <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
-                <span>elaborado por</span>
-                <a
-                  href="https://github.com/basabecode"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:text-white transition-colors font-medium"
-                >
-                  <Github size={14} className="mb-0.5" />
-                  <span>@basabecode</span>
-                </a>
-                <span>, Cali Colombia</span>
-              </p>
+            <div className="flex items-center justify-center text-sm text-center">
+              <p className="text-gray-400">© 2026 SomosTécnicos — Cali, Colombia. Todos los derechos reservados.</p>
             </div>
 
             {/* Enlaces legales */}

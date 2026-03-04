@@ -50,7 +50,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una nevera en Cali?',
-        a: 'La visita de diagnóstico tiene un costo de $50.000 pesos, valor que se descuenta del total si decides proceder con la reparación. El costo final varía según el tipo de falla. Contáctenos para un diagnóstico preciso.',
+        a: 'La visita de diagnóstico tiene un costo de $50.000 pesos. El precio de la reparación varía según la complejidad, los repuestos requeridos y la tecnología del equipo — no existe tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Qué marcas de neveras reparan?',
@@ -91,7 +91,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una lavadora en Cali?',
-        a: 'El costo de diagnóstico es de $50.000 pesos, descontable del total de la reparación. El precio final depende de la falla específica. Contacte para una cotización sin compromiso.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio de la reparación varía según la falla, los repuestos y la tecnología de la lavadora — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan lavadoras de carga frontal y superior?',
@@ -132,7 +132,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una secadora en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos, valor que se aplica al total de la reparación. El costo final depende del tipo de falla y los repuestos requeridos.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla y los repuestos requeridos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan secadoras a gas y eléctricas?',
@@ -173,7 +173,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una estufa a gas en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El costo total de la reparación depende de la falla. Brindamos cotización sin compromiso antes de proceder.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla y los repuestos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Es seguro reparar estufas a gas en casa?',
@@ -214,7 +214,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar un calentador en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El costo de la reparación varía según el tipo de falla y el modelo del calentador. Le damos cotización antes de proceder.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla, el modelo y los repuestos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan calentadores de paso y de acumulación?',
@@ -255,7 +255,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar un televisor en Cali?',
-        a: 'El diagnóstico técnico cuesta $50.000 pesos, descontable del total de la reparación. El costo depende de la falla: problemas de backlight, tarjeta de poder o pantalla tienen precios diferentes.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio varía según la falla (backlight, tarjeta de poder, pantalla) y la tecnología del equipo — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan Smart TV y televisores 4K?',
@@ -296,7 +296,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta un electricista a domicilio en Cali?',
-        a: 'El precio depende del tipo de trabajo. La visita de diagnóstico cuesta $50.000 pesos. Para instalaciones y reparaciones hacemos presupuesto detallado sin costo previo a la ejecución.',
+        a: 'El precio depende del tipo de trabajo (instalación, cortocircuito, tablero, etc.) — no hay tarifa fija. La visita de diagnóstico cuesta $50.000 pesos; si apruebas el trabajo dentro del mes siguiente, ese valor se abona al total.',
       },
       {
         q: '¿Los electricistas cumplen normas RETIE?',
@@ -337,7 +337,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta el técnico de computadores a domicilio en Cali?',
-        a: 'La visita de diagnóstico cuesta $50.000 pesos. El formateo básico parte de $80.000 pesos. El precio varía según el servicio requerido. Le damos cotización exacta tras el diagnóstico.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio varía según el servicio requerido (formateo, virus, hardware, redes) — no hay tarifa fija. Si apruebas el trabajo dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Atienden computadores Mac y Windows?',
