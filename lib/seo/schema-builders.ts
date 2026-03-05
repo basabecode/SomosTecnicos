@@ -150,9 +150,9 @@ export function buildBlogPostJsonLd(post: BlogPost): object[] {
       url: `${BASE_URL}${post.canonicalPath}`,
       datePublished: post.publishedAt,
       dateModified: post.publishedAt,
-      image: post.heroImage.startsWith('http')
-        ? post.heroImage
-        : `${BASE_URL}${post.heroImage}`,
+      image: (post.cardImage ?? post.heroImage).startsWith('http')
+        ? (post.cardImage ?? post.heroImage)
+        : `${BASE_URL}${post.cardImage ?? post.heroImage}`,
       author: {
         '@type': 'Organization',
         name: 'Equipo Técnico SomosTécnicos',

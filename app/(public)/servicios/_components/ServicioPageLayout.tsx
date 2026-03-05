@@ -37,7 +37,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
       <main className="pt-16 md:pt-20">
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="relative bg-[#1a0a0f] text-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Texto */}
               <div>
@@ -91,13 +91,16 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
                 </div>
               </div>
 
-              {/* Imagen */}
-              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none">
+              {/* Imagen con destello de luz */}
+              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none w-full">
+                {/* Destello central blanco */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-white rounded-full blur-[80px] lg:blur-[120px] opacity-30 pointer-events-none z-0"></div>
+
                 <Image
                   src={data.heroImage}
                   alt={data.heroImageAlt}
                   fill
-                  className="object-contain"
+                  className="object-contain relative z-10"
                   sizes="(max-width: 1024px) 90vw, 45vw"
                   priority
                 />

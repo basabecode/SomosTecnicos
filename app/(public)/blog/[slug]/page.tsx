@@ -38,10 +38,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'SomosTécnicos',
       images: [
         {
-          url: post.heroImage.startsWith('http')
-            ? post.heroImage
-            : `${BASE_URL}${post.heroImage}`,
-          alt: post.heroImageAlt,
+          url: (post.cardImage ?? post.heroImage).startsWith('http')
+            ? (post.cardImage ?? post.heroImage)
+            : `${BASE_URL}${post.cardImage ?? post.heroImage}`,
+          alt: post.cardImageAlt ?? post.heroImageAlt,
         },
       ],
     },
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: Props) {
   // Related posts (same category, excluding current)
   const related = Object.values(BLOG_POSTS)
     .filter((p) => p.slug !== post.slug && p.category === post.category)
-    .slice(0, 2)
+    .slice(0, 3) // Mostramos 3 para un grid balanceado
 
   return (
     <>
@@ -78,71 +78,78 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
       />
 
-      <main className="min-h-screen bg-[#F8F9FA]">
-        {/* Hero image + breadcrumb */}
-        <div className="bg-white border-b border-[#E8EAED]">
-          <div className="max-w-3xl mx-auto px-4 pt-8 pb-0">
-            {/* Breadcrumb */}
-            <nav aria-label="Ruta de navegación" className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-              <Link href="/" className="hover:text-[#A50034] transition-colors">Inicio</Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link href="/blog" className="hover:text-[#A50034] transition-colors">Blog</Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-slate-700 truncate">{post.title}</span>
-            </nav>
+      <main className="min-h-screen bg-[#F8F9FA] pt-16 md:pt-20">
+        {/* Encabezado Editorial */}
+        <div className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
+            <div className="max-w-3xl mx-auto">
+              {/* Breadcrumb en la parte superior, alineado con el texto */}
+              <nav aria-label="Ruta de navegación" className="flex items-center flex-wrap gap-2 text-sm text-slate-500 mb-6 sm:mb-8">
+                <Link href="/" className="hover:text-[#A50034] transition-colors">Inicio</Link>
+                <ChevronRight className="w-3.5 h-3.5" />
+                <Link href="/blog" className="hover:text-[#A50034] transition-colors">Blog</Link>
+                <ChevronRight className="w-3.5 h-3.5" />
+                <span className="text-slate-900 font-medium truncate">{post.title}</span>
+              </nav>
 
-            {/* Meta */}
-            <div className="flex items-center gap-3 mb-4">
-              <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
-                }`}
-              >
-                {post.categoryLabel}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
-                <Clock className="w-3 h-3" />
-                {post.readTime} min de lectura
-              </span>
-              <time
-                dateTime={post.publishedAt}
-                className="text-xs text-slate-400"
-              >
-                {new Date(post.publishedAt).toLocaleDateString('es-CO', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
+              {/* Meta */}
+              <div className="flex flex-wrap items-center gap-3 mb-5">
+                <span
+                  className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                    CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {post.categoryLabel}
+                </span>
+                <span className="flex items-center gap-1.5 text-sm text-slate-500">
+                  <Clock className="w-4 h-4" />
+                  {post.readTime} min de lectura
+                </span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <time dateTime={post.publishedAt} className="text-sm text-slate-500 w-full sm:w-auto mt-2 sm:mt-0">
+                  {new Date(post.publishedAt).toLocaleDateString('es-CO', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+
+              {/* Título y extracto */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl text-justify font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-6">
+                {post.title}
+              </h1>
+              <p className="text-lg sm:text-xl text-slate-600 leading-relaxed text-justify">
+                {post.excerpt}
+              </p>
             </div>
-
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-snug mb-4">
-              {post.title}
-            </h1>
-
-            <p className="text-base text-slate-600 leading-relaxed mb-6">
-              {post.excerpt}
-            </p>
           </div>
+        </div>
 
-          {/* Hero image */}
-          <div className="max-w-3xl mx-auto px-4">
-            <div className="relative h-56 sm:h-80 rounded-xl overflow-hidden bg-slate-100">
-              <Image
-                src={post.heroImage}
-                alt={post.heroImageAlt}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
+        {/* Contenedor de la Imagen Principal Controlada */}
+        <div className="bg-white pb-10 border-b border-[#E8EAED]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto">
+              {/* Aspect ratio restringido y el contenedor más pequeño (max-w-2xl) para que no sea inmensa */}
+              <div className="relative w-full aspect-square sm:aspect-video rounded-2xl overflow-hidden bg-white border border-[#E8EAED]">
+                <Image
+                  src={post.cardImage ?? post.heroImage}
+                  alt={post.cardImageAlt ?? post.heroImageAlt}
+                  fill
+                  className="object-contain p-4 sm:p-8"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 768px"
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Article body */}
-        <article className="max-w-3xl mx-auto px-4 py-10">
-          <div className="bg-white rounded-xl border border-[#E8EAED] p-6 sm:p-10">
+        <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-3xl mx-auto">
+            {/* Contenido principal centrado mediante el wrapper mx-auto */}
+            <div className="bg-white rounded-xl border border-[#E8EAED] p-6 sm:p-10">
 
             {post.sections.map((section, i) => (
               <section key={i} className="mb-8 last:mb-0">
@@ -252,54 +259,40 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Author byline */}
-          <div className="mt-6 flex items-center gap-4 px-2">
-            <div className="w-10 h-10 rounded-full bg-[#A50034] flex items-center justify-center flex-shrink-0">
-              <Wrench className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">
-                Equipo Técnico SomosTécnicos
-              </p>
-              <p className="text-xs text-slate-500">
-                Técnicos certificados con experiencia en Cali y el Valle del Cauca
-              </p>
             </div>
           </div>
         </article>
 
         {/* Related posts */}
         {related.length > 0 && (
-          <section className="max-w-3xl mx-auto px-4 pb-14">
-            <h2 className="text-lg font-bold text-slate-900 mb-5">
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
               Artículos relacionados
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {related.map((rp) => (
                 <Link
                   key={rp.slug}
                   href={`/blog/${rp.slug}`}
-                  className="group bg-white rounded-xl border border-[#E8EAED] overflow-hidden
-                             hover:shadow-md hover:border-slate-300 transition-all"
+                  className="group bg-white rounded-xl border border-[#E8EAED] overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col max-w-[320px] justify-self-center sm:justify-self-start w-full"
                 >
-                  <div className="relative h-36 bg-slate-100 overflow-hidden">
+                  {/* Imagen — formato vertical, máximo ancho bloqueado para no ser gigante */}
+                  <div className="relative w-full aspect-[3/4] bg-white overflow-hidden border-b border-[#E8EAED]">
                     <Image
-                      src={rp.heroImage}
-                      alt={rp.heroImageAlt}
+                      src={rp.cardImage ?? rp.heroImage}
+                      alt={rp.cardImageAlt ?? rp.heroImageAlt}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 100vw, 50vw"
+                      className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Clock className="w-3 h-3 text-slate-400" />
                       <span className="text-xs text-slate-400">{rp.readTime} min</span>
                     </div>
                     <p className="text-sm font-semibold text-slate-900 leading-snug
-                                  group-hover:text-[#A50034] transition-colors line-clamp-2">
+                                  group-hover:text-[#A50034] transition-colors line-clamp-3">
                       {rp.title}
                     </p>
                   </div>
@@ -310,9 +303,9 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Phone CTA strip */}
-        <div className="max-w-3xl mx-auto px-4 pb-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4
-                          bg-white border border-[#E8EAED] rounded-xl p-5">
+                          bg-white border border-[#E8EAED] rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-[#A50034] flex-shrink-0" />
               <p className="text-sm text-slate-700">

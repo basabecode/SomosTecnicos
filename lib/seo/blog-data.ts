@@ -25,6 +25,10 @@ export interface BlogPost {
   canonicalPath: string
   heroImage: string
   heroImageAlt: string
+  /** Imagen opcional para la tarjeta del listado de blog.
+   * Si no se define, se usa heroImage como fallback. */
+  cardImage?: string
+  cardImageAlt?: string
   excerpt: string
   category: 'mantenimiento' | 'reparacion' | 'consejos' | 'guias'
   categoryLabel: string
@@ -53,6 +57,8 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     canonicalPath: '/blog/por-que-la-nevera-deja-de-enfriar',
     heroImage: '/electrodomesticos/nevecon lg1.jpg',
     heroImageAlt: 'Técnico revisando nevera que no enfría en Cali',
+    cardImage: '/hero-servicios/nevecones-neveras-refrigeracion-hero-cali.png',
+    cardImageAlt: 'Nevera LG nevecón para reparación en Cali',
     excerpt: 'Cuando la nevera deja de enfriar, los alimentos se pierden en pocas horas. Conoce las causas más frecuentes y qué puedes revisar tú mismo antes de llamar a un técnico.',
     category: 'mantenimiento',
     categoryLabel: 'Mantenimiento',
@@ -146,6 +152,8 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     canonicalPath: '/blog/mantenimiento-lavadora-cada-cuanto',
     heroImage: '/electrodomesticos/lavadora carga superior lg.jpg',
     heroImageAlt: 'Lavadora de carga frontal limpia y en buen estado',
+    cardImage: '/hero-servicios/lavadora-blanca-lg.png',
+    cardImageAlt: 'Lavadora LG carga superior para reparación en Cali',
     excerpt: 'La lavadora es uno de los electrodomésticos más usados en el hogar, pero también uno de los que menos mantenimiento reciben. Aprende a cuidarla para que dure el doble.',
     category: 'mantenimiento',
     categoryLabel: 'Mantenimiento',
@@ -349,6 +357,8 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     canonicalPath: '/blog/reparar-o-cambiar-electrodomestico',
     heroImage: '/electrodomesticos/nevecon lg1.jpg',
     heroImageAlt: 'Técnico evaluando si vale la pena reparar un electrodoméstico',
+    cardImage: '/hero-servicios/nevera-mabe-servicio-domicilio.png',
+    cardImageAlt: 'Técnico evaluando si vale la pena reparar un electrodoméstico',
     excerpt: '¿Tu nevera se dañó y no sabes si repararla o comprar una nueva? Te explicamos cómo tomar esa decisión de manera inteligente, sin presiones y con información real.',
     category: 'guias',
     categoryLabel: 'Guías',

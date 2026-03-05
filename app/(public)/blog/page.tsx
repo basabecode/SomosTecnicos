@@ -81,8 +81,8 @@ export default function BlogPage() {
                 {/* Thumbnail */}
                 <div className="relative h-48 bg-white overflow-hidden border-b border-[#E8EAED]">
                   <Image
-                    src={post.heroImage}
-                    alt={post.heroImageAlt}
+                    src={post.cardImage ?? post.heroImage}
+                    alt={post.cardImageAlt ?? post.heroImageAlt}
                     fill
                     className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
