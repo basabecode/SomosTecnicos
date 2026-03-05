@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "4f7d87609c47c397af108f18adfc8c20d4dd685b8189f6bde734b18f930e0889"
     },
+    "content-creation": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "computedHash": "b268ce58564e55cea8dd0513222f68cf8cfefde6ed625b1842e1d1c73d23795b"
+    },
     "programmatic-seo": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -45,6 +50,11 @@
       "source": "agricidaniel/claude-seo",
       "sourceType": "github",
       "computedHash": "e51facd96affe8001eec6ee8b3824dd8c9e98f67133d6b4132d7b7311966b85b"
+    },
+    "threejs-animation": {
+      "source": "cloudai-x/threejs-skills",
+      "sourceType": "github",
+      "computedHash": "457900cae6babbe092e3226a2ac9ae5d09a84199c1b3d5050ed400d4f56a9d82"
     }
   }
 }

@@ -1,0 +1,33 @@
+INVENTARIO DE SKILLS
+====================
+Fecha: 2026-03-05
+
+--- .claude/skills/ (proyecto) ---
+admin-dashboard
+docs-cleaner
+frontend-design
+interface-design
+lluvia-de-ideas
+postgre-design
+production-ready
+responsive-design
+vercel-react-best-practices
+
+--- .agents/skills/ (SEO) ---
+ai-seo
+blog-strategy
+content-creation
+programmatic-seo
+schema-markup
+seo-audit
+seo-competitor-pages
+seo-content
+seo-geo
+seo-technical
+
+--- ~/.claude/skills/ (globales del usuario) ---
+ai-pm-assistant
+auth-supabase
+pmis-metrics
+rbac-workos
+supabase-migration

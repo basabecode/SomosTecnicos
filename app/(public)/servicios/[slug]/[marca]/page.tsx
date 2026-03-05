@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { CheckCircle, ChevronRight, Phone, Wrench, AlertTriangle, Star, Clock } from 'lucide-react'
+import { CheckCircle, Phone, Wrench, AlertTriangle, Star, Clock } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 import {
   SERVICE_MARCA_COMBOS,
   MARCAS_DATA,
@@ -114,15 +115,17 @@ export default async function ServicioMarcaPage({ params }: Props) {
         <section className="bg-white border-b border-[#E8EAED]">
           <div className="max-w-5xl mx-auto px-4 pt-8 pb-10">
             {/* Breadcrumb */}
-            <nav aria-label="Ruta de navegación" className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-5">
-              <Link href="/" className="hover:text-[#A50034] transition-colors">Inicio</Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link href="/servicios" className="hover:text-[#A50034] transition-colors">Servicios</Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link href={`/servicios/${slug}`} className="hover:text-[#A50034] transition-colors">{servicioData.h1}</Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-slate-700">{marcaData.name}</span>
-            </nav>
+            <PageBreadcrumb
+              variant="light"
+              showHomeIcon
+              className="mb-5"
+              items={[
+                { label: 'Inicio', href: '/' },
+                { label: 'Servicios', href: '/servicios' },
+                { label: servicioData.h1, href: `/servicios/${slug}` },
+                { label: marcaData.name },
+              ]}
+            />
 
             <div className="flex items-center gap-2 mb-3">
               <span className="px-2.5 py-1 bg-red-50 text-[#A50034] text-xs font-semibold rounded-full">

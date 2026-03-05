@@ -2,11 +2,12 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Clock, ChevronRight, AlertTriangle, Lightbulb, Info, Wrench, Phone } from 'lucide-react'
+import { Clock, AlertTriangle, Lightbulb, Info, Wrench, Phone } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { BLOG_POSTS } from '@/lib/seo/blog-data'
 import { buildBlogPostJsonLd } from '@/lib/seo/schema-builders'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 
 const BASE_URL = 'https://somostecnicos.com'
 
@@ -84,13 +85,16 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
             <div className="max-w-3xl mx-auto">
               {/* Breadcrumb en la parte superior, alineado con el texto */}
-              <nav aria-label="Ruta de navegación" className="flex items-center flex-wrap gap-2 text-sm text-slate-500 mb-6 sm:mb-8">
-                <Link href="/" className="hover:text-[#A50034] transition-colors">Inicio</Link>
-                <ChevronRight className="w-3.5 h-3.5" />
-                <Link href="/blog" className="hover:text-[#A50034] transition-colors">Blog</Link>
-                <ChevronRight className="w-3.5 h-3.5" />
-                <span className="text-slate-900 font-medium truncate">{post.title}</span>
-              </nav>
+              <PageBreadcrumb
+                variant="light"
+                showHomeIcon
+                className="mb-6 sm:mb-8"
+                items={[
+                  { label: 'Inicio', href: '/' },
+                  { label: 'Blog', href: '/blog' },
+                  { label: post.title },
+                ]}
+              />
 
               {/* Meta */}
               <div className="flex flex-wrap items-center gap-3 mb-5">

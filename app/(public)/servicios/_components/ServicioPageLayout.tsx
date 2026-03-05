@@ -1,9 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckCircle, Phone, MessageCircle, MapPin, ChevronRight } from 'lucide-react'
+import { CheckCircle, Phone, MessageCircle, MapPin } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import ServiceProcess from '@/components/service-process'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 import type { ServicioSEOData } from '@/lib/seo/servicios-data'
 
 interface ServicioPageLayoutProps {
@@ -42,13 +43,16 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
               {/* Texto */}
               <div>
                 {/* Breadcrumb */}
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
-                  <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-                  <ChevronRight className="w-4 h-4" />
-                  <Link href="/servicios" className="hover:text-white transition-colors">Servicios</Link>
-                  <ChevronRight className="w-4 h-4" />
-                  <span className="text-gray-200">{data.h1}</span>
-                </nav>
+                <PageBreadcrumb
+                  variant="dark"
+                  showHomeIcon
+                  className="mb-6"
+                  items={[
+                    { label: 'Inicio', href: '/' },
+                    { label: 'Servicios', href: '/servicios' },
+                    { label: data.h1 },
+                  ]}
+                />
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6">
                   {data.h1}

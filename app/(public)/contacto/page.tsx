@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Phone, Mail, Clock, MapPin, MessageCircle, ChevronRight } from 'lucide-react'
+import { Phone, Mail, Clock, MapPin, MessageCircle } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Contacto | SomosTécnicos – Servicio Técnico en Cali',
@@ -95,11 +96,15 @@ export default function ContactoPage() {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative z-10">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
-              <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-gray-200">Contacto</span>
-            </nav>
+            <PageBreadcrumb
+              variant="dark"
+              showHomeIcon
+              className="mb-6"
+              items={[
+                { label: 'Inicio', href: '/' },
+                { label: 'Contacto' },
+              ]}
+            />
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               Contacta a SomosTécnicos en Cali
             </h1>

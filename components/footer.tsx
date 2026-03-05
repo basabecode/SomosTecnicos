@@ -44,6 +44,7 @@ export default function Footer() {
                 { href: '/sobre-nosotros', label: 'Sobre Nosotros' },
                 { href: '/contacto', label: 'Contacto' },
                 { href: '/admin-info', label: 'Seguimiento de Órdenes' },
+                { href: '/trabaja-con-nosotros', label: 'Trabaja con Nosotros' },
               ].map(({ href, label }) => (
                 <Link
                   key={href}

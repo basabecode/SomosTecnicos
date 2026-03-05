@@ -56,6 +56,7 @@ After modifying `prisma/schema.prisma`, run `pnpm db:generate` to regenerate the
 **Messaging** (`/api/messages`, `lib/chat-logic.ts`): Messages use soft-delete per user (`deletedBySender`/`deletedByReceiver` flags). Never call `deleteMany` on messages. All thread-grouping and message-routing logic is centralized in `lib/chat-logic.ts` — import from there, don't duplicate in page components. IDs between `Customer` and `AdminUser` collide, so `isOwnMessage()` compares both `senderId` AND `senderType`.
 
 **Key lib files:**
+
 - `lib/constants.ts` — All enum-like constants (`ORDER_STATES`, `USER_ROLES`, `ASSIGNMENT_STATES`, etc.) and their display helpers
 - `lib/prisma.ts` — Singleton Prisma client
 - `lib/validations.ts` — Zod schemas for API input validation
@@ -65,6 +66,10 @@ After modifying `prisma/schema.prisma`, run `pnpm db:generate` to regenerate the
 
 ## Key Conventions
 
+- **Tailwind v4 — restricciones de valores arbitrarios**:
+  - **Sin px en dimensiones**: No usar `w-[Xpx]`, `h-[Xpx]`, `size-[Xpx]`. Usar escala estándar (`w-96`, `size-48`) o rem si la escala no alcanza. Para decorativos usar clases estándar (`blur-3xl`, `size-96`).
+  - **Sin opacidad decimal**: No usar `bg-color/[0.X]`, `border-color/[0.X]`, `text-color/[0.X]`. Usar entero porcentual sin corchetes: `bg-color/10` (10%), `bg-color/7` (7%), etc.
+  - Tokens de tamaño reutilizables van en `styles/tokens.css`.
 - **Strict TypeScript**: avoid `any`; use `@ts-ignore` only with justification
 - **API auth**: always protect routes with `withAuth()` or `withRoles()` — never skip for non-public endpoints
 - **Optimistic updates**: update UI before server confirmation; revert on error
@@ -75,14 +80,14 @@ After modifying `prisma/schema.prisma`, run `pnpm db:generate` to regenerate the
 
 Copy `.env.example` to `.env`. Key variables:
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_URL` | PostgreSQL with connection pooler |
-| `DIRECT_URL` | PostgreSQL direct (for migrations) |
-| `JWT_SECRET` | Sign tokens (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` | App base URL |
-| `BREVO_API_KEY` | Email sending via Brevo |
-| `DEMO_*` | Seed account credentials (dev only) |
+| Variable        | Purpose                                 |
+| --------------- | --------------------------------------- |
+| `DATABASE_URL`  | PostgreSQL with connection pooler       |
+| `DIRECT_URL`    | PostgreSQL direct (for migrations)      |
+| `JWT_SECRET`    | Sign tokens (`openssl rand -base64 32`) |
+| `NEXTAUTH_URL`  | App base URL                            |
+| `BREVO_API_KEY` | Email sending via Brevo                 |
+| `DEMO_*`        | Seed account credentials (dev only)     |
 
 Generate secrets with: `openssl rand -base64 32`
 
@@ -98,4 +103,116 @@ fix(scope): short description     # bug fix
 refactor(scope): description      # no behavior change
 docs(scope): description          # docs only
 style(scope): description         # formatting only
+```
+
+# ============================================================
+
+# BLOQUE DE INSTRUCCIONES DE SKILLS
+
+## Sistema de Skills — LECTURA OBLIGATORIA
+
+Este proyecto tiene 24 skills especializadas distribuidas en tres ubicaciones.
+**REGLA FUNDAMENTAL:** Antes de ejecutar cualquier tarea, DEBES revisar si existe un skill relevante y leer su SKILL.md completo ANTES de escribir código o tomar decisiones. No confíes solo en tu conocimiento general — las instrucciones del skill tienen prioridad.
+
+### Ubicaciones de Skills
+
+```
+.claude/skills/          → Skills del proyecto (diseño, frontend, producción)
+.agents/skills/          → Skills de SEO y contenido
+~/.claude/skills/        → Skills globales (auth, base de datos, gestión)
+```
+
+### Mapa de Skills por Contexto
+
+Usa esta tabla para identificar qué skill leer según la tarea solicitada:
+
+#### Diseño y Frontend (.claude/skills/)
+
+| Contexto / Palabras clave                                 | Skill                       | Ruta                                                |
+| --------------------------------------------------------- | --------------------------- | --------------------------------------------------- |
+| Dashboard, panel admin, vista de administración           | admin-dashboard             | .claude/skills/admin-dashboard/SKILL.md             |
+| Limpiar docs, documentación, organizar archivos .md       | docs-cleaner                | .claude/skills/docs-cleaner/SKILL.md                |
+| UI, diseño web, componentes visuales, estilos             | frontend-design             | .claude/skills/frontend-design/SKILL.md             |
+| Interfaces, layouts, UX, flujos de usuario                | interface-design            | .claude/skills/interface-design/SKILL.md            |
+| Ideas, brainstorming, propuestas, creatividad             | lluvia-de-ideas             | .claude/skills/lluvia-de-ideas/SKILL.md             |
+| Base de datos, PostgreSQL, tablas, esquemas, relaciones   | postgre-design              | .claude/skills/postgre-design/SKILL.md              |
+| Deploy, producción, optimización, build, rendimiento      | production-ready            | .claude/skills/production-ready/SKILL.md            |
+| Responsive, mobile, adaptable, breakpoints, media queries | responsive-design           | .claude/skills/responsive-design/SKILL.md           |
+| Vercel, React, Next.js, deployment, mejores prácticas     | vercel-react-best-practices | .claude/skills/vercel-react-best-practices/SKILL.md |
+
+#### SEO y Contenido (.agents/skills/)
+
+| Contexto / Palabras clave                                   | Skill                | Ruta                                         |
+| ----------------------------------------------------------- | -------------------- | -------------------------------------------- |
+| SEO para IA, LLMs, visibilidad en AI, AI search             | ai-seo               | .agents/skills/ai-seo/SKILL.md               |
+| Blog, artículos, calendario editorial, plan de contenido    | blog-strategy        | .agents/skills/blog-strategy/SKILL.md        |
+| Crear contenido, redacción, textos, copywriting             | content-creation     | .agents/skills/content-creation/SKILL.md     |
+| SEO programático, páginas generadas, templates SEO          | programmatic-seo     | .agents/skills/programmatic-seo/SKILL.md     |
+| Schema, datos estructurados, JSON-LD, rich snippets         | schema-markup        | .agents/skills/schema-markup/SKILL.md        |
+| Auditoría SEO, análisis técnico, errores SEO                | seo-audit            | .agents/skills/seo-audit/SKILL.md            |
+| Competencia, análisis competidores, páginas alternativas    | seo-competitor-pages | .agents/skills/seo-competitor-pages/SKILL.md |
+| Contenido SEO, optimización de texto, keywords en contenido | seo-content          | .agents/skills/seo-content/SKILL.md          |
+| SEO local, geolocalización, Google Maps, ciudades           | seo-geo              | .agents/skills/seo-geo/SKILL.md              |
+| SEO técnico, crawling, indexación, sitemap, robots.txt      | seo-technical        | .agents/skills/seo-technical/SKILL.md        |
+
+#### Infraestructura y Gestión (~/.claude/skills/)
+
+| Contexto / Palabras clave                                 | Skill              | Ruta                                         |
+| --------------------------------------------------------- | ------------------ | -------------------------------------------- |
+| Gestión de proyecto, tareas, planificación, PM, sprints   | ai-pm-assistant    | ~/.claude/skills/ai-pm-assistant/SKILL.md    |
+| Autenticación, login, registro, Supabase Auth, sesiones   | auth-supabase      | ~/.claude/skills/auth-supabase/SKILL.md      |
+| Métricas, KPIs, indicadores, rendimiento del proyecto     | pmis-metrics       | ~/.claude/skills/pmis-metrics/SKILL.md       |
+| Roles, permisos, RBAC, WorkOS, control de acceso          | rbac-workos        | ~/.claude/skills/rbac-workos/SKILL.md        |
+| Migraciones, esquema DB, Supabase migrations, ALTER TABLE | supabase-migration | ~/.claude/skills/supabase-migration/SKILL.md |
+
+### Reglas de Uso de Skills
+
+1. **Siempre leer antes de actuar.** Cuando una tarea coincida con algún skill del mapa anterior, lee el SKILL.md completo antes de empezar. No asumas que ya sabes qué dice.
+
+2. **Combinar skills cuando sea necesario.** Muchas tareas requieren más de un skill. Por ejemplo:
+   - "Crear una landing page optimizada para SEO" → lee `frontend-design` + `seo-content` + `schema-markup`
+   - "Diseñar las tablas para el módulo de usuarios" → lee `postgre-design` + `auth-supabase`
+   - "Preparar el sitio para producción" → lee `production-ready` + `seo-technical` + `responsive-design`
+   - "Crear una página de servicios por ciudad" → lee `programmatic-seo` + `seo-geo` + `frontend-design`
+
+3. **Las instrucciones del skill tienen prioridad** sobre tu conocimiento general. Si un skill dice "usa esta estructura" o "sigue este patrón", hazlo aunque creas que hay otra forma mejor.
+
+4. **No inventes soluciones cuando existe un skill.** Si el mapa indica que hay un skill para la tarea, úsalo. No resuelvas desde cero lo que ya está documentado.
+
+5. **Ante la duda, revisa.** Si no estás seguro de si un skill aplica, léelo. Es mejor leer un skill que no necesitabas que saltarte uno que sí necesitabas.
+
+# ============================================================
+
+# Three.js Animation — Instrucciones para CLAUDE.md
+
+## Three.js Animation / Tarjetas y Diseños 3D
+
+### Cuándo usar
+
+Activa este skill siempre que el usuario pida:
+
+- Tarjetas 3D, tarjetas interactivas o con efecto de profundidad
+- Animaciones 3D: objetos que giran, flotan, se transforman, flip
+- Diseños 3D animados, escenas con movimiento
+- Modelos GLTF/GLB animados
+- Cualquier mención de: "tarjeta 3D", "diseño 3D", "animación 3D", "efecto 3D", "Three.js"
+
+### Cómo usar
+
+**ANTES de escribir código**, lee el skill:
+
+```
+.claude/skills/threejs-skills/skills/threejs-animation/SKILL.md
+```
+
+### Flujo obligatorio
+
+1. Leer `threejs-animation/SKILL.md`
+2. Aplicar los patrones y API documentados (Three.js r160+)
+3. Producir código funcional completo (HTML con JS inline cuando sea posible)
+4. Incluir siempre: resize handler, animation loop, antialiasing, pixelRatio limitado a 2
+5. Llamar `.dispose()` en geometrías/materiales/texturas al limpiar
+
+```
+
 ```

@@ -1,10 +1,11 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Clock, ChevronRight, Wrench } from 'lucide-react'
+import { Clock, Wrench } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { BLOG_POSTS } from '@/lib/seo/blog-data'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 
 const BASE_URL = 'https://somostecnicos.com'
 
@@ -51,13 +52,15 @@ export default function BlogPage() {
         {/* Hero */}
         <section className="bg-white border-b border-[#E8EAED]">
           <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
-            <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-              <Link href="/" className="hover:text-[#A50034] transition-colors">
-                Inicio
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-slate-700">Blog</span>
-            </div>
+            <PageBreadcrumb
+              variant="light"
+              showHomeIcon
+              className="mb-4"
+              items={[
+                { label: 'Inicio', href: '/' },
+                { label: 'Blog' },
+              ]}
+            />
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
               Consejos de nuestros técnicos
             </h1>

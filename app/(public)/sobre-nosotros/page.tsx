@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CheckCircle, Users, Star, Clock, Shield, ChevronRight, Phone, MessageCircle } from 'lucide-react'
+import { CheckCircle, Users, Star, Clock, Shield, Phone, MessageCircle } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Sobre Nosotros | SomosTécnicos – Servicio Técnico en Cali',
@@ -138,11 +139,15 @@ export default function SobreNosotrosPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0f] via-[#2d0a15] to-[#1a0a0f] pointer-events-none lg:hidden" />
 
                 <div className="relative z-10">
-                  <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
-                    <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-gray-200">Sobre Nosotros</span>
-                  </nav>
+                  <PageBreadcrumb
+                    variant="dark"
+                    showHomeIcon
+                    className="mb-6"
+                    items={[
+                      { label: 'Inicio', href: '/' },
+                      { label: 'Sobre Nosotros' },
+                    ]}
+                  />
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                     Llevamos soluciones técnicas a tu hogar en Cali
                   </h1>
