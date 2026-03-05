@@ -1,109 +1,199 @@
-"use client"
-import Image from "next/image"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { MessageCircle } from "lucide-react"
+'use client'
+import Image from 'next/image'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
-/**
- * FAQ - Acordeón de preguntas frecuentes
- * - Grid 7/5 columnas para mejor balance visual
- * - Imagen compacta y adaptada
- * - Icono de chat integrado que abre el Asistente IA
- */
+const faqs = [
+  {
+    question: '¿Cuál es el costo del servicio?',
+    answer:
+      'La visita de diagnóstico tiene un valor de $50.000 dentro de la ciudad — abonables al total de la reparación si la apruebas en el mes. El costo de la reparación varía según el equipo, la complejidad y los repuestos necesarios; no existe tarifa fija.',
+  },
+  {
+    question: '¿Cuánto tiempo tarda la reparación?',
+    answer:
+      'Reparaciones simples se resuelven el mismo día. Fallas complejas o con repuestos especiales toman 2 a 3 días hábiles. Instalaciones de seguridad o redes pueden requerir 1 a 2 días según el alcance.',
+  },
+  {
+    question: '¿Qué servicios ofrecen?',
+    answer:
+      'Reparación de electrodomésticos (neveras, lavadoras, secadoras, calentadores, aires acondicionados, estufas, microondas), servicios eléctricos residenciales y comerciales, soporte en computadores y redes, e instalación de sistemas de seguridad electrónica (cámaras CCTV, alarmas, control de acceso).',
+  },
+  {
+    question: '¿Qué marcas de electrodomésticos atienden?',
+    answer:
+      'Atendemos todas las marcas: LG, Samsung, Whirlpool, Mabe, Electrolux, Haceb, Challenger, Frigidaire y más. En especialidades trabajamos con Schneider y Legrand (electricidad), HP, Dell, Lenovo y Apple (computación), e Hikvision y Dahua (seguridad).',
+  },
+  {
+    question: '¿Tienen garantía en sus servicios?',
+    answer:
+      'Sí. Reparaciones de electrodomésticos: 30 días. Instalaciones eléctricas y de seguridad: 90 días. Servicios de computación y redes: 60 días. Si el problema vuelve dentro del período de garantía, lo resolvemos sin costo adicional.',
+  },
+  {
+    question: '¿Cómo puedo pagar?',
+    answer:
+      'Aceptamos efectivo y transferencias bancarias. El pago se realiza al finalizar el servicio, una vez usted esté satisfecho con el trabajo realizado.',
+  },
+]
+
 export default function FAQ() {
-  const faqs = [
-    {
-      question: "¿Cuál es el costo del servicio?",
-      answer:
-        "El costo varía según el tipo de servicio y complejidad. Visita técnica para diagnóstico: 50 mil pesos dentro de la ciudad (abonable al total de la reparación). Servicios de electrodomésticos, electricidad, computación y seguridad tienen tarifas específicas según el trabajo requerido.",
-    },
-    {
-      question: "¿Cuánto tiempo tarda la reparación?",
-      answer: "Depende del problema. Reparaciones simples: mismo día. Complejas: 2-3 días hábiles. Instalaciones de seguridad o redes pueden tomar 1-2 días según la complejidad.",
-    },
-    {
-      question: "¿Qué servicios ofrecen?",
-      answer: "Reparación de electrodomésticos (neveras, lavadoras, aires, etc.), servicios de electricidad (cableado, tableros, iluminación), soporte de computadores y redes, e instalación de sistemas de seguridad (cámaras, alarmas, control de acceso).",
-    },
-    {
-      question: "¿Qué marcas atienden?",
-      answer: "Atendemos todas las marcas de electrodomésticos: LG, Samsung, Whirlpool, Mabe, Electrolux, Haceb, Challenger. En especialidades: Schneider, Legrand, Siemens (electricidad), HP, Dell, Lenovo, Cisco (computación), Hikvision, Dahua (seguridad).",
-    },
-    {
-      question: "¿Tienen garantía?",
-      answer: "Sí, 30 días en reparaciones de electrodomésticos, 90 días en instalaciones eléctricas y de seguridad, y 60 días en servicios de computación y redes.",
-    },
-    {
-      question: "¿Cómo puedo pagar?",
-      answer: "Aceptamos efectivo y transferencias bancarias.",
-    },
-  ]
-
-  const triggerChat = () => {
-    const event = new CustomEvent('openAIChat', { detail: { fromHero: true } })
-    window.dispatchEvent(event)
-  }
-
   return (
-    <section className="py-16 md:py-24 bg-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50] mb-4">Preguntas Frecuentes</h2>
-          <p className="text-lg text-[#7F8C8D]">Encuentra respuestas a las dudas más comunes</p>
+    <section className="py-16 md:py-24 bg-[#FAFAFA] relative overflow-hidden">
+      {/* Decorative background word */}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A50034] mb-3">
+            Preguntas frecuentes
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+            Todo lo que necesitas saber
+          </h2>
+          <div className="mt-4 h-0.5 w-16 bg-[#A50034] rounded-full" />
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: FAQ Accordion - Takes up more space now (7/12) */}
-            <div className="lg:col-span-7">
-              <Accordion type="single" collapsible className="space-y-3">
-                {faqs.map((faq, index) => (
-                  <AccordionItem
-                    key={index}
-                    value={`item-${index}`}
-                    className="border border-[#E0E0E0] rounded-lg px-6 data-[state=open]:border-[#A50034] bg-white overflow-hidden shadow-sm"
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
+          {/* ── Accordion ──────────────────────────────────────────── */}
+          <div className="lg:col-span-7">
+            <Accordion
+              type="single"
+              collapsible
+              className="space-y-0 divide-y divide-slate-100"
+            >
+              {faqs.map((faq, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`item-${i}`}
+                  className="
+                    group border-0 bg-transparent
+                    data-[state=open]:bg-white
+                    data-[state=open]:rounded-xl
+                    data-[state=open]:shadow-sm
+                    data-[state=open]:border
+                    data-[state=open]:border-[#A50034]/15
+                    transition-all duration-200
+                    px-0
+                  "
+                >
+                  <AccordionTrigger
+                    className="
+                      flex items-start gap-4 text-left w-full
+                      hover:no-underline py-5 px-4
+                      group-data-[state=open]:px-5 group-data-[state=open]:pt-5 group-data-[state=open]:pb-3
+                      transition-all duration-200
+                      [&>svg]:hidden
+                    "
                   >
-                    <AccordionTrigger className="text-left font-semibold text-[#2C3E50] hover:text-[#A50034] hover:no-underline py-4 text-sm md:text-base">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-[#7F8C8D] leading-relaxed pb-4 text-sm">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                    {/* Number */}
+                    <span
+                      className="
+                        shrink-0 text-2xl font-black leading-none tabular-nums
+                        text-slate-200 group-hover:text-[#A50034]/40
+                        group-data-[state=open]:text-[#A50034]
+                        transition-colors duration-200 select-none mt-0.5
+                      "
+                      aria-hidden="true"
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+
+                    {/* Question + custom chevron */}
+                    <div className="flex items-start justify-between gap-3 flex-1 min-w-0">
+                      <span
+                        className="
+                        text-sm md:text-base font-semibold text-slate-700
+                        group-hover:text-slate-900
+                        group-data-[state=open]:text-slate-900
+                        transition-colors duration-150 leading-snug
+                      "
+                      >
+                        {faq.question}
+                      </span>
+                      {/* Custom +/− toggle */}
+                      <span
+                        className="
+                        shrink-0 w-6 h-6 rounded-full border border-slate-200
+                        group-data-[state=open]:border-[#A50034] group-data-[state=open]:bg-[#A50034]
+                        flex items-center justify-center
+                        transition-all duration-200 mt-0.5
+                      "
+                      >
+                        <svg
+                          className="w-3 h-3 text-slate-400 group-data-[state=open]:text-white transition-colors"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                        >
+                          <line
+                            x1="2"
+                            y1="6"
+                            x2="10"
+                            y2="6"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                          <line
+                            x1="6"
+                            y1="2"
+                            x2="6"
+                            y2="10"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            className="origin-center transition-transform duration-200 group-data-[state=open]:scale-y-0"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+
+                  <AccordionContent className="px-5 pb-5 pt-0">
+                    {/* Red top rule */}
+                    <div className="ml-10 pl-3 border-l-2 border-[#A50034]/20">
+                      <p className="text-sm text-slate-500 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+
+          {/* ── Right column ───────────────────────────────────────── */}
+          <div className="hidden lg:block lg:col-span-5 self-stretch">
+            <div className="relative w-full h-full min-h-[30rem] rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm">
+              <Image
+                src="/img-3d/tecnico_whatsapp.png"
+                alt="Técnico SomosTécnicos"
+                fill
+                className="object-contain object-bottom p-6"
+                quality={95}
+                sizes="(max-width: 1024px) 0vw, 30vw"
+              />
+
+              {/* Bottom red accent bar */}
+              <div
+                className="absolute bottom-0 inset-x-0 h-1 bg-[#A50034]"
+                aria-hidden="true"
+              />
+
+              {/* Floating label top-left */}
+              <div className="absolute top-4 left-4">
+                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#A50034] text-xs font-bold px-2.5 py-1 rounded-full border border-[#A50034]/20 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  Técnicos disponibles hoy
+                </span>
+              </div>
             </div>
-
-            {/* Right Column: Support Image & Chat Icon - Compact size (5/12) */}
-            <div className="lg:col-span-5 relative flex flex-col items-end">
-                <div className="relative h-[380px] w-full hidden lg:block rounded-xl overflow-hidden bg-gray-50/50 self-center border border-gray-100 shadow-inner">
-                     <Image
-                        src="/img-3d/tecnico_whatsapp.png"
-                        alt="Soporte Técnico en línea"
-                        fill
-                        className="object-contain object-bottom p-4"
-                        quality={95}
-                        sizes="(max-width: 1024px) 100vw, 30vw"
-                     />
-
-                     {/* Floating Chat Button */}
-                     <div
-                        onClick={triggerChat}
-                        className="absolute bottom-6 right-6 z-20 group cursor-pointer transition-transform duration-300 hover:scale-105"
-                     >
-                          <div className="relative">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
-                            <div className="relative h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg border-2 border-white">
-                                 <MessageCircle className="h-7 w-7 text-white" />
-                            </div>
-                          </div>
-                          <div className="absolute -top-10 right-0 bg-[#2C3E50] px-3 py-1.5 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap arrow-bottom">
-                              <p className="text-[10px] font-bold text-white tracking-wide">¡Contáctanos!</p>
-                          </div>
-                     </div>
-                </div>
-
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </section>
   )
 }

@@ -1,904 +1,638 @@
-/**
- * ============================================================================
- * COMPONENTE: AIChat - Asistente Virtual Inteligente para SomosTécnicos
- * ============================================================================
- *
- * PROPÓSITO:
- * Este componente implementa un chatbot conversacional que guía a los usuarios
- * a través de un flujo de diagnóstico de electrodomésticos en 3 pasos, culminando
- * con la creación automática de una solicitud de servicio.
- *
- * FLUJO DE CONVERSACIÓN (3 PASOS):
- * 1. GREETING → IDENTIFYING: Identificar qué electrodoméstico tiene el problema
- * 2. IDENTIFYING → DIAGNOSING: Diagnosticar el problema específico
- * 3. DIAGNOSING → READY: Mostrar resumen y CTA para crear solicitud
- *
- * TECNOLOGÍAS:
- * - React Hooks (useState, useEffect, useRef) para manejo de estado
- * - Shadcn/ui components para UI consistente
- * - Tailwind CSS para estilos responsivos
- * - Lucide React para iconografía
- * - Custom Events para comunicación entre componentes
- *
- * CARACTERÍSTICAS:
- * - Sistema de reconocimiento de patrones basado en palabras clave
- * - 10 tipos de electrodomésticos soportados
- * - Diagnóstico de urgencia (baja, media, alta)
- * - Detección de Instalación y Mantenimiento
- * - Comunicación con ServiceForm mediante eventos personalizados
- * - Indicador visual de progreso
- * - Respuestas contextuales según el estado de la conversación
- *
- * @author SomosTécnicos Dev Team
- * @version 2.1
- */
-
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  MessageCircle, Send, X, Minimize2, Maximize2,
+  Loader2, CheckCircle2, ChevronRight
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  MessageCircle,
-  Send,
-  Bot,
-  User,
-  X,
-  Minimize2,
-  Maximize2,
-  Loader2,
-  CheckCircle2,
-  Wrench,
-  Calendar
-} from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
-// ============================================================================
-// INTERFACES Y TIPOS
-// ============================================================================
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-/**
- * Estructura de un mensaje individual en el chat
- */
 interface Message {
-  id: string              // ID único del mensaje (timestamp)
-  text: string            // Contenido del mensaje
-  isBot: boolean          // true = mensaje del bot, false = mensaje del usuario
-  timestamp: Date         // Hora en que se envió el mensaje
+  id: string
+  text: string
+  isBot: boolean
+  timestamp: Date
+  quickReplies?: string[]
+  actionButton?: { label: string; href?: string; action?: 'createRequest' }
 }
 
-/**
- * Estado de la conversación - Controla el flujo del chat
- *
- * ESTADOS POSIBLES:
- * - greeting: Estado inicial, esperando que el usuario inicie
- * - identifying: Identificando el tipo de electrodoméstico
- * - diagnosing: Diagnosticando el problema específico
- * - ready: Diagnóstico completo, listo para crear solicitud
- */
 interface ConversationState {
   step: 'greeting' | 'identifying' | 'diagnosing' | 'ready'
-  appliance?: string      // Tipo de electrodoméstico identificado
-  problem?: string        // Descripción del problema
-  urgency?: 'baja' | 'media' | 'alta'  // Nivel de urgencia del problema
+  appliance?: string
+  problem?: string
+  urgency?: 'baja' | 'media' | 'alta'
 }
 
-/**
- * Props del componente AIChat
- */
-interface AIChatProps {
-  className?: string      // Clases CSS personalizadas
+interface BotReply {
+  text: string
+  quickReplies?: string[]
+  actionButton?: { label: string; href?: string; action?: 'createRequest' }
 }
 
-// ============================================================================
-// COMPONENTE PRINCIPAL
-// ============================================================================
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const INITIAL_QUICK_REPLIES = [
+  'Reparar electrodoméstico',
+  'Servicios especializados',
+  'Registrarme como cliente',
+  'Unirme como técnico',
+  'Precios y garantías',
+]
+
+const APPLIANCE_MAP: Record<string, { name: string; problems: string[] }> = {
+  'lavadora|lavado|centrifug': {
+    name: 'Lavadora',
+    problems: ['No enciende', 'Hace ruido', 'No centrifuga', 'Bota agua', 'Instalación', 'Mantenimiento'],
+  },
+  'nevera|refrigerador|refri|heladera': {
+    name: 'Nevera',
+    problems: ['No enfría', 'Hace ruido', 'Gotea', 'Se congela todo', 'Instalación', 'Mantenimiento'],
+  },
+  'aire|split|clima': {
+    name: 'Aire Acondicionado',
+    problems: ['No enfría', 'No enciende', 'Gotea', 'Hace ruido', 'Instalación', 'Mantenimiento'],
+  },
+  'calentador|termocalentador|boiler|agua caliente': {
+    name: 'Calentador',
+    problems: ['No calienta', 'Gotea', 'Temperatura baja', 'Piloto apagado', 'Instalación', 'Mantenimiento'],
+  },
+  'secadora|ropa húmeda': {
+    name: 'Secadora',
+    problems: ['No seca', 'No enciende', 'Hace ruido', 'Se sobrecalienta', 'Instalación', 'Mantenimiento'],
+  },
+  'estufa|cocina a gas|fogon': {
+    name: 'Estufa',
+    problems: ['Quemadores fallan', 'No enciende', 'Horno', 'Regulador', 'Instalación', 'Mantenimiento'],
+  },
+  'microondas|micro': {
+    name: 'Microondas',
+    problems: ['No calienta', 'No enciende', 'Hace chispas', 'Plato no gira', 'Instalación', 'Mantenimiento'],
+  },
+  'lavavajillas|lavaplatos|lava platos': {
+    name: 'Lavavajillas',
+    problems: ['No lava bien', 'No enciende', 'No desagua', 'Bota agua', 'Instalación', 'Mantenimiento'],
+  },
+  'horno eléctrico|horno electrico': {
+    name: 'Horno Eléctrico',
+    problems: ['No calienta', 'No enciende', 'Temperatura irregular', 'Puerta no cierra', 'Instalación', 'Mantenimiento'],
+  },
+  'televisor|television|pantalla led|pantalla smart': {
+    name: 'Televisor',
+    problems: ['No enciende', 'Sin imagen', 'Sin sonido', 'Pantalla dañada', 'Instalación', 'Mantenimiento'],
+  },
+  'electricidad|cableado|tablero|breaker|tomacorriente|interruptor': {
+    name: 'Electricidad',
+    problems: ['Instalación cableado', 'Reparación tablero', 'Cambio de breakers', 'Tomas e interruptores', 'Iluminación', 'Revisión eléctrica'],
+  },
+  'computador|computadora|laptop|portátil|portatil': {
+    name: 'Computador / Laptop',
+    problems: ['No enciende', 'Muy lento', 'Virus / malware', 'Pantalla dañada', 'Formateo', 'Mantenimiento'],
+  },
+  'red |redes|internet|wifi|router|cableado estructurado': {
+    name: 'Redes / Internet',
+    problems: ['Instalación de red', 'Configurar router', 'WiFi lento', 'Sin conexión', 'Cableado estructurado', 'Ampliar cobertura'],
+  },
+  'cámara|camara|alarma|cctv|vigilancia|seguridad electronica': {
+    name: 'Seguridad Electrónica',
+    problems: ['Instalación cámaras', 'Sistema de alarma', 'Control de acceso', 'Videoportero', 'Mantenimiento', 'Ampliar sistema'],
+  },
+}
+
+function matchAppliance(lower: string) {
+  for (const [pattern, config] of Object.entries(APPLIANCE_MAP)) {
+    if (pattern.split('|').some(kw => lower.includes(kw.trim()))) {
+      return config
+    }
+  }
+  return null
+}
+
+/** Render **bold** markers as <strong> elements */
+function RichText({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+  return (
+    <span className="whitespace-pre-line leading-relaxed">
+      {parts.map((part, i) =>
+        part.startsWith('**') && part.endsWith('**')
+          ? <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>
+          : <span key={i}>{part}</span>
+      )}
+    </span>
+  )
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+interface AIChatProps { className?: string }
 
 export default function AIChat({ className }: AIChatProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [inputValue, setInputValue] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [conversationState, setConversationState] = useState<ConversationState>({ step: 'greeting' })
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // ========================================================================
-  // ESTADOS DEL COMPONENTE
-  // ========================================================================
-
-  const [isOpen, setIsOpen] = useState(false)                    // Control de visibilidad del chat
-  const [isMinimized, setIsMinimized] = useState(false)          // Control de minimización
-  const [messages, setMessages] = useState<Message[]>([])        // Array de mensajes del chat
-  const [inputValue, setInputValue] = useState('')               // Valor del input de texto
-  const [isTyping, setIsTyping] = useState(false)                // Indicador de "bot escribiendo..."
-  const [conversationState, setConversationState] = useState<ConversationState>({
-    step: 'greeting'
-  })
-  const messagesEndRef = useRef<HTMLDivElement>(null)            // Referencia para auto-scroll
-
-  // ========================================================================
-  // EFECTO: Escuchar eventos personalizados para abrir el chat
-  // ========================================================================
-
-  /**
-   * Permite abrir el chat desde otros componentes mediante evento personalizado
-   * Uso: window.dispatchEvent(new CustomEvent('openAIChat', { detail: { fromHero: true } }))
-   */
+  // External trigger
   useEffect(() => {
-    const handleOpenChat = (event: any) => {
+    const handler = (e: Event) => {
+      const ev = e as CustomEvent
       setIsOpen(true)
       setIsMinimized(false)
-      if (event.detail?.fromHero && messages.length === 0) {
-        initializeChat()
-      }
+      if (ev.detail?.fromHero && messages.length === 0) initChat()
     }
-    window.addEventListener('openAIChat', handleOpenChat)
-    return () => window.removeEventListener('openAIChat', handleOpenChat)
+    window.addEventListener('openAIChat', handler)
+    return () => window.removeEventListener('openAIChat', handler)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length])
+
+  const initChat = useCallback(() => {
+    setMessages([{
+      id: '1',
+      text: '¡Hola! 👋 Soy el asistente de **SomosTécnicos**. ¿En qué te puedo ayudar hoy?',
+      isBot: true,
+      timestamp: new Date(),
+      quickReplies: INITIAL_QUICK_REPLIES,
+    }])
+    setConversationState({ step: 'greeting' })
   }, [])
 
-  // ========================================================================
-  // MENSAJES INICIALES DEL BOT
-  // ========================================================================
-
-  /**
-   * Mensajes de bienvenida que se muestran al abrir el chat
-   * Explican el flujo de 3 pasos y solicitan el tipo de electrodoméstico
-   */
-  const initialMessages: Message[] = [
-    {
-      id: '1',
-      text: '¡Hola! 👋 Soy tu asistente de SomosTécnicos.',
-      isBot: true,
-      timestamp: new Date(),
-    },
-    {
-      id: '2',
-      text: 'Te ayudo a solicitar tu servicio en 3 pasos:\n\n1️⃣ Identifico tu necesidad\n2️⃣ Entiendo el problema\n3️⃣ Creo tu solicitud\n\n**¿Qué servicio necesitas?**\n\n📱 **Electrodomésticos:** Lavadora, nevera, aire, estufa, microondas, secadora, lavavajillas, horno, calentador, televisor\n\n⚡ **Especialidades:** Electricidad, computadores, redes, cámaras de seguridad',
-      isBot: true,
-      timestamp: new Date(),
-    },
-  ]
-
-  /**
-   * Inicializa el chat con los mensajes de bienvenida
-   */
-  const initializeChat = () => {
-    setMessages(initialMessages)
-    setConversationState({ step: 'greeting' })
-  }
-
-  // ========================================================================
-  // EFECTOS DE INICIALIZACIÓN Y AUTO-SCROLL
-  // ========================================================================
-
-  /**
-   * Inicializar mensajes cuando se abre el chat por primera vez
-   */
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      initializeChat()
-    }
-  }, [isOpen])
+    if (isOpen && messages.length === 0) initChat()
+  }, [isOpen, initChat, messages.length])
 
-  /**
-   * Auto-scroll al último mensaje cuando hay nuevos mensajes
-   */
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  /**
-   * Función para hacer scroll al final del chat
-   */
-  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [messages, isTyping])
 
-  // ========================================================================
-  // MOTOR DE INTELIGENCIA ARTIFICIAL (SIMULADA)
-  // ========================================================================
+  // ─── AI Logic ──────────────────────────────────────────────────────────────
 
-  /**
-   * FUNCIÓN PRINCIPAL DE PROCESAMIENTO DE IA
-   *
-   * Esta función implementa un sistema de reconocimiento de patrones
-   * basado en palabras clave (keyword matching) para simular inteligencia.
-   *
-   * FLUJO DE DECISIÓN:
-   * 1. Normaliza el input del usuario (lowercase)
-   * 2. Evalúa el estado actual de la conversación
-   * 3. Busca patrones de palabras clave en el mensaje
-   * 4. Genera respuesta contextual según el paso del flujo
-   * 5. Actualiza el estado de la conversación si es necesario
-   *
-   * @param userMessage - Mensaje enviado por el usuario
-   * @returns Promise<string> - Respuesta generada por el bot
-   */
-  const processAIResponse = async (userMessage: string): Promise<string> => {
+  const processResponse = useCallback(async (raw: string): Promise<BotReply> => {
+    await new Promise(r => setTimeout(r, 850))
+    const lower = raw.toLowerCase()
 
-    // Simular delay de procesamiento (efecto de "pensando...")
-    await new Promise(resolve => setTimeout(resolve, 1200))
-
-    // Normalizar mensaje para búsqueda de patrones
-    const lower = userMessage.toLowerCase()
-
-    // ====================================================================
-    // PASO 1: MANEJO DE SALUDOS Y COMANDOS BÁSICOS
-    // ====================================================================
-
-    if (conversationState.step === 'greeting') {
-
-      // Patrón: Saludos generales
-      if (lower.includes('hola') || lower.includes('buenas') || lower.includes('hey')) {
-        return '¡Hola! 😊 Listo para ayudarte.\n\n**¿Qué servicio necesitas?** (electrodomésticos, electricidad, computadores, redes, seguridad)'
-      }
-
-      // Patrón: Solicitud de ayuda
-      if (lower.includes('ayuda') || lower.includes('help')) {
-        return 'Claro! Te ayudo paso a paso:\n\n1. Dime qué servicio necesitas\n2. Describes el problema\n3. Te creo la solicitud ✅\n\n**Servicios disponibles:**\n📱 Electrodomésticos\n⚡ Electricidad\n💻 Computadores\n🌐 Redes\n📹 Seguridad'
+    // Register as client
+    if (
+      (lower.includes('registrar') && (lower.includes('client') || lower.includes('cuenta'))) ||
+      lower.includes('crear cuenta') || lower.includes('registrarme como cliente') ||
+      lower.includes('nueva cuenta') || lower.includes('abrir cuenta')
+    ) {
+      return {
+        text: '¡Excelente! Crear tu cuenta de cliente es **gratis** y te da acceso a:\n\n• Seguimiento en tiempo real de tu técnico\n• Historial de reparaciones y garantías\n• Chat directo con tu técnico asignado\n• Notificaciones de estado del servicio',
+        actionButton: { label: 'Crear cuenta de cliente →', href: '/register' },
       }
     }
 
-    // ====================================================================
-    // PASO 2: IDENTIFICACIÓN DE ELECTRODOMÉSTICO
-    // ====================================================================
+    // Register as technician
+    if (
+      lower.includes('unirme como técnico') || lower.includes('unirme como tecnico') ||
+      lower.includes('registrarme como técnico') || lower.includes('ser técnico') ||
+      (lower.includes('técnico') && (lower.includes('unir') || lower.includes('trabajar') || lower.includes('registrar')))
+    ) {
+      return {
+        text: '¡Genial! Unirte como técnico es **completamente gratis**. Obtienes:\n\n• Órdenes de servicio en tu zona\n• Pagos seguros y garantizados\n• Agenda 100% flexible desde el celular\n• Sin mensualidades ni comisiones fijas',
+        actionButton: { label: 'Registrarme como técnico →', href: '/trabaja-con-nosotros' },
+      }
+    }
 
-    /**
-     * Si aún no tenemos el tipo de electrodoméstico identificado,
-     * buscar patrones de palabras clave para cada tipo
-     */
+    // Prices
+    if (lower.includes('precio') || lower.includes('costo') || lower.includes('cuánto') ||
+        lower.includes('cuanto') || lower.includes('cobran') || lower.includes('vale')) {
+      return {
+        text: '**Precios del servicio:**\n\n• **Diagnóstico:** $50.000 (se abona si apruebas la reparación en el mes)\n• **Reparación:** Varía según equipo y repuestos\n• **Mantenimiento preventivo:** Desde $45.000\n• **Urgente el mismo día:** Disponible con recargo\n\nEl precio exacto lo da el técnico después del diagnóstico presencial.',
+        quickReplies: ['Agendar diagnóstico', '¿Qué cubre la garantía?', 'Volver al inicio'],
+      }
+    }
+
+    // Guarantees
+    if (lower.includes('garantía') || lower.includes('garantia') || lower.includes('garantizan')) {
+      return {
+        text: '**Garantía en todos los servicios:**\n\n• **Reparaciones:** 30 días\n• **Instalaciones eléctricas y de seguridad:** 90 días\n• **Repuestos nuevos:** 6 a 12 meses\n\nSi el problema regresa dentro del período de garantía, lo resolvemos **sin costo adicional**.',
+        quickReplies: ['Ver precios', 'Solicitar servicio', 'Volver al inicio'],
+      }
+    }
+
+    // Schedule / availability
+    if (lower.includes('cuándo') || lower.includes('cuando') || lower.includes('agendar') ||
+        lower.includes('horario') || lower.includes('disponib') || lower.includes('cita')) {
+      return {
+        text: '**Disponibilidad:**\n\n• Lunes a sábado: 8:00 am – 6:00 pm\n• Diagnóstico en 24 a 48 horas\n• Servicio urgente el mismo día (con disponibilidad)\n\n¿Prefieres mañana o tarde?',
+        quickReplies: ['Reparar electrodoméstico', 'Precios y garantías', 'Volver al inicio'],
+      }
+    }
+
+    // Greetings
+    if (lower.includes('hola') || lower.includes('buenas') || lower.includes('hey') || lower.includes('buenos')) {
+      return { text: '¡Hola! 😊 ¿En qué te ayudo hoy?', quickReplies: INITIAL_QUICK_REPLIES }
+    }
+
+    // Back to menu
+    if (lower.includes('volver') || lower.includes('inicio') || lower.includes('menú') || lower.includes('menu')) {
+      setConversationState({ step: 'greeting' })
+      return { text: '¿En qué más te puedo ayudar?', quickReplies: INITIAL_QUICK_REPLIES }
+    }
+
+    // General "electrodoméstico" / "especializado" triggers
+    if (lower.includes('electrodoméstico') || lower.includes('electrodomestico') || lower.includes('reparar electrodoméstico')) {
+      return {
+        text: '¿Qué electrodoméstico necesita atención?',
+        quickReplies: ['Lavadora', 'Nevera', 'Aire Acondicionado', 'Calentador', 'Secadora', 'Estufa', 'Microondas', 'Televisor'],
+      }
+    }
+    if (lower.includes('especializado') || lower.includes('servicios especializados')) {
+      return {
+        text: '¿Qué servicio especializado necesitas?',
+        quickReplies: ['Electricidad', 'Computador / Laptop', 'Redes / Internet', 'Cámaras / Seguridad'],
+      }
+    }
+
+    // ── Appliance identification ──────────────────────────────────────────────
     if (!conversationState.appliance) {
-      let appliance = ''      // Nombre del electrodoméstico identificado
-      let followUp = ''       // Pregunta de seguimiento para diagnosticar
-
-      // LAVADORA
-      if (lower.includes('lavadora') || lower.includes('lavado')) {
-        appliance = 'Lavadora'
-        followUp = '**¿Cuál es el problema?**\n\n• No enciende\n• Hace ruido\n• No centrifuga\n• Bota agua\n• Instalación\n• Mantenimiento'
+      const match = matchAppliance(lower)
+      if (match) {
+        setConversationState(prev => ({ ...prev, step: 'identifying', appliance: match.name }))
+        return {
+          text: `Perfecto, **${match.name}**. ¿Cuál es el problema?`,
+          quickReplies: match.problems,
+        }
       }
-
-      // NEVERA/REFRIGERADOR
-      else if (lower.includes('nevera') || lower.includes('refri') || lower.includes('frigo')) {
-        appliance = 'Nevera'
-        followUp = '**¿Qué está pasando?**\n\n• No enfría\n• Hace ruido\n• Bota agua\n• Se congela todo\n• Instalación\n• Mantenimiento'
-      }
-
-      // AIRE ACONDICIONADO
-      else if (lower.includes('aire') || lower.includes('clima')) {
-        appliance = 'Aire Acondicionado'
-        followUp = '**¿Cuál es la falla?**\n\n• No enfría\n• No enciende\n• Gotea\n• Hace ruido\n• Instalación\n• Mantenimiento'
-      }
-
-      // ESTUFA/COCINA
-      else if (lower.includes('estufa') || lower.includes('cocina')) {
-        appliance = 'Estufa'
-        followUp = '**¿Qué no funciona?**\n\n• Quemadores\n• Horno\n• Encendido\n• Regulador\n• Instalación\n• Mantenimiento'
-      }
-
-      // MICROONDAS
-      else if (lower.includes('microondas') || lower.includes('micro')) {
-        appliance = 'Microondas'
-        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• No enciende\n• Hace chispas\n• Plato no gira\n• Instalación\n• Mantenimiento'
-      }
-
-      // SECADORA
-      else if (lower.includes('secadora') || lower.includes('secado')) {
-        appliance = 'Secadora'
-        followUp = '**¿Qué está fallando?**\n\n• No seca\n• No enciende\n• Hace ruido\n• Se sobrecalienta\n• Instalación\n• Mantenimiento'
-      }
-
-      // LAVAVAJILLAS
-      else if (lower.includes('lavavajillas') || lower.includes('lava platos') || lower.includes('lavaplatos')) {
-        appliance = 'Lavavajillas'
-        followUp = '**¿Cuál es la falla?**\n\n• No lava bien\n• No enciende\n• Bota agua\n• No desagua\n• Instalación\n• Mantenimiento'
-      }
-
-      // HORNO ELÉCTRICO
-      else if (lower.includes('horno eléctrico') || lower.includes('horno electrico') || (lower.includes('horno') && lower.includes('eléctrico'))) {
-        appliance = 'Horno Eléctrico'
-        followUp = '**¿Qué no funciona?**\n\n• No calienta\n• No enciende\n• Temperatura irregular\n• Puerta no cierra\n• Instalación\n• Mantenimiento'
-      }
-
-      // CALENTADOR
-      else if (lower.includes('calentador') || lower.includes('termo') || lower.includes('boiler')) {
-        appliance = 'Calentador'
-        followUp = '**¿Cuál es el problema?**\n\n• No calienta\n• Gotea\n• Temperatura baja\n• No enciende piloto\n• Instalación\n• Mantenimiento'
-      }
-
-      // TELEVISOR
-      else if (lower.includes('televisor') || lower.includes('tv') || lower.includes('tele')) {
-        appliance = 'Televisor'
-        followUp = '**¿Qué está pasando?**\n\n• No enciende\n• No da imagen\n• No hay sonido\n• Pantalla dañada\n• Instalación\n• Mantenimiento'
-      }
-
-      // ELECTRICIDAD
-      else if (lower.includes('electricidad') || lower.includes('eléctrico') || lower.includes('electrico') || lower.includes('cableado') || lower.includes('tablero') || lower.includes('breaker') || lower.includes('toma') || lower.includes('interruptor')) {
-        appliance = 'Electricidad'
-        followUp = '**¿Qué necesitas?**\n\n• Instalación de cableado\n• Reparación de tablero\n• Cambio de breakers\n• Instalación de tomas\n• Iluminación\n• Revisión eléctrica'
-      }
-
-      // COMPUTADORES
-      else if (lower.includes('computador') || lower.includes('computadora') || lower.includes('pc') || lower.includes('laptop') || lower.includes('portatil') || lower.includes('portátil')) {
-        appliance = 'Computador'
-        followUp = '**¿Cuál es el problema?**\n\n• No enciende\n• Lento\n• Virus\n• Pantalla dañada\n• Formateo\n• Instalación de software\n• Mantenimiento'
-      }
-
-      // REDES
-      else if (lower.includes('red') || lower.includes('redes') || lower.includes('internet') || lower.includes('wifi') || lower.includes('router') || lower.includes('cableado estructurado')) {
-        appliance = 'Redes'
-        followUp = '**¿Qué necesitas?**\n\n• Instalación de red\n• Configuración de router\n• Cableado estructurado\n• Puntos de acceso WiFi\n• Diagnóstico de conexión\n• Optimización de red'
-      }
-
-      // SEGURIDAD ELECTRÓNICA
-      else if (lower.includes('cámara') || lower.includes('camara') || lower.includes('seguridad') || lower.includes('alarma') || lower.includes('cctv') || lower.includes('vigilancia')) {
-        appliance = 'Seguridad Electrónica'
-        followUp = '**¿Qué necesitas?**\n\n• Instalación de cámaras\n• Sistema de alarma\n• Control de acceso\n• Videoportero\n• Mantenimiento de sistema\n• Ampliación de cámaras'
-      }
-
-      // NO SE IDENTIFICÓ EL SERVICIO
-      else {
-        return 'Mmm, no identifiqué el servicio 🤔\n\n**Por favor escribe uno de estos:**\n\n📱 **Electrodomésticos:** Lavadora, Nevera, Aire, Estufa, Microondas, Secadora, Lavavajillas, Horno, Calentador, Televisor\n\n⚡ **Especialidades:** Electricidad, Computador, Redes, Cámaras/Seguridad'
-      }
-
-      // Actualizar estado: ahora tenemos el electrodoméstico identificado
-      setConversationState(prev => ({
-        ...prev,
-        step: 'identifying',
-        appliance
-      }))
-
-      return `Perfecto! ${appliance} 👍\n\n${followUp}`
+      return { text: 'No identifiqué el servicio. ¿Con qué te ayudo?', quickReplies: INITIAL_QUICK_REPLIES }
     }
 
-    // ====================================================================
-    // PASO 3: DIAGNÓSTICO DEL PROBLEMA
-    // ====================================================================
-
-    /**
-     * Si ya tenemos el electrodoméstico pero no el problema,
-     * analizar el mensaje para diagnosticar
-     */
+    // ── Problem diagnosis ─────────────────────────────────────────────────────
     if (conversationState.appliance && !conversationState.problem) {
-      let problem = ''                                    // Descripción del problema
-      let urgency: 'baja' | 'media' | 'alta' = 'media'   // Nivel de urgencia
-      let diagnostic = ''                                 // Mensaje de diagnóstico
+      let problem = ''
+      let urgency: 'baja' | 'media' | 'alta' = 'media'
+      let diagnostic = ''
 
-      // ----------------------------------------------------------------
-      // DETECCIÓN DE PROBLEMAS COMUNES (Patrones de palabras clave)
-      // ----------------------------------------------------------------
-
-      // PROBLEMA: No enciende (Alta urgencia - sin electricidad)
-      if (lower.includes('no enciende') || lower.includes('no prende') || lower.includes('muerto')) {
-        problem = 'No enciende'
-        urgency = 'alta'
-        diagnostic = '⚡ **Problema eléctrico**\nPosible causa: Conexión, fusible o tarjeta.\n\n'
-      }
-
-      // PROBLEMA: Hace ruidos anormales
-      else if (lower.includes('ruido') || lower.includes('sonido') || lower.includes('golpe')) {
-        problem = 'Hace ruidos anormales'
+      if (lower.includes('no enciende') || lower.includes('no prende') || lower.includes('muerto') || lower.includes('sin luz')) {
+        problem = 'No enciende'; urgency = 'alta'
+        diagnostic = '⚡ **Problema eléctrico** — revisión de conexiones y tarjeta de control.\n\n'
+      } else if (lower.includes('ruido') || lower.includes('golpe') || lower.includes('vibra') || lower.includes('ronca')) {
+        problem = 'Ruidos anormales'; urgency = 'media'
+        diagnostic = '🔧 **Problema mecánico** — posibles rodamientos o motor.\n\n'
+      } else if (lower.includes('no enfría') || lower.includes('no enfria') || lower.includes('caliente') || lower.includes('no congela')) {
+        problem = 'No enfría'; urgency = 'alta'
+        diagnostic = '❄️ **Refrigeración** — posible gas refrigerante, compresor o termostato.\n\n'
+      } else if (lower.includes('agua') || lower.includes('gotea') || lower.includes('fuga') || lower.includes('bota') || lower.includes('charco')) {
+        problem = 'Fuga de agua'; urgency = 'media'
+        diagnostic = '💧 **Sellado** — posible manguera, empaque o drenaje dañado.\n\n'
+      } else if (lower.includes('instalación') || lower.includes('instalacion') || lower.includes('instalar') || lower.includes('nueva')) {
+        problem = 'Instalación'; urgency = 'baja'
+        diagnostic = '🔧 **Instalación profesional** — conexión, nivelación y pruebas incluidas.\n\n'
+      } else if (lower.includes('mantenimiento') || lower.includes('limpieza') || lower.includes('revisión') || lower.includes('preventivo')) {
+        problem = 'Mantenimiento preventivo'; urgency = 'baja'
+        diagnostic = '🛠️ **Mantenimiento** — limpieza profunda, calibración y revisión de componentes.\n\n'
+      } else if (lower.includes('no calienta') || lower.includes('agua fría') || lower.includes('piloto') || lower.includes('temperatura baja')) {
+        problem = 'No calienta'; urgency = 'alta'
+        diagnostic = '🔥 **Calefacción** — posible termostato, resistencia o piloto apagado.\n\n'
+      } else if (lower.includes('no seca') || lower.includes('húmedo') || lower.includes('humedo')) {
+        problem = 'No seca'; urgency = 'media'
+        diagnostic = '🌀 **Secado** — posible resistencia o ventilación obstruida.\n\n'
+      } else if (lower.includes('chispa') || lower.includes('corto') || lower.includes('quema') || lower.includes('humo')) {
+        problem = 'Cortocircuito / chispas'; urgency = 'alta'
+        diagnostic = '⚠️ **PELIGRO ELÉCTRICO** — suspende el uso hasta revisión técnica.\n\n'
+      } else if (lower.includes('no desagua') || lower.includes('no drena')) {
+        problem = 'No desagua'; urgency = 'media'
+        diagnostic = '🚰 **Drenaje** — posible bomba u obstrucción en filtro.\n\n'
+      } else if (lower.includes('sin imagen') || lower.includes('pantalla negra') || lower.includes('no da imagen')) {
+        problem = 'Sin imagen'; urgency = 'alta'
+        diagnostic = '📺 **Video** — posible placa principal o panel de pantalla.\n\n'
+      } else if (lower.includes('lento') || lower.includes('tarda') || lower.includes('virus')) {
+        problem = 'Rendimiento bajo / virus'; urgency = 'media'
+        diagnostic = '💻 **Software** — diagnóstico de malware, limpieza y optimización.\n\n'
+      } else {
+        problem = raw.length > 60 ? raw.slice(0, 57) + '...' : raw
         urgency = 'media'
-        diagnostic = '🔧 **Problema mecánico**\nPosible causa: Rodamientos o motor.\n\n'
+        diagnostic = '🔍 **Requiere diagnóstico presencial.**\n\n'
       }
 
-      // PROBLEMA: No enfría (Alta urgencia - riesgo de comida/ambiente)
-      else if (lower.includes('no enfría') || lower.includes('caliente') || lower.includes('no congela')) {
-        problem = 'No enfría correctamente'
-        urgency = 'alta'
-        diagnostic = '❄️ **Problema de refrigeración**\nPosible causa: Gas, compresor o termostato.\n\n'
+      setConversationState(prev => ({ ...prev, step: 'ready', problem, urgency }))
+
+      const urgencyLabel =
+        urgency === 'alta' ? '🚨 Urgente' :
+        urgency === 'media' ? '⏰ Normal (24-48 h)' : '📅 Programable'
+
+      return {
+        text: `${diagnostic}**Resumen del diagnóstico:**\n• Equipo: ${conversationState.appliance}\n• Problema: ${problem}\n• Prioridad: ${urgencyLabel}\n• Diagnóstico: **$50.000** (abonables si apruebas la reparación)\n\n¿Agendamos la visita?`,
+        actionButton: { label: '✓  Crear solicitud de servicio', action: 'createRequest' },
       }
-
-      // PROBLEMA: Fuga de agua
-      else if (lower.includes('agua') || lower.includes('gotea') || lower.includes('fuga') || lower.includes('bota')) {
-        problem = 'Fuga de agua'
-        urgency = 'media'
-        diagnostic = '💧 **Problema de sellado**\nPosible causa: Manguera o empaque.\n\n'
-      }
-
-      // PROBLEMA: Instalación
-      else if (lower.includes('instalación') || lower.includes('instalacion') || lower.includes('instalar')) {
-        problem = 'Instalación de equipo'
-        urgency = 'baja'
-        diagnostic = '🔧 **Servicio de instalación**\nInstalación profesional de tu equipo.\n\n'
-      }
-
-      // PROBLEMA: Mantenimiento
-      else if (lower.includes('mantenimiento') || lower.includes('limpieza') || lower.includes('revisión') || lower.includes('revision')) {
-        problem = 'Mantenimiento preventivo'
-        urgency = 'baja'
-        diagnostic = '🛠️ **Mantenimiento preventivo**\nRevisión y limpieza completa del equipo.\n\n'
-      }
-
-      // PROBLEMA: Funciones específicas no operan
-      else if (lower.includes('no centrifuga') || lower.includes('no lava') || lower.includes('no calienta')) {
-        problem = userMessage
-        urgency = 'media'
-        diagnostic = '⚙️ **Falla funcional**\nNecesita revisión técnica.\n\n'
-      }
-
-      // PROBLEMA: No seca (Secadoras)
-      else if (lower.includes('no seca') || lower.includes('húmedo') || lower.includes('humedo')) {
-        problem = 'No seca correctamente'
-        urgency = 'media'
-        diagnostic = '🌀 **Problema de secado**\nPosible causa: Resistencia, termostato o ventilación.\n\n'
-      }
-
-      // PROBLEMA: Sobrecalentamiento (Alta urgencia - riesgo de incendio)
-      else if (lower.includes('sobrecalienta') || lower.includes('muy caliente') || lower.includes('quema')) {
-        problem = 'Se sobrecalienta'
-        urgency = 'alta'
-        diagnostic = '🔥 **Problema de temperatura**\nPosible causa: Termostato o ventilación bloqueada.\n\n'
-      }
-
-      // PROBLEMA: No desagua (Lavavajillas/Lavadoras)
-      else if (lower.includes('no desagua') || lower.includes('no desagüa') || lower.includes('no drena')) {
-        problem = 'No desagua'
-        urgency = 'media'
-        diagnostic = '🚰 **Problema de drenaje**\nPosible causa: Bomba o filtro obstruido.\n\n'
-      }
-
-      // PROBLEMA: Sin imagen (TV)
-      else if (lower.includes('no da imagen') || lower.includes('pantalla') || lower.includes('negro')) {
-        problem = 'No da imagen'
-        urgency = 'alta'
-        diagnostic = '📺 **Problema de video**\nPosible causa: Placa, pantalla o cable.\n\n'
-      }
-
-      // PROBLEMA: Sin sonido (TV)
-      else if (lower.includes('no hay sonido') || lower.includes('sin audio') || lower.includes('mudo')) {
-        problem = 'Sin sonido'
-        urgency = 'media'
-        diagnostic = '🔊 **Problema de audio**\nPosible causa: Bocinas o placa de sonido.\n\n'
-      }
-
-      // PROBLEMA: Chispas o cortocircuito (MÁXIMA URGENCIA - PELIGRO)
-      else if (lower.includes('chispas') || lower.includes('chispa') || lower.includes('corto')) {
-        problem = 'Genera chispas'
-        urgency = 'alta'
-        diagnostic = '⚠️ **PELIGRO ELÉCTRICO**\nNo usar hasta revisar. Posible cortocircuito.\n\n'
-      }
-
-      // PROBLEMA: Temperatura irregular
-      else if (lower.includes('temperatura irregular') || lower.includes('no regula') || lower.includes('temperatura')) {
-        problem = 'Temperatura irregular'
-        urgency = 'media'
-        diagnostic = '🌡️ **Problema de control**\nPosible causa: Termostato o sensor.\n\n'
-      }
-
-      // PROBLEMA: Piloto (Calentadores a gas)
-      else if (lower.includes('piloto') || lower.includes('llama')) {
-        problem = 'Problema con piloto'
-        urgency = 'alta'
-        diagnostic = '🔥 **Problema de encendido**\nPosible causa: Termopar o piloto.\n\n'
-      }
-
-      // PROBLEMA GENÉRICO: Usar el mensaje del usuario tal cual
-      else {
-        problem = userMessage
-        urgency = 'media'
-        diagnostic = '🔍 **Requiere diagnóstico**\n\n'
-      }
-
-      // ----------------------------------------------------------------
-      // ACTUALIZAR ESTADO: Conversación completa, listo para crear solicitud
-      // ----------------------------------------------------------------
-      setConversationState(prev => ({
-        ...prev,
-        step: 'ready',    // Cambiar a estado "ready"
-        problem,
-        urgency
-      }))
-
-      // Formatear texto de urgencia
-      const urgencyText = urgency === 'alta' ? '🚨 **URGENTE**' : urgency === 'media' ? '⏰ Normal' : '📅 Programable'
-
-      // Retornar resumen completo con CTA
-      return `${diagnostic}**Resumen:**\n• Equipo: ${conversationState.appliance}\n• Problema: ${problem}\n• Prioridad: ${urgencyText}\n\n✅ **¡Listo para crear tu solicitud!**\nPresiona el botón verde de abajo 👇`
     }
 
-    // ====================================================================
-    // RESPUESTAS INFORMATIVAS ADICIONALES
-    // ====================================================================
-
-    // Consulta sobre precios
-    if (lower.includes('precio') || lower.includes('costo') || lower.includes('cuanto')) {
-      return '💰 **Precios estimados:**\n\n• Diagnóstico: $35.000\n• Reparación básica: $50k-$120k\n• Servicio completo: $80k-$200k\n\nEl costo exacto se confirma después del diagnóstico.'
-    }
-
-    // Consulta sobre tiempos
-    if (lower.includes('tiempo') || lower.includes('cuando') || lower.includes('demora')) {
-      return '⏱️ **Tiempos de servicio:**\n\n• Diagnóstico: 24-48 hrs\n• Reparación: 2-4 hrs\n• Con repuestos: 3-7 días\n\n¿Es urgente?'
-    }
-
-    // Agradecimientos o confirmaciones
-    if (lower.includes('gracias') || lower.includes('ok') || lower.includes('perfecto') || lower.includes('bien')) {
-      if (conversationState.step === 'ready') {
-        return '😊 ¡Excelente!\n\n**Presiona "Crear Solicitud"** para completar el formulario automáticamente.'
+    // ── Post-ready ────────────────────────────────────────────────────────────
+    if (conversationState.step === 'ready') {
+      if (lower.includes('gracias') || lower.includes('ok') || lower.includes('perfecto') || lower.includes('sí')) {
+        return {
+          text: '¡Perfecto! Presiona el botón de abajo para completar tu solicitud 👇',
+          actionButton: { label: '✓  Crear solicitud', action: 'createRequest' },
+        }
       }
-      return '😊 De nada! ¿En qué más te ayudo?'
     }
 
-    // ====================================================================
-    // RESPUESTA GENÉRICA CONTEXTUAL
-    // ====================================================================
-
-    /**
-     * Si no se reconoce el patrón, guiar según el paso actual
-     */
-    return `Entendido 👍\n\n${
-      conversationState.step === 'greeting'
-        ? '**Primero dime: ¿Qué electrodoméstico?**'
+    return {
+      text: conversationState.step === 'greeting'
+        ? '¿Con qué te puedo ayudar?'
         : conversationState.step === 'identifying'
-        ? '**Ahora cuéntame: ¿Cuál es el problema?**'
-        : '¿Algo más que quieras agregar antes de crear la solicitud?'
-    }`
-  }
+        ? '¿Cuál es el problema específico?'
+        : '¿Algo más antes de crear la solicitud?',
+      quickReplies: conversationState.step === 'greeting' ? INITIAL_QUICK_REPLIES : undefined,
+    }
+  }, [conversationState])
 
-  // ========================================================================
-  // HANDLER: Enviar mensaje del usuario
-  // ========================================================================
+  // ─── Handlers ──────────────────────────────────────────────────────────────
 
-  /**
-   * Procesa el envío de un mensaje del usuario
-   *
-   * FLUJO:
-   * 1. Valida que haya texto
-   * 2. Agrega mensaje del usuario al chat
-   * 3. Activa indicador de "escribiendo..."
-   * 4. Procesa respuesta de IA
-   * 5. Agrega respuesta del bot al chat
-   * 6. Maneja errores si ocurren
-   */
-  const handleSendMessage = async () => {
-    // Validar input no vacío
-    if (!inputValue.trim()) return
-
-    // Crear mensaje del usuario
-    const userMessage: Message = {
+  const addBotReply = useCallback((reply: BotReply) => {
+    setMessages(prev => [...prev, {
       id: Date.now().toString(),
-      text: inputValue,
+      text: reply.text,
+      isBot: true,
+      timestamp: new Date(),
+      quickReplies: reply.quickReplies,
+      actionButton: reply.actionButton,
+    }])
+  }, [])
+
+  const sendMessage = useCallback(async (text: string) => {
+    if (!text.trim()) return
+
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      text,
       isBot: false,
       timestamp: new Date(),
-    }
-
-    // Agregar mensaje al chat y limpiar input
-    setMessages(prev => [...prev, userMessage])
+    }])
     setInputValue('')
-    setIsTyping(true)  // Activar indicador "escribiendo..."
+    setIsTyping(true)
 
     try {
-      // Procesar respuesta de IA
-      const response = await processAIResponse(inputValue)
-
-      // Crear mensaje del bot
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response,
-        isBot: true,
-        timestamp: new Date(),
-      }
-
-      // Agregar respuesta al chat
-      setMessages(prev => [...prev, botMessage])
-
-    } catch (error) {
-      // Manejo de errores: mostrar mensaje amigable
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: '😅 Ups, hubo un error. ¿Puedes repetir?',
-        isBot: true,
-        timestamp: new Date(),
-      }
-      setMessages(prev => [...prev, errorMessage])
-
+      const reply = await processResponse(text)
+      addBotReply(reply)
+    } catch {
+      addBotReply({ text: '😅 Hubo un error. ¿Podrías repetir?' })
     } finally {
-      // Siempre desactivar indicador de escritura
       setIsTyping(false)
     }
+  }, [processResponse, addBotReply])
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputValue) }
   }
 
-  // ========================================================================
-  // HANDLER: Detectar tecla Enter
-  // ========================================================================
-
-  /**
-   * Permite enviar mensaje con Enter (sin Shift)
-   * Shift+Enter agrega nueva línea
-   */
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
-  }
-
-  // ========================================================================
-  // FUNCIÓN: Crear solicitud de servicio
-  // ========================================================================
-
-  /**
-   * Crea una solicitud de servicio con los datos del diagnóstico del chat
-   *
-   * PROCESO:
-   * 1. Prepara los datos del diagnóstico (electrodoméstico, problema, urgencia)
-   * 2. Dispara un evento personalizado 'openServiceForm' con los datos
-   * 3. El ServiceForm escuchará este evento y pre-llenará el formulario
-   * 4. Hace scroll al formulario y muestra mensaje de confirmación
-   */
-  const createServiceRequest = () => {
-    // Mapeo de nombres del chat a valores del formulario
+  const createServiceRequest = useCallback(() => {
     const typeMap: Record<string, string> = {
-      // Electrodomésticos
-      'Lavadora': 'lavadora',
-      'Nevera': 'nevera',
-      'Aire Acondicionado': 'aire',
-      'Estufa': 'estufa',
-      'Microondas': 'microondas',
-      'Secadora': 'secadora',
-      'Lavavajillas': 'lavavajillas',
-      'Horno Eléctrico': 'horno',
-      'Calentador': 'calentador',
-      'Televisor': 'televisor',
-
-      // Especialidades
-      'Electricidad': 'electricidad',
-      'Computador': 'computacion',
-      'Redes': 'redes',
-      'Seguridad Electrónica': 'seguridad_electronica'
+      'Lavadora': 'lavadora', 'Nevera': 'nevera', 'Aire Acondicionado': 'aire',
+      'Calentador': 'calentador', 'Secadora': 'secadora', 'Estufa': 'estufa',
+      'Microondas': 'microondas', 'Lavavajillas': 'lavavajillas', 'Horno Eléctrico': 'horno',
+      'Televisor': 'televisor', 'Electricidad': 'electricidad',
+      'Computador / Laptop': 'computacion', 'Redes / Internet': 'redes',
+      'Seguridad Electrónica': 'seguridad_electronica',
     }
-
-    const mappedType = typeMap[conversationState.appliance || '']
-
-    // Disparar evento personalizado con los datos del diagnóstico
-    window.dispatchEvent(
-      new CustomEvent('openServiceForm', {
-        detail: {
-          tipoElectrodomestico: mappedType || '',
-          descripcionProblema: `${conversationState.appliance} - ${conversationState.problem}\n\nDiagnosticado por Asistente IA de SomosTécnicos`,
-          urgencia: conversationState.urgency || 'media',
-          fromAI: true
-        }
-      })
-    )
-
-    // Scroll suave al formulario
+    window.dispatchEvent(new CustomEvent('openServiceForm', {
+      detail: {
+        tipoElectrodomestico: typeMap[conversationState.appliance || ''] || '',
+        descripcionProblema: `${conversationState.appliance} — ${conversationState.problem}\n\nDiagnosticado por Asistente IA de SomosTécnicos`,
+        urgencia: conversationState.urgency || 'media',
+        fromAI: true,
+      },
+    }))
+    addBotReply({ text: '✅ **¡Datos transferidos!** Completa tus datos en el formulario y envía la solicitud.' })
     setTimeout(() => {
-      const formElement = document.getElementById('formulario')
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth' })
-      }
+      document.getElementById('formulario')?.scrollIntoView({ behavior: 'smooth' })
     }, 300)
+    setTimeout(() => setIsOpen(false), 2200)
+  }, [conversationState, addBotReply])
 
-    // Agregar mensaje de confirmación al chat
-    const successMsg: Message = {
-      id: Date.now().toString(),
-      text: '✅ **¡Datos transferidos!**\n\nAhora completa tus datos personales en el formulario y envía la solicitud.',
-      isBot: true,
-      timestamp: new Date(),
-    }
-    setMessages(prev => [...prev, successMsg])
-
-    // Cerrar el chat después de 2 segundos
-    setTimeout(() => {
-      setIsOpen(false)
-    }, 2000)
-  }
-
-  // ========================================================================
-  // FUNCIÓN: Calcular progreso visual
-  // ========================================================================
-
-  /**
-   * Calcula el porcentaje de progreso basado en el paso actual
-   * Se usa para la barra de progreso en el header
-   *
-   * @returns Porcentaje de 0 a 100
-   */
   const getProgress = () => {
-    const steps = ['greeting', 'identifying', 'diagnosing', 'ready']
-    const currentIndex = steps.indexOf(conversationState.step)
-    return ((currentIndex + 1) / steps.length) * 100
+    const map = { greeting: 25, identifying: 50, diagnosing: 75, ready: 100 }
+    return map[conversationState.step] ?? 25
   }
 
-  // ========================================================================
-  // RENDER: Botón flotante (chat cerrado)
-  // ========================================================================
+  // ─── Render: Closed (floating button) ─────────────────────────────────────
 
-  /**
-   * Si el chat no está abierto, mostrar solo el botón flotante
-   *
-   * IMPORTANTE: Este botón se oculta en móviles (hidden md:block) porque
-   * MobileOptimizations maneja el trigger en mobile mediante eventos.
-   */
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 hidden md:block">
-        {/* Botón circular flotante con animación de pulso */}
-        <Button
+      <div className="fixed bottom-6 right-6 z-50 hidden md:flex flex-col items-end gap-2">
+        {/* Tooltip */}
+        <div className="bg-[#1a0a0f] text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg border border-white/10 animate-[fade-in-up_0.4s_ease-out_forwards]">
+          ¿Necesitas ayuda? 💬
+        </div>
+        <button
           onClick={() => setIsOpen(true)}
-          className="h-16 w-16 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 animate-pulse"
+          className="relative h-14 w-14 rounded-full bg-[#A50034] text-white shadow-lg hover:shadow-xl hover:bg-[#c0003d] transition-all duration-300 hover:scale-110 flex items-center justify-center"
           aria-label="Abrir asistente virtual"
+          style={{ boxShadow: '0 8px 32px rgba(165,0,52,0.45)' }}
         >
-          <MessageCircle className="h-7 w-7" />
-        </Button>
+          {/* Pulse ring */}
+          <span className="absolute inset-0 rounded-full bg-[#A50034]/40 animate-ping" aria-hidden="true" />
+          <MessageCircle className="h-6 w-6 relative z-10" />
+        </button>
       </div>
     )
   }
 
-  // ========================================================================
-  // RENDER: Interfaz del chat (abierto)
-  // ========================================================================
+  // ─── Render: Open chat ─────────────────────────────────────────────────────
 
   return (
-    <div className={className || "fixed bottom-0 right-0 md:bottom-6 md:right-6 z-[60] w-full md:w-auto h-full md:h-auto flex items-end md:block bg-black/50 md:bg-transparent"}>
-      <Card
-        className={`w-full md:w-96 shadow-2xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 flex flex-col ${
-          isMinimized
-            ? 'h-16'
-            : 'h-[90vh] md:h-[520px] rounded-t-xl md:rounded-xl'
-        }`}
+    <div className={
+      className ||
+      'fixed bottom-0 right-0 md:bottom-6 md:right-6 z-[60] w-full md:w-auto h-full md:h-auto flex items-end md:block bg-black/50 md:bg-transparent'
+    }>
+      <div
+        className={`
+          w-full md:w-[380px] shadow-2xl flex flex-col overflow-hidden
+          rounded-t-2xl md:rounded-2xl border border-white/8
+          transition-all duration-300
+          ${isMinimized ? 'h-[60px]' : 'h-[90vh] md:h-[560px]'}
+        `}
+        style={{ background: '#ffffff' }}
       >
-        {/* ================================================================
-            HEADER DEL CHAT
-            ================================================================ */}
-        <CardHeader className="p-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-t-xl shrink-0">
+
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <div
+          className="shrink-0 px-4 py-3 flex flex-col gap-2"
+          style={{ background: 'linear-gradient(135deg, #120608 0%, #1f0a10 100%)' }}
+        >
           <div className="flex items-center justify-between">
-            {/* Título y estado */}
-            <div className="flex items-center space-x-2">
-              <Image
-                src="/img-3d/logo_modificado.jpeg"
-                alt="SomosTécnicos"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain bg-white rounded-full p-0.5"
-              />
+            {/* Identity */}
+            <div className="flex items-center gap-2.5">
+              <div className="relative shrink-0">
+                <Image
+                  src="/img-3d/logo_modificado.jpeg"
+                  alt="SomosTécnicos"
+                  width={36} height={36}
+                  className="rounded-full object-contain bg-white p-0.5 ring-2 ring-[#A50034]/40"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#120608]" aria-label="En línea" />
+              </div>
               <div>
-                <CardTitle className="text-sm font-medium">
-                  Asistente IA
-                </CardTitle>
+                <p className="text-white text-sm font-semibold leading-none">Asistente SomosTécnicos</p>
                 {!isMinimized && (
-                  <p className="text-xs opacity-90">
-                    Paso {conversationState.step === 'greeting' ? '1' : conversationState.step === 'identifying' ? '2' : conversationState.step === 'diagnosing' ? '3' : '3'} de 3
+                  <p className="text-[11px] text-[#ff8fab] mt-0.5">
+                    Paso {getProgress() === 25 ? 1 : getProgress() === 50 ? 2 : getProgress() === 75 ? 3 : 3} de 3 · En línea
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Controles: Minimizar y Cerrar */}
-            <div className="flex items-center space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMinimized(!isMinimized)}
-                className="h-8 w-8 p-0 text-white hover:bg-white/20 hidden md:flex"
-                aria-label={isMinimized ? "Maximizar" : "Minimizar"}
+            {/* Controls */}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setIsMinimized(v => !v)}
+                className="h-8 w-8 hidden md:flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label={isMinimized ? 'Maximizar' : 'Minimizar'}
               >
-                {isMinimized ? (
-                  <Maximize2 className="h-4 w-4" />
-                ) : (
-                  <Minimize2 className="h-4 w-4" />
-                )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
+                {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              </button>
+              <button
                 onClick={() => setIsOpen(false)}
-                className="h-8 w-8 p-0 text-white hover:bg-white/20"
-                aria-label="Cerrar chat"
+                className="h-8 w-8 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Cerrar"
               >
                 <X className="h-4 w-4" />
-              </Button>
+              </button>
             </div>
           </div>
 
-          {/* Barra de progreso */}
+          {/* Progress bar */}
           {!isMinimized && (
-            <div className="mt-3 bg-white/20 rounded-full h-1.5 overflow-hidden">
+            <div className="h-0.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="bg-white h-full transition-all duration-500 ease-out"
+                className="h-full bg-[#A50034] rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${getProgress()}%` }}
               />
             </div>
           )}
-        </CardHeader>
+        </div>
 
-        {/* ================================================================
-            CONTENIDO DEL CHAT (solo visible cuando no está minimizado)
-            ================================================================ */}
+        {/* ── Messages ───────────────────────────────────────────────────── */}
         {!isMinimized && (
-          <>
-            <CardContent className="p-0 flex flex-col flex-1 overflow-hidden">
-              {/* ============================================================
-                  ÁREA DE MENSAJES
-                  ============================================================ */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {messages.map((message, index) => (
-                  <div
-                    key={`${message.id}-${index}`}
-                    className={`flex ${
-                      message.isBot ? 'justify-start' : 'justify-end'
-                    }`}
-                  >
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 bg-[#FAFAF9]">
+            {messages.map((msg, idx) => {
+              const isLast = idx === messages.length - 1
+              return (
+                <div key={msg.id} className="space-y-2">
+                  <div className={`flex ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
+                    {/* Bot avatar */}
+                    {msg.isBot && (
+                      <div className="w-6 h-6 rounded-full bg-[#A50034] flex items-center justify-center shrink-0 mr-2 mt-0.5">
+                        <span className="text-white text-[9px] font-bold">ST</span>
+                      </div>
+                    )}
                     <div
-                      className={`max-w-[85%] p-3 rounded-lg shadow-sm ${
-                        message.isBot
-                          ? 'bg-gray-100 text-gray-800 rounded-tl-none'
-                          : 'bg-blue-500 text-white rounded-tr-none'
+                      className={`max-w-[82%] px-3.5 py-2.5 rounded-2xl text-sm shadow-sm ${
+                        msg.isBot
+                          ? 'bg-white text-slate-800 rounded-tl-sm border border-slate-100'
+                          : 'bg-[#A50034] text-white rounded-tr-sm'
                       }`}
                     >
-                      <div className="flex items-start space-x-2">
-                        {message.isBot && (
-                          <Bot className="h-4 w-4 mt-0.5 flex-shrink-0 text-blue-600" />
-                        )}
-                        {!message.isBot && (
-                          <User className="h-4 w-4 mt-0.5 flex-shrink-0 text-blue-100" />
-                        )}
-                        <p className="text-sm whitespace-pre-line leading-relaxed">
-                          {message.text}
-                        </p>
-                      </div>
+                      <RichText text={msg.text} />
                     </div>
                   </div>
-                ))}
 
-                {/* Indicador de "escribiendo..." */}
-                {isTyping && (
-                  <div className="flex justify-start animate-fade-in">
-                    <div className="bg-gray-100 p-3 rounded-lg flex items-center space-x-2 rounded-tl-none">
-                      <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-                      <span className="text-sm text-gray-500 italic">Escribiendo...</span>
+                  {/* Quick replies — only on the last bot message */}
+                  {msg.isBot && msg.quickReplies && isLast && !isTyping && (
+                    <div className="flex flex-wrap gap-1.5 pl-8">
+                      {msg.quickReplies.map(qr => (
+                        <button
+                          key={qr}
+                          onClick={() => sendMessage(qr)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-[#A50034]/25 text-[#A50034] bg-white hover:bg-[#A50034] hover:text-white hover:border-[#A50034] transition-all duration-150 font-medium"
+                        >
+                          {qr}
+                        </button>
+                      ))}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Referencia para auto-scroll */}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* ============================================================
-                  BOTÓN DE CREAR SOLICITUD (solo visible cuando está listo)
-                  ============================================================ */}
-              {conversationState.step === 'ready' && (
-                <div className="p-3 bg-emerald-50 border-t border-emerald-100 animate-in slide-in-from-bottom-2 fade-in">
-                  <Button
-                    onClick={createServiceRequest}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md py-6 text-lg"
-                  >
-                    <CheckCircle2 className="h-5 w-5 mr-2" />
-                    Crear Solicitud de Servicio
-                  </Button>
-                  <p className="text-xs text-center text-emerald-700 mt-2 font-medium">
-                    Llenaremos el formulario automáticamente por ti ✨
-                  </p>
+                  {/* Action button */}
+                  {msg.isBot && msg.actionButton && isLast && !isTyping && (
+                    <div className="pl-8">
+                      {msg.actionButton.href ? (
+                        <Link
+                          href={msg.actionButton.href}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#A50034] px-4 py-2.5 rounded-lg hover:bg-[#c0003d] transition-colors shadow-sm"
+                        >
+                          {msg.actionButton.label}
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={createServiceRequest}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#A50034] px-4 py-2.5 rounded-lg hover:bg-[#c0003d] transition-colors shadow-sm"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                          {msg.actionButton.label}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              )
+            })}
 
-              {/* ============================================================
-                  ÁREA DE INPUT
-                  ============================================================ */}
-              <div className="p-3 md:p-4 border-t bg-white border-gray-100 shrink-0">
-                <div className="flex items-center space-x-2">
-                  <Input
-                    value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    placeholder="Escribe aquí..."
-                    className="flex-1 text-base md:text-sm h-12 md:h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-full px-4"
-                    disabled={isTyping}
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    size="icon"
-                    disabled={!inputValue.trim() || isTyping}
-                    className="bg-blue-600 hover:bg-blue-700 h-12 w-12 md:h-10 md:w-10 rounded-full shrink-0 shadow-sm"
-                    aria-label="Enviar mensaje"
-                  >
-                    <Send className="h-5 w-5 md:h-4 md:w-4" />
-                  </Button>
+            {/* Typing indicator */}
+            {isTyping && (
+              <div className="flex justify-start items-end gap-2">
+                <div className="w-6 h-6 rounded-full bg-[#A50034] flex items-center justify-center shrink-0">
+                  <span className="text-white text-[9px] font-bold">ST</span>
                 </div>
-                <p className="text-[10px] text-center text-gray-400 mt-2 hidden md:block">
-                  Presiona Enter para enviar • Shift+Enter para nueva línea
-                </p>
+                <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1">
+                  {[0, 150, 300].map(delay => (
+                    <span
+                      key={delay}
+                      className="w-1.5 h-1.5 rounded-full bg-[#A50034]/60"
+                      style={{ animation: `cta-float-0 1.2s ease-in-out infinite`, animationDelay: `${delay}ms` }}
+                    />
+                  ))}
+                </div>
               </div>
-            </CardContent>
-          </>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
         )}
-      </Card>
+
+        {/* ── Input area ─────────────────────────────────────────────────── */}
+        {!isMinimized && (
+          <div className="shrink-0 bg-white border-t border-slate-100 px-3 py-3">
+            <div className="flex items-center gap-2">
+              <input
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Escribe tu consulta..."
+                disabled={isTyping}
+                className="
+                  flex-1 text-sm h-10 px-4 rounded-full border border-slate-200
+                  bg-[#FAFAF9] text-slate-800 placeholder:text-slate-400
+                  focus:outline-none focus:ring-2 focus:ring-[#A50034]/25 focus:border-[#A50034]/40
+                  disabled:opacity-50 transition-all
+                "
+              />
+              <button
+                onClick={() => sendMessage(inputValue)}
+                disabled={!inputValue.trim() || isTyping}
+                className="h-10 w-10 rounded-full bg-[#A50034] text-white flex items-center justify-center hover:bg-[#c0003d] disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
+                aria-label="Enviar"
+              >
+                {isTyping
+                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                  : <Send className="h-4 w-4" />
+                }
+              </button>
+            </div>
+            <p className="text-[10px] text-center text-slate-400 mt-2 hidden md:block">
+              Enter para enviar · SomosTécnicos · Cali, Colombia
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
