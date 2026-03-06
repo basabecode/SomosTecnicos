@@ -7,10 +7,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Dominio canónico principal (debe coincidir con el dominio real del servidor)
   const baseUrl = 'https://somostecnicos.com'
 
-  // Fechas de última modificación real del contenido estático
-  const today = new Date('2026-03-04')
-  const lastWeek = new Date('2026-02-26')
-  const lastMonth = new Date('2026-02-01')
+  // Fechas de última modificación real del contenido.
+  // IMPORTANTE: actualizar manualmente cuando se hagan cambios significativos en cada sección.
+  // NO usar new Date() aquí: decirle a Google que todo cambió "hoy" cada día es una señal engañosa.
+  const today = new Date('2026-03-06')      // homepage y páginas de servicio (estilos + seguridad)
+  const lastWeek = new Date('2026-02-26')   // contacto, sobre-nosotros, admin-info
+  const termsFixed = new Date('2026-03-06') // términos: refactorizado a Server Component (ahora indexable)
 
   // 1. Rutas Estáticas Core
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -52,7 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/terminos-y-condiciones`,
-      lastModified: lastMonth,
+      lastModified: termsFixed,
       changeFrequency: 'yearly',
       priority: 0.4,
     },
