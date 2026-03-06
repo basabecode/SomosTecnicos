@@ -15,6 +15,12 @@ setInterval(() => {
 }, 10 * 60 * 1000)
 
 export async function middleware(request: NextRequest) {
+  // Block CVE-2025-29927: attackers can send this internal Next.js header to
+  // bypass middleware entirely. Reject any external request that carries it.
+  if (request.headers.has('x-middleware-subrequest')) {
+    return new NextResponse(null, { status: 403 })
+  }
+
   // Skip rate limiting for static assets and internal paths
   if (
     request.nextUrl.pathname.startsWith('/_next') ||

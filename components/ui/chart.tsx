@@ -69,6 +69,11 @@ function ChartContainer({
   )
 }
 
+// Prevent CSS injection: keys must be safe CSS identifier characters,
+// colors must be valid CSS color tokens (hex, rgb, named, hsl, etc.)
+const safeCSSIdent = (value: string) => value.replace(/[^a-zA-Z0-9-_]/g, '')
+const safeCSSValue = (value: string) => value.replace(/[^a-zA-Z0-9#(),%./ -]/g, '')
+
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color,
@@ -78,19 +83,23 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  const safeId = safeCSSIdent(id)
+
   return (
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
+${prefix} [data-chart=${safeId}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+    const safeKey = safeCSSIdent(key)
+    const safeColor = color ? safeCSSValue(color) : null
+    return safeKey && safeColor ? `  --color-${safeKey}: ${safeColor};` : null
   })
   .join('\n')}
 }
