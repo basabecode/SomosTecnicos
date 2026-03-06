@@ -35,7 +35,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en neveras a domicilio en Cali. Reparamos LG, Samsung, Mabe, Haceb. No enfría, gotea, hace ruido. Garantía 30 días. Llámanos al +57 300 3094854.',
     keywords: ['reparación neveras cali', 'arreglo nevera cali', 'técnico neveras cali', 'nevera no enfría cali', 'servicio técnico nevera cali', 'reparar nevera a domicilio cali'],
     canonicalPath: '/servicios/reparacion-neveras-cali',
-    heroImage: '/electrodomesticos/nevecon lg1.jpg',
+    heroImage: '/hero-servicios/servicio-tecnico-neveras-nevecones-lg.png',
     heroImageAlt: 'Técnico reparando nevera LG en Cali',
     description: 'Servicio técnico especializado en reparación y mantenimiento de neveras y nevecones a domicilio en Cali y sus alrededores. Atendemos todas las marcas con técnicos certificados y garantía incluida.',
     problems: [
@@ -50,7 +50,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una nevera en Cali?',
-        a: 'La visita de diagnóstico tiene un costo de $50.000 pesos, valor que se descuenta del total si decides proceder con la reparación. El costo final varía según el tipo de falla. Contáctenos para un diagnóstico preciso.',
+        a: 'La visita de diagnóstico tiene un costo de $50.000 pesos. El precio de la reparación varía según la complejidad, los repuestos requeridos y la tecnología del equipo — no existe tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Qué marcas de neveras reparan?',
@@ -76,7 +76,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en lavadoras en Cali. Carga frontal y superior. No gira, no drena, vibra, no enciende. LG, Samsung, Whirlpool. Garantía incluida. Servicio a domicilio.',
     keywords: ['reparación lavadoras cali', 'técnico lavadoras cali', 'lavadora no gira cali', 'arreglo lavadora cali', 'lavadora no drena cali', 'servicio técnico lavadora cali'],
     canonicalPath: '/servicios/reparacion-lavadoras-cali',
-    heroImage: '/electrodomesticos/lavadora carga superior lg.jpg',
+    heroImage: '/hero-servicios/lavadora_lg_1.png',
     heroImageAlt: 'Técnico reparando lavadora en Cali',
     description: 'Reparamos lavadoras de carga frontal y superior de todas las marcas a domicilio en Cali. Técnicos certificados con experiencia en diagnóstico y reparación de fallas eléctricas y mecánicas.',
     problems: [
@@ -91,7 +91,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una lavadora en Cali?',
-        a: 'El costo de diagnóstico es de $50.000 pesos, descontable del total de la reparación. El precio final depende de la falla específica. Contacte para una cotización sin compromiso.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio de la reparación varía según la falla, los repuestos y la tecnología de la lavadora — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan lavadoras de carga frontal y superior?',
@@ -117,7 +117,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en secadoras en Cali. A gas y eléctricas. No calienta, no gira, hace ruido. LG, Samsung, Whirlpool. Servicio a domicilio con garantía de 30 días.',
     keywords: ['reparación secadoras cali', 'técnico secadoras cali', 'secadora no calienta cali', 'arreglo secadora cali', 'secadora no gira cali'],
     canonicalPath: '/servicios/reparacion-secadoras-cali',
-    heroImage: '/electrodomesticos/lavadora blanca lg1.jpg',
+    heroImage: '/hero-servicios/secadora-lg-2.png',
     heroImageAlt: 'Técnico reparando secadora en Cali',
     description: 'Reparamos secadoras a gas y eléctricas de todas las marcas a domicilio en Cali. Diagnóstico rápido y reparación el mismo día en la mayoría de casos.',
     problems: [
@@ -132,7 +132,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una secadora en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos, valor que se aplica al total de la reparación. El costo final depende del tipo de falla y los repuestos requeridos.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla y los repuestos requeridos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan secadoras a gas y eléctricas?',
@@ -158,7 +158,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en estufas y hornos en Cali. Llama baja, quemador no prende, olor a gas, horno no calienta. Mabe, Haceb, Challenger. Diagnóstico a domicilio.',
     keywords: ['reparación estufas cali', 'arreglo estufa gas cali', 'técnico estufas cali', 'reparación hornos cali', 'estufa no prende cali', 'servicio técnico estufas cali'],
     canonicalPath: '/servicios/reparacion-estufas-hornos-cali',
-    heroImage: '/electrodomesticos/estufa empotrar 1.jpg',
+    heroImage: '/hero-servicios/estufa-de-empotrar-challenger-alpha-gris-y-negro-582x512cm-de-gas-natural-con-cuatro-quemadores_2.png',
     heroImageAlt: 'Técnico reparando estufa empotrable en Cali',
     description: 'Servicio técnico en estufas a gas, eléctricas y de inducción, y hornos de empotrar en Cali. Diagnóstico y reparación segura con técnicos certificados en gas y electricidad.',
     problems: [
@@ -173,7 +173,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar una estufa a gas en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El costo total de la reparación depende de la falla. Brindamos cotización sin compromiso antes de proceder.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla y los repuestos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Es seguro reparar estufas a gas en casa?',
@@ -199,7 +199,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en calentadores en Cali. De paso y acumulación. No calienta agua, se apaga, fuga, explosiones al encender. Challenger, Haceb. Garantía incluida.',
     keywords: ['reparación calentadores cali', 'técnico calentadores cali', 'calentador no calienta agua cali', 'arreglo calentador gas cali', 'instalación calentador cali', 'calentador paso cali'],
     canonicalPath: '/servicios/reparacion-calentadores-cali',
-    heroImage: '/electrodomesticos/calentador challenger.jpg',
+    heroImage: '/hero-servicios/calentador-bosch.png',
     heroImageAlt: 'Técnico reparando calentador de paso en Cali',
     description: 'Reparamos e instalamos calentadores de paso y de acumulación a gas y eléctricos en Cali. Técnicos certificados para diagnóstico seguro y reparaciones con garantía.',
     problems: [
@@ -214,7 +214,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar un calentador en Cali?',
-        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El costo de la reparación varía según el tipo de falla y el modelo del calentador. Le damos cotización antes de proceder.',
+        a: 'La visita técnica de diagnóstico cuesta $50.000 pesos. El precio varía según la falla, el modelo y los repuestos — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan calentadores de paso y de acumulación?',
@@ -240,7 +240,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en televisores en Cali. LED, LCD, Smart TV, 4K. Pantalla negra, no enciende, imagen distorsionada, sin WiFi. LG, Samsung, Sony. Servicio a domicilio.',
     keywords: ['reparación televisores cali', 'arreglo tv cali', 'técnico televisores cali', 'tv pantalla negra cali', 'reparar smart tv cali', 'técnico tv led cali'],
     canonicalPath: '/servicios/reparacion-televisores-cali',
-    heroImage: '/electrodomesticos/tv lg uhd.jpg',
+    heroImage: '/hero-servicios/televisor-oled-lg.png',
     heroImageAlt: 'Técnico reparando televisor LED en Cali',
     description: 'Reparamos televisores LED, LCD, OLED y Smart TV de todas las marcas a domicilio en Cali. Diagnóstico de tarjetas electrónicas, pantallas, backlights y sistemas de conectividad.',
     problems: [
@@ -255,7 +255,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta reparar un televisor en Cali?',
-        a: 'El diagnóstico técnico cuesta $50.000 pesos, descontable del total de la reparación. El costo depende de la falla: problemas de backlight, tarjeta de poder o pantalla tienen precios diferentes.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio varía según la falla (backlight, tarjeta de poder, pantalla) y la tecnología del equipo — no hay tarifa fija. Si apruebas la reparación dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Reparan Smart TV y televisores 4K?',
@@ -296,7 +296,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta un electricista a domicilio en Cali?',
-        a: 'El precio depende del tipo de trabajo. La visita de diagnóstico cuesta $50.000 pesos. Para instalaciones y reparaciones hacemos presupuesto detallado sin costo previo a la ejecución.',
+        a: 'El precio depende del tipo de trabajo (instalación, cortocircuito, tablero, etc.) — no hay tarifa fija. La visita de diagnóstico cuesta $50.000 pesos; si apruebas el trabajo dentro del mes siguiente, ese valor se abona al total.',
       },
       {
         q: '¿Los electricistas cumplen normas RETIE?',
@@ -322,7 +322,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en computadores en Cali. PC lentos, virus, pantalla azul, formateo, WiFi, impresoras. HP, Dell, Lenovo, Apple. Servicio a domicilio en Cali.',
     keywords: ['técnico computadores cali', 'reparación pc cali', 'técnico portátiles cali', 'formateo computador cali', 'redes wifi cali', 'soporte técnico computadores cali'],
     canonicalPath: '/servicios/tecnico-computadores-redes-cali',
-    heroImage: '/especialistas/computacion_redes2.jpg',
+    heroImage: '/hero-servicios/redes-computaciones.png',
     heroImageAlt: 'Técnico reparando computador portátil en Cali',
     description: 'Soporte técnico en computadores de escritorio, portátiles y redes a domicilio en Cali. Reparación de hardware, eliminación de virus, formateo, configuración de redes WiFi e impresoras.',
     problems: [
@@ -337,7 +337,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     faqs: [
       {
         q: '¿Cuánto cuesta el técnico de computadores a domicilio en Cali?',
-        a: 'La visita de diagnóstico cuesta $50.000 pesos. El formateo básico parte de $80.000 pesos. El precio varía según el servicio requerido. Le damos cotización exacta tras el diagnóstico.',
+        a: 'La visita de diagnóstico cuesta $50.000 pesos. El precio varía según el servicio requerido (formateo, virus, hardware, redes) — no hay tarifa fija. Si apruebas el trabajo dentro del mes siguiente al diagnóstico, los $50.000 se abonan al total.',
       },
       {
         q: '¿Atienden computadores Mac y Windows?',
@@ -363,7 +363,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Instalación y mantenimiento de cámaras CCTV, alarmas y control de acceso en Cali. Hikvision, Dahua, ZKTeco. Monitoreo desde tu celular. Diagnóstico gratis.',
     keywords: ['cámaras seguridad cali', 'instalación CCTV cali', 'alarmas cali', 'control de acceso cali', 'sistema de seguridad cali', 'cámaras vigilancia cali'],
     canonicalPath: '/servicios/camaras-seguridad-alarmas-cali',
-    heroImage: '/especialistas/seguridad_electronica3.png',
+    heroImage: '/hero-servicios/nvr-camaras-seguridad.png',
     heroImageAlt: 'Instalación de cámaras de seguridad CCTV en Cali',
     description: 'Instalación, configuración y mantenimiento de sistemas de seguridad electrónica en Cali: cámaras CCTV, alarmas perimetrales, control de acceso y citofones. Monitoreo remoto desde su celular.',
     problems: [

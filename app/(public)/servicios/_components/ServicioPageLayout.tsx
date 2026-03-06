@@ -1,14 +1,28 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckCircle, Phone, MessageCircle, MapPin, ChevronRight } from 'lucide-react'
+import { CheckCircle, Phone, MessageCircle, MapPin } from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import ServiceProcess from '@/components/service-process'
+import PageBreadcrumb from '@/components/page-breadcrumb'
 import type { ServicioSEOData } from '@/lib/seo/servicios-data'
 
 interface ServicioPageLayoutProps {
   data: ServicioSEOData
   jsonLd: object[]
+}
+
+const getEquipoIdFromSlug = (slug: string) => {
+  if (slug.includes('nevera')) return 'nevera'
+  if (slug.includes('lavadora')) return 'lavadora'
+  if (slug.includes('secadora')) return 'secadora'
+  if (slug.includes('estufa') || slug.includes('horno')) return 'estufa'
+  if (slug.includes('calentador')) return 'calentador'
+  if (slug.includes('televisor') || slug.includes('tv')) return 'televisor'
+  if (slug.includes('electricista')) return 'electricidad_general'
+  if (slug.includes('computador') || slug.includes('redes')) return 'sistemas_general'
+  if (slug.includes('camara') || slug.includes('alarma') || slug.includes('seguridad')) return 'seguridad_general'
+  return ''
 }
 
 export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutProps) {
@@ -24,18 +38,21 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
       <main className="pt-16 md:pt-20">
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="relative bg-[#1a0a0f] text-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Texto */}
               <div>
                 {/* Breadcrumb */}
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-gray-400 mb-6">
-                  <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-                  <ChevronRight className="w-4 h-4" />
-                  <Link href="/servicios" className="hover:text-white transition-colors">Servicios</Link>
-                  <ChevronRight className="w-4 h-4" />
-                  <span className="text-gray-200">{data.h1}</span>
-                </nav>
+                <PageBreadcrumb
+                  variant="dark"
+                  showHomeIcon
+                  className="mb-6"
+                  items={[
+                    { label: 'Inicio', href: '/' },
+                    { label: 'Servicios', href: '/servicios' },
+                    { label: data.h1 },
+                  ]}
+                />
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6">
                   {data.h1}
@@ -46,7 +63,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
-                    href="/#formulario"
+                    href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
                     className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-semibold px-8 py-4 rounded-lg transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
@@ -78,13 +95,16 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
                 </div>
               </div>
 
-              {/* Imagen */}
-              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none">
+              {/* Imagen con destello de luz */}
+              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none w-full">
+                {/* Destello central blanco */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-white rounded-full blur-[80px] lg:blur-[120px] opacity-30 pointer-events-none z-0"></div>
+
                 <Image
                   src={data.heroImage}
                   alt={data.heroImageAlt}
                   fill
-                  className="object-contain"
+                  className="object-contain relative z-10"
                   sizes="(max-width: 1024px) 90vw, 45vw"
                   priority
                 />
@@ -203,7 +223,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
-                href="/#formulario"
+                href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034] hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />

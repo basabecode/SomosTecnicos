@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm run build)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Usuario\\Desktop\\Servicio_tecnico\\somostecnicos_FSM\\app\\(public)\\servicios",
+      "c:\\Users\\Usuario\\.claude\\projects\\c--Users-Usuario-Desktop-Servicio-tecnico-somostecnicos-FSM\\memory"
+    ]
+  }
+}

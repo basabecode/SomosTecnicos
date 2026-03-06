@@ -1,6 +1,6 @@
 /**
- * API del Chat IA - Endpoint para procesamiento inteligente
- * Procesa conversaciones y genera respuestas contextuales
+ * API Chat IA — SomosTécnicos
+ * Procesa mensajes y retorna respuestas contextuales con sugerencias de servicio.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -28,33 +28,20 @@ interface AIResponse {
   suggestion?: ServiceSuggestion
   confidence: number
   followUpQuestions?: string[]
+  actionType?: 'register_client' | 'register_technician' | 'schedule_visit' | null
 }
 
-/**
- * Procesador de IA para el chat
- * - Análisis de texto con patrones
- * - Detección de problemas comunes
- * - Sugerencias de servicio automáticas
- * - Respuestas contextuales
- */
 export async function POST(request: NextRequest) {
   try {
     const { message, conversationHistory = [] }: ChatRequest = await request.json()
 
     if (!message?.trim()) {
-      return NextResponse.json(
-        { error: 'Mensaje requerido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Mensaje requerido' }, { status: 400 })
     }
 
-    const aiResponse = await processAIResponse(message, conversationHistory)
+    const aiResponse = processAIResponse(message, conversationHistory)
 
-    return NextResponse.json({
-      success: true,
-      data: aiResponse
-    })
-
+    return NextResponse.json({ success: true, data: aiResponse })
   } catch (error) {
     console.error('Error en Chat IA:', error)
     return NextResponse.json(
@@ -63,318 +50,303 @@ export async function POST(request: NextRequest) {
         error: 'Error procesando mensaje',
         data: {
           response: 'Disculpa, tuve un problema técnico. ¿Podrías repetir tu consulta?',
-          confidence: 0
-        }
+          confidence: 0,
+        },
       },
       { status: 500 }
     )
   }
 }
 
-async function processAIResponse(message: string, history: ChatMessage[]): Promise<AIResponse> {
-  const lowerMessage = message.toLowerCase()
+// ─── Main processor ────────────────────────────────────────────────────────────
 
-  // Análisis de contexto de la conversación
-  const conversationContext = history
-    .map(msg => msg.text.toLowerCase())
-    .join(' ')
+function processAIResponse(message: string, history: ChatMessage[]): AIResponse {
+  const lower = message.toLowerCase()
+  const context = history.map(m => m.text.toLowerCase()).join(' ')
 
-  // Patrones de reconocimiento avanzados
-  const patterns = {
-    lavadora: {
-      keywords: ['lavadora', 'lavado', 'centrifuga', 'spin'],
+  // ── Registration intents ──────────────────────────────────────────────────
+  if (
+    (lower.includes('registrar') && lower.includes('client')) ||
+    lower.includes('crear cuenta') || lower.includes('nueva cuenta')
+  ) {
+    return {
+      response: 'Crear tu cuenta de cliente es **gratuito**. Obtienes seguimiento en tiempo real, historial de reparaciones y chat directo con tu técnico.\n\nVisita somostecnicos.com/register para registrarte.',
+      confidence: 0.98,
+      actionType: 'register_client',
+    }
+  }
+
+  if (
+    lower.includes('unirme como técnico') || lower.includes('ser técnico') ||
+    (lower.includes('técnico') && (lower.includes('unir') || lower.includes('trabajar') || lower.includes('registrar')))
+  ) {
+    return {
+      response: 'Unirte como técnico es **completamente gratis**. Recibes órdenes en tu zona, pagos seguros y agenda flexible — sin mensualidades.\n\nVisita somostecnicos.com/trabaja-con-nosotros para registrarte.',
+      confidence: 0.98,
+      actionType: 'register_technician',
+    }
+  }
+
+  // ── Prices ───────────────────────────────────────────────────────────────
+  if (lower.includes('precio') || lower.includes('costo') || lower.includes('cuánto') ||
+      lower.includes('cuanto') || lower.includes('cobran') || lower.includes('vale')) {
+    return {
+      response: '**Precios del servicio:**\n\n• Diagnóstico: $50.000 (se abona si apruebas la reparación dentro del mes)\n• Reparación: Varía según equipo y repuestos — no existe tarifa fija\n• Mantenimiento preventivo: Desde $45.000\n• Urgente el mismo día: Disponible con recargo\n\nEl precio exacto lo confirma el técnico después del diagnóstico presencial.',
+      confidence: 0.98,
+      followUpQuestions: ['¿Qué cubre la garantía?', '¿Cuánto tarda el diagnóstico?', '¿Qué servicios ofrecen?'],
+    }
+  }
+
+  // ── Guarantees ───────────────────────────────────────────────────────────
+  if (lower.includes('garantía') || lower.includes('garantia')) {
+    return {
+      response: '**Garantía en todos los servicios:**\n\n• Reparaciones de electrodomésticos: 30 días\n• Instalaciones eléctricas y de seguridad: 90 días\n• Repuestos nuevos originales: 6 a 12 meses\n\nSi el problema regresa dentro del período de garantía, lo resolvemos sin costo adicional.',
+      confidence: 0.98,
+      followUpQuestions: ['¿Cuáles son los precios?', '¿Qué servicios ofrecen?'],
+    }
+  }
+
+  // ── Schedule / timing ────────────────────────────────────────────────────
+  if (lower.includes('tiempo') || lower.includes('cuándo') || lower.includes('demora') ||
+      lower.includes('cuanto tarda') || lower.includes('disponib')) {
+    return {
+      response: '**Tiempos de servicio:**\n\n• Diagnóstico: 24 a 48 horas\n• Reparación in-situ: 2 a 4 horas\n• Con repuestos especiales: 3 a 7 días hábiles\n• Servicio urgente el mismo día: Disponible\n\n**Horario de atención:** Lunes a sábado, 8:00 am – 6:00 pm\n\n¿Es urgente tu solicitud?',
+      confidence: 0.97,
+      followUpQuestions: ['Quiero agendar una visita', '¿Tienen servicio urgente?'],
+      actionType: 'schedule_visit',
+    }
+  }
+
+  // ── Appliance patterns ────────────────────────────────────────────────────
+
+  const appliancePatterns: {
+    keywords: string[]
+    name: string
+    problems: Record<string, {
+      triggers: string[]
+      response: string
+      suggestion: ServiceSuggestion
+    }>
+  }[] = [
+    {
+      keywords: ['lavadora', 'lavado', 'centrifug'],
+      name: 'Lavadora',
       problems: {
         ruido: {
-          pattern: ['ruido', 'sonido', 'estruendo', 'golpe', 'vibra'],
-          response: 'Entiendo, problema con ruidos en la lavadora. 🔧\n\n¿El ruido ocurre durante el centrifugado o durante todo el ciclo? Esto me ayuda a determinar si son los rodamientos, la correa o un desbalance.',
-          suggestion: {
-            type: 'Lavadora',
-            urgency: 'media' as const,
-            description: 'Problema de ruidos - posible desgaste de rodamientos o desbalance',
-            estimatedCost: '$80,000 - $150,000',
-            estimatedTime: '2-4 horas'
-          }
+          triggers: ['ruido', 'sonido', 'vibra', 'golpe'],
+          response: '**Ruidos en lavadora** pueden indicar rodamientos desgastados o desbalance.\n\n¿El ruido ocurre durante el centrifugado o en todo el ciclo?',
+          suggestion: { type: 'Lavadora', urgency: 'media', description: 'Ruidos — posibles rodamientos o desbalance', estimatedCost: '$80.000 – $150.000', estimatedTime: '2-4 h' },
         },
         noEnciende: {
-          pattern: ['no enciende', 'no prende', 'no funciona', 'muerta'],
-          response: 'Problema eléctrico en lavadora detectado. ⚡\n\n¿La lavadora no prende para nada o se apaga durante el funcionamiento? ¿Has verificado que llegue corriente al tomacorriente?',
-          suggestion: {
-            type: 'Lavadora',
-            urgency: 'alta' as const,
-            description: 'Lavadora no enciende - revisar conexiones eléctricas y controles',
-            estimatedCost: '$60,000 - $120,000',
-            estimatedTime: '1-3 horas'
-          }
+          triggers: ['no enciende', 'no prende', 'no funciona', 'muerta'],
+          response: '**Lavadora sin encendido.** ¿El panel no enciende para nada, o se apaga a mitad del ciclo? ¿Llega corriente al tomacorriente?',
+          suggestion: { type: 'Lavadora', urgency: 'alta', description: 'No enciende — revisión eléctrica y placa', estimatedCost: '$60.000 – $120.000', estimatedTime: '1-3 h' },
         },
         noDesagua: {
-          pattern: ['no desagua', 'no drena', 'agua', 'inundada'],
-          response: 'Problema de desagüe detectado. 💧\n\n¿El agua se queda en el tambor al final del ciclo? ¿Has revisado si hay obstrucciones en la manguera de desagüe?',
-          suggestion: {
-            type: 'Lavadora',
-            urgency: 'alta' as const,
-            description: 'Problema de desagüe - obstrucción en bomba o mangueras',
-            estimatedCost: '$50,000 - $100,000',
-            estimatedTime: '1-2 horas'
-          }
+          triggers: ['no desagua', 'no drena', 'inundada', 'agua atascada'],
+          response: '**Problema de desagüe.** ¿El agua se queda en el tambor al terminar el ciclo? Puede ser bomba o manguera obstruida.',
+          suggestion: { type: 'Lavadora', urgency: 'alta', description: 'No desagua — obstrucción en bomba o mangueras', estimatedCost: '$50.000 – $100.000', estimatedTime: '1-2 h' },
         },
         mantenimiento: {
-          pattern: ['mantenimiento', 'limpieza', 'revisión', 'preventivo'],
-          response: 'Excelente idea! El mantenimiento preventivo alarga la vida útil. 🔧✨\n\n¿Cuánto tiempo tiene sin mantenimiento tu lavadora? Incluye limpieza completa, revisión de mangueras y calibración.',
-          suggestion: {
-            type: 'Lavadora',
-            urgency: 'baja' as const,
-            description: 'Mantenimiento preventivo - limpieza completa y calibración',
-            estimatedCost: '$45,000 - $65,000',
-            estimatedTime: '1-2 horas'
-          }
+          triggers: ['mantenimiento', 'limpieza', 'revisión', 'preventivo'],
+          response: '**Mantenimiento preventivo para lavadora.** Incluye limpieza de tambor, filtros, mangueras y calibración. ¿Cuánto tiempo lleva sin mantenimiento?',
+          suggestion: { type: 'Lavadora', urgency: 'baja', description: 'Mantenimiento preventivo completo', estimatedCost: '$45.000 – $65.000', estimatedTime: '1-2 h' },
         },
-        instalacion: {
-          pattern: ['instalación', 'instalar', 'conectar', 'nueva'],
-          response: 'Instalación profesional de lavadora. 🔧🏠\n\n¿Es lavadora nueva o reubicación? Incluye conexión de agua, desagüe, nivelación y prueba completa de funcionamiento.',
-          suggestion: {
-            type: 'Lavadora',
-            urgency: 'media' as const,
-            description: 'Instalación completa - conexiones, nivelación y puesta en marcha',
-            estimatedCost: '$60,000 - $90,000',
-            estimatedTime: '2-3 horas'
-          }
-        }
-      }
+      },
     },
-
-    nevera: {
+    {
       keywords: ['nevera', 'refrigerador', 'refri', 'heladera'],
+      name: 'Nevera',
       problems: {
         noEnfria: {
-          pattern: ['no enfría', 'caliente', 'temperatura', 'no congela'],
-          response: 'Problema crítico de refrigeración detectado! 🧊\n\n¿La nevera está completamente caliente o solo algunas áreas? ¿Escuchas que el motor funciona? Esto es urgente por la conservación de alimentos.',
-          suggestion: {
-            type: 'Nevera',
-            urgency: 'alta' as const,
-            description: 'Nevera no enfría - problema crítico de refrigeración',
-            estimatedCost: '$100,000 - $250,000',
-            estimatedTime: '2-6 horas'
-          }
+          triggers: ['no enfría', 'no enfria', 'caliente', 'no congela', 'temperatura'],
+          response: '**Nevera sin refrigeración — problema urgente.** ¿Está completamente caliente o solo una zona? ¿El motor suena normalmente?',
+          suggestion: { type: 'Nevera', urgency: 'alta', description: 'No enfría — gas, compresor o termostato', estimatedCost: '$100.000 – $250.000', estimatedTime: '2-6 h' },
         },
         ruido: {
-          pattern: ['ruido', 'sonido', 'zumbido', 'golpea'],
-          response: 'Ruidos en nevera pueden indicar problema del compresor. 🔧\n\n¿El ruido es constante o solo cuando arranca? ¿Es un zumbido, golpeteo o chirrido?',
-          suggestion: {
-            type: 'Nevera',
-            urgency: 'media' as const,
-            description: 'Nevera con ruidos anormales - revisar compresor y ventiladores',
-            estimatedCost: '$80,000 - $200,000',
-            estimatedTime: '2-4 horas'
-          }
+          triggers: ['ruido', 'zumbido', 'golpea', 'sonido'],
+          response: '**Ruidos en nevera** pueden venir del compresor o ventiladores. ¿Es constante o solo al arrancar?',
+          suggestion: { type: 'Nevera', urgency: 'media', description: 'Ruidos — compresor o ventiladores', estimatedCost: '$80.000 – $200.000', estimatedTime: '2-4 h' },
         },
         gotea: {
-          pattern: ['gotea', 'agua', 'charco', 'humedad'],
-          response: 'Fuga de agua en nevera detectada. 💧\n\n¿El agua sale por debajo, por dentro o por la parte trasera? ¿Has revisado el desagüe interno?',
-          suggestion: {
-            type: 'Nevera',
-            urgency: 'media' as const,
-            description: 'Nevera con goteo - obstrucción en drenaje o sellos dañados',
-            estimatedCost: '$40,000 - $90,000',
-            estimatedTime: '1-2 horas'
-          }
+          triggers: ['gotea', 'agua', 'charco', 'humedad'],
+          response: '**Goteo en nevera.** ¿Sale agua por debajo, por dentro o por la parte trasera? ¿Has revisado el desagüe interno?',
+          suggestion: { type: 'Nevera', urgency: 'media', description: 'Goteo — drenaje obstruido o sellos dañados', estimatedCost: '$40.000 – $90.000', estimatedTime: '1-2 h' },
         },
         mantenimiento: {
-          pattern: ['mantenimiento', 'limpieza', 'revisión', 'preventivo'],
-          response: 'Mantenimiento de nevera es clave para su eficiencia! ❄️🔧\n\n¿Cuándo fue la última limpieza? Incluye limpieza de serpentines, desagües, sellos y calibración de temperatura.',
-          suggestion: {
-            type: 'Nevera',
-            urgency: 'baja' as const,
-            description: 'Mantenimiento preventivo - limpieza de serpentines y calibración',
-            estimatedCost: '$50,000 - $70,000',
-            estimatedTime: '1-2 horas'
-          }
+          triggers: ['mantenimiento', 'limpieza', 'revisión', 'preventivo'],
+          response: '**Mantenimiento de nevera.** Incluye limpieza de serpentines, desagüe, sellos y calibración de temperatura.',
+          suggestion: { type: 'Nevera', urgency: 'baja', description: 'Mantenimiento preventivo', estimatedCost: '$50.000 – $70.000', estimatedTime: '1-2 h' },
         },
-        instalacion: {
-          pattern: ['instalación', 'instalar', 'conectar', 'nueva'],
-          response: 'Instalación profesional de nevera. ❄️🏠\n\n¿Es nevera nueva o cambio de ubicación? Incluye conexión eléctrica, nivelación, configuración inicial y pruebas.',
-          suggestion: {
-            type: 'Nevera',
-            urgency: 'media' as const,
-            description: 'Instalación completa - conexión, nivelación y configuración inicial',
-            estimatedCost: '$65,000 - $95,000',
-            estimatedTime: '2-3 horas'
-          }
-        }
-      }
+      },
     },
-
-    aire: {
-      keywords: ['aire', 'acondicionado', 'split', 'clima'],
+    {
+      keywords: ['calentador', 'boiler', 'agua caliente', 'termocalentador'],
+      name: 'Calentador',
+      problems: {
+        noCalienta: {
+          triggers: ['no calienta', 'agua fría', 'agua tibia', 'temperatura'],
+          response: '**Calentador sin agua caliente.** ¿Es a gas o eléctrico? ¿El piloto está encendido? Puede ser termostato, resistencia o problema de gas.',
+          suggestion: { type: 'Calentador', urgency: 'alta', description: 'No calienta — termostato, resistencia o gas', estimatedCost: '$70.000 – $160.000', estimatedTime: '1-3 h' },
+        },
+        gotea: {
+          triggers: ['gotea', 'fuga', 'agua', 'charco'],
+          response: '**Fuga en calentador** — puede ser en conexiones o en el tanque. ¿Es una gota o un chorro constante?',
+          suggestion: { type: 'Calentador', urgency: 'alta', description: 'Fuga de agua — conexiones o tanque', estimatedCost: '$60.000 – $120.000', estimatedTime: '1-2 h' },
+        },
+        piloto: {
+          triggers: ['piloto', 'llama', 'encendido'],
+          response: '**Problema de piloto en calentador a gas.** El piloto puede fallar por corriente de aire, suciedad o termopar desgastado.',
+          suggestion: { type: 'Calentador', urgency: 'alta', description: 'Piloto no enciende — termopar o gas', estimatedCost: '$50.000 – $90.000', estimatedTime: '1-2 h' },
+        },
+        mantenimiento: {
+          triggers: ['mantenimiento', 'limpieza', 'revisión'],
+          response: '**Mantenimiento de calentador.** Incluye limpieza de quemador, revisión de conexiones, purga del tanque y pruebas de temperatura.',
+          suggestion: { type: 'Calentador', urgency: 'baja', description: 'Mantenimiento preventivo', estimatedCost: '$55.000 – $75.000', estimatedTime: '1-2 h' },
+        },
+      },
+    },
+    {
+      keywords: ['secadora', 'ropa húmeda'],
+      name: 'Secadora',
+      problems: {
+        noSeca: {
+          triggers: ['no seca', 'húmeda', 'humeda', 'mojada'],
+          response: '**Secadora sin secar.** ¿Es a gas o eléctrica? ¿El tambor gira pero no hay calor? Puede ser resistencia, termostato o ventilación bloqueada.',
+          suggestion: { type: 'Secadora', urgency: 'media', description: 'No seca — resistencia o ventilación', estimatedCost: '$80.000 – $150.000', estimatedTime: '2-3 h' },
+        },
+        sobrecalienta: {
+          triggers: ['sobrecalienta', 'muy caliente', 'huele a quemado'],
+          response: '**Secadora sobrecalentada — riesgo de incendio.** Suspende el uso. Puede ser ventilación obstruida o termostato dañado.',
+          suggestion: { type: 'Secadora', urgency: 'alta', description: 'Sobrecalentamiento — revisión urgente', estimatedCost: '$70.000 – $130.000', estimatedTime: '2-3 h' },
+        },
+        mantenimiento: {
+          triggers: ['mantenimiento', 'limpieza', 'revisión'],
+          response: '**Mantenimiento de secadora.** Limpieza de conducto de salida, filtros y revisión de resistencia y correas.',
+          suggestion: { type: 'Secadora', urgency: 'baja', description: 'Mantenimiento preventivo', estimatedCost: '$50.000 – $70.000', estimatedTime: '1-2 h' },
+        },
+      },
+    },
+    {
+      keywords: ['aire', 'split', 'acondicionado', 'clima'],
+      name: 'Aire Acondicionado',
       problems: {
         noEnfria: {
-          pattern: ['no enfría', 'caliente', 'temperatura'],
-          response: 'Aire acondicionado sin enfriamiento. 🌡️\n\n¿Arranca normalmente pero no bota aire frío, o no enciende para nada? ¿Cuándo fue la última limpieza de filtros?',
-          suggestion: {
-            type: 'Aire Acondicionado',
-            urgency: 'alta' as const,
-            description: 'Aire no enfría - limpieza, recarga de gas o problema eléctrico',
-            estimatedCost: '$70,000 - $180,000',
-            estimatedTime: '2-4 horas'
-          }
+          triggers: ['no enfría', 'no enfria', 'caliente', 'temperatura'],
+          response: '**Aire sin enfriamiento.** ¿El ventilador funciona pero no bota frío, o no enciende? ¿Cuándo fue la última limpieza de filtros?',
+          suggestion: { type: 'Aire Acondicionado', urgency: 'alta', description: 'No enfría — gas, limpieza o eléctrico', estimatedCost: '$70.000 – $180.000', estimatedTime: '2-4 h' },
         },
         gotea: {
-          pattern: ['gotea', 'agua', 'chorrea'],
-          response: 'Goteo en aire acondicionado. 💧\n\n¿Gotea por la unidad interna o externa? ¿El goteo es constante o solo cuando funciona?',
-          suggestion: {
-            type: 'Aire Acondicionado',
-            urgency: 'media' as const,
-            description: 'Aire acondicionado con goteo - limpieza de drenajes',
-            estimatedCost: '$50,000 - $100,000',
-            estimatedTime: '1-2 horas'
-          }
+          triggers: ['gotea', 'agua', 'chorrea'],
+          response: '**Goteo en aire acondicionado.** ¿Gotea por la unidad interna? Suele ser el drenaje obstruido — revisión rápida.',
+          suggestion: { type: 'Aire Acondicionado', urgency: 'media', description: 'Goteo — limpieza de drenajes', estimatedCost: '$50.000 – $100.000', estimatedTime: '1-2 h' },
         },
         mantenimiento: {
-          pattern: ['mantenimiento', 'limpieza', 'revisión', 'preventivo'],
-          response: 'Mantenimiento de aire es esencial para eficiencia energética! ❄️🔧\n\n¿Hace cuánto no lo limpian? Incluye lavado de filtros, serpentines, drenajes y verificación de gas.',
-          suggestion: {
-            type: 'Aire Acondicionado',
-            urgency: 'media' as const,
-            description: 'Mantenimiento preventivo - limpieza completa y verificación de gas',
-            estimatedCost: '$60,000 - $90,000',
-            estimatedTime: '2-3 horas'
-          }
+          triggers: ['mantenimiento', 'limpieza', 'revisión'],
+          response: '**Mantenimiento de aire acondicionado.** Limpieza de filtros, serpentines, drenajes y verificación de gas refrigerante.',
+          suggestion: { type: 'Aire Acondicionado', urgency: 'media', description: 'Mantenimiento preventivo', estimatedCost: '$60.000 – $90.000', estimatedTime: '2-3 h' },
         },
         instalacion: {
-          pattern: ['instalación', 'instalar', 'conectar', 'nueva'],
-          response: 'Instalación profesional de aire acondicionado. ❄️⚡\n\n¿Qué tipo de unidad? Incluye instalación eléctrica, tubería de cobre, drenaje, vacío y carga de gas.',
-          suggestion: {
-            type: 'Aire Acondicionado',
-            urgency: 'alta' as const,
-            description: 'Instalación completa - eléctrica, tubería, vacío y carga de gas',
-            estimatedCost: '$150,000 - $300,000',
-            estimatedTime: '4-8 horas'
-          }
-        }
-      }
-    }
-  }
+          triggers: ['instalación', 'instalar', 'nueva'],
+          response: '**Instalación profesional de aire acondicionado.** Incluye instalación eléctrica, tubería de cobre, vacío y carga de gas.',
+          suggestion: { type: 'Aire Acondicionado', urgency: 'media', description: 'Instalación completa', estimatedCost: '$150.000 – $300.000', estimatedTime: '4-8 h' },
+        },
+      },
+    },
+    {
+      keywords: ['electricidad', 'cableado', 'tablero', 'breaker', 'tomacorriente', 'interruptor'],
+      name: 'Electricidad',
+      problems: {
+        tablero: {
+          triggers: ['tablero', 'breaker', 'panel', 'disyuntor'],
+          response: '**Revisión de tablero eléctrico.** ¿Se disparan los breakers con frecuencia o hay alguno quemado? ¿Cuántos circuitos tiene el tablero?',
+          suggestion: { type: 'Electricidad', urgency: 'alta', description: 'Tablero — revisión y reparación', estimatedCost: '$80.000 – $200.000', estimatedTime: '2-4 h' },
+        },
+        instalacion: {
+          triggers: ['instalación', 'cableado', 'instalar', 'nueva'],
+          response: '**Instalación eléctrica residencial.** ¿Es una instalación nueva, adición de circuitos o cambio de cableado?',
+          suggestion: { type: 'Electricidad', urgency: 'media', description: 'Instalación eléctrica', estimatedCost: '$100.000 – $300.000', estimatedTime: '4-8 h' },
+        },
+      },
+    },
+    {
+      keywords: ['cámara', 'camara', 'alarma', 'cctv', 'seguridad electronica', 'vigilancia'],
+      name: 'Seguridad Electrónica',
+      problems: {
+        instalacion: {
+          triggers: ['instalación', 'instalar', 'cámara nueva', 'sistema nuevo'],
+          response: '**Instalación de sistema de seguridad.** ¿Cuántas cámaras necesitas y cuál es el área a cubrir (interior, exterior, ambos)?',
+          suggestion: { type: 'Seguridad', urgency: 'media', description: 'Instalación de cámaras y alarmas', estimatedCost: '$150.000 – $400.000', estimatedTime: '4-8 h' },
+        },
+        mantenimiento: {
+          triggers: ['mantenimiento', 'limpieza', 'revisión'],
+          response: '**Mantenimiento de cámaras de seguridad.** Limpieza de lentes, revisión de conexiones, actualización de firmware y prueba de grabación.',
+          suggestion: { type: 'Seguridad', urgency: 'baja', description: 'Mantenimiento del sistema', estimatedCost: '$60.000 – $120.000', estimatedTime: '2-3 h' },
+        },
+      },
+    },
+  ]
 
-  // Análisis inteligente del mensaje
-  for (const [applianceType, config] of Object.entries(patterns)) {
-    const hasAppliance = config.keywords.some(keyword =>
-      lowerMessage.includes(keyword) || conversationContext.includes(keyword)
+  // Match appliance + problem
+  for (const appliance of appliancePatterns) {
+    const hasAppliance = appliance.keywords.some(kw =>
+      lower.includes(kw) || context.includes(kw)
     )
+    if (!hasAppliance) continue
 
-    if (hasAppliance) {
-      // Buscar problema específico
-      for (const [problemType, problemConfig] of Object.entries(config.problems)) {
-        const hasProblem = problemConfig.pattern.some(pattern =>
-          lowerMessage.includes(pattern)
-        )
+    for (const [, prob] of Object.entries(appliance.problems)) {
+      const hasProblem = prob.triggers.some(t => lower.includes(t))
+      if (!hasProblem) continue
 
-        if (hasProblem) {
-          return {
-            response: problemConfig.response,
-            suggestion: problemConfig.suggestion,
-            confidence: 0.9,
-            followUpQuestions: generateFollowUpQuestions(applianceType, problemType)
-          }
-        }
-      }
-
-      // Si se menciona el electrodoméstico pero no el problema específico
       return {
-        response: `Veo que tienes un problema con tu ${applianceType}. 🔧\n\n¿Podrías describir exactamente qué está pasando? Por ejemplo: no enciende, hace ruidos extraños, no funciona correctamente, etc.`,
-        confidence: 0.7,
+        response: prob.response,
+        suggestion: prob.suggestion,
+        confidence: 0.92,
         followUpQuestions: [
-          `¿Qué síntomas presenta tu ${applianceType}?`,
-          `¿Cuándo comenzó el problema?`,
-          `¿Es urgente la reparación?`
-        ]
+          '¿Cuándo comenzó el problema?',
+          '¿Has intentado alguna solución?',
+          '¿Qué tan urgente es?',
+        ],
       }
     }
-  }
 
-  // Patrones genéricos para mantenimiento e instalación
-  if (lowerMessage.includes('mantenimiento') || lowerMessage.includes('limpieza') || lowerMessage.includes('preventivo')) {
+    // Appliance recognized but no specific problem
     return {
-      response: 'Mantenimiento preventivo es una excelente decisión! 🔧✨\n\n¿Para qué electrodoméstico necesitas el mantenimiento? Ofrecemos servicios completos que incluyen:\n\n• Limpieza profunda\n• Revisión de componentes\n• Calibración\n• Lubricación de partes móviles\n• Pruebas de funcionamiento',
-      confidence: 0.85,
+      response: `Entendido, tienes un problema con tu **${appliance.name}**. ¿Podrías describir exactamente qué está pasando? Por ejemplo: no enciende, hace ruidos, no cumple su función, gotea, etc.`,
+      confidence: 0.75,
       followUpQuestions: [
-        '¿Qué electrodoméstico necesita mantenimiento?',
-        '¿Cuánto tiempo tiene sin mantenimiento?',
-        '¿Has notado algún problema específico?'
-      ]
+        `¿Qué síntomas presenta tu ${appliance.name}?`,
+        '¿Cuándo comenzó el problema?',
+        '¿Es urgente la reparación?',
+      ],
     }
   }
 
-  if (lowerMessage.includes('instalación') || lowerMessage.includes('instalar') || lowerMessage.includes('conectar')) {
+  // Generic fallbacks
+  if (lower.includes('mantenimiento') || lower.includes('limpieza') || lower.includes('preventivo')) {
     return {
-      response: 'Instalación profesional garantizada! 🔧🏠\n\n¿Qué electrodoméstico necesitas instalar? Nuestros servicios incluyen:\n\n• Conexiones eléctricas seguras\n• Instalación hidráulica (si aplica)\n• Nivelación y calibración\n• Pruebas completas de funcionamiento\n• Garantía de instalación',
+      response: '**Mantenimiento preventivo** — excelente decisión para alargar la vida útil de tus equipos.\n\n¿Para qué electrodoméstico o sistema necesitas el mantenimiento?',
       confidence: 0.85,
-      followUpQuestions: [
-        '¿Qué tipo de electrodoméstico vas a instalar?',
-        '¿Es instalación nueva o reubicación?',
-        '¿Tienes las conexiones eléctricas listas?'
-      ]
+      followUpQuestions: ['¿Qué equipo necesita mantenimiento?', '¿Cuánto tiempo lleva sin mantenimiento?'],
     }
   }
 
-  // Respuestas a consultas generales
-  if (lowerMessage.includes('precio') || lowerMessage.includes('costo') || lowerMessage.includes('cuánto')) {
+  if (lower.includes('instalación') || lower.includes('instalar')) {
     return {
-      response: 'Te explico nuestros precios: 💰\n\n• **Diagnóstico:** $35,000\n• **Reparación básica:** $50,000-$120,000\n• **Servicio completo:** $80,000-$200,000\n• **Mantenimiento preventivo:** $45,000\n\n*Precios incluyen mano de obra. Repuestos se cobran aparte.*\n\n¿Te gustaría programar una visita de diagnóstico?',
-      confidence: 0.95
+      response: '**Instalación profesional** con garantía incluida.\n\n¿Qué equipo o sistema necesitas instalar? (lavadora, nevera, calentador, aire, cámaras, electricidad, etc.)',
+      confidence: 0.85,
+      followUpQuestions: ['¿Qué tipo de equipo vas a instalar?', '¿Es instalación nueva o reubicación?'],
     }
   }
 
-  if (lowerMessage.includes('tiempo') || lowerMessage.includes('cuándo') || lowerMessage.includes('demora')) {
-    return {
-      response: 'Nuestros tiempos de servicio: ⏰\n\n• **Visita diagnóstico:** 24-48 horas\n• **Reparación in situ:** 2-4 horas\n• **Con repuestos:** 3-7 días\n• **Servicios urgentes:** Mismo día (+30%)\n\n¿Qué tan urgente es tu solicitud?',
-      confidence: 0.95
-    }
-  }
-
-  if (lowerMessage.includes('garantía') || lowerMessage.includes('garantia')) {
-    return {
-      response: 'Nuestra garantía te protege: 🛡️\n\n• **Mano de obra:** 3 meses\n• **Repuestos nuevos:** 6-12 meses\n• **Servicio completo:** Hasta 1 año\n• **Revisión gratuita:** 30 días\n\n¿Tienes algún servicio previo con nosotros?',
-      confidence: 0.9
-    }
-  }
-
-  // Respuesta genérica inteligente
+  // Default
   return {
-    response: `Entiendo tu consulta: "${message}" 🤔\n\nPara ayudarte mejor, necesito más información:\n\n1. **¿Qué electrodoméstico es?** (lavadora, nevera, aire, etc.)\n2. **¿Cuál es el problema específico?**\n3. **¿Qué tan urgente es?**\n\nCon estos datos puedo darte una cotización precisa y programar la visita.`,
+    response: `Para ayudarte mejor necesito saber:\n\n1. **¿Qué equipo o servicio necesitas?** (lavadora, nevera, calentador, electricidad, cámaras, etc.)\n2. **¿Cuál es el problema específico?**\n3. **¿Qué tan urgente es?**\n\nCon esos datos te doy una cotización y agendamos la visita.`,
     confidence: 0.6,
     followUpQuestions: [
-      '¿Qué tipo de electrodoméstico necesita reparación?',
+      '¿Qué tipo de electrodoméstico o servicio necesitas?',
       '¿Cuáles son los síntomas del problema?',
-      '¿Prefieres servicio normal o urgente?'
-    ]
+      '¿Prefieres servicio normal o urgente?',
+    ],
   }
-}
-
-function generateFollowUpQuestions(applianceType: string, problemType: string): string[] {
-  const questions: Record<string, Record<string, string[]>> = {
-    lavadora: {
-      ruido: [
-        '¿En qué momento del ciclo se produce el ruido?',
-        '¿Has notado si vibra mucho durante el centrifugado?',
-        '¿Cuántos años tiene la lavadora?'
-      ],
-      noEnciende: [
-        '¿Hay luz en el panel de control?',
-        '¿El tomacorriente funciona con otros aparatos?',
-        '¿Se escucha algún sonido al presionar encendido?'
-      ]
-    },
-    nevera: {
-      noEnfria: [
-        '¿Cuánto tiempo lleva sin enfriar?',
-        '¿Los alimentos en el congelador están descongelándose?',
-        '¿La luz interior funciona normalmente?'
-      ]
-    }
-  }
-
-  return questions[applianceType]?.[problemType] || [
-    '¿Cuándo comenzó el problema?',
-    '¿Has intentado alguna solución?',
-    '¿Qué tan urgente es la reparación?'
-  ]
 }
