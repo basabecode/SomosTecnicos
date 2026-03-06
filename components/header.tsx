@@ -338,11 +338,11 @@ export default function Header() {
               aria-label="SomosTécnicos — Ir al inicio"
             >
               <Image
-                src="/img-3d/somos_tecnicos.png"
+                src="/img-3d/logotipo_somostecnicos_nuevo_sin_fondo.png"
                 alt="SomosTécnicos"
-                width={100}
-                height={25}
-                className="h-6 w-auto object-contain"
+                width={150}
+                height={50}
+                className="h-10 w-auto object-contain"
                 priority
               />
             </Link>

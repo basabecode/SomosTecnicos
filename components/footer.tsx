@@ -19,7 +19,7 @@ export default function Footer() {
           <div className="sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="/img-3d/logo_modificado.jpeg"
+                src="/img-3d/logotipo-ST.png"
                 alt="SomosTécnicos"
                 width={56}
                 height={56}

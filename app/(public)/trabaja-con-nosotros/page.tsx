@@ -80,7 +80,7 @@ const jobPostingSchema = {
     '@type': 'Organization',
     name: 'SomosTécnicos',
     sameAs: 'https://somostecnicos.com',
-    logo: 'https://somostecnicos.com/img-3d/logo_modificado.jpeg',
+    logo: 'https://somostecnicos.com/img-3d/logotipo-ST.png',
   },
   jobLocation: {
     '@type': 'Place',
@@ -338,7 +338,6 @@ export default function TrabajaConNosotrosPage() {
                   href="/register/technician"
                   className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-bold px-8 py-3 rounded-lg transition-colors duration-200 text-[0.9375rem]"
                 >
-                  <Wrench className="w-4 h-4" />
                   Postularme ahora — gratis
                 </Link>
                 <a
@@ -704,7 +703,6 @@ export default function TrabajaConNosotrosPage() {
                 href="/register/technician"
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034] hover:bg-gray-50 font-bold px-10 py-3.5 rounded-lg transition-colors duration-200 text-[1.0625rem]"
               >
-                <Wrench className="w-5 h-5" />
                 Registrarme como técnico
               </Link>
               <a

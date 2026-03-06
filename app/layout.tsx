@@ -90,9 +90,9 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   icons: {
-    icon: '/img-3d/logo_modificado.jpeg',
-    shortcut: '/img-3d/logo_modificado.jpeg',
-    apple: '/img-3d/logo_modificado.jpeg',
+    icon: '/img-3d/logoST-blanco.png',
+    shortcut: '/img-3d/logoST-blanco.png',
+    apple: '/img-3d/logoST-blanco.png',
   },
   verification: {
     google: 'geutOlRYLvqkZ5QpsYNSq0B7k0gXTOBSq-yot0RsDR8', // Placeholder for user to fill
