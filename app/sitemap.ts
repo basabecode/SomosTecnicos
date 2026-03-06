@@ -7,9 +7,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Fechas de última modificación real del contenido.
   // IMPORTANTE: actualizar manualmente cuando se hagan cambios significativos en cada sección.
   // NO usar new Date() aquí: decirle a Google que todo cambió "hoy" cada día es una señal engañosa.
-  const today = new Date('2026-02-27')      // homepage y páginas de servicio (última actualización SEO)
+  const today = new Date('2026-03-06')      // homepage y páginas de servicio (estilos + seguridad)
   const lastWeek = new Date('2026-02-15')   // contacto, sobre-nosotros, admin-info
-  const lastMonth = new Date('2026-02-01')  // términos y condiciones (contenido legal estable)
+  const termsFixed = new Date('2026-03-06') // términos: refactorizado a Server Component (ahora indexable)
 
   return [
     // Página principal – máxima prioridad SEO
@@ -28,10 +28,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
 
-    // Términos y condiciones – contenido legal estable
+    // Términos y condiciones – refactorizado a Server Component (ahora correctamente indexable)
     {
       url: `${baseUrl}/terminos-y-condiciones`,
-      lastModified: lastMonth,
+      lastModified: termsFixed,
       changeFrequency: 'yearly',
       priority: 0.4,
     },
