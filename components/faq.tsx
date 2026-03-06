@@ -89,17 +89,17 @@ export default function FAQ() {
                       [&>svg]:hidden
                     "
                   >
-                    {/* Number */}
-                    <span
-                      className="
-                        shrink-0 text-2xl font-black leading-none tabular-nums
-                        text-slate-200 group-hover:text-[#A50034]/40
-                        group-data-[state=open]:text-[#A50034]
-                        transition-colors duration-200 select-none mt-0.5
-                      "
-                      aria-hidden="true"
-                    >
-                      {String(i + 1).padStart(2, '0')}
+                    {/* Viñeta — rombo geométrico */}
+                    <span className="shrink-0 mt-2" aria-hidden="true">
+                      <span
+                        className="
+                          block w-2.5 h-2.5 rotate-45
+                          border border-slate-200 bg-white
+                          group-hover:border-[#A50034]/50 group-hover:bg-[#A50034]/10
+                          group-data-[state=open]:bg-[#A50034] group-data-[state=open]:border-[#A50034]
+                          transition-all duration-200
+                        "
+                      />
                     </span>
 
                     {/* Question + custom chevron */}

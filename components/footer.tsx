@@ -1,55 +1,75 @@
-import { Phone, Mail, Clock } from 'lucide-react'
+import { Phone, Mail, Clock, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { TermsLink } from './terms-link'
 
+const NAV_LINKS = [
+  { href: '/', label: 'Inicio' },
+  { href: '/servicios', label: 'Servicios' },
+  { href: '/blog', label: 'Blog técnico' },
+  { href: '/barrios', label: 'Barrios' },
+  { href: '/sobre-nosotros', label: 'Sobre Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+  { href: '/trabaja-con-nosotros', label: 'Trabaja con Nosotros' },
+]
+
+const SERVICIOS_LINKS = [
+  { href: '/servicios/reparacion-neveras-cali', label: 'Neveras' },
+  { href: '/servicios/reparacion-lavadoras-cali', label: 'Lavadoras' },
+  { href: '/servicios/reparacion-calentadores-cali', label: 'Calentadores' },
+  { href: '/servicios/reparacion-estufas-hornos-cali', label: 'Estufas y Hornos' },
+  { href: '/servicios/reparacion-televisores-cali', label: 'Televisores' },
+  { href: '/servicios/electricista-a-domicilio-cali', label: 'Electricista' },
+  { href: '/servicios/tecnico-computadores-redes-cali', label: 'Computadores' },
+  { href: '/servicios/camaras-seguridad-alarmas-cali', label: 'Cámaras y Alarmas' },
+]
+
+function FooterHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 mb-3">
+      {children}
+    </h4>
+  )
+}
+
 /**
- * Footer - 3 columnas responsive
- * - Logo y descripción
- * - Enlaces de navegación
- * - Información de contacto
- * - Copyright
+ * Footer compacto — 4 columnas, tipografía unificada, logo blanco
  */
 export default function Footer() {
   return (
     <footer id="footer" className="bg-[#2C3E50] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
-          {/* Columna 1: Logo y descripción */}
-          <div className="sm:col-span-2 md:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+
+          {/* Col 1: Logo + descripción */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="mb-3">
               <Image
-                src="/img-3d/logotipo-ST.png"
+                src="/img-3d/logotipo_somostecnicos_nuevo_sin_fondo.png"
                 alt="SomosTécnicos"
-                width={56}
-                height={56}
-                className="object-contain w-14 h-14"
+                width={150}
+                height={50}
+                className="h-8 w-auto object-contain brightness-0 invert"
               />
-              <h3 className="text-2xl font-bold text-white">somostecnicos</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed text-sm">
-              Servicio Técnico Especializado en reparación, instalación y mantenimiento de equipos domésticos y tecnológicos. Con más de 5 años de experiencia en los hogares colombianos.
+            <p className="text-[13px] text-slate-400 leading-relaxed mb-3">
+              Técnicos certificados a domicilio en Cali. Reparación, instalación y mantenimiento de electrodomésticos y tecnología.
             </p>
+            <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
+              <MapPin size={12} className="flex-shrink-0" />
+              <span>Cali, Colombia · Lun–Sáb 8am–6pm</span>
+            </div>
           </div>
 
-          {/* Columna 2: Navegación */}
+          {/* Col 2: Navegación */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Navegación</h4>
-            <nav className="flex flex-col gap-2.5">
-              {[
-                { href: '/', label: 'Inicio' },
-                { href: '/servicios', label: 'Servicios' },
-                { href: '/blog', label: 'Blog técnico' },
-                { href: '/barrios', label: 'Barrios que cubrimos' },
-                { href: '/sobre-nosotros', label: 'Sobre Nosotros' },
-                { href: '/contacto', label: 'Contacto' },
-                { href: '/admin-info', label: 'Seguimiento de Órdenes' },
-                { href: '/trabaja-con-nosotros', label: 'Trabaja con Nosotros' },
-              ].map(({ href, label }) => (
+            <FooterHeading>Navegación</FooterHeading>
+            <nav className="flex flex-col gap-1.5">
+              {NAV_LINKS.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  className="text-[13px] text-slate-400 hover:text-white transition-colors duration-150"
                 >
                   {label}
                 </Link>
@@ -57,24 +77,15 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Columna 3: Servicios */}
+          {/* Col 3: Servicios */}
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Servicios</h4>
-            <nav className="flex flex-col gap-2.5">
-              {[
-                { href: '/servicios/reparacion-neveras-cali', label: 'Neveras' },
-                { href: '/servicios/reparacion-lavadoras-cali', label: 'Lavadoras' },
-                { href: '/servicios/reparacion-calentadores-cali', label: 'Calentadores' },
-                { href: '/servicios/reparacion-estufas-hornos-cali', label: 'Estufas y Hornos' },
-                { href: '/servicios/reparacion-televisores-cali', label: 'Televisores' },
-                { href: '/servicios/electricista-a-domicilio-cali', label: 'Electricista' },
-                { href: '/servicios/tecnico-computadores-redes-cali', label: 'Computadores' },
-                { href: '/servicios/camaras-seguridad-alarmas-cali', label: 'Cámaras y Alarmas' },
-              ].map(({ href, label }) => (
+            <FooterHeading>Servicios</FooterHeading>
+            <nav className="flex flex-col gap-1.5">
+              {SERVICIOS_LINKS.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  className="text-[13px] text-slate-400 hover:text-white transition-colors duration-150"
                 >
                   {label}
                 </Link>
@@ -82,58 +93,52 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Columna 4: Contacto */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Contacto</h4>
-            <div className="flex flex-col gap-3">
+          {/* Col 4: Contacto */}
+          <div className="col-span-2 md:col-span-1">
+            <FooterHeading>Contacto</FooterHeading>
+            <div className="flex flex-col gap-2.5">
               <a
                 href="tel:+573003094854"
-                className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
+                className="flex items-center gap-2.5 text-[13px] text-slate-400 hover:text-white transition-colors duration-150"
               >
-                <Phone size={20} />
-                <span>+57 3003094854</span>
+                <Phone size={14} className="flex-shrink-0 text-slate-500" />
+                +57 300 309 4854
               </a>
               <a
                 href="mailto:soporte@somostecnicos.com"
-                className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
+                className="flex items-center gap-2.5 text-[13px] text-slate-400 hover:text-white transition-colors duration-150"
               >
-                <Mail size={20} />
-                <span>soporte@somostecnicos.com</span>
+                <Mail size={14} className="flex-shrink-0 text-slate-500" />
+                <span className="break-all">soporte@somostecnicos.com</span>
               </a>
-              <div className="flex items-center gap-3 text-gray-300">
-                <Clock size={20} />
-                <span>Lun-Sáb 8am-6pm</span>
+              <div className="flex items-center gap-2.5 text-[13px] text-slate-400">
+                <Clock size={14} className="flex-shrink-0 text-slate-500" />
+                Lun–Sáb · 8am – 6pm
               </div>
             </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-600 mt-12 pt-8">
-          <div className="flex flex-col gap-6 text-gray-400">
-            {/* Copyright y créditos */}
-            <div className="flex items-center justify-center text-sm text-center">
-              <p className="text-gray-400">© 2026 SomosTécnicos — Cali, Colombia. Todos los derechos reservados.</p>
-            </div>
-
-            {/* Enlaces legales */}
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
-              <TermsLink className="text-gray-400 hover:text-gray-200 whitespace-nowrap" showIcon={false}>
-                Términos y Condiciones
-              </TermsLink>
-              <span className="text-gray-600 hidden sm:inline">•</span>
-              <TermsLink className="text-gray-400 hover:text-gray-200 whitespace-nowrap" showIcon={false}>
-                Política de Privacidad
-              </TermsLink>
-              <span className="text-gray-600 hidden sm:inline">•</span>
-              <a
-                href="/admin-info"
-                className="text-gray-500 hover:text-gray-300 transition-colors whitespace-nowrap"
-                title="Información del Panel Administrativo"
-              >
-                Información y Funcionamiento
-              </a>
-            </div>
+        {/* Barra de copyright */}
+        <div className="border-t border-white/10 mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] text-slate-500">
+            © 2026 SomosTécnicos · Cali, Colombia. Todos los derechos reservados.
+          </p>
+          <div className="flex items-center gap-3 text-[11px]">
+            <TermsLink className="text-slate-500 hover:text-slate-300 transition-colors" showIcon={false}>
+              Términos y Condiciones
+            </TermsLink>
+            <span className="text-slate-600">·</span>
+            <TermsLink className="text-slate-500 hover:text-slate-300 transition-colors" showIcon={false}>
+              Privacidad
+            </TermsLink>
+            <span className="text-slate-600">·</span>
+            <a
+              href="/admin-info"
+              className="text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              Funcionamiento
+            </a>
           </div>
         </div>
       </div>
