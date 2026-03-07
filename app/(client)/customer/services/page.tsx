@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -532,20 +533,9 @@ export default function CustomerServicesPage() {
       </div>
 
       {filteredServices.length === 0 && (
-        <Card>
-          <CardContent className="text-center py-12">
-            <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No hay servicios</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== 'all'
-                ? 'No se encontraron servicios con los filtros aplicados'
-                : 'No tienes servicios activos en este momento'}
-            </p>
-            <Button onClick={() => (window.location.href = '/customer/request')}>
-              Solicitar Nuevo Servicio
-            </Button>
-          </CardContent>
-        </Card>
+        searchTerm || statusFilter !== 'all'
+          ? <EmptyState variant="no-results" />
+          : <EmptyState variant="no-services" onAction={() => { window.location.href = '/customer/request' }} />
       )}
 
       {/* Dialog de detalle */}

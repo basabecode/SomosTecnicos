@@ -82,7 +82,7 @@ export default function OrderTrackingDashboard() {
     <Card className="border-2 border-[#E0E0E0] h-fit">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-bold text-[#2C3E50] flex items-center gap-2">
-          <Package size={20} className="text-[#A50034]" />
+          <Package size={20} className="text-primary" />
           Estado de Servicio
         </CardTitle>
       </CardHeader>
@@ -99,7 +99,7 @@ export default function OrderTrackingDashboard() {
           <Button
             onClick={handleSearch}
             size="sm"
-            className="bg-[#A50034] hover:bg-[#E74C3C] text-white px-3"
+            className="bg-primary hover:bg-primary/80 text-white px-3"
             disabled={isLoading}
           >
             <Search size={16} />

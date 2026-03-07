@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireTechnicianManager } from '@/lib/auth'
 import { ORDER_STATES } from '@/lib/constants'
+import { isValidTransition } from '@/lib/state-machine'
+import { sendNotification } from '@/lib/services/notification.service'
 import { logger } from '@/lib/logger'
 import { z } from 'zod'
 
@@ -84,21 +86,12 @@ export async function PUT(
       )
     }
 
-    // Validar transiciones de estado válidas
-    const validTransitions: Record<string, string[]> = {
-      [ORDER_STATES.PENDIENTE]: [ORDER_STATES.ASIGNADO, ORDER_STATES.CANCELADO],
-      [ORDER_STATES.ASIGNADO]: [ORDER_STATES.EN_PROCESO, ORDER_STATES.CANCELADO],
-      [ORDER_STATES.EN_PROCESO]: [ORDER_STATES.COMPLETADO, ORDER_STATES.CANCELADO],
-      [ORDER_STATES.COMPLETADO]: [], // Final state
-      [ORDER_STATES.CANCELADO]: [] // Final state
-    }
-
-    const allowedNextStates = validTransitions[existingOrder.estado] || []
-    if (!allowedNextStates.includes(nuevoEstado)) {
+    // Validar transición usando la FSM centralizada (lib/state-machine.ts)
+    if (!isValidTransition(existingOrder.estado, nuevoEstado)) {
       return NextResponse.json(
         {
           success: false,
-          error: `No se puede cambiar de estado "${existingOrder.estado}" a "${nuevoEstado}"`
+          error: `Transición inválida: "${existingOrder.estado}" → "${nuevoEstado}"`
         },
         { status: 400 }
       )
@@ -196,14 +189,34 @@ export async function PUT(
       return updatedOrder
     })
 
-    // Notificación al cliente (opcional)
+    // Notificaciones post-transición
     try {
-      if (nuevoEstado === ORDER_STATES.ASIGNADO || nuevoEstado === ORDER_STATES.EN_PROCESO || nuevoEstado === ORDER_STATES.COMPLETADO) {
-        // TODO: Implementar notificación al cliente
-        logger.audit('order_status_notification_pending', 'system', {
+      // Notificar al cliente si tiene cuenta registrada
+      if (existingOrder.customerId) {
+        await sendNotification({
+          userId: existingOrder.customerId.toString(),
+          userType: 'customer',
+          to: existingOrder.email,
+          subject: `Actualización de Orden #${existingOrder.orderNumber}`,
+          message: `Tu orden ha cambiado al estado: ${nuevoEstado}`,
+          type: 'SYSTEM',
           orderId: existingOrder.id,
-          newStatus: nuevoEstado,
-          action: 'status_change_notification'
+          metadata: { previousState: existingOrder.estado, newState: nuevoEstado }
+        })
+      }
+
+      // Notificar al técnico asignado si existe
+      if (existingOrder.assignments.length > 0) {
+        const assignment = existingOrder.assignments[0]
+        await sendNotification({
+          userId: assignment.technician.id.toString(),
+          userType: 'technician',
+          to: assignment.technician.nombre,
+          subject: `Orden #${existingOrder.orderNumber} actualizada`,
+          message: `El administrador cambió el estado de la orden a: ${nuevoEstado}`,
+          type: 'SYSTEM',
+          orderId: existingOrder.id,
+          metadata: { previousState: existingOrder.estado, newState: nuevoEstado }
         })
       }
     } catch (notificationError) {

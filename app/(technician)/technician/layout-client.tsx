@@ -11,7 +11,6 @@ import { UnifiedSidebar, SidebarItem } from '@/components/layout/unified-sidebar
 import { UnifiedHeader, HeaderMenuItem } from '@/components/layout/unified-header'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { BottomNav } from '@/components/navigation/bottom-nav'
 import {
   Home,
@@ -57,13 +56,12 @@ const sidebarItems: SidebarItem[] = [
   },
 ]
 
-// Items para navegación móvil inferior
+// Items para navegación móvil inferior (4 acciones primarias; Configuración va en el menú del avatar)
 const mobileNavItems = [
   { label: 'Inicio', href: '/technician/dashboard', icon: Home },
-  { label: 'Mensajes', href: '/technician/messages', icon: Mail },
   { label: 'Asignaciones', href: '/technician/assignments', icon: ClipboardList },
+  { label: 'Mensajes', href: '/technician/messages', icon: Mail },
   { label: 'Historial', href: '/technician/history', icon: History },
-  { label: 'Config', href: '/technician/settings', icon: Settings },
 ]
 
 export default function TechnicianLayoutClient({
@@ -71,9 +69,15 @@ export default function TechnicianLayoutClient({
 }: {
   children: React.ReactNode
 }) {
-  const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuth()
+  const pathname = usePathname()
+
+  // Título de página activa basado en pathname
+  const activeItem = sidebarItems.find(
+    item => pathname === item.href || pathname.startsWith(item.href + '/')
+  )
+  const pageTitle = activeItem?.title ?? 'Portal Técnico'
 
   // Datos del usuario
   const userData = {
@@ -123,7 +127,7 @@ export default function TechnicianLayoutClient({
         <div className="flex flex-col flex-1 overflow-hidden pb-16 md:pb-0">
           {/* Header */}
           <UnifiedHeader
-            title="Portal Técnico"
+            title={pageTitle}
             userName={userData.name}
             userEmail={userData.email}
             userInitials={userData.initials}
@@ -131,16 +135,7 @@ export default function TechnicianLayoutClient({
             menuItems={headerMenuItems}
             onLogout={handleLogout}
             showNotifications={true}
-            rightContent={
-              <div className="hidden md:flex items-center gap-2">
-                <Badge
-                  variant="outline"
-                  className="bg-green-50 text-green-700 border-green-200"
-                >
-                  Disponible
-                </Badge>
-              </div>
-            }
+            rightContent={undefined}
             leftContent={
               <div className="md:hidden">
                 <Sheet>

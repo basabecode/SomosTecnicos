@@ -185,7 +185,7 @@ export function VisitReportForm({
       </Button>
 
       {/* Header - Info de Orden */}
-      <Card className="border-l-4 border-l-[#A50034]">
+      <Card className="border-l-4 border-l-primary">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Informe de Visita</CardTitle>
@@ -215,7 +215,7 @@ export function VisitReportForm({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#A50034]" />
+            <FileText className="w-5 h-5 text-primary" />
             Diagnóstico y Resultado
           </CardTitle>
         </CardHeader>
@@ -302,7 +302,7 @@ export function VisitReportForm({
 
               {/* Seccion de Costos */}
               <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
-                <h4 className="font-semibold text-[#A50034]">Costos</h4>
+                <h4 className="font-semibold text-primary">Costos</h4>
 
                 {/* Costo Visita - siempre visible */}
                 <FormField
@@ -437,7 +437,7 @@ export function VisitReportForm({
                 <div className="pt-3 border-t">
                   <div className="flex justify-between items-center text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-[#A50034]">{formatCurrency(costoTotal)}</span>
+                    <span className="text-primary">{formatCurrency(costoTotal)}</span>
                   </div>
                   <div className="flex flex-col gap-1 mt-1 text-xs text-muted-foreground">
                     <span>Visita: {formatCurrency(costoVisita)}</span>
@@ -493,7 +493,7 @@ export function VisitReportForm({
               {/* Submit */}
               <Button
                 type="submit"
-                className="w-full bg-[#A50034] hover:bg-[#8B002B] h-12 text-lg"
+                className="w-full bg-primary hover:bg-primary/90 h-12 text-lg"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

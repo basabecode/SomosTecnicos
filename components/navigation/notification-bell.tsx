@@ -36,9 +36,10 @@ export function NotificationBell() {
       open={open}
       onOpenChange={(isOpen) => {
         setOpen(isOpen)
-        // Auto-mark all as read when opening notification menu
-        if (isOpen && unreadCount > 0) {
-             markAllAsRead()
+        // Marcar como leídas al cerrar el panel (no al abrir),
+        // para que el usuario pueda ver cuáles son nuevas antes de que desaparezca el punto.
+        if (!isOpen && unreadCount > 0) {
+          markAllAsRead()
         }
       }}
     >
@@ -47,7 +48,7 @@ export function NotificationBell() {
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
-              className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] bg-[#A50034] text-white text-[10px] flex items-center justify-center border-2 border-white"
+              className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] bg-primary text-white text-[10px] flex items-center justify-center border-2 border-white"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
             </Badge>
@@ -89,7 +90,7 @@ export function NotificationBell() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs h-7 text-[#A50034] hover:text-[#8B002B] hover:bg-red-50"
+                className="text-xs h-7 text-primary hover:text-primary/80 hover:bg-red-50"
                 onClick={(e) => {
                   e.stopPropagation()
                   markAllAsRead()
@@ -131,7 +132,7 @@ export function NotificationBell() {
                           {notification.asunto || 'Notificación del Sistema'}
                         </p>
                         {!notification.read && (
-                          <div className="h-2 w-2 rounded-full bg-[#A50034] shrink-0 mt-1" />
+                          <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1" />
                         )}
                       </div>
                       <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">

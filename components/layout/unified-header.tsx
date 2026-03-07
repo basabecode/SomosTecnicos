@@ -109,7 +109,7 @@ export function UnifiedHeader({
             >
               <Avatar className="h-9 w-9 md:h-10 md:w-10">
                 <AvatarImage src={userAvatar} alt={userName} />
-                <AvatarFallback className="bg-[#991B1B] text-white text-xs md:text-sm font-semibold">
+                <AvatarFallback className="bg-primary text-white text-xs md:text-sm font-semibold">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>

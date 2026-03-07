@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { z } from 'zod'
+import { sendNotification } from '@/lib/services/notification.service'
 
 /**
  * API para actualizar estado de asignación específica
@@ -57,7 +58,7 @@ export async function PUT(
       }
 
       // Verificar permisos: solo el técnico asignado o administradores pueden actualizar
-      if (user.role !== 'admin' && user.role !== 'manager' && user.id !== assignment.technicianId) {
+      if (user.role !== 'admin' && user.role !== 'technician_manager' && user.id !== assignment.technicianId) {
         return NextResponse.json(
           { error: 'No tienes permisos para actualizar esta asignación' },
           { status: 403 }
@@ -74,7 +75,7 @@ export async function PUT(
       }
 
       const allowedStates = validTransitions[assignment.estado] || []
-      if (!allowedStates.includes(estado) && user.role !== 'admin') {
+      if (!allowedStates.includes(estado) && user.role !== 'admin' && user.role !== 'technician_manager') {
         return NextResponse.json(
           { error: `No se puede cambiar de ${assignment.estado} a ${estado}` },
           { status: 400 }
@@ -99,9 +100,9 @@ export async function PUT(
         if (estado === 'en_proceso') {
           orderStatus = 'en_proceso'
         } else if (estado === 'completado') {
-          orderStatus = 'completada'
+          orderStatus = 'completado'
         } else if (estado === 'cancelado') {
-          orderStatus = 'cancelada'
+          orderStatus = 'cancelado'
         }
 
         await tx.order.update({

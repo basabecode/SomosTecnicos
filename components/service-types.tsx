@@ -67,8 +67,8 @@ export default function ServiceTypes() {
       title: 'Reparación Especializada',
       description: 'Diagnóstico y solución de fallas. Recuperamos su equipo.',
       badgeLabel: 'Inmediata',
-      accentColor: 'border-l-[#A50034]',
-      badgeColor: 'text-[#A50034] border-[#A50034]',
+      accentColor: 'border-l-primary',
+      badgeColor: 'text-primary border-primary',
     },
     {
       title: 'Instalación Calificada',

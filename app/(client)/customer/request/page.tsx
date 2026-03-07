@@ -460,7 +460,7 @@ import { useToast } from '@/hooks/use-toast'
                          <div>
                            <p className="text-sm font-semibold text-gray-900">Costo de la Visita</p>
                            <p className="text-sm text-gray-600 mt-1">
-                             Las revisiones dentro de la ciudad tienen un costo de <span className="font-bold text-[#A50034]">$50.000 COP</span>
+                             Las revisiones dentro de la ciudad tienen un costo de <span className="font-bold text-primary">$50.000 COP</span>
                            </p>
                          </div>
                       </div>
@@ -522,7 +522,7 @@ import { useToast } from '@/hooks/use-toast'
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full h-14 text-lg font-bold rounded-2xl active-tap bg-[#A50034] hover:bg-[#8B002B] shadow-xl shadow-primary/20"
+              className="w-full h-14 text-lg font-bold rounded-2xl active-tap bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20"
               disabled={
                 isSubmitting || !selectedService || !selectedDate || !selectedTime
               }

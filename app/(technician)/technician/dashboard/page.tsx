@@ -26,6 +26,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { useToast } from '@/hooks/use-toast'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { NextJobCard, NoAssignmentsEmptyState } from '@/components/domain'
@@ -66,6 +67,7 @@ interface TechnicianProfile {
 export default function TechnicianDashboard() {
   const router = useRouter()
   const { user } = useAuth()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [stats, setStats] = useState<TechStats>({ pending: 0, inProgress: 0, completedToday: 0 })
@@ -161,15 +163,21 @@ export default function TechnicianDashboard() {
 
       if (data.success) {
         // Recargar datos para reflejar cambios
-        // Nota: fetchAssignments pone loading=true, lo que hará parpadear la UI.
-        // Podríamos optimizarlo, pero para v1 está bien.
         fetchAssignments()
       } else {
-        alert('Error actualizando estado: ' + (data.error || 'Desconocido'))
+        toast({
+          title: 'Error al actualizar estado',
+          description: data.error || 'Inténtalo de nuevo',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Error:', error)
-      alert('Error de conexión al actualizar estado')
+      toast({
+        title: 'Error de conexión',
+        description: 'No se pudo actualizar el estado. Verifica tu conexión.',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -200,7 +208,11 @@ export default function TechnicianDashboard() {
                  statusText: response.statusText,
                  data: errorData
              })
-             alert(`Error al actualizar estado: ${errorData.error || response.statusText}`)
+             toast({
+               title: 'Error al actualizar estado',
+               description: errorData.error || response.statusText,
+               variant: 'destructive',
+             })
         }
       } catch (error) {
           console.error('Error updating status:', error)
@@ -238,7 +250,7 @@ export default function TechnicianDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#A50034] to-[#2C3E50] bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-[#2C3E50] bg-clip-text text-transparent">
             Panel del Técnico
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
@@ -270,10 +282,14 @@ export default function TechnicianDashboard() {
 
            <div className="flex items-center justify-between sm:justify-start gap-2 text-[10px] sm:text-xs text-muted-foreground">
              <span className="flex items-center flex-1 sm:flex-none">
-               <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-1.5 ${
-                 technician?.status === 'disponible' ? 'bg-green-500 animate-pulse' :
-                 technician?.status === 'ocupado' ? 'bg-blue-500' : 'bg-orange-500'
-               }`}></div>
+               <div
+                 role="img"
+                 aria-label={`Estado: ${technician?.status === 'disponible' ? 'Disponible' : technician?.status === 'ocupado' ? 'En servicio' : 'En pausa'}`}
+                 className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-1.5 ${
+                   technician?.status === 'disponible' ? 'bg-green-500 animate-pulse' :
+                   technician?.status === 'ocupado' ? 'bg-blue-500' : 'bg-orange-500'
+                 }`}
+               />
                 Estado: {
                   technician?.status === 'disponible' ? 'Disponible' :
                   technician?.status === 'ocupado' ? 'En servicio' : 'En pausa'
@@ -287,8 +303,8 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Estado Actual - Scrollable on mobile */}
-      <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Pendientes</CardTitle>
             <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-500" />
@@ -301,7 +317,7 @@ export default function TechnicianDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">
               En Progreso
@@ -316,7 +332,7 @@ export default function TechnicianDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Completados</CardTitle>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
@@ -327,7 +343,7 @@ export default function TechnicianDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Zona</CardTitle>
             <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />
@@ -387,7 +403,7 @@ export default function TechnicianDashboard() {
                   {/* Resto de asignaciones - Lista compacta */}
                   {assignments.length > 1 && (
                     <div className="space-y-3">
-                      <h4 className="text-small font-[600] text-text-secondary uppercase tracking-wide">
+                      <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                         Siguientes Servicios ({assignments.length - 1})
                       </h4>
                       {assignments.slice(1).map((service) => (
@@ -459,7 +475,7 @@ export default function TechnicianDashboard() {
                               <Button
                                 size="sm"
                                 variant="secondary"
-                                className="flex-1 sm:flex-none bg-[#A50034] text-white hover:bg-[#8B002B]"
+                                className="flex-1 sm:flex-none bg-primary text-white hover:bg-primary/90"
                                 onClick={() => router.push(`/technician/assignments/${service.id}/execute`)}
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
@@ -517,7 +533,7 @@ export default function TechnicianDashboard() {
                 </Link>
               </Button>
 
-              <Button className="w-full justify-start" variant="outline" onClick={() => alert("Reportar problema")}>
+              <Button className="w-full justify-start" variant="outline" onClick={() => toast({ title: 'Próximamente', description: 'La función de reportar incidencias estará disponible pronto.' })}>
                 <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
                 Reportar Incidencia
               </Button>

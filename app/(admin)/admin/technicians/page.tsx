@@ -6,6 +6,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { EmptyState } from '@/components/domain'
 import Link from 'next/link'
 import { ProtectedRoute } from '@/contexts/auth-context'
 import {
@@ -446,11 +447,7 @@ export default function TechniciansPage() {
                 ))}
               </div>
             ) : technicians.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  No se encontraron técnicos
-                </p>
-              </div>
+              <EmptyState variant="no-technicians" />
             ) : (
               <div className="overflow-x-auto">
                 <Table>

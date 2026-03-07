@@ -92,7 +92,7 @@ export default function ContactoPage() {
         <section className="relative bg-[#1a0a0f] text-white py-16 overflow-hidden">
           {/* Decorative gradients */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a0f] via-[#2d0a15] to-[#1a0a0f] pointer-events-none" />
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#A50034]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative z-10">
@@ -129,9 +129,9 @@ export default function ContactoPage() {
               {/* Teléfono */}
               <a
                 href="tel:+573003094854"
-                className="group bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-[#A50034]/40 hover:-translate-y-1 transition-all duration-200"
+                className="group bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-primary/40 hover:-translate-y-1 transition-all duration-200"
               >
-                <div className="w-14 h-14 bg-[#A50034] rounded-2xl flex items-center justify-center mb-5 group-hover:bg-[#c0003d] transition-colors">
+                <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/80 transition-colors">
                   <Phone className="w-7 h-7 text-white" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Teléfono</p>
@@ -190,7 +190,7 @@ export default function ContactoPage() {
               </p>
               <Link
                 href="/#formulario"
-                className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-bold px-10 py-4 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-bold px-10 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicitar Servicio Ahora
@@ -212,7 +212,7 @@ export default function ContactoPage() {
               {zones.map((zone) => (
                 <span
                   key={zone}
-                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm hover:bg-[#A50034] hover:text-white hover:border-[#A50034] transition-colors duration-200 cursor-default min-h-[44px]"
+                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm hover:bg-primary hover:text-white hover:border-primary transition-colors duration-200 cursor-default min-h-[44px]"
                 >
                   <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                   {zone}
@@ -221,7 +221,7 @@ export default function ContactoPage() {
             </div>
             <p className="text-gray-500 text-sm mt-6">
               ¿Está en otra zona? Llámenos al{' '}
-              <a href="tel:+573003094854" className="text-[#A50034] font-semibold hover:underline">
+              <a href="tel:+573003094854" className="text-primary font-semibold hover:underline">
                 +57 300 3094854
               </a>{' '}
               y verificamos cobertura.

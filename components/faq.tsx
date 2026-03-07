@@ -48,13 +48,13 @@ export default function FAQ() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}
         <div className="mb-12 md:mb-16">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A50034] mb-3">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
             Preguntas frecuentes
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
             Todo lo que necesitas saber
           </h2>
-          <div className="mt-4 h-0.5 w-16 bg-[#A50034] rounded-full" />
+          <div className="mt-4 h-0.5 w-16 bg-primary rounded-full" />
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
@@ -75,7 +75,7 @@ export default function FAQ() {
                     data-[state=open]:rounded-xl
                     data-[state=open]:shadow-sm
                     data-[state=open]:border
-                    data-[state=open]:border-[#A50034]/15
+                    data-[state=open]:border-primary/15
                     transition-all duration-200
                     px-0
                   "
@@ -95,8 +95,8 @@ export default function FAQ() {
                         className="
                           block w-2.5 h-2.5 rotate-45
                           border border-slate-200 bg-white
-                          group-hover:border-[#A50034]/50 group-hover:bg-[#A50034]/10
-                          group-data-[state=open]:bg-[#A50034] group-data-[state=open]:border-[#A50034]
+                          group-hover:border-primary/50 group-hover:bg-primary/10
+                          group-data-[state=open]:bg-primary group-data-[state=open]:border-primary
                           transition-all duration-200
                         "
                       />
@@ -118,7 +118,7 @@ export default function FAQ() {
                       <span
                         className="
                         shrink-0 w-6 h-6 rounded-full border border-slate-200
-                        group-data-[state=open]:border-[#A50034] group-data-[state=open]:bg-[#A50034]
+                        group-data-[state=open]:border-primary group-data-[state=open]:bg-primary
                         flex items-center justify-center
                         transition-all duration-200 mt-0.5
                       "
@@ -154,7 +154,7 @@ export default function FAQ() {
 
                   <AccordionContent className="px-5 pb-5 pt-0">
                     {/* Red top rule */}
-                    <div className="ml-10 pl-3 border-l-2 border-[#A50034]/20">
+                    <div className="ml-10 pl-3 border-l-2 border-primary/20">
                       <p className="text-sm text-slate-500 leading-relaxed">
                         {faq.answer}
                       </p>
@@ -179,13 +179,13 @@ export default function FAQ() {
 
               {/* Bottom red accent bar */}
               <div
-                className="absolute bottom-0 inset-x-0 h-1 bg-[#A50034]"
+                className="absolute bottom-0 inset-x-0 h-1 bg-primary"
                 aria-hidden="true"
               />
 
               {/* Floating label top-left */}
               <div className="absolute top-4 left-4">
-                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#A50034] text-xs font-bold px-2.5 py-1 rounded-full border border-[#A50034]/20 shadow-sm">
+                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold px-2.5 py-1 rounded-full border border-primary/20 shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                   Técnicos disponibles hoy
                 </span>

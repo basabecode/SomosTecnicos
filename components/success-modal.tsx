@@ -29,7 +29,7 @@ export default function SuccessModal({ isOpen, onClose, orderNumber }: SuccessMo
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-none shadow-xl bg-white">
 
         {/* Header Corporativo con Estado */}
-        <div className="bg-[#A50034] p-6 text-center text-white relative overflow-hidden">
+        <div className="bg-primary p-6 text-center text-white relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent pointer-events-none"></div>
             <div className="relative z-10 flex flex-col items-center">
                 <CheckCircle2 className="w-16 h-16 text-white mb-3" strokeWidth={1.5} />
@@ -47,7 +47,7 @@ export default function SuccessModal({ isOpen, onClose, orderNumber }: SuccessMo
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-gray-400 hover:text-[#A50034] hover:bg-red-50"
+                        className="h-8 w-8 text-gray-400 hover:text-primary hover:bg-red-50"
                         onClick={handleCopy}
                         title="Copiar número de orden"
                     >

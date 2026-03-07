@@ -32,7 +32,7 @@ interface MetricCardProps {
 }
 
 const iconColorClasses = {
-  primary: 'bg-red-50 text-[#991B1B]',
+  primary: 'bg-red-50 text-primary',
   success: 'bg-green-50 text-green-600',
   warning: 'bg-yellow-50 text-yellow-600',
   error: 'bg-red-50 text-red-600',

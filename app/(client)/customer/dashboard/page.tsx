@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import OrderTrackingDashboard from '@/components/dashboard/order-tracking-dashboard'
 import { useAuth } from '@/contexts/auth-context'
-import { ServiceTimeline, NoHistoryEmptyState } from '@/components/domain'
+import { ServiceTimeline, NoHistoryEmptyState, EmptyState } from '@/components/domain'
 import {
   Home,
   Clock,
@@ -32,7 +32,6 @@ import {
   Percent,
   ShoppingCart,
   ArrowRight,
-  Loader2,
   RefreshCw,
 } from 'lucide-react'
 
@@ -112,16 +111,16 @@ type StatusIconComponent = ComponentType<SVGProps<SVGSVGElement>>
 const statusIcons: Record<ServiceStatus, StatusIconComponent> = {
   pendiente: Clock,
   asignado: Users,
-  en_camino: Clock,
+  en_camino: MapPin,
   en_proceso: AlertCircle,
   revisado: CheckCircle,
-  cotizado: CheckCircle,
-  esperando_repuestos: Clock,
-  reparado: CheckCircle,
+  cotizado: ShoppingCart,
+  esperando_repuestos: Calendar,
+  reparado: Star,
   entregado: CheckCircle,
   completado: CheckCircle,
   cancelado: AlertCircle,
-  reagendado: Clock,
+  reagendado: Calendar,
 }
 
 export default function CustomerDashboard() {
@@ -169,12 +168,43 @@ export default function CustomerDashboard() {
   const historyServices = orders.filter(o => terminalStates.includes(o.estado))
 
   if (loading) {
-     return (
-        <div className="flex flex-col items-center justify-center min-h-[400px]">
-           <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-           <p className="text-muted-foreground">Cargando tu dashboard...</p>
+    return (
+      <div className="flex-1 space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-8 pt-4 sm:pt-6">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+            <div className="h-4 w-64 bg-muted animate-pulse rounded" />
+          </div>
+          <div className="h-9 w-9 bg-muted animate-pulse rounded" />
         </div>
-     )
+        {/* Stats skeleton */}
+        <div className="grid gap-3 sm:gap-4 grid-cols-2">
+          {[1, 2].map(i => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 w-16 bg-muted animate-pulse rounded mb-2" />
+                <div className="h-3 w-20 bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {/* Lista skeleton */}
+        <Card>
+          <CardHeader>
+            <div className="h-5 w-36 bg-muted animate-pulse rounded" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-16 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -182,20 +212,20 @@ export default function CustomerDashboard() {
       {/* Welcome Header */}
       <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#A50034] to-[#2C3E50] bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-[#2C3E50] bg-clip-text text-transparent">
             Hola, {user?.nombre || 'Cliente'}
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
             Gestiona tus reparaciones con SomosTécnicos
           </p>
         </div>
-        <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos" className="h-10 w-10 sm:h-9 sm:w-9">
+        <Button variant="outline" size="icon" onClick={fetchOrders} title="Recargar datos" aria-label="Recargar datos" className="h-10 w-10 sm:h-9 sm:w-9">
           <RefreshCw className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">
@@ -237,15 +267,10 @@ export default function CustomerDashboard() {
             </CardHeader>
             <CardContent>
               {activeServices.length === 0 ? (
-                <div className="text-center py-8">
-                  <Clock className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-20" />
-                  <p className="text-muted-foreground mb-4">
-                    No tienes servicios activos en este momento.
-                  </p>
-                  <Button asChild variant="outline">
-                    <Link href="/customer/request">Solicitar un Técnico</Link>
-                  </Button>
-                </div>
+                <EmptyState
+                  variant="no-services"
+                  onAction={() => { window.location.href = '/customer/request' }}
+                />
               ) : (
                 <div className="space-y-6">
                   {activeServices.map(service => {
@@ -340,13 +365,13 @@ export default function CustomerDashboard() {
                 ) : (
                   <div className="space-y-4">
                     {historyServices.slice(0, 3).map(service => (
-                      <div key={service.id} className="border rounded-lg p-4 flex justify-between items-center">
+                      <Link key={service.id} href={`/customer/services`} className="block border rounded-lg p-4 flex justify-between items-center hover:bg-muted/30 transition-colors">
                          <div>
                             <p className="font-medium">{service.tipoServicio}</p>
                             <p className="text-xs text-muted-foreground">{new Date(service.createdAt).toLocaleDateString()}</p>
                          </div>
                          <Badge variant="outline">{statusLabels[service.estado]}</Badge>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -359,44 +384,46 @@ export default function CustomerDashboard() {
           {/* Order Tracking */}
           <OrderTrackingDashboard />
 
-          {/* Promotions & Advertising */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Gift className="w-5 h-5" />
-                <span>Ofertas Especiales</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {promotions.map(promo => (
-                  <div
-                    key={promo.id}
-                    className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-purple-50"
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Zap className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-semibold text-sm">
-                            {promo.title}
-                          </h3>
+          {/* Promotions & Advertising — solo visible cuando hay promociones activas */}
+          {promotions.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Gift className="w-5 h-5" />
+                  <span>Ofertas Especiales</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {promotions.map(promo => (
+                    <div
+                      key={promo.id}
+                      className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-purple-50"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <Zap className="w-6 h-6 text-primary" />
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">
-                          {promo.description}
-                        </p>
-                        <Button size="sm" className="w-full" variant="secondary">
-                          Ver Oferta
-                        </Button>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h3 className="font-semibold text-sm">
+                              {promo.title}
+                            </h3>
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            {promo.description}
+                          </p>
+                          <Button size="sm" className="w-full" variant="secondary">
+                            Ver Oferta
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

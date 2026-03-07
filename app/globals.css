@@ -3,28 +3,58 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tema personalizado para SomosTécnicos con paleta corporativa */
+/* ─────────────────────────────────────────────────────────────
+   TOKENS CORPORATIVOS SomosTécnicos
+   Estos tokens usan nombres propios para NO colisionar con
+   los tokens de Tailwind/shadcn que se definen más abajo.
+   Úsalos con var(--st-*) en componentes propios.
+───────────────────────────────────────────────────────────── */
 :root {
-  /* Colores principales SomosTécnicos */
-  --primary: #a50034; /* Rojo principal - CTA y acentos */
-  --secondary: #2c3e50; /* Azul oscuro - textos importantes */
-  --accent: #e74c3c; /* Rojo hover */
-  --bg-light: #f8f9fa; /* Fondos alternos */
-  --bg-white: #ffffff; /* Fondo principal */
-  --text-dark: #2c3e50; /* Texto principal */
-  --text-gray: #7f8c8d; /* Texto secundario */
-  --border-color: #e0e0e0; /* Bordes */
-  --success: #27ae60; /* Confirmaciones */
+  /* Marca */
+  --st-primary:            #a50034;
+  --st-primary-hover:      #8a0029;
+  --st-primary-foreground: #ffffff;
 
-  /* Conversión a tokens de Tailwind */
+  /* Textos */
+  --st-text-primary:   #2c3e50;
+  --st-text-secondary: #7f8c8d;
+  --st-text-disabled:  #bdc3c7;
+
+  /* Superficies */
+  --st-bg-primary:   #ffffff;
+  --st-bg-secondary: #f8f9fa;
+  --st-bg-tertiary:  #ecf0f1;
+  --st-border:       #e0e0e0;
+
+  /* Semánticos */
+  --st-success: #27ae60;
+  --st-warning: #f39c12;
+  --st-error:   #e74c3c;
+  --st-info:    #2980b9;
+
+  /* Nota: --st-status-* se definen en tokens.css como aliases
+     de los Workshop tokens (--pending-amber, --assigned-blue, etc.)
+     para mantener un único source of truth. */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TOKENS TAILWIND / SHADCN
+   Estos tokens alimentan los componentes de shadcn/ui y
+   las utilidades de Tailwind. Se mantienen separados de los
+   tokens corporativos para evitar colisiones.
+───────────────────────────────────────────────────────────── */
+:root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+
+  /* primary shadcn → apuntado al rojo corporativo */
+  --primary: oklch(0.398 0.18 15);       /* ~#a50034 en oklch */
+  --primary-foreground: oklch(1 0 0);    /* blanco sobre rojo */
+
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -35,7 +65,7 @@
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.398 0.18 15);          /* ring del color primario */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -44,8 +74,8 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.398 0.18 15);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
@@ -76,7 +106,7 @@
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-5: oklch(0.645 0.246 16.445);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -85,6 +115,14 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  /* Tokens corporativos en dark mode */
+  --st-bg-primary:   #1a1a2e;
+  --st-bg-secondary: #16213e;
+  --st-bg-tertiary:  #0f3460;
+  --st-text-primary:   #e8e8e8;
+  --st-text-secondary: #a0a0a0;
+  --st-border:       #333333;
 }
 
 @theme inline {
@@ -126,6 +164,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Exponer tokens corporativos a Tailwind */
+  --color-st-primary:          var(--st-primary);
+  --color-st-primary-hover:    var(--st-primary-hover);
+  --color-st-success:          var(--st-success);
+  --color-st-warning:          var(--st-warning);
+  --color-st-error:            var(--st-error);
+  --color-st-info:             var(--st-info);
+  --color-st-status-pending:   var(--st-status-pending);
+  --color-st-status-active:    var(--st-status-active);
+  --color-st-status-completed: var(--st-status-completed);
+  --color-st-status-cancelled: var(--st-status-cancelled);
 }
 
 @layer base {
@@ -137,18 +187,11 @@
     font-family: var(--font-body), 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 
-  /* Smooth scroll */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Tipografía mejorada - Outfit para headings */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     @apply text-balance;
     font-family: var(--font-display), 'Outfit', system-ui, sans-serif;
     font-weight: 700;
@@ -172,91 +215,51 @@
   }
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Animación de entrada con stagger - Orquestada */
   .animate-fade-in-up {
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
   }
 
   @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Animación de gradiente para texto */
   .animate-gradient-x {
     background-size: 200% auto;
     animation: gradientX 3s ease infinite;
   }
 
   @keyframes gradientX {
-    0%, 100% {
-      background-position: 0% center;
-    }
-    50% {
-      background-position: 100% center;
-    }
+    0%, 100% { background-position: 0% center; }
+    50%       { background-position: 100% center; }
   }
 
-  /* Animaciones de flotación para elementos decorativos */
-  .animate-float-slow {
-    animation: floatSlow 8s ease-in-out infinite;
-  }
-
-  .animate-float-slower {
-    animation: floatSlower 12s ease-in-out infinite;
-  }
+  .animate-float-slow   { animation: floatSlow 8s ease-in-out infinite; }
+  .animate-float-slower { animation: floatSlower 12s ease-in-out infinite; }
 
   @keyframes floatSlow {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    50% {
-      transform: translateY(-20px) rotate(5deg);
-    }
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50%       { transform: translateY(-20px) rotate(5deg); }
   }
 
   @keyframes floatSlower {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    50% {
-      transform: translateY(-15px) rotate(-3deg);
-    }
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50%       { transform: translateY(-15px) rotate(-3deg); }
   }
 
-  /* Safe area padding para móviles con notch/indicador */
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom) !important;
-  }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom) !important; }
+  .pt-safe { padding-top: env(safe-area-inset-top) !important; }
 
-  .pt-safe {
-    padding-top: env(safe-area-inset-top) !important;
-  }
-
-  /* Efecto de toque nativo */
   .active-tap:active {
     transform: scale(0.96);
     transition: transform 0.1s ease;
   }
 
-  /* Card estilo Apple/Material */
   .native-card {
     @apply rounded-xl border-none shadow-sm;
     background: rgba(255, 255, 255, 0.8);
@@ -264,30 +267,21 @@
     -webkit-backdrop-filter: blur(10px);
   }
 
-  /* Ocultar scrollbar pero permitir scroll */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
-  /* Animación shimmer para barra de progreso */
   .animate-shimmer {
     animation: shimmer 3s ease-in-out infinite;
   }
 
   @keyframes shimmer {
-    0% {
-      background-position: -200% center;
-    }
-    100% {
-      background-position: 200% center;
-    }
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
   }
 
-  /* ── Brands slider animation ─────────────────────── */
   @keyframes brands-scroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -301,8 +295,6 @@
     animation-play-state: paused;
   }
 
-  /* ── Image protection inside cards ──────────────── */
-  /* Ensures images never stretch beyond their container */
   .img-safe {
     max-width: 100%;
     height: 100%;
@@ -310,12 +302,10 @@
     display: block;
   }
 
-  /* Clamp text to avoid overflow in cards */
   .text-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; }
   .text-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; }
 }
 
-/* ── iOS / Mobile: prevent input zoom ─────────────────────────────────── */
 @media (max-width: 768px) {
   input[type="text"],
   input[type="email"],
@@ -328,7 +318,6 @@
   }
 }
 
-/* ── Brands slider responsive speed ── */
 @media (max-width: 768px) {
   .animate-scroll {
     animation-duration: 25s;

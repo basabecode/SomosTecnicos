@@ -30,6 +30,15 @@ import {
   Mail,
   FileText,
 } from 'lucide-react'
+import { BottomNav } from '@/components/navigation/bottom-nav'
+
+// Items para navegación móvil inferior del admin (4 acciones primarias)
+const mobileNavItems = [
+  { label: 'Dashboard', href: '/admin/dashboard', icon: Home },
+  { label: 'Órdenes', href: '/admin/orders', icon: ShoppingCart },
+  { label: 'Técnicos', href: '/admin/technicians', icon: Wrench },
+  { label: 'Mensajes', href: '/admin/messages', icon: Mail },
+]
 
 // Items de navegación del sidebar
 const sidebarItems: SidebarItem[] = [
@@ -133,6 +142,12 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
     return <div className="min-h-screen w-full">{children}</div>
   }
 
+  // Título de página activa basado en pathname
+  const activeItem = sidebarItems.find(
+    item => pathname === item.href || pathname.startsWith(item.href + '/')
+  )
+  const pageTitle = activeItem?.title ?? 'Panel de Administración'
+
   // Datos del usuario
   const userData = {
     name: user
@@ -184,11 +199,11 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden pb-16 md:pb-0">
         {/* Header */}
         <UnifiedHeader
-          title="Panel de Administración"
-          subtitle="Sistema Operativo"
+          title={pageTitle}
+          subtitle="Panel de Administración"
           userName={userData.name}
           userEmail={userData.email}
           userInitials={userData.initials}
@@ -222,6 +237,9 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
           <div className="max-w-7xl mx-auto p-4 md:p-8">{children}</div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav items={mobileNavItems} />
     </div>
   )
 }

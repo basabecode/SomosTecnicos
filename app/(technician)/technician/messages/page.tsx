@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { EmptyState } from '@/components/domain'
 import {
   Card,
   CardContent,
@@ -495,9 +496,7 @@ export default function TechnicianMessages() {
                  Cargando chats...
                </div>
              ) : filteredThreads.length === 0 ? (
-               <div className="text-center py-8 text-muted-foreground bg-gray-50 rounded-lg border border-dashed">
-                 No hay mensajes
-               </div>
+               <EmptyState variant="no-messages" className="p-6" />
              ) : (
                filteredThreads.map(thread => {
                  const lastMsg = thread.lastMessage

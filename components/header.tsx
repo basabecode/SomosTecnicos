@@ -121,10 +121,10 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className="group relative px-3 py-2 text-sm font-medium text-slate-700 hover:text-[#A50034] transition-colors duration-200 rounded-md"
+      className="group relative px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors duration-200 rounded-md"
     >
       {children}
-      <span className="absolute bottom-1 left-3 right-3 h-px bg-[#A50034] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
+      <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
     </Link>
   )
 }
@@ -263,10 +263,10 @@ export default function Header() {
         <div className="flex items-center gap-1">
           <Link
             href={getDashboardUrl()}
-            className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-[#A50034] transition-colors px-3 py-2 rounded-lg hover:bg-red-50"
+            className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-red-50"
           >
-            <div className="w-7 h-7 bg-[#A50034]/10 rounded-full flex items-center justify-center">
-              <User size={14} className="text-[#A50034]" />
+            <div className="w-7 h-7 bg-primary/10 rounded-full flex items-center justify-center">
+              <User size={14} className="text-primary" />
             </div>
             <span className="hidden sm:inline">{user.nombre}</span>
           </Link>
@@ -285,7 +285,7 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1.5 text-sm font-medium text-slate-700 border border-slate-200 px-3 py-2 rounded-lg hover:border-[#A50034] hover:text-[#A50034] transition-all duration-200">
+            <button className="flex items-center gap-1.5 text-sm font-medium text-slate-700 border border-slate-200 px-3 py-2 rounded-lg hover:border-primary hover:text-primary transition-all duration-200">
               <UserPlus size={15} />
               <span className="hidden sm:inline">Registrarse</span>
               <ChevronDown size={12} className="text-slate-400" />
@@ -327,7 +327,7 @@ export default function Header() {
 
         <Link
           href="/login"
-          className="flex items-center gap-1.5 bg-[#A50034] hover:bg-[#8a002b] text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow"
+          className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow"
         >
           <User size={15} />
           <span className="hidden sm:inline">Iniciar Sesión</span>
@@ -376,18 +376,18 @@ export default function Header() {
                 <button
                   ref={servicesButtonRef}
                   onClick={() => setIsServicesDropdownOpen(prev => !prev)}
-                  className="group relative flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-[#A50034] transition-colors duration-200 rounded-md"
+                  className="group relative flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors duration-200 rounded-md"
                   aria-expanded={isServicesDropdownOpen}
                   aria-haspopup="true"
                 >
                   Servicios
                   <ChevronDown
                     size={14}
-                    className={`text-slate-400 group-hover:text-[#A50034] transition-all duration-200 ${
-                      isServicesDropdownOpen ? 'rotate-180 text-[#A50034]' : ''
+                    className={`text-slate-400 group-hover:text-primary transition-all duration-200 ${
+                      isServicesDropdownOpen ? 'rotate-180 text-primary' : ''
                     }`}
                   />
-                  <span className="absolute bottom-1 left-3 right-3 h-px bg-[#A50034] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
+                  <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
                 </button>
 
                 {isServicesDropdownOpen && (
@@ -407,7 +407,7 @@ export default function Header() {
                       }}
                     >
                       {/* Accent line */}
-                      <div className="h-0.5 bg-gradient-to-r from-[#A50034] via-[#c9003f] to-[#A50034]" />
+                      <div className="h-0.5 bg-gradient-to-r from-primary via-[#c9003f] to-primary" />
 
                       {/* Panel header */}
                       <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-slate-50">
@@ -417,7 +417,7 @@ export default function Header() {
                         <Link
                           href="/servicios"
                           onClick={() => setIsServicesDropdownOpen(false)}
-                          className="flex items-center gap-1 text-[11px] font-semibold text-[#A50034] hover:underline"
+                          className="flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
                         >
                           Ver todos <ArrowRight size={10} />
                         </Link>
@@ -445,10 +445,10 @@ export default function Header() {
                                   <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center flex-shrink-0 transition-colors duration-150">
                                     <Icon
                                       size={13}
-                                      className="text-slate-400 group-hover/item:text-[#A50034] transition-colors"
+                                      className="text-slate-400 group-hover/item:text-primary transition-colors"
                                     />
                                   </div>
-                                  <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-[#A50034] transition-colors leading-tight">
+                                  <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-primary transition-colors leading-tight">
                                     {servicio.label}
                                   </span>
                                 </Link>
@@ -479,10 +479,10 @@ export default function Header() {
                                       <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center flex-shrink-0 transition-colors duration-150">
                                         <Icon
                                           size={13}
-                                          className="text-slate-400 group-hover/item:text-[#A50034] transition-colors"
+                                          className="text-slate-400 group-hover/item:text-primary transition-colors"
                                         />
                                       </div>
-                                      <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-[#A50034] transition-colors leading-tight">
+                                      <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-primary transition-colors leading-tight">
                                         {servicio.label}
                                       </span>
                                     </Link>
@@ -495,7 +495,7 @@ export default function Header() {
                       </div>
 
                       {/* CTA footer */}
-                      <div className="mx-4 mb-4 bg-gradient-to-r from-[#A50034] to-[#c9003f] rounded-xl px-4 py-3 flex items-center justify-between">
+                      <div className="mx-4 mb-4 bg-gradient-to-r from-primary to-[#c9003f] rounded-xl px-4 py-3 flex items-center justify-between">
                         <div>
                           <p className="text-white text-[13px] font-semibold leading-tight">
                             ¿No encuentras tu servicio?
@@ -507,7 +507,7 @@ export default function Header() {
                         <Link
                           href="/servicios"
                           onClick={() => setIsServicesDropdownOpen(false)}
-                          className="flex items-center gap-1.5 bg-white text-[#A50034] text-[12px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors flex-shrink-0"
+                          className="flex items-center gap-1.5 bg-white text-primary text-[12px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors flex-shrink-0"
                         >
                           Ver todos <ArrowRight size={12} />
                         </Link>
@@ -520,10 +520,10 @@ export default function Header() {
               {/* Seguimiento */}
               <button
                 onClick={() => handleNavClick('seguimiento')}
-                className="group relative px-3 py-2 text-sm font-medium text-slate-700 hover:text-[#A50034] transition-colors duration-200 rounded-md"
+                className="group relative px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors duration-200 rounded-md"
               >
                 Seguimiento
-                <span className="absolute bottom-1 left-3 right-3 h-px bg-[#A50034] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
+                <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
               </button>
 
               <NavLink href="/contacto">Contacto</NavLink>
@@ -588,7 +588,7 @@ export default function Header() {
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-[#A50034] hover:bg-red-50 rounded-xl transition-colors"
+                className="px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-primary hover:bg-red-50 rounded-xl transition-colors"
               >
                 Inicio
               </Link>
@@ -597,7 +597,7 @@ export default function Header() {
               <div>
                 <button
                   onClick={() => setIsMobileServicesOpen(prev => !prev)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-[#A50034] hover:bg-red-50 rounded-xl transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-primary hover:bg-red-50 rounded-xl transition-colors"
                   aria-expanded={isMobileServicesOpen}
                 >
                   <span>Servicios</span>
@@ -621,7 +621,7 @@ export default function Header() {
                             setIsMobileServicesOpen(false)
                             setIsMobileMenuOpen(false)
                           }}
-                          className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-600 hover:text-[#A50034] hover:bg-red-50 rounded-lg transition-colors"
+                          className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-600 hover:text-primary hover:bg-red-50 rounded-lg transition-colors"
                         >
                           <Icon
                             size={14}
@@ -637,7 +637,7 @@ export default function Header() {
                         setIsMobileServicesOpen(false)
                         setIsMobileMenuOpen(false)
                       }}
-                      className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-[#A50034] hover:bg-red-50 rounded-lg transition-colors mt-1"
+                      className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-primary hover:bg-red-50 rounded-lg transition-colors mt-1"
                     >
                       <ArrowRight size={13} /> Ver todos los servicios
                     </Link>
@@ -647,7 +647,7 @@ export default function Header() {
 
               <button
                 onClick={() => handleNavClick('seguimiento')}
-                className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-[#A50034] hover:bg-red-50 rounded-xl transition-colors text-left"
+                className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-primary hover:bg-red-50 rounded-xl transition-colors text-left"
               >
                 Seguimiento de Orden
               </button>
@@ -655,7 +655,7 @@ export default function Header() {
               <Link
                 href="/contacto"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-[#A50034] hover:bg-red-50 rounded-xl transition-colors"
+                className="px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-primary hover:bg-red-50 rounded-xl transition-colors"
               >
                 Contacto
               </Link>
@@ -685,8 +685,8 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors"
                   >
-                    <div className="w-9 h-9 bg-[#A50034]/10 rounded-full flex items-center justify-center">
-                      <User size={16} className="text-[#A50034]" />
+                    <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center">
+                      <User size={16} className="text-primary" />
                     </div>
                     <div>
                       <div className="text-sm font-semibold text-slate-900">
@@ -712,10 +712,10 @@ export default function Header() {
                   <Link
                     href="/register/customer"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 border border-slate-200 hover:border-[#A50034] hover:bg-red-50 rounded-xl transition-all"
+                    className="flex items-center gap-3 p-3 border border-slate-200 hover:border-primary hover:bg-red-50 rounded-xl transition-all"
                   >
                     <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
-                      <Users size={15} className="text-[#A50034]" />
+                      <Users size={15} className="text-primary" />
                     </div>
                     <div>
                       <div className="text-sm font-medium text-slate-900">
@@ -756,7 +756,7 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#8a002b] text-white text-sm font-semibold py-3 rounded-xl transition-colors"
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold py-3 rounded-xl transition-colors"
                   >
                     <User size={15} /> Iniciar Sesión
                   </Link>

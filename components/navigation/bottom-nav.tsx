@@ -30,7 +30,7 @@ export function BottomNav({ items }: BottomNavProps) {
             href={item.href}
             className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-all active-tap ${
               isActive(item.href)
-                ? 'text-[#A50034]'
+                ? 'text-primary'
                 : 'text-gray-400 hover:text-gray-600'
             }`}
           >

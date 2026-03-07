@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
+import { isValidTransition } from '@/lib/state-machine'
 
 // Estados válidos en los que el técnico puede enviar una cotización
 const STATES_VALID_FOR_QUOTE = [

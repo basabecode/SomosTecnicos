@@ -74,7 +74,7 @@ export function MobileChatWidget() {
       {/* Botón principal flotante */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 z-50 bg-[#A50034] hover:bg-[#E74C3C] text-white rounded-full p-4 shadow-2xl md:hidden"
+        className="fixed bottom-4 right-4 z-50 bg-primary hover:bg-primary/80 text-white rounded-full p-4 shadow-2xl md:hidden"
         size="lg"
       >
         {isOpen ? (
@@ -94,7 +94,7 @@ export function MobileChatWidget() {
 
             <Button
               onClick={scrollToForm}
-              className="w-full bg-[#A50034] hover:bg-[#E74C3C] text-white justify-start"
+              className="w-full bg-primary hover:bg-primary/80 text-white justify-start"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Solicitar Servicio

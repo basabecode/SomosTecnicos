@@ -6,6 +6,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { EmptyState } from '@/components/domain'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ProtectedRoute } from '@/contexts/auth-context'
@@ -397,11 +398,7 @@ export default function OrdersPage() {
                 ))}
               </div>
             ) : orders.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  No se encontraron órdenes
-                </p>
-              </div>
+              <EmptyState variant="no-orders" />
             ) : (
                 <>
                 {/* Desktop View: Table */}
@@ -593,7 +590,7 @@ export default function OrdersPage() {
                                     {urgencyLabels[order.urgencia as keyof typeof urgencyLabels]}
                                 </Badge>
                             </span>
-                            <h4 className="font-semibold text-base mt-1 text-[#A50034]">{order.nombre}</h4>
+                            <h4 className="font-semibold text-base mt-1 text-primary">{order.nombre}</h4>
                          </div>
                          <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -661,7 +658,7 @@ export default function OrdersPage() {
                           })()}
                       </div>
 
-                      <Button asChild className="w-full bg-[#A50034] hover:bg-[#8B0028] text-white" size="default">
+                      <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white" size="default">
                          <Link href={`/admin/orders/${order.id}`}>
                             Ver Detalles Completos
                          </Link>

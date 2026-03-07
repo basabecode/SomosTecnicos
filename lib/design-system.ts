@@ -47,8 +47,8 @@ export const designSystem = {
   colors: {
     // Primarios
     primary: {
-      main: '#991B1B',
-      hover: '#7F1D1D',
+      main: '#A50034',
+      hover: '#8B002B',
       light: '#FEE2E2',
     },
     // Neutrales
@@ -78,7 +78,7 @@ export const designSystem = {
       textPrimary: '#1F2937',
       textSecondary: '#6B7280',
       activeBackground: '#F3F4F6',
-      activeText: '#991B1B',
+      activeText: '#A50034',
       hover: '#F9FAFB',
     },
   },
@@ -131,13 +131,13 @@ export const designSystem = {
     },
     button: {
       primary: {
-        background: '#991B1B',
+        background: '#A50034',
         color: '#FFFFFF',
         padding: '12px 24px',
         borderRadius: '8px',
         fontSize: '14px',
         fontWeight: 600,
-        hover: '#7F1D1D',
+        hover: '#8B002B',
       },
       secondary: {
         background: '#FFFFFF',
@@ -157,7 +157,7 @@ export const sharedClasses = {
     profile: 'flex items-center px-5 py-4 gap-3 bg-gray-50 mx-5 rounded-lg',
     nav: 'flex-1 px-5 py-2 space-y-1 overflow-y-auto',
     navItem: 'flex items-center gap-3 px-5 py-3 rounded-lg text-sm font-medium transition-all duration-200',
-    navItemActive: 'bg-gray-100 text-[#991B1B] font-semibold',
+    navItemActive: 'bg-gray-100 text-primary font-semibold',
     navItemInactive: 'text-gray-700 hover:bg-gray-50',
     logout: 'flex items-center gap-3 px-5 py-4 mx-5 mb-4 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200',
   },

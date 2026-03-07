@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { getQueueStats } from '@/lib/queue'
+import { getQueueStats, clearQueue } from '@/lib/queue'
 import { getCacheStats } from '@/lib/cache'
 import { requireTechnicianManager } from '@/lib/auth'
 
@@ -178,13 +178,21 @@ export async function POST(request: Request) {
       )
     }
 
-    // TODO: Implementar limpieza real de colas
-    // En una implementación real, esto limpiaría las colas especificadas
-    console.warn(`Queue clear requested by admin: ${queue || 'all'}`)
-    
+    const validPriorities = ['high', 'medium', 'low']
+    if (queue && !validPriorities.includes(queue)) {
+      return NextResponse.json(
+        { error: `Invalid queue. Must be one of: ${validPriorities.join(', ')}` },
+        { status: 400 }
+      )
+    }
+
+    const discarded = clearQueue(queue || undefined)
+    console.warn(`Queue clear executed by admin: ${queue || 'all'} — ${discarded} jobs discarded`)
+
     return NextResponse.json({
       success: true,
-      message: `Queue ${queue || 'all'} cleared successfully`,
+      message: `Cola "${queue || 'all'}" limpiada. ${discarded} jobs descartados.`,
+      discarded,
       timestamp: new Date().toISOString()
     })
 

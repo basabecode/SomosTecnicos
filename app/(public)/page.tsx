@@ -288,7 +288,7 @@ export default function HomePage() {
               <div className="max-w-6xl mx-auto">
                 <div className="flex items-end justify-between mb-8 gap-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#A50034] mb-1">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-1">
                       Blog técnico
                     </p>
                     <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
@@ -297,7 +297,7 @@ export default function HomePage() {
                   </div>
                   <Link
                     href="/blog"
-                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-[#A50034] hover:underline flex-shrink-0"
+                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline flex-shrink-0"
                   >
                     Ver todos <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -335,7 +335,7 @@ export default function HomePage() {
                         </div>
                         <p
                           className="text-sm md:text-xs font-semibold text-slate-900 leading-snug
-                                      group-hover:text-[#A50034] transition-colors line-clamp-2"
+                                      group-hover:text-primary transition-colors line-clamp-2"
                         >
                           {post.title}
                         </p>
@@ -352,7 +352,7 @@ export default function HomePage() {
                 <div className="mt-6 text-center sm:hidden">
                   <Link
                     href="/blog"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#A50034] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                   >
                     Ver todos los artículos <ArrowRight className="w-4 h-4" />
                   </Link>

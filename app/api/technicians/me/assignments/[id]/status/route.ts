@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authenticateRequest } from '@/lib/auth'
 import { USER_ROLES } from '@/lib/constants'
+import { sendNotification } from '@/lib/services/notification.service'
 
 // PATCH /api/technicians/me/assignments/[id]/status
 export async function PATCH(

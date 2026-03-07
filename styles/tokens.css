@@ -2,6 +2,12 @@
  * Workshop Design System - Tokens CSS
  * Sistema de diseño intencional para SomosTécnicos
  * Basado en el mundo físico de talleres técnicos profesionales
+ *
+ * ESTRUCTURA:
+ * 1. Tokens Workshop originales (--workshop-*, --tool-*, etc.)
+ * 2. Tokens corporativos ST (--st-*) — sin colisión con shadcn
+ * 3. Alias semánticos que unen ambos sistemas
+ * 4. Utilidades CSS
  */
 
 @layer base {
@@ -207,20 +213,78 @@
     --z-modal: 1400;
     --z-popover: 1500;
     --z-tooltip: 1600;
+
+    /* ════════════════════════════════════════
+       TOKENS CORPORATIVOS ST (--st-*)
+       Alias sobre los tokens Workshop para
+       conectar con globals.css sin colisionar
+       con los tokens de shadcn/ui.
+       ════════════════════════════════════════ */
+
+    /* Marca corporativa */
+    --st-primary:            #a50034;
+    --st-primary-hover:      #8a0029;
+    --st-primary-foreground: #ffffff;
+
+    /* Textos corporativos */
+    --st-text-primary:   #2c3e50;
+    --st-text-secondary: #7f8c8d;
+    --st-text-disabled:  #bdc3c7;
+
+    /* Superficies corporativas */
+    --st-bg-primary:   #ffffff;
+    --st-bg-secondary: #f8f9fa;
+    --st-bg-tertiary:  #ecf0f1;
+    --st-border:       #e0e0e0;
+
+    /* Semánticos corporativos */
+    --st-success: #27ae60;
+    --st-warning: #f39c12;
+    --st-error:   #e74c3c;
+    --st-info:    #2980b9;
+
+    /* Estados de servicio — alias de los tokens Workshop.
+       Son el único source of truth para los estados;
+       globals.css NO los redefine para evitar conflictos de cascada. */
+    --st-status-pending:   hsl(var(--pending-amber));
+    --st-status-active:    hsl(var(--assigned-blue));
+    --st-status-completed: hsl(var(--completed-green));
+    --st-status-cancelled: hsl(var(--canceled-red));
   }
 
   /* ========================================
-     MODO OSCURO (Futuro)
+     MODO OSCURO - Overrides Workshop + ST
      ======================================== */
 
   .dark {
-    /* TODO: Implementar tokens de modo oscuro */
-    /* Principio: En dark mode, elevación = más claro */
+    /* Superficies Workshop en dark mode */
+    --surface-base:     220 20% 10%;
+    --surface-raised:   220 20% 14%;
+    --surface-card:     220 20% 14%;
+    --surface-overlay:  220 20% 16%;
+    --surface-dropdown: 220 20% 14%;
+
+    /* Bordes Workshop en dark mode */
+    --border-light:    220 15% 22%;
+    --border-standard: 220 15% 28%;
+    --border-emphasis: 220 15% 38%;
+
+    /* Texto Workshop en dark mode */
+    --label-ink:   0 0% 92%;
+    --label-faded: 215 15% 55%;
+
+    /* Tokens corporativos ST en dark mode */
+    --st-bg-primary:   #1a1a2e;
+    --st-bg-secondary: #16213e;
+    --st-bg-tertiary:  #0f3460;
+    --st-text-primary:   #e8e8e8;
+    --st-text-secondary: #a0a0a0;
+    --st-border:       #333333;
   }
 }
 
 /* ========================================
-   UTILIDADES DE TOKENS
+   UTILIDADES DE TOKENS WORKSHOP
    ======================================== */
 
 /* Backgrounds */
@@ -231,9 +295,12 @@
 /* Text Colors */
 .text-label-ink { color: hsl(var(--label-ink)); }
 .text-label-faded { color: hsl(var(--label-faded)); }
-.text-primary { color: hsl(var(--text-primary)); }
-.text-secondary { color: hsl(var(--text-secondary)); }
-.text-tertiary { color: hsl(var(--text-tertiary)); }
+/* NOTA: .text-primary, .text-secondary y .text-tertiary se eliminaron
+   porque colisionaban con las utilidades generadas por Tailwind v4 desde @theme.
+   Al estar fuera de @layer, tenían mayor especificidad y sobreescribían
+   text-primary (rojo corporativo) con el tono ink del Workshop.
+   Usar: text-primary → rojo corporativo (--color-primary)
+         text-st-primary → hex fijo #a50034, seguro en fondos oscuros y dark mode */
 
 /* Accent Colors */
 .text-tool-orange { color: hsl(var(--tool-orange)); }
@@ -260,6 +327,39 @@
 .border-standard { border-color: hsl(var(--border-standard)); }
 .border-emphasis { border-color: hsl(var(--border-emphasis)); }
 .border-focus { border-color: hsl(var(--border-focus)); }
+
+/* ========================================
+   UTILIDADES DE TOKENS CORPORATIVOS ST
+   ======================================== */
+
+.bg-st-primary      { background-color: var(--st-primary); }
+.text-st-primary    { color: var(--st-primary); }
+.border-st-primary  { border-color: var(--st-primary); }
+
+.bg-st-success      { background-color: var(--st-success); }
+.text-st-success    { color: var(--st-success); }
+
+.bg-st-warning      { background-color: var(--st-warning); }
+.text-st-warning    { color: var(--st-warning); }
+
+.bg-st-error        { background-color: var(--st-error); }
+.text-st-error      { color: var(--st-error); }
+
+.bg-st-info         { background-color: var(--st-info); }
+.text-st-info       { color: var(--st-info); }
+
+/* Estados de servicio vía alias ST */
+.bg-st-status-pending    { background-color: var(--st-status-pending); }
+.text-st-status-pending  { color: var(--st-status-pending); }
+
+.bg-st-status-active     { background-color: var(--st-status-active); }
+.text-st-status-active   { color: var(--st-status-active); }
+
+.bg-st-status-completed  { background-color: var(--st-status-completed); }
+.text-st-status-completed{ color: var(--st-status-completed); }
+
+.bg-st-status-cancelled  { background-color: var(--st-status-cancelled); }
+.text-st-status-cancelled{ color: var(--st-status-cancelled); }
 
 /* ========================================
    ANIMACIONES PERSONALIZADAS
@@ -332,10 +432,10 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Button primario */
+/* Button primario — usa el color de marca ST, no tool-orange */
 .workshop-button-primary {
-  background-color: hsl(var(--tool-orange));
-  color: white;
+  background-color: var(--st-primary);
+  color: var(--st-primary-foreground);
   font-weight: var(--weight-emphasis);
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-sm);
@@ -343,7 +443,7 @@
 }
 
 .workshop-button-primary:hover {
-  filter: brightness(1.1);
+  background-color: var(--st-primary-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

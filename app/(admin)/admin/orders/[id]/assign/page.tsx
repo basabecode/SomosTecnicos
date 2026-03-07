@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { EmptyState } from '@/components/domain'
 
 interface Order {
   id: string
@@ -330,7 +331,7 @@ export default function AssignTechnicianPage() {
                 </div>
 
                 <Button
-                  className="w-full bg-[#A50034] hover:bg-[#8B002B]"
+                  className="w-full bg-primary hover:bg-primary/90"
                   onClick={handleAssign}
                   disabled={submitting || !selectedTechnicianId}
                 >
@@ -356,16 +357,7 @@ export default function AssignTechnicianPage() {
 
             <div className="grid gap-4">
               {filteredTechnicians.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-lg border border-dashed p-6">
-                    <p className="text-muted-foreground mb-4">No se encontraron técnicos disponibles en {order.ciudad}.</p>
-                    <Button
-                        variant="outline"
-                        onClick={() => setIgnoreCity(true)}
-                        className="text-primary hover:text-primary/90"
-                    >
-                        Ver todos los técnicos (ignorando ciudad)
-                    </Button>
-                </div>
+                <EmptyState variant="no-technicians" onAction={() => setIgnoreCity(true)} />
               ) : (
                 <>
                     {ignoreCity && (
@@ -386,7 +378,7 @@ export default function AssignTechnicianPage() {
                         className={`
                           relative flex items-start gap-4 p-4 rounded-xl border transition-all cursor-pointer hover:shadow-md
                           ${selectedTechnicianId === tech.id
-                            ? 'border-[#A50034] bg-red-50/30 ring-1 ring-[#A50034]'
+                            ? 'border-primary bg-red-50/30 ring-1 ring-primary'
                             : 'border-border bg-white hover:border-gray-300'
                           }
                         `}
@@ -410,7 +402,7 @@ export default function AssignTechnicianPage() {
                               </div>
                             </div>
                             {selectedTechnicianId === tech.id && (
-                              <div className="bg-[#A50034] text-white p-1 rounded-full">
+                              <div className="bg-primary text-white p-1 rounded-full">
                                 <CheckCircle className="h-4 w-4" />
                               </div>
                             )}

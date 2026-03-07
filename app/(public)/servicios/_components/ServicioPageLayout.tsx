@@ -64,7 +64,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
-                    className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-semibold px-8 py-4 rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-semibold px-8 py-4 rounded-lg transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
                     Solicitar Servicio
@@ -128,7 +128,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
                   key={problem}
                   className="flex items-start gap-3 bg-gray-50 border border-gray-100 rounded-xl p-4"
                 >
-                  <CheckCircle className="w-5 h-5 text-[#A50034] shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-gray-700 font-medium">{problem}</span>
                 </div>
               ))}
@@ -201,7 +201,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
                 >
                   <summary className="flex items-center justify-between gap-4 p-5 cursor-pointer font-semibold text-[#2C3E50] list-none">
                     <span>{faq.q}</span>
-                    <span className="text-[#A50034] group-open:rotate-45 transition-transform shrink-0 text-xl leading-none">+</span>
+                    <span className="text-primary group-open:rotate-45 transition-transform shrink-0 text-xl leading-none">+</span>
                   </summary>
                   <p className="px-5 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
                     {faq.a}
@@ -213,7 +213,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
         </section>
 
         {/* ── CTA final ─────────────────────────────────────────── */}
-        <section className="py-16 bg-[#A50034] text-white">
+        <section className="py-16 bg-primary text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
               ¿Listo para Resolver el Problema?
@@ -224,7 +224,7 @@ export default function ServicioPageLayout({ data, jsonLd }: ServicioPageLayoutP
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href={`/?equipo=${getEquipoIdFromSlug(data.slug)}#electrodomesticos`}
-                className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034] hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-white text-primary hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicitar Servicio Ahora

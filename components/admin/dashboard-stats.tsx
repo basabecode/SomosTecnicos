@@ -7,23 +7,16 @@
 
 import { useEffect, useState } from 'react'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import {
   ShoppingCart,
   Users,
   Clock,
   CheckCircle,
   TrendingUp,
-  AlertTriangle,
   DollarSign,
   Calendar,
+  Wrench,
 } from 'lucide-react'
+import { MetricCard, MetricGrid } from '@/components/layout/metric-card'
 
 interface DashboardStats {
   ordenes: {
@@ -85,7 +78,6 @@ export function DashboardStats() {
       console.error('Error fetching stats:', error)
       setError('No se pudieron cargar las estadísticas')
 
-      // Si no hay datos previos, inicializar en ceros
       if (!stats) {
         setStats({
           ordenes: { total: 0, pendientes: 0, asignadas: 0, enProceso: 0, completadasHoy: 0, completadasMes: 0, vencidas: 0, urgentes: 0 },
@@ -100,54 +92,45 @@ export function DashboardStats() {
   }
 
   useEffect(() => {
-    // Carga inicial
     fetchStats()
-
-    // Auto-refresh cada 30 segundos
-    const interval = setInterval(() => {
-      fetchStats(true)
-    }, 30000)
-
+    const interval = setInterval(() => fetchStats(true), 30000)
     return () => clearInterval(interval)
   }, [])
 
-  if (loading) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-4 w-24 bg-muted animate-pulse rounded"></div>
-              <div className="h-4 w-4 bg-muted animate-pulse rounded"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 w-16 bg-muted animate-pulse rounded mb-2"></div>
-              <div className="h-3 w-32 bg-muted animate-pulse rounded"></div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    )
-  }
-
-  if (!stats) return null // Shouldn't happen due to default init
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CO', {
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0,
     }).format(amount)
+
+  if (loading) {
+    return (
+      <MetricGrid>
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="bg-white rounded-xl shadow-sm p-5 md:p-6 animate-pulse">
+            <div className="flex items-start justify-between">
+              <div className="space-y-2 flex-1">
+                <div className="h-4 w-24 bg-muted rounded" />
+                <div className="h-8 w-16 bg-muted rounded" />
+                <div className="h-3 w-32 bg-muted rounded" />
+              </div>
+              <div className="w-12 h-12 bg-muted rounded-lg ml-3" />
+            </div>
+          </div>
+        ))}
+      </MetricGrid>
+    )
   }
+
+  if (!stats) return null
 
   return (
     <div className="space-y-4">
       {/* Indicador de última actualización */}
       {lastUpdate && (
         <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-          <span>
-            Última actualización: {lastUpdate.toLocaleTimeString('es-CO')}
-          </span>
+          <span>Última actualización: {lastUpdate.toLocaleTimeString('es-CO')}</span>
           <button
             onClick={() => fetchStats(true)}
             className="hover:text-foreground transition-colors flex items-center gap-1"
@@ -159,126 +142,71 @@ export function DashboardStats() {
         </div>
       )}
 
-      {/* Mensaje de error si existe */}
+      {/* Error banner */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">
           {error}
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-      {/* Total Órdenes */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Órdenes</CardTitle>
-          <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.ordenes.total}</div>
-          <p className="text-xs text-muted-foreground">
-             Histórico total
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Órdenes Pendientes */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
-          <Clock className="h-4 w-4 text-orange-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-orange-600">
-            {stats.ordenes.pendientes}
-          </div>
-          <p className="text-xs text-muted-foreground">Requieren asignación</p>
-        </CardContent>
-      </Card>
-
-      {/* En Proceso */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">En Proceso</CardTitle>
-          <AlertTriangle className="h-4 w-4 text-blue-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-blue-600">
-            {stats.ordenes.enProceso}
-          </div>
-          <p className="text-xs text-muted-foreground">Técnicos trabajando</p>
-        </CardContent>
-      </Card>
-
-      {/* Completadas */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Completadas</CardTitle>
-          <CheckCircle className="h-4 w-4 text-green-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-green-600">
-            {stats.ordenes.completadasMes}
-          </div>
-          <p className="text-xs text-muted-foreground">Este mes</p>
-        </CardContent>
-      </Card>
-
-      {/* Técnicos Activos */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Técnicos</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {stats.tecnicos.activos}/{stats.tecnicos.total}
-          </div>
-          <p className="text-xs text-muted-foreground">Activos / Total</p>
-        </CardContent>
-      </Card>
-
-      {/* Órdenes Hoy */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Hoy</CardTitle>
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {stats.ordenes.completadasHoy}
-          </div>
-          <p className="text-xs text-muted-foreground">Nuevas hoy</p>
-        </CardContent>
-      </Card>
-
-      {/* Ingresos Mensuales */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Ingresos</CardTitle>
-          <DollarSign className="h-4 w-4 text-green-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {formatCurrency(stats.negocio.ingresosMes)}
-          </div>
-          <p className="text-xs text-muted-foreground">Este mes</p>
-        </CardContent>
-      </Card>
-
-      {/* Tiempo Promedio */}
-      <Card key="avg-time">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Tiempo Promedio</CardTitle>
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {stats.negocio.tiempoPromedioResolucion} días
-          </div>
-          <p className="text-xs text-muted-foreground">Por servicio</p>
-        </CardContent>
-      </Card>
-    </div>
+      <MetricGrid>
+        <MetricCard
+          title="Total Órdenes"
+          value={stats.ordenes.total}
+          description="Histórico total"
+          icon={ShoppingCart}
+          iconColor="primary"
+        />
+        <MetricCard
+          title="Pendientes"
+          value={stats.ordenes.pendientes}
+          description="Requieren asignación"
+          icon={Clock}
+          iconColor="warning"
+        />
+        <MetricCard
+          title="En Proceso"
+          value={stats.ordenes.enProceso}
+          description="Técnicos trabajando"
+          icon={Wrench}
+          iconColor="info"
+        />
+        <MetricCard
+          title="Completadas"
+          value={stats.ordenes.completadasMes}
+          description="Este mes"
+          icon={CheckCircle}
+          iconColor="success"
+        />
+        <MetricCard
+          title="Técnicos"
+          value={`${stats.tecnicos.activos}/${stats.tecnicos.total}`}
+          description="Activos / Total"
+          icon={Users}
+          iconColor="primary"
+        />
+        <MetricCard
+          title="Hoy"
+          value={stats.ordenes.completadasHoy}
+          description="Completadas hoy"
+          icon={Calendar}
+          iconColor="success"
+        />
+        <MetricCard
+          title="Ingresos"
+          value={formatCurrency(stats.negocio.ingresosMes)}
+          description="Este mes"
+          icon={DollarSign}
+          iconColor="success"
+        />
+        <MetricCard
+          title="Tiempo Promedio"
+          value={`${stats.negocio.tiempoPromedioResolucion} días`}
+          description="Por servicio"
+          icon={TrendingUp}
+          iconColor="primary"
+        />
+      </MetricGrid>
     </div>
   )
 }

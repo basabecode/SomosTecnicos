@@ -79,7 +79,7 @@ function Sidebar({ className }: { className?: string }) {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="flex items-center space-x-2 mb-4">
-            <Wrench className="h-6 w-6 text-[#A50034]" />
+            <Wrench className="h-6 w-6 text-primary" />
             <h2 className="text-lg font-semibold">SomosTécnicos Manager</h2>
           </div>
 
@@ -87,7 +87,7 @@ function Sidebar({ className }: { className?: string }) {
           <div className="mb-4 pb-3 border-b border-gray-200">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#A50034] transition-colors px-2 py-1 rounded-md hover:bg-gray-100"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-gray-100"
             >
               <Home size={16} />
               <span>Volver al Inicio</span>
@@ -100,7 +100,7 @@ function Sidebar({ className }: { className?: string }) {
                 variant={pathname === item.href ? 'default' : 'ghost'}
                 className={`w-full justify-start ${
                   pathname === item.href
-                    ? 'bg-[#A50034] text-white hover:bg-[#8B0028]'
+                    ? 'bg-primary text-white hover:bg-primary/90'
                     : 'hover:bg-muted'
                 }`}
                 asChild
@@ -147,7 +147,7 @@ function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-[#A50034] rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-xs font-medium text-white">
                     {user?.nombre?.charAt(0)}
                     {user?.apellido?.charAt(0)}

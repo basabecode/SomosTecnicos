@@ -622,7 +622,7 @@ export default function OrderDetailPage() {
                 <div className="text-center py-6 bg-muted/30 rounded-lg border border-dashed">
                   <UserCheck className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
                   <p className="text-muted-foreground">No hay técnico asignado a esta orden.</p>
-                  <Button variant="link" asChild className="mt-1 text-[#A50034]">
+                  <Button variant="link" asChild className="mt-1 text-primary">
                      <Link href={`/admin/orders/${order.id}/assign`}>Asignar ahora</Link>
                   </Button>
                 </div>

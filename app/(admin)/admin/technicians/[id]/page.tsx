@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/domain'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ProtectedRoute } from '@/contexts/auth-context'
@@ -471,11 +472,7 @@ export default function TechnicianDetailPage() {
             <CardContent>
               {!technician.assignments ||
               technician.assignments.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    No hay asignaciones registradas
-                  </p>
-                </div>
+                <EmptyState variant="no-history" />
               ) : (
                 <div className="overflow-x-auto">
                   <Table>

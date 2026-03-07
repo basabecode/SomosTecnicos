@@ -287,13 +287,13 @@ export default function CustomerRegistrationPage() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                       currentStep >= s.num
-                        ? 'bg-[#A50034] border-[#A50034] text-white'
+                        ? 'bg-primary border-primary text-white'
                         : 'bg-white border-gray-300 text-gray-400'
                     }`}
                   >
                     <s.icon className="h-6 w-6" />
                   </div>
-                  <span className={`text-xs mt-2 font-medium ${currentStep >= s.num ? 'text-[#A50034]' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-2 font-medium ${currentStep >= s.num ? 'text-primary' : 'text-gray-400'}`}>
                     {s.label}
                   </span>
                 </div>
@@ -301,7 +301,7 @@ export default function CustomerRegistrationPage() {
                   <div className="flex-1 h-0.5 mx-2 -mt-6">
                     <div
                       className={`h-full transition-all ${
-                        currentStep > s.num ? 'bg-[#A50034]' : 'bg-gray-300'
+                        currentStep > s.num ? 'bg-primary' : 'bg-gray-300'
                       }`}
                     />
                   </div>
@@ -428,7 +428,7 @@ export default function CustomerRegistrationPage() {
                   <div className="flex justify-end pt-4">
                     <Button
                       type="submit"
-                      className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      className="bg-primary hover:bg-primary/80 text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       Siguiente
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -506,7 +506,7 @@ export default function CustomerRegistrationPage() {
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-[#A50034] hover:bg-[#c9003f] text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      className="bg-primary hover:bg-primary/80 text-white px-8 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       Siguiente
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -577,7 +577,7 @@ export default function CustomerRegistrationPage() {
                           <button
                             type="button"
                             onClick={() => setShowTermsModal(true)}
-                            className="text-[#A50034] hover:text-[#c9003f] underline font-semibold"
+                            className="text-primary hover:text-primary/90 underline font-semibold"
                           >
                             Términos y Condiciones
                           </button>
@@ -638,7 +638,7 @@ export default function CustomerRegistrationPage() {
         <div className="text-center mt-8 text-sm text-[#64748B]">
           <p>
             ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-[#A50034] hover:text-[#c9003f] font-medium transition-colors">
+            <Link href="/login" className="text-primary hover:text-primary/90 font-medium transition-colors">
               Inicia sesión aquí
             </Link>
           </p>

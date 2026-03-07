@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -327,9 +328,7 @@ export default function ApplicationsPage() {
               <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
             </div>
           ) : applications.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              No hay solicitudes {filter && filter !== 'all' && `en estado "${filter}"`}
-            </div>
+            <EmptyState variant="no-applications" />
           ) : (
             <div className="space-y-4">
               {applications.map((app) => (

@@ -20,10 +20,10 @@ export function BackToHome({
   const baseClasses = 'flex items-center gap-2 transition-colors'
 
   const variants = {
-    default: 'text-sm text-gray-600 hover:text-[#A50034]',
+    default: 'text-sm text-gray-600 hover:text-primary',
     button:
-      'bg-white hover:bg-gray-50 text-gray-700 hover:text-[#A50034] px-4 py-2 border border-gray-300 rounded-md shadow-sm',
-    minimal: 'text-xs text-gray-500 hover:text-[#A50034]',
+      'bg-white hover:bg-gray-50 text-gray-700 hover:text-primary px-4 py-2 border border-gray-300 rounded-md shadow-sm',
+    minimal: 'text-xs text-gray-500 hover:text-primary',
   }
 
   return (

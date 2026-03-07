@@ -424,12 +424,12 @@ export default function AIChat({ className }: AIChatProps) {
         </div>
         <button
           onClick={() => setIsOpen(true)}
-          className="relative h-14 w-14 rounded-full bg-[#A50034] text-white shadow-lg hover:shadow-xl hover:bg-[#c0003d] transition-all duration-300 hover:scale-110 flex items-center justify-center"
+          className="relative h-14 w-14 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all duration-300 hover:scale-110 flex items-center justify-center"
           aria-label="Abrir asistente virtual"
           style={{ boxShadow: '0 8px 32px rgba(165,0,52,0.45)' }}
         >
           {/* Pulse ring */}
-          <span className="absolute inset-0 rounded-full bg-[#A50034]/40 animate-ping" aria-hidden="true" />
+          <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping" aria-hidden="true" />
           <MessageCircle className="h-6 w-6 relative z-10" />
         </button>
       </div>
@@ -466,7 +466,7 @@ export default function AIChat({ className }: AIChatProps) {
                   src="/img-3d/logo_modificado.jpeg"
                   alt="SomosTécnicos"
                   width={36} height={36}
-                  className="rounded-full object-contain bg-white p-0.5 ring-2 ring-[#A50034]/40"
+                  className="rounded-full object-contain bg-white p-0.5 ring-2 ring-primary/40"
                 />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#120608]" aria-label="En línea" />
               </div>
@@ -503,7 +503,7 @@ export default function AIChat({ className }: AIChatProps) {
           {!isMinimized && (
             <div className="h-0.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#A50034] rounded-full transition-all duration-700 ease-out"
+                className="h-full bg-primary rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${getProgress()}%` }}
               />
             </div>
@@ -520,7 +520,7 @@ export default function AIChat({ className }: AIChatProps) {
                   <div className={`flex ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
                     {/* Bot avatar */}
                     {msg.isBot && (
-                      <div className="w-6 h-6 rounded-full bg-[#A50034] flex items-center justify-center shrink-0 mr-2 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 mr-2 mt-0.5">
                         <span className="text-white text-[9px] font-bold">ST</span>
                       </div>
                     )}
@@ -528,7 +528,7 @@ export default function AIChat({ className }: AIChatProps) {
                       className={`max-w-[82%] px-3.5 py-2.5 rounded-2xl text-sm shadow-sm ${
                         msg.isBot
                           ? 'bg-white text-slate-800 rounded-tl-sm border border-slate-100'
-                          : 'bg-[#A50034] text-white rounded-tr-sm'
+                          : 'bg-primary text-white rounded-tr-sm'
                       }`}
                     >
                       <RichText text={msg.text} />
@@ -542,7 +542,7 @@ export default function AIChat({ className }: AIChatProps) {
                         <button
                           key={qr}
                           onClick={() => sendMessage(qr)}
-                          className="text-xs px-3 py-1.5 rounded-full border border-[#A50034]/25 text-[#A50034] bg-white hover:bg-[#A50034] hover:text-white hover:border-[#A50034] transition-all duration-150 font-medium"
+                          className="text-xs px-3 py-1.5 rounded-full border border-primary/25 text-primary bg-white hover:bg-primary hover:text-white hover:border-primary transition-all duration-150 font-medium"
                         >
                           {qr}
                         </button>
@@ -556,7 +556,7 @@ export default function AIChat({ className }: AIChatProps) {
                       {msg.actionButton.href ? (
                         <Link
                           href={msg.actionButton.href}
-                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#A50034] px-4 py-2.5 rounded-lg hover:bg-[#c0003d] transition-colors shadow-sm"
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-primary px-4 py-2.5 rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
                         >
                           {msg.actionButton.label}
                           <ChevronRight className="w-4 h-4" />
@@ -564,7 +564,7 @@ export default function AIChat({ className }: AIChatProps) {
                       ) : (
                         <button
                           onClick={createServiceRequest}
-                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#A50034] px-4 py-2.5 rounded-lg hover:bg-[#c0003d] transition-colors shadow-sm"
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-primary px-4 py-2.5 rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           {msg.actionButton.label}
@@ -579,14 +579,14 @@ export default function AIChat({ className }: AIChatProps) {
             {/* Typing indicator */}
             {isTyping && (
               <div className="flex justify-start items-end gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#A50034] flex items-center justify-center shrink-0">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0">
                   <span className="text-white text-[9px] font-bold">ST</span>
                 </div>
                 <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1">
                   {[0, 150, 300].map(delay => (
                     <span
                       key={delay}
-                      className="w-1.5 h-1.5 rounded-full bg-[#A50034]/60"
+                      className="w-1.5 h-1.5 rounded-full bg-primary/60"
                       style={{ animation: `cta-float-0 1.2s ease-in-out infinite`, animationDelay: `${delay}ms` }}
                     />
                   ))}
@@ -611,14 +611,14 @@ export default function AIChat({ className }: AIChatProps) {
                 className="
                   flex-1 text-sm h-10 px-4 rounded-full border border-slate-200
                   bg-[#FAFAF9] text-slate-800 placeholder:text-slate-400
-                  focus:outline-none focus:ring-2 focus:ring-[#A50034]/25 focus:border-[#A50034]/40
+                  focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/40
                   disabled:opacity-50 transition-all
                 "
               />
               <button
                 onClick={() => sendMessage(inputValue)}
                 disabled={!inputValue.trim() || isTyping}
-                className="h-10 w-10 rounded-full bg-[#A50034] text-white flex items-center justify-center hover:bg-[#c0003d] disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
+                className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
                 aria-label="Enviar"
               >
                 {isTyping

@@ -4,6 +4,7 @@
  */
 
 import { logger } from '@/lib/logger'
+import { sendNotification } from '@/lib/services/notification.service'
 
 // Tipos para los jobs de la cola
 export type QueuePriority = 'high' | 'medium' | 'low'
@@ -318,6 +319,27 @@ class QueueManager {
       total: Array.from(this.queues.values()).reduce((sum, queue) => sum + queue.length, 0)
     }
   }
+
+  /**
+   * Limpiar una cola específica o todas las colas
+   * Retorna el número de jobs descartados
+   */
+  clearQueue(priority?: QueuePriority): number {
+    if (priority) {
+      const queue = this.queues.get(priority)
+      if (!queue) return 0
+      const count = queue.length
+      queue.length = 0
+      return count
+    }
+    // Limpiar todas
+    let total = 0
+    for (const queue of this.queues.values()) {
+      total += queue.length
+      queue.length = 0
+    }
+    return total
+  }
 }
 
 // Instancia singleton del queue manager
@@ -342,6 +364,10 @@ export async function enqueueAudit(job: Omit<AuditJob, 'type'>, priority: QueueP
 
 export function getQueueStats() {
   return queueManager.getQueueStats()
+}
+
+export function clearQueue(priority?: QueuePriority): number {
+  return queueManager.clearQueue(priority)
 }
 
 // Helper para API endpoints que necesitan feedback inmediato

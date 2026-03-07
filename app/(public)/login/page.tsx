@@ -1,11 +1,11 @@
 ﻿/**
  * Login - SomosTécnicos
- * Diseño moderno 50/50 con UX optimizada mobile-first
+ * Rediseño: Precision Workshop — panel oscuro + formulario quirúrgico
  */
 
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -22,10 +22,9 @@ import {
   Mail,
   Lock,
   ArrowRight,
-  CheckCircle2,
   Edit2,
   XCircle,
-  Users
+  Users,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -131,164 +130,175 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full max-w-7xl mx-auto min-h-screen">
-        <div className="grid md:grid-cols-2 relative bg-white min-h-screen">
-          {/* Botón Volver al Inicio - Desktop/Tablet (Flotante en esquina derecha) */}
-          <Link href="/" className="hidden md:flex absolute top-6 right-6 z-50 group">
-            <Button
-              variant="ghost"
-              className="text-[#2C3E50] hover:text-[#A50034] hover:bg-gray-50 transition-all border border-gray-200 hover:border-[#A50034]/30 shadow-sm"
-            >
-              <Home className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              Volver al Inicio
-            </Button>
-          </Link>
+    <div className="min-h-[100dvh] flex flex-col md:flex-row relative">
 
-          {/* Botón Volver al Inicio - Móvil (En header esquina derecha) */}
-          <Link href="/" className="md:hidden absolute top-4 right-4 z-50">
-             <div className="p-2 bg-white/10 backdrop-blur-sm rounded-full active:bg-white/20 transition-colors">
-                <Home className="h-5 w-5 text-white" />
-             </div>
-          </Link>
+      {/* ══════════════════════════════════════════
+          PANEL IZQUIERDO — Taller oscuro (md+)
+      ══════════════════════════════════════════ */}
+      <div className="hidden md:flex flex-col w-5/12 xl:w-[42%] relative bg-[#2d1420] overflow-hidden">
 
-      {/* ========================================
-          LADO IZQUIERDO - BRANDING (50%)
-          Visible en md (768px+)
-      ======================================== */}
-      <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-[#A50034] to-[#2C3E50] overflow-hidden">
-        {/* Decoración de fondo */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+        {/* Halos ambientales */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-st-primary/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-1/4 left-0 w-60 h-60 bg-rose-950/30 rounded-full blur-2xl pointer-events-none" aria-hidden="true" />
 
-        <div className="relative z-10 flex flex-col h-full px-8 lg:px-16 py-6 lg:py-8 justify-between">
+        {/* Contenido */}
+        <div className="relative z-10 flex flex-col h-full px-10 xl:px-14 py-10">
 
-          {/* Header */}
-          <div className="space-y-4 lg:space-y-6">
-            <div className="flex items-center gap-4">
-              <Image
-                src="/img-3d/logo_modificado.jpeg"
-                alt="SomosTécnicos"
-                width={70}
-                height={70}
-                className="h-16 lg:h-16 w-16 lg:w-16 object-contain"
-                priority
-              />
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-                SomosTécnicos
-              </h1>
-            </div>
-
-            <div className="space-y-4 max-w-xl">
-              <h2 className="text-3xl lg:text-3xl font-bold text-white leading-tight">
-                Bienvenido
-              </h2>
-              <p className="text-lg lg:text-xl text-blue-100 font-medium leading-relaxed">
-                Accede para gestionar tus servicios técnicos.
-              </p>
-            </div>
-
-            {/* Bullet Points */}
-            <div className="space-y-4 max-w-xl pt-4">
-              {[
-                "Gestiona todas tus solicitudes de servicio en un solo lugar",
-                "Seguimiento en tiempo real del estado de tus reparaciones",
-                "Técnicos certificados y calificados a tu servicio"
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                   <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-white/90 text-sm lg:text-base">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Imagen Desktop */}
-          <div className="flex-1 flex items-center justify-center py-4 lg:py-6">
-            <div className="relative w-full max-w-xs lg:max-w-md aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/10 group transform transition-transform hover:scale-[1.02] duration-500">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
-              <Image
-                src="/img-3d/tecnico_saludando_cliente.jpeg"
-                alt="Confianza y Calidad"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 320px, 448px"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <p className="text-white font-bold text-2xl lg:text-3xl mb-2 drop-shadow-lg">Confianza y Calidad</p>
-                <p className="text-white/95 text-base lg:text-lg drop-shadow-md">Tu satisfacción es nuestra prioridad.</p>
+          {/* Logo — contenedor unificado estilo píldora */}
+          <div className="mb-12">
+            <div className="inline-flex items-center bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.25)] border border-white/10 overflow-hidden pl-2 pr-4 py-2 gap-0">
+              {/* Ícono ST — cuadrado recortado */}
+              <div className="w-10 h-10 flex-shrink-0 relative overflow-hidden rounded-xl">
+                <Image
+                  src="/img-3d/logo_modificado.jpeg"
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  priority
+                />
+              </div>
+              {/* Separador visual sutil */}
+              <div className="w-px h-6 bg-gray-200 mx-3 flex-shrink-0" />
+              {/* Wordmark — sin fondo extra, objeto contenido */}
+              <div className="relative h-7 w-[148px] flex-shrink-0">
+                <Image
+                  src="/img-3d/logotipo_somostecnicos_nuevo.jpg"
+                  alt="SomosTécnicos"
+                  fill
+                  className="object-contain object-left"
+                  priority
+                />
               </div>
             </div>
           </div>
 
+          {/* Titular */}
+          <div className="mb-10">
+            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-st-primary mb-3">
+              Portal de acceso
+            </p>
+            <h2 className="text-4xl xl:text-5xl font-bold text-white leading-[1.05] font-display mb-4">
+              Todo bajo<br />control.
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              Gestiona servicios, coordina técnicos y da seguimiento a cada orden desde un solo lugar.
+            </p>
+          </div>
+
+          {/* Foto — anclada al fondo */}
+          <div className="flex-1 flex items-end">
+            <div className="relative w-full rounded-2xl overflow-hidden border border-white/8" style={{ aspectRatio: '4/3' }}>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2d1420] via-transparent to-transparent z-10" />
+              <Image
+                src="/img-3d/tecnico_saludando_cliente.jpeg"
+                alt="Técnico certificado SomosTécnicos"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 1280px) 42vw, 45vw"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
+                <p className="text-white font-semibold text-sm">Confianza y Calidad</p>
+                <p className="text-gray-400 text-xs mt-0.5">Tu satisfacción es nuestra prioridad</p>
+              </div>
+            </div>
+          </div>
 
         </div>
+
+        {/* Divisor rojo — umbral de acceso */}
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-st-primary/40 to-transparent" />
       </div>
 
-      {/* ========================================
-          LADO DERECHO / MÓVIL MAIN (50% / 100%)
-      ======================================== */}
-      <div className="flex flex-col bg-white overflow-y-auto">
+      {/* ══════════════════════════════════════════
+          PANEL DERECHO — Espacio del formulario
+      ══════════════════════════════════════════ */}
+      <div className="flex-1 flex flex-col bg-white overflow-y-auto">
 
-        {/* HEADER MÓVIL COMPACTO (Solo < md) */}
-        <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
-           <div className="flex items-center gap-3 mb-3">
-              <Image
-                src="/img-3d/logo_modificado.jpeg"
-                alt="SomosTécnicos"
-                width={48}
-                height={48}
-                className="h-12 w-12 object-contain"
-              />
-              <h1 className="text-2xl font-bold text-white tracking-tight">SomosTécnicos</h1>
-           </div>
-           <p className="text-white/90 text-base font-medium">¡Bienvenido de nuevo!</p>
+        {/* Header móvil (< md) */}
+        <div className="md:hidden relative bg-[#2d1420] px-6 pt-14 pb-8 text-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2d1420] via-[#3d1a2a] to-[#2d1420] pointer-events-none" />
+          <div className="relative z-10 flex flex-col items-center">
+            {/* Logo píldora — móvil */}
+            <div className="inline-flex items-center bg-white rounded-xl shadow-[0_2px_16px_rgba(0,0,0,0.3)] overflow-hidden pl-1.5 pr-3 py-1.5 gap-0 mb-2">
+              <div className="w-7 h-7 flex-shrink-0 relative overflow-hidden rounded-lg">
+                <Image
+                  src="/img-3d/logo_modificado.jpeg"
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                />
+              </div>
+              <div className="w-px h-4 bg-gray-200 mx-2 flex-shrink-0" />
+              <div className="relative h-5 w-[110px] flex-shrink-0">
+                <Image
+                  src="/img-3d/logotipo_somostecnicos_nuevo.jpg"
+                  alt="SomosTécnicos"
+                  fill
+                  className="object-contain object-left"
+                />
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm">Portal de acceso</p>
+          </div>
         </div>
 
-        {/* CONTENEDOR FORMULARIO */}
-        <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 w-full">
-          <div className="w-full max-w-[400px] lg:max-w-[450px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Botón Inicio — desktop */}
+        <Link href="/" className="hidden md:flex absolute top-6 right-6 z-50">
+          <Button
+            variant="ghost"
+            className="h-9 text-gray-500 hover:text-gray-900 hover:bg-gray-100 text-sm gap-2 border border-gray-200"
+          >
+            <Home className="h-4 w-4" />
+            Inicio
+          </Button>
+        </Link>
 
-            {/* Header Formulario */}
-            <div className="mb-8 lg:mb-10 text-center md:text-left">
-              <h2 className="text-2xl lg:text-3xl font-bold text-[#111827] mb-2">
-                Iniciar Sesión
-              </h2>
-              <p className="text-[#6B7280] text-sm lg:text-base">
-                Ingresa tus datos para continuar
+        {/* Botón Inicio — móvil */}
+        <Link href="/" className="md:hidden absolute top-4 right-4 z-50">
+          <div className="p-2 bg-white/10 backdrop-blur-sm rounded-full active:bg-white/20 transition-colors">
+            <Home className="h-5 w-5 text-white" />
+          </div>
+        </Link>
+
+        {/* Área del formulario */}
+        <div className="flex-1 flex items-center justify-center px-6 py-10 md:px-10 lg:px-16">
+          <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* Encabezado */}
+            <div className="mb-8">
+              <h1 className="text-2xl lg:text-[1.75rem] font-bold text-gray-900 font-display mb-1">
+                Iniciar sesión
+              </h1>
+              <p className="text-gray-500 text-sm">
+                Ingresa tus credenciales para continuar
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* Email */}
-              <div className="space-y-2">
+              {/* Campo email */}
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                   <Label htmlFor="email" className="text-sm font-medium text-[#374151]">
+                  <Label htmlFor="email" className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     Correo Electrónico
-                   </Label>
-                   {email && !isEditingEmail && (
-                      <button
-                        type="button"
-                        onClick={() => setIsEditingEmail(true)}
-                        className="text-xs text-[#A50034] font-medium flex items-center gap-1 hover:underline"
-                      >
-                        <Edit2 className="w-3 h-3" /> Cambiar
-                      </button>
-                   )}
+                  </Label>
+                  {email && !isEditingEmail && (
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingEmail(true)}
+                      className="text-xs text-st-primary font-medium flex items-center gap-1 hover:underline"
+                    >
+                      <Edit2 className="w-3 h-3" /> Cambiar
+                    </button>
+                  )}
                 </div>
-
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <Mail className={`h-5 w-5 ${emailError ? 'text-red-500' : ''}`} />
-                  </div>
+                  <Mail className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${emailError ? 'text-red-400' : 'text-gray-400'}`} />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="ejemplo@correo.com"
+                    placeholder="correo@ejemplo.com"
                     autoComplete="email"
                     autoCapitalize="none"
                     autoCorrect="off"
@@ -300,207 +310,185 @@ export default function LoginPage() {
                     }}
                     required
                     disabled={loading}
-                    className={`h-[52px] pl-12 bg-white border rounded-xl text-base focus:ring-2 transition-all ${
+                    className={`h-11 pl-10 text-sm rounded-lg border transition-all ${
                       emailError
-                        ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-                        : 'border-[#E5E7EB] focus:ring-[#A50034]/20 focus:border-[#A50034]'
+                        ? 'border-red-400 focus-visible:ring-red-200'
+                        : 'border-gray-200 focus-visible:border-st-primary focus-visible:ring-st-primary/15'
                     }`}
                   />
                 </div>
                 {emailError && (
-                  <p className="text-xs text-red-500 flex items-center gap-1 mt-1 animate-in slide-in-from-left-1">
-                    <XCircle className="w-3 h-3" /> {emailError}
+                  <p className="text-xs text-red-500 flex items-center gap-1 animate-in slide-in-from-left-1">
+                    <XCircle className="w-3 h-3 flex-shrink-0" /> {emailError}
                   </p>
                 )}
               </div>
 
-              {/* Password */}
-              <div className="space-y-2">
-                 <Label htmlFor="password" className="text-sm font-medium text-[#374151]">
-                    Contraseña
-                 </Label>
-                 <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                      <Lock className={`h-5 w-5 ${passwordError ? 'text-red-500' : ''}`} />
-                    </div>
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      autoComplete="current-password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value)
-                        if (passwordError) setPasswordError('')
-                      }}
-                      required
-                      disabled={loading}
-                      className={`h-[52px] pl-12 pr-12 bg-white border rounded-xl text-base focus:ring-2 transition-all ${
-                        passwordError
-                          ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-                          : 'border-[#E5E7EB] focus:ring-[#A50034]/20 focus:border-[#A50034]'
-                      }`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                      aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                 </div>
-                 {passwordError && (
-                    <p className="text-xs text-red-500 flex items-center gap-1 mt-1 animate-in slide-in-from-left-1">
-                      <XCircle className="w-3 h-3" /> {passwordError}
-                    </p>
-                  )}
-                 <div className="flex justify-end pt-1">
-                    <Link
-                      href="/forgot-password"
-                      className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8]"
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </Link>
-                 </div>
+              {/* Campo contraseña */}
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-xs font-semibold text-gray-500 uppercase tracking-wide block">
+                  Contraseña
+                </Label>
+                <div className="relative">
+                  <Lock className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${passwordError ? 'text-red-400' : 'text-gray-400'}`} />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value)
+                      if (passwordError) setPasswordError('')
+                    }}
+                    required
+                    disabled={loading}
+                    className={`h-11 pl-10 pr-11 text-sm rounded-lg border transition-all ${
+                      passwordError
+                        ? 'border-red-400 focus-visible:ring-red-200'
+                        : 'border-gray-200 focus-visible:border-st-primary focus-visible:ring-st-primary/15'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {passwordError && (
+                  <p className="text-xs text-red-500 flex items-center gap-1 animate-in slide-in-from-left-1">
+                    <XCircle className="w-3 h-3 flex-shrink-0" /> {passwordError}
+                  </p>
+                )}
+                <div className="flex justify-end pt-0.5">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-gray-500 hover:text-gray-900 transition-colors"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
               </div>
 
-              {/* General Error Message */}
+              {/* Error general */}
               {error && (
-                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-700 rounded-xl">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="ml-2 font-medium">
-                    {error}
-                  </AlertDescription>
+                <Alert className="bg-red-50 border-red-200 text-red-700 rounded-lg py-3">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <AlertDescription className="ml-2 text-sm font-medium">{error}</AlertDescription>
                 </Alert>
               )}
 
-              {/* Submit Button */}
+              {/* Botón submit */}
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
+                className="w-full h-11 bg-st-primary hover:bg-st-primary-hover text-white font-semibold text-sm rounded-lg transition-all active:scale-[0.98] mt-1"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Ingresando...
                   </>
                 ) : (
                   <>
-                    Ingresar <ArrowRight className="ml-2 h-5 w-5" />
+                    Ingresar <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
             </form>
 
-            {/* Register Link */}
-            <div className="mt-8 text-center">
-              <p className="text-[#4B5563] text-[15px]">
-                ¿Aún no tienes cuenta?{' '}
-                <button
-                  onClick={() => setIsRegisterModalOpen(true)}
-                  className="text-[#A50034] font-bold hover:underline cursor-pointer"
-                >
-                  Regístrate Gratis
-                </button>
-              </p>
-            </div>
+            {/* Registro */}
+            <p className="mt-6 text-center text-sm text-gray-500">
+              ¿No tienes cuenta?{' '}
+              <button
+                onClick={() => setIsRegisterModalOpen(true)}
+                className="text-st-primary font-semibold hover:underline cursor-pointer"
+              >
+                Regístrate gratis
+              </button>
+            </p>
 
-            {/* Mobile Footer Legal */}
-            <div className="mt-12 text-center">
-               <div className="flex justify-center gap-4 text-xs text-[#6B7280]">
-                  <TermsLink
-                    className="hover:text-[#A50034] transition-colors"
-                    showIcon={false}
-                  >
-                    Términos
-                  </TermsLink>
-                  <span>•</span>
-                  <TermsLink
-                    className="hover:text-[#A50034] transition-colors"
-                    showIcon={false}
-                  >
-                    Privacidad
-                  </TermsLink>
-               </div>
-               <p className="mt-4 text-[11px] text-[#9CA3AF]">
-                 © 2026 SomosTécnicos. Calidad Certificada.
-               </p>
+            {/* Footer legal */}
+            <div className="mt-10 pt-6 border-t border-gray-100">
+              <div className="flex justify-center gap-5 text-xs text-gray-400">
+                <TermsLink className="hover:text-gray-600 transition-colors" showIcon={false}>
+                  Términos
+                </TermsLink>
+                <span aria-hidden="true">·</span>
+                <TermsLink className="hover:text-gray-600 transition-colors" showIcon={false}>
+                  Privacidad
+                </TermsLink>
+              </div>
+              <p className="mt-3 text-center text-[11px] text-gray-300">
+                © 2026 SomosTécnicos. Todos los derechos reservados.
+              </p>
             </div>
 
           </div>
         </div>
       </div>
-      </div>
-     </div>
 
-      {/* Modal de Selección de Registro */}
+      {/* ══════════════════════════════════════════
+          MODAL — Selección de registro
+      ══════════════════════════════════════════ */}
       {isRegisterModalOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setIsRegisterModalOpen(false)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-300"
+            className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 duration-300"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Cabecera Corporativa */}
-            <div className="bg-[#A50034] px-6 py-6 text-center">
-              <h2 className="text-2xl font-bold text-white mb-1">Únete a SomosTécnicos</h2>
-              <p className="text-white/80 text-sm">Selecciona tu perfil para continuar</p>
+            {/* Cabecera */}
+            <div className="bg-[#1a0a0f] px-6 py-5 text-center">
+              <h2 className="text-xl font-bold text-white font-display mb-1">Únete a SomosTécnicos</h2>
+              <p className="text-gray-400 text-xs">Selecciona tu perfil para continuar</p>
             </div>
 
-            {/* Opciones de Acceso */}
-            <div className="p-6 space-y-4">
-              {/* Opción: Cliente */}
+            {/* Opciones */}
+            <div className="p-5 space-y-3">
               <Link
                 href="/register/customer"
-                className="group flex items-center gap-4 bg-white hover:bg-red-50/30 rounded-xl p-4 border border-gray-100 hover:border-[#A50034] transition-all duration-300 shadow-sm hover:shadow-md"
+                className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-st-primary hover:bg-red-50/30 transition-all duration-200"
                 onClick={() => setIsRegisterModalOpen(false)}
               >
-                <div className="p-3 bg-[#A50034]/10 rounded-xl group-hover:bg-[#A50034] transition-colors">
-                  <Users className="w-6 h-6 text-[#A50034] group-hover:text-white" />
+                <div className="p-2.5 bg-st-primary/10 rounded-lg group-hover:bg-st-primary transition-colors flex-shrink-0">
+                  <Users className="w-5 h-5 text-st-primary group-hover:text-white" />
                 </div>
-
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#2C3E50] mb-0.5">Soy Cliente</h3>
-                  <p className="text-gray-500 text-xs">
-                    Solicita servicios técnicos expertos
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm">Soy Cliente</p>
+                  <p className="text-gray-400 text-xs">Solicita servicios técnicos expertos</p>
                 </div>
-
-                <ArrowRight className="w-5 h-5 text-[#A50034] opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-st-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
               </Link>
 
-              {/* Opción: Técnico */}
               <Link
                 href="/register/technician"
-                className="group flex items-center gap-4 bg-white hover:bg-slate-50/50 rounded-xl p-4 border border-gray-100 hover:border-[#2C3E50] transition-all duration-300 shadow-sm hover:shadow-md"
+                className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
                 onClick={() => setIsRegisterModalOpen(false)}
               >
-                <div className="p-3 bg-[#2C3E50]/10 rounded-xl group-hover:bg-[#2C3E50] transition-colors">
-                  <Wrench className="w-6 h-6 text-[#2C3E50] group-hover:text-white" />
+                <div className="p-2.5 bg-gray-100 rounded-lg group-hover:bg-[#2C3E50] transition-colors flex-shrink-0">
+                  <Wrench className="w-5 h-5 text-gray-600 group-hover:text-white" />
                 </div>
-
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#2C3E50] mb-0.5">Soy Técnico</h3>
-                  <p className="text-gray-500 text-xs">
-                    Forma parte de nuestro equipo profesional
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm">Soy Técnico</p>
+                  <p className="text-gray-400 text-xs">Únete a nuestra red de profesionales</p>
                 </div>
-
-                <ArrowRight className="w-5 h-5 text-[#2C3E50] opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
               </Link>
             </div>
 
-            {/* Footer */}
-            <div className="px-6 pb-6 text-center">
+            {/* Footer modal */}
+            <div className="px-5 pb-5 text-center">
               <button
                 onClick={() => setIsRegisterModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-xs font-medium transition-colors border-b border-transparent hover:border-gray-300"
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
               >
-                Cerrar ventana
+                Cerrar
               </button>
             </div>
           </div>

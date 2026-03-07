@@ -70,7 +70,7 @@ export function NotificationList({ title, description, limit }: NotificationList
             >
               No leídas
               {notifications.filter(n => !n.read).length > 0 && (
-                 <Badge className="ml-2 bg-[#A50034] text-white border-none h-5 px-1.5 min-w-[20px] justify-center">
+                 <Badge className="ml-2 bg-primary text-white border-none h-5 px-1.5 min-w-[20px] justify-center">
                     {notifications.filter(n => !n.read).length}
                  </Badge>
               )}
@@ -108,7 +108,7 @@ export function NotificationList({ title, description, limit }: NotificationList
               {filteredNotifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`p-5 sm:p-6 transition-all hover:bg-gray-50/50 flex gap-4 group relative ${!n.read ? 'bg-[#A50034]/[0.02]' : ''}`}
+                  className={`p-5 sm:p-6 transition-all hover:bg-gray-50/50 flex gap-4 group relative ${!n.read ? 'bg-primary/[0.02]' : ''}`}
                 >
                   <div className={`mt-1 p-2.5 rounded-xl shadow-sm h-fit ${
                     n.tipo === 'assignment' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
@@ -154,7 +154,7 @@ export function NotificationList({ title, description, limit }: NotificationList
                   </div>
 
                   {!n.read && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#A50034]" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
                   )}
                 </div>
               ))}

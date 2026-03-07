@@ -185,7 +185,7 @@ export function CloseServiceForm({
                   name="costoFinal"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-lg font-semibold text-[#A50034]">
+                      <FormLabel className="text-lg font-semibold text-primary">
                         Total a Cobrar (COP) *
                       </FormLabel>
                       <FormControl>
@@ -214,7 +214,7 @@ export function CloseServiceForm({
                 </div>
               )}
 
-              <Button type="submit" className="w-full bg-[#A50034] hover:bg-[#8B002B] h-12 text-lg" disabled={isSubmitting}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 h-12 text-lg" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

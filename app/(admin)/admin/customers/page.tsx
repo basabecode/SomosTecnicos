@@ -35,6 +35,7 @@ import {
   Clock,
   History
 } from 'lucide-react'
+import { EmptyState } from '@/components/domain'
 
 interface Customer {
   id: number
@@ -216,8 +217,8 @@ export default function CustomersPage() {
                                 </TableRow>
                             ) : customers.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                                        No se encontraron clientes registrados.
+                                    <TableCell colSpan={7} className="p-0">
+                                        <EmptyState variant="no-results" />
                                     </TableCell>
                                 </TableRow>
                             ) : (

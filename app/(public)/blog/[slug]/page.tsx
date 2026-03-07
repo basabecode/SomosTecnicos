@@ -234,7 +234,7 @@ export default async function BlogPostPage({ params }: Props) {
 
             {/* CTA in-article */}
             {post.relatedServiceSlug && (
-              <div className="mt-10 bg-[#A50034] rounded-xl p-6 text-white text-center">
+              <div className="mt-10 bg-primary rounded-xl p-6 text-white text-center">
                 <div className="flex justify-center mb-3">
                   <Wrench className="w-6 h-6 text-red-200" />
                 </div>
@@ -247,7 +247,7 @@ export default async function BlogPostPage({ params }: Props) {
                     href="https://wa.me/573003094854?text=Hola,%20necesito%20un%20técnico%20a%20domicilio"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034]
+                    className="inline-flex items-center justify-center gap-2 bg-white text-primary
                                font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-red-50 transition-colors"
                   >
                     WhatsApp
@@ -296,7 +296,7 @@ export default async function BlogPostPage({ params }: Props) {
                       <span className="text-xs text-slate-400">{rp.readTime} min</span>
                     </div>
                     <p className="text-sm font-semibold text-slate-900 leading-snug
-                                  group-hover:text-[#A50034] transition-colors line-clamp-3">
+                                  group-hover:text-primary transition-colors line-clamp-3">
                       {rp.title}
                     </p>
                   </div>
@@ -311,7 +311,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4
                           bg-white border border-[#E8EAED] rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-[#A50034] flex-shrink-0" />
+              <Phone className="w-5 h-5 text-primary flex-shrink-0" />
               <p className="text-sm text-slate-700">
                 <strong>¿Necesitas un técnico en Cali?</strong>{' '}
                 Llamamos en menos de 10 minutos.
@@ -319,8 +319,8 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
             <a
               href="tel:+573003094854"
-              className="flex-shrink-0 bg-[#A50034] text-white text-sm font-semibold
-                         px-5 py-2.5 rounded-full hover:bg-[#c9003f] transition-colors"
+              className="flex-shrink-0 bg-primary text-white text-sm font-semibold
+                         px-5 py-2.5 rounded-full hover:bg-primary/80 transition-colors"
             >
               Llamar ahora
             </a>

@@ -6,6 +6,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -316,12 +317,7 @@ export default function WarrantyPage() {
         </CardHeader>
         <CardContent>
           {activeWarranties.length === 0 ? (
-            <div className="text-center py-8">
-              <Shield className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">
-                No tienes garantías activas
-              </p>
-            </div>
+            <EmptyState variant="no-warranties" />
           ) : (
             <div className="space-y-4">
               {activeWarranties.map(service => {

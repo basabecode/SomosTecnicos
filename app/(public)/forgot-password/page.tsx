@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
           <Link href="/login" className="hidden md:flex absolute top-6 right-6 z-50 group">
             <Button
               variant="ghost"
-              className="text-[#2C3E50] hover:text-[#A50034] hover:bg-gray-50 transition-all border border-gray-200 hover:border-[#A50034]/30 shadow-sm"
+              className="text-[#2C3E50] hover:text-primary hover:bg-gray-50 transition-all border border-gray-200 hover:border-primary/30 shadow-sm"
             >
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
               Volver al Login
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
           </Link>
 
           {/* LADO IZQUIERDO - BRANDING */}
-          <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-[#A50034] to-[#2C3E50] overflow-hidden">
+          <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-primary to-[#2C3E50] overflow-hidden">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
 
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
           {/* LADO DERECHO / MÓVIL MAIN */}
           <div className="flex flex-col bg-white overflow-y-auto">
             {/* HEADER MÓVIL */}
-            <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
+            <div className="md:hidden bg-primary py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
               <div className="flex items-center gap-3 mb-3">
                 <Image
                   src="/img-3d/logo modificado.jpeg"
@@ -181,7 +181,7 @@ export default function ForgotPasswordPage() {
                     </Alert>
 
                     <Link href="/login" className="block">
-                      <Button className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl">
+                      <Button className="w-full h-[54px] bg-primary hover:bg-primary/90 text-white font-semibold text-[17px] rounded-xl">
                         <ArrowLeft className="mr-2 h-5 w-5" />
                         Volver al Login
                       </Button>
@@ -217,7 +217,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             disabled={loading}
-                            className="h-[52px] pl-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-[#A50034]/20 focus:border-[#A50034]"
+                            className="h-[52px] pl-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                         </div>
                       </div>
@@ -234,7 +234,7 @@ export default function ForgotPasswordPage() {
                       <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
+                        className="w-full h-[54px] bg-primary hover:bg-primary/90 text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
@@ -252,7 +252,7 @@ export default function ForgotPasswordPage() {
                     <div className="mt-8 text-center">
                       <Link
                         href="/login"
-                        className="text-[#A50034] font-semibold hover:underline inline-flex items-center gap-2"
+                        className="text-primary font-semibold hover:underline inline-flex items-center gap-2"
                       >
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Login

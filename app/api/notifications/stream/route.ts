@@ -4,6 +4,10 @@
  *
  * Usa Server-Sent Events para entregar notificaciones nuevas sin polling de 60s.
  * El token se pasa como query param porque EventSource del navegador no soporta headers custom.
+ *
+ * Runtime: Node.js con maxDuration=300 (5 min en Vercel Pro, 60s en Hobby).
+ * Edge Runtime no es viable con @prisma/client estándar — requeriría Prisma Accelerate.
+ * Para Vercel Hobby: el cliente reconecta automáticamente cada 60s (comportamiento aceptable).
  */
 
 import { NextRequest } from 'next/server'
@@ -12,6 +16,7 @@ import { verifyToken } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+export const maxDuration = 300 // 5 min en Vercel Pro | 60s en Hobby (reconexión automática)
 
 const POLL_INTERVAL_MS = 5000
 
@@ -74,24 +79,37 @@ export async function GET(request: NextRequest) {
         lastId = 0
       }
 
-      // Contar no leídas al conectar (para sincronizar badge inicial)
-      let unreadCount = 0
+      // Contar no leídas + enviar las pendientes al conectar (sincroniza badge inicial)
       try {
-        unreadCount = await prisma.notification.count({
-          where: {
-            OR: [
-              { userId, userType: userRole, read: false },
-              ...(isAdmin
-                ? [{ userId: '0', userType: { in: ['admin', 'support'] }, read: false }]
-                : [])
-            ]
-          }
-        })
-      } catch {
-        unreadCount = 0
-      }
+        const [unreadCount, pendingNotifications] = await Promise.all([
+          prisma.notification.count({
+            where: {
+              OR: [
+                { userId, userType: userRole, read: false },
+                ...(isAdmin
+                  ? [{ userId: '0', userType: { in: ['admin', 'support'] }, read: false }]
+                  : [])
+              ]
+            }
+          }),
+          prisma.notification.findMany({
+            where: {
+              OR: [
+                { userId, userType: userRole, read: false },
+                ...(isAdmin
+                  ? [{ userId: '0', userType: { in: ['admin', 'support'] }, read: false }]
+                  : [])
+              ]
+            },
+            orderBy: { id: 'desc' },
+            take: 20
+          })
+        ])
 
-      send({ type: 'connected', unreadCount })
+        send({ type: 'connected', unreadCount, notifications: pendingNotifications })
+      } catch {
+        send({ type: 'connected', unreadCount: 0, notifications: [] })
+      }
 
       // Polling al servidor cada POLL_INTERVAL_MS ms
       const interval = setInterval(async () => {
@@ -131,7 +149,7 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no' // Deshabilitar buffering en proxies (nginx)
+      'X-Accel-Buffering': 'no'
     }
   })
 }

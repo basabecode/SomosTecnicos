@@ -15,14 +15,14 @@ export default function RegisterPage() {
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              className="flex items-center text-[#2C3E50] hover:text-[#A50034] transition-colors"
+              className="flex items-center text-[#2C3E50] hover:text-primary transition-colors"
             >
               <Home className="h-5 w-5 mr-2" />
               <span className="font-medium">Volver al inicio</span>
             </Link>
             <Link
               href="/login"
-              className="text-sm text-[#64748B] hover:text-[#A50034] transition-colors"
+              className="text-sm text-[#64748B] hover:text-primary transition-colors"
             >
               ¿Ya tienes cuenta? <span className="font-semibold">Inicia sesión</span>
             </Link>
@@ -45,7 +45,7 @@ export default function RegisterPage() {
             />
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#2C3E50] leading-tight tracking-tight mb-4">
-            Únete a <span className="text-[#A50034]">SomosTécnicos</span>
+            Únete a <span className="text-primary">SomosTécnicos</span>
           </h1>
           <p className="text-lg md:text-xl text-[#64748B] max-w-2xl mx-auto">
             Selecciona el tipo de cuenta que deseas crear para comenzar
@@ -55,11 +55,11 @@ export default function RegisterPage() {
         {/* Opciones de Registro */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Opción: Cliente */}
-          <Card className="group border-2 border-gray-100 hover:border-[#A50034] transition-all duration-300 hover:shadow-2xl bg-white/80 backdrop-blur-xl overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#A50034] to-[#c9003f]" />
+          <Card className="group border-2 border-gray-100 hover:border-primary transition-all duration-300 hover:shadow-2xl bg-white/80 backdrop-blur-xl overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-primary to-[#c9003f]" />
             <CardHeader className="text-center pb-4">
-              <div className="mx-auto mb-4 p-4 w-20 h-20 rounded-2xl bg-[#A50034]/10 flex items-center justify-center group-hover:bg-[#A50034] transition-colors">
-                <Users className="w-10 h-10 text-[#A50034] group-hover:text-white transition-colors" />
+              <div className="mx-auto mb-4 p-4 w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">
+                <Users className="w-10 h-10 text-primary group-hover:text-white transition-colors" />
               </div>
               <CardTitle className="text-2xl font-bold text-[#2C3E50]">
                 Soy Cliente
@@ -78,13 +78,13 @@ export default function RegisterPage() {
                   'Historial completo de servicios',
                 ].map((benefit, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle2 className="w-5 h-5 text-[#A50034] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <span>{benefit}</span>
                   </li>
                 ))}
               </ul>
               <Link href="/register/customer" className="block">
-                <Button className="w-full h-12 bg-[#A50034] hover:bg-[#c9003f] text-white font-semibold text-base rounded-xl shadow-lg hover:shadow-xl transition-all group">
+                <Button className="w-full h-12 bg-primary hover:bg-primary/80 text-white font-semibold text-base rounded-xl shadow-lg hover:shadow-xl transition-all group">
                   Registrarme como Cliente
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -135,7 +135,7 @@ export default function RegisterPage() {
         <div className="text-center mt-12 space-y-4">
           <p className="text-sm text-[#64748B]">
             Al registrarte, aceptas nuestros{' '}
-            <Link href="/terminos-y-condiciones" className="text-[#A50034] hover:underline font-medium">
+            <Link href="/terminos-y-condiciones" className="text-primary hover:underline font-medium">
               Términos y Condiciones
             </Link>
           </p>

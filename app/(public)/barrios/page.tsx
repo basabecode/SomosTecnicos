@@ -39,7 +39,7 @@ export default function BarriosPage() {
         <section className="bg-white border-b border-[#E8EAED]">
           <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
             <nav aria-label="Ruta de navegación" className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-              <Link href="/" className="hover:text-[#A50034] transition-colors">Inicio</Link>
+              <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-slate-700">Barrios</span>
             </nav>
@@ -65,10 +65,10 @@ export default function BarriosPage() {
               >
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 text-[#A50034]" />
+                    <MapPin className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <h2 className="font-semibold text-slate-900 group-hover:text-[#A50034] transition-colors">
+                    <h2 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
                       {barrio.name}
                     </h2>
                     <p className="text-xs text-slate-400 truncate">{barrio.zone}</p>
@@ -93,7 +93,7 @@ export default function BarriosPage() {
 
         {/* CTA */}
         <section className="max-w-5xl mx-auto px-4 pb-14">
-          <div className="bg-[#A50034] rounded-2xl p-8 text-center text-white">
+          <div className="bg-primary rounded-2xl p-8 text-center text-white">
             <h2 className="text-xl font-bold mb-2">¿No ves tu barrio en la lista?</h2>
             <p className="text-red-200 text-sm mb-6">
               Cubrimos toda la ciudad de Cali y municipios cercanos. Contáctanos y confirmamos cobertura de inmediato.
@@ -102,7 +102,7 @@ export default function BarriosPage() {
               href="https://wa.me/573003094854?text=Hola,%20quiero%20saber%20si%20tienen%20cobertura%20en%20mi%20barrio"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-[#A50034] font-semibold
+              className="inline-flex items-center gap-2 bg-white text-primary font-semibold
                          px-6 py-3 rounded-full text-sm hover:bg-red-50 transition-colors"
             >
               Consultar cobertura por WhatsApp

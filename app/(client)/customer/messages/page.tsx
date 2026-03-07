@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { EmptyState } from '@/components/domain'
 import {
   Card,
   CardContent,
@@ -548,10 +549,7 @@ export default function CustomerMessages() {
                        <span className="text-xs">Cargando...</span>
                      </div>
                    ) : filteredThreads.length === 0 ? (
-                     <div className="text-center py-10 text-gray-400 px-4">
-                       <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                       <p className="text-sm">No se encontraron mensajes</p>
-                     </div>
+                     <EmptyState variant="no-messages" className="p-6" />
                    ) : (
                      filteredThreads.map(thread => {
                         const isSelected = selectedThreadId === thread.id

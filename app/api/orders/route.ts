@@ -244,7 +244,7 @@ export const POST = withAuth(async (request: NextRequest, user: AuthenticatedUse
         await enqueueEmail({
           to: order.email,
           subject: `Orden Confirmada - #${order.orderNumber}`,
-          template: 'order-created',
+          template: 'new-order',
           data: {
             orderNumber: order.orderNumber,
             customerName: order.nombre,

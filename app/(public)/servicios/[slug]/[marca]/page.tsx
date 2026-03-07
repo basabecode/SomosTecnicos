@@ -128,7 +128,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
             />
 
             <div className="flex items-center gap-2 mb-3">
-              <span className="px-2.5 py-1 bg-red-50 text-[#A50034] text-xs font-semibold rounded-full">
+              <span className="px-2.5 py-1 bg-red-50 text-primary text-xs font-semibold rounded-full">
                 {marcaData.name}
               </span>
               <span className="text-slate-400 text-xs">{marcaData.origin}</span>
@@ -149,7 +149,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                 { icon: CheckCircle, label: '30 días', sub: 'Garantía' },
               ].map(({ icon: Icon, label, sub }) => (
                 <div key={sub} className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-2.5 border border-[#E8EAED]">
-                  <Icon className="w-4 h-4 text-[#A50034] flex-shrink-0" />
+                  <Icon className="w-4 h-4 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-slate-900 font-semibold text-sm leading-none">{label}</p>
                     <p className="text-slate-400 text-xs mt-0.5">{sub}</p>
@@ -172,7 +172,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
               <ul className="space-y-3">
                 {combo.failures.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <Wrench className="w-4 h-4 text-[#A50034] flex-shrink-0 mt-0.5" />
+                    <Wrench className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-slate-700 leading-relaxed">{f}</span>
                   </li>
                 ))}
@@ -219,7 +219,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                   { step: '4', title: '30 días de garantía', desc: 'La reparación queda garantizada. Si el mismo problema regresa, lo atendemos sin costo.' },
                 ].map(({ step, title, desc }) => (
                   <li key={step} className="flex items-start gap-4">
-                    <div className="w-7 h-7 rounded-full bg-[#A50034] flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-xs font-bold">{step}</span>
                     </div>
                     <div>
@@ -243,7 +243,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 mb-1">Artículo relacionado</p>
-                  <p className="text-sm font-semibold text-slate-900 group-hover:text-[#A50034] transition-colors">
+                  <p className="text-sm font-semibold text-slate-900 group-hover:text-primary transition-colors">
                     {relatedBlog.title}
                   </p>
                 </div>
@@ -254,7 +254,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
           {/* Sidebar */}
           <div className="space-y-5">
             {/* CTA */}
-            <div className="bg-[#A50034] rounded-xl p-5 text-white text-center sticky top-6">
+            <div className="bg-primary rounded-xl p-5 text-white text-center sticky top-6">
               <Wrench className="w-6 h-6 text-red-200 mx-auto mb-3" />
               <p className="font-bold mb-1">{combo.serviceName} {marcaData.name} en Cali</p>
               <p className="text-red-200 text-xs mb-4 leading-relaxed">
@@ -264,7 +264,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                 href="https://wa.me/573003094854?text=Hola,%20necesito%20técnico%20para%20mi%20equipo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-white text-[#A50034]
+                className="flex items-center justify-center gap-2 bg-white text-primary
                            font-semibold px-4 py-3 rounded-full text-sm hover:bg-red-50 transition-colors mb-2"
               >
                 Solicitar por WhatsApp
@@ -285,7 +285,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
               <p className="text-xs text-slate-400 mb-2">Ver página del servicio</p>
               <Link
                 href={`/servicios/${slug}`}
-                className="text-sm font-semibold text-[#A50034] hover:underline block"
+                className="text-sm font-semibold text-primary hover:underline block"
               >
                 {servicioData.h1} →
               </Link>
@@ -304,7 +304,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                       <li key={m}>
                         <Link
                           href={`/servicios/${slug}/${m}`}
-                          className="text-sm text-[#A50034] hover:underline"
+                          className="text-sm text-primary hover:underline"
                         >
                           {combo.serviceName} {md?.name} →
                         </Link>

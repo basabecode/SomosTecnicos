@@ -104,7 +104,7 @@ export default async function BarrioPage({ params }: Props) {
 
       <main className="min-h-screen bg-[#F8F9FA]">
         {/* Hero */}
-        <section className="bg-[#A50034] text-white">
+        <section className="bg-primary text-white">
           <div className="max-w-5xl mx-auto px-4 pt-8 pb-12">
             {/* Breadcrumb */}
             <nav aria-label="Ruta de navegación" className="flex items-center gap-2 text-sm text-red-200 mb-6">
@@ -179,10 +179,10 @@ export default async function BarrioPage({ params }: Props) {
                     key={servicio.slug}
                     href={`/servicios/${servicio.slug}`}
                     className="flex items-center gap-3 p-3 rounded-lg border border-[#E8EAED]
-                               hover:border-[#A50034] hover:bg-red-50/30 transition-all group"
+                               hover:border-primary hover:bg-red-50/30 transition-all group"
                   >
-                    <Wrench className="w-4 h-4 text-slate-400 group-hover:text-[#A50034] flex-shrink-0" />
-                    <span className="text-sm font-medium text-slate-700 group-hover:text-[#A50034] transition-colors">
+                    <Wrench className="w-4 h-4 text-slate-400 group-hover:text-primary flex-shrink-0" />
+                    <span className="text-sm font-medium text-slate-700 group-hover:text-primary transition-colors">
                       {servicio.h1}
                     </span>
                   </Link>
@@ -231,7 +231,7 @@ export default async function BarrioPage({ params }: Props) {
           {/* Sidebar */}
           <div className="space-y-5">
             {/* CTA principal */}
-            <div className="bg-[#A50034] rounded-xl p-5 text-white text-center sticky top-6">
+            <div className="bg-primary rounded-xl p-5 text-white text-center sticky top-6">
               <Wrench className="w-6 h-6 text-red-200 mx-auto mb-3" />
               <p className="font-bold mb-1">¿Necesitas un técnico en {barrio.name}?</p>
               <p className="text-red-200 text-xs mb-4 leading-relaxed">
@@ -241,7 +241,7 @@ export default async function BarrioPage({ params }: Props) {
                 href="https://wa.me/573003094854?text=Hola,%20necesito%20un%20técnico%20en%20mi%20domicilio"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-white text-[#A50034]
+                className="flex items-center justify-center gap-2 bg-white text-primary
                            font-semibold px-4 py-3 rounded-full text-sm hover:bg-red-50 transition-colors mb-2"
               >
                 Solicitar por WhatsApp
@@ -265,7 +265,7 @@ export default async function BarrioPage({ params }: Props) {
                   <li key={b.slug}>
                     <Link
                       href={`/barrios/${b.slug}`}
-                      className="flex items-center gap-2 text-sm text-[#A50034] hover:underline"
+                      className="flex items-center gap-2 text-sm text-primary hover:underline"
                     >
                       <MapPin className="w-3 h-3 flex-shrink-0" />
                       {b.name}

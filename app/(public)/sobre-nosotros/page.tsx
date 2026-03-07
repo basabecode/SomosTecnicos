@@ -127,7 +127,7 @@ export default function SobreNosotrosPage() {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
           </div>
           {/* Fondo blanco a la derecha con el borde rojo separador exacto al 50% de la pantalla */}
-          <div className="absolute inset-y-0 right-0 hidden lg:block w-1/2 bg-white border-l-2 border-[#A50034]" />
+          <div className="absolute inset-y-0 right-0 hidden lg:block w-1/2 bg-white border-l-2 border-primary" />
 
           {/* Contenedor centralizado y responsivo */}
           <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-8 relative z-10 w-full flex-grow">
@@ -158,7 +158,7 @@ export default function SobreNosotrosPage() {
               </div>
 
               {/* Lado Imagen (Derecha - Blanco centralizado) */}
-              <div className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center items-center bg-white lg:bg-transparent border-t-2 border-[#A50034] lg:border-t-0">
+              <div className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center items-center bg-white lg:bg-transparent border-t-2 border-primary lg:border-t-0">
                 <div className="relative w-full max-w-[500px] aspect-[16/9] flex items-center justify-center">
                   <Image
                     src="/img-3d/somos_tecnicos.png"
@@ -176,7 +176,7 @@ export default function SobreNosotrosPage() {
         </section>
 
         {/* Stats */}
-        <section className="py-12 bg-[#A50034] text-white">
+        <section className="py-12 bg-primary text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
               {stats.map((stat) => (
@@ -217,8 +217,8 @@ export default function SobreNosotrosPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
-                <div className="w-12 h-12 bg-[#A50034]/10 rounded-xl flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-[#A50034]" />
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-primary" />
                 </div>
                 <h2 className="text-xl font-bold text-[#2C3E50] mb-3">Nuestra Misión</h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -246,10 +246,10 @@ export default function SobreNosotrosPage() {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {values.map((val) => (
-                <div key={val.title} className="bg-gray-50 hover:bg-white rounded-xl p-6 border border-gray-100 hover:border-[#A50034]/20 hover:shadow-md transition-all duration-200 group">
+                <div key={val.title} className="bg-gray-50 hover:bg-white rounded-xl p-6 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all duration-200 group">
                   <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle className="w-5 h-5 text-[#A50034] shrink-0" />
-                    <h3 className="font-bold text-[#2C3E50] group-hover:text-[#A50034] transition-colors">{val.title}</h3>
+                    <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+                    <h3 className="font-bold text-[#2C3E50] group-hover:text-primary transition-colors">{val.title}</h3>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed">{val.description}</p>
                 </div>
@@ -270,7 +270,7 @@ export default function SobreNosotrosPage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href="/#formulario"
-                className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-bold px-8 py-4 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-bold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicitar Servicio

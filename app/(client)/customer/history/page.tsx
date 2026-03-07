@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/domain'
 import {
   Card,
   CardContent,
@@ -260,17 +261,7 @@ export default function CustomerHistory() {
       {/* History List */}
       <div className="space-y-4">
         {filteredServices.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No se encontraron servicios
-              </h3>
-              <p className="text-gray-600">
-                Intenta ajustar los filtros de búsqueda
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState variant="no-results" />
         ) : (
           filteredServices.map(service => (
             <Card key={service.id} className="overflow-hidden">

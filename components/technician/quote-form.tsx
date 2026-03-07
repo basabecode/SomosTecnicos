@@ -149,7 +149,7 @@ export function QuoteForm({
                 )}
               />
 
-              <Button type="submit" className="w-full bg-[#A50034] hover:bg-[#8B002B]" disabled={isSubmitting}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

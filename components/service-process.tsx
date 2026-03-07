@@ -103,13 +103,13 @@ export default function ServiceProcess() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A50034] mb-3">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
               Proceso de servicio
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
               ¿Cómo funciona nuestro servicio?
             </h2>
-            <div className="mt-4 h-0.5 w-16 bg-[#A50034] rounded-full" />
+            <div className="mt-4 h-0.5 w-16 bg-primary rounded-full" />
           </motion.div>
         </div>
 
@@ -126,7 +126,7 @@ export default function ServiceProcess() {
                 whileInView={{ scaleY: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1], delay: 0.15 }}
-                className="absolute left-5 top-5 bottom-12 w-px bg-gradient-to-b from-[#A50034] via-[#A50034]/30 to-transparent origin-top pointer-events-none"
+                className="absolute left-5 top-5 bottom-12 w-px bg-linear-to-b from-primary via-primary/30 to-transparent origin-top pointer-events-none"
               />
 
               {steps.map((step, index) => (
@@ -155,7 +155,7 @@ export default function ServiceProcess() {
                           hover: { scale: 1.9, opacity: 0 },
                         }}
                         transition={{ duration: 0.55, ease: 'easeOut' }}
-                        className="absolute inset-0 rounded-full border border-[#A50034]/40 pointer-events-none"
+                        className="absolute inset-0 rounded-full border border-primary/40 pointer-events-none"
                       />
                       <motion.div
                         variants={circleVariants}
@@ -182,14 +182,14 @@ export default function ServiceProcess() {
                       <motion.div
                         variants={accentVariants}
                         transition={{ duration: 0.22, ease: 'easeOut' }}
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-[#A50034] origin-top rounded-r-full"
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-primary origin-top rounded-r-full"
                       />
 
                       {/* Shimmer — barre de izquierda a derecha */}
                       <motion.div
                         variants={shimmerVariants}
                         transition={{ duration: 0.65, ease: 'easeInOut' }}
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none"
+                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/60 to-transparent pointer-events-none"
                       />
 
                       {/* Contenido */}
@@ -217,7 +217,7 @@ export default function ServiceProcess() {
                 onClick={() => {
                   document.getElementById('formulario')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#A50034] hover:bg-[#8a002b] text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all duration-200"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all duration-200"
               >
                 Solicitar Servicio Ahora
               </button>
@@ -231,7 +231,7 @@ export default function ServiceProcess() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative w-full h-full min-h-[30rem] rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm"
+              className="relative w-full h-full min-h-120 rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm"
             >
               <Image
                 src="/img-3d/moto-roja.jpg"
@@ -244,13 +244,13 @@ export default function ServiceProcess() {
 
               {/* Barra roja inferior — idéntica al FAQ */}
               <div
-                className="absolute bottom-0 inset-x-0 h-1 bg-[#A50034]"
+                className="absolute bottom-0 inset-x-0 h-1 bg-primary"
                 aria-hidden="true"
               />
 
               {/* Badge flotante — idéntico al FAQ */}
               <div className="absolute top-4 left-4">
-                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#A50034] text-xs font-bold px-2.5 py-1 rounded-full border border-[#A50034]/20 shadow-sm">
+                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold px-2.5 py-1 rounded-full border border-primary/20 shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                   Técnico a domicilio hoy
                 </span>

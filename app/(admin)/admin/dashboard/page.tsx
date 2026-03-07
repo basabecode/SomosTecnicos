@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Suspense, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { ProtectedRoute } from '@/contexts/auth-context'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { RecentOrders } from '@/components/admin/recent-orders'
@@ -32,52 +32,7 @@ import {
 import { TechnicianAvailabilitySection } from '@/components/admin/technician-availability'
 import { DashboardCharts } from '@/components/admin/dashboard-charts'
 import { DashboardActions } from '@/components/admin/dashboard-export'
-
-// Componente de carga para las estadísticas
-function StatsLoading() {
-  return (
-    <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-      {[...Array(8)].map((_, i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="h-4 w-24 bg-muted animate-pulse rounded"></div>
-            <div className="h-4 w-4 bg-muted animate-pulse rounded"></div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-8 w-16 bg-muted animate-pulse rounded mb-2"></div>
-            <div className="h-3 w-32 bg-muted animate-pulse rounded"></div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  )
-}
-
-// Componente de carga para las tarjetas
-function CardLoading() {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="h-6 w-32 bg-muted animate-pulse rounded mb-2"></div>
-        <div className="h-4 w-48 bg-muted animate-pulse rounded"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-muted animate-pulse rounded-full"></div>
-              <div className="space-y-2 flex-1">
-                <div className="h-4 w-32 bg-muted animate-pulse rounded"></div>
-                <div className="h-3 w-48 bg-muted animate-pulse rounded"></div>
-              </div>
-              <div className="h-6 w-20 bg-muted animate-pulse rounded"></div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+import { EmptyState } from '@/components/domain'
 
 // Componente de actividad reciente
 function QuickActions() {
@@ -88,7 +43,7 @@ function QuickActions() {
         <CardDescription>Tareas comunes del sistema</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 grid-cols-2 md:gap-4">
-        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="outline" asChild>
+        <Button className="h-16 md:h-20 flex-col gap-1 md:gap-2 text-xs md:text-sm" variant="default" asChild>
           <Link href="/admin/orders">
             <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
             <span>Nueva Orden</span>
@@ -259,9 +214,7 @@ function SystemAlerts() {
       <CardContent>
         <div className="space-y-3">
           {alerts.length === 0 ? (
-             <div className="text-center py-4 text-muted-foreground text-sm">
-                No hay alertas críticas en este momento.
-             </div>
+            <EmptyState variant="no-results" className="p-4" />
           ) : (
             alerts.map((alert, index) => {
               const Icon = alert.icon
@@ -323,24 +276,18 @@ export default function AdminDashboard() {
         </div>
 
         {/* Estadísticas Principales */}
-        <Suspense fallback={<StatsLoading />}>
-          <DashboardStats />
-        </Suspense>
+        <DashboardStats />
 
         {/* Grid Principal */}
         <div className="grid gap-4 md:gap-6 lg:grid-cols-3">
           {/* Órdenes Recientes */}
           <div className="lg:col-span-2 order-2 lg:order-1">
-            <Suspense fallback={<CardLoading />}>
-              <RecentOrders />
-            </Suspense>
+            <RecentOrders />
           </div>
 
           {/* Estado de Técnicos */}
           <div className="order-1 lg:order-2">
-            <Suspense fallback={<CardLoading />}>
-              <TechnicianStatus />
-            </Suspense>
+            <TechnicianStatus />
           </div>
         </div>
 
@@ -355,9 +302,7 @@ export default function AdminDashboard() {
               Visualización de datos y métricas del sistema
             </p>
           </div>
-          <Suspense fallback={<CardLoading />}>
-            <DashboardCharts />
-          </Suspense>
+          <DashboardCharts />
         </div>
 
         {/* Fila Inferior */}

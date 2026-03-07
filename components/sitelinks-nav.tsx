@@ -91,7 +91,7 @@ export default function SitelinksNav() {
                     >
                       <div className="flex flex-col gap-1 min-w-0">
                         <span
-                          className="text-[#A50034] text-[18px] font-medium leading-snug
+                          className="text-[#a50034] text-[18px] font-medium leading-snug
                                      no-underline group-hover:underline group-hover:underline-offset-2
                                      truncate"
                         >
@@ -107,7 +107,7 @@ export default function SitelinksNav() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-[#A50034] transition-colors"
+                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-primary transition-colors"
                         aria-hidden="true"
                       >
                         <path
@@ -126,7 +126,7 @@ export default function SitelinksNav() {
                     >
                       <div className="flex flex-col gap-1 min-w-0">
                         <span
-                          className="text-[#A50034] text-[18px] font-medium leading-snug
+                          className="text-[#a50034] text-[18px] font-medium leading-snug
                                      no-underline group-hover:underline group-hover:underline-offset-2
                                      truncate"
                         >
@@ -142,7 +142,7 @@ export default function SitelinksNav() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-[#A50034] transition-colors"
+                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-primary transition-colors"
                         aria-hidden="true"
                       >
                         <path

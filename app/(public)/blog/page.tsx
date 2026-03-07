@@ -110,7 +110,7 @@ export default function BlogPage() {
 
                   <h2
                     className="text-[15px] font-semibold text-slate-900 leading-snug mb-2
-                               group-hover:text-[#A50034] transition-colors line-clamp-2"
+                               group-hover:text-primary transition-colors line-clamp-2"
                   >
                     {post.title}
                   </h2>
@@ -120,7 +120,7 @@ export default function BlogPage() {
                   </p>
 
                   {post.relatedServiceLabel && (
-                    <div className="mt-4 flex items-center gap-1.5 text-xs text-[#A50034] font-medium">
+                    <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
                       <Wrench className="w-3 h-3 flex-shrink-0" />
                       <span className="truncate">{post.relatedServiceLabel}</span>
                     </div>
@@ -140,7 +140,7 @@ export default function BlogPage() {
 
         {/* CTA banner */}
         <section className="max-w-5xl mx-auto px-4 pb-14">
-          <div className="bg-[#A50034] rounded-2xl p-8 text-center text-white">
+          <div className="bg-primary rounded-2xl p-8 text-center text-white">
             <h2 className="text-xl font-bold mb-2">
               ¿Tu electrodoméstico tiene un problema ahora?
             </h2>
@@ -151,7 +151,7 @@ export default function BlogPage() {
               href="https://wa.me/573003094854?text=Hola,%20necesito%20un%20técnico%20a%20domicilio"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-[#A50034] font-semibold
+              className="inline-flex items-center gap-2 bg-white text-primary font-semibold
                          px-6 py-3 rounded-full text-sm hover:bg-red-50 transition-colors"
             >
               Solicitar técnico por WhatsApp

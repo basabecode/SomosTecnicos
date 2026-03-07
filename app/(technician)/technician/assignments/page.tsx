@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { EmptyState } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -238,9 +239,7 @@ export default function TechnicianAssignmentsPage() {
       {/* Assignments Cards */}
       <div className="grid gap-4">
         {filteredAssignments.length === 0 ? (
-             <div className="text-center py-10 bg-muted/20 rounded-lg border border-dashed">
-                <p className="text-muted-foreground">No se encontraron asignaciones</p>
-             </div>
+          <EmptyState variant="no-assignments" />
         ) : (
         filteredAssignments.map(assignment => {
           const StatusIcon = statusIcons[assignment.estado] || Clock
@@ -371,7 +370,7 @@ export default function TechnicianAssignmentsPage() {
                     {assignment.estado === 'en_proceso' && (
                       <Button
                         size="sm"
-                        className="w-full mt-2 bg-[#A50034] hover:bg-[#8B002B]"
+                        className="w-full mt-2 bg-primary hover:bg-primary/90"
                         onClick={() => completeJob(assignment)}
                       >
                         <CheckCircle className="w-4 h-4 mr-1.5" />

@@ -27,6 +27,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { EmptyState } from '@/components/domain'
 import { cn } from '@/lib/utils'
 
 // Tipos
@@ -199,10 +200,7 @@ export default function TechnicianSchedulePage() {
                     <p>Sincronizando calendario...</p>
                 </div>
             ) : selectedDayAssignments.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border border-dashed text-muted-foreground">
-                    <p className="text-lg font-medium text-gray-900">Día Libre</p>
-                    <p>No tienes servicios asignados para esta fecha.</p>
-                </div>
+                <EmptyState variant="no-schedule" />
             ) : (
                 <div className="space-y-4 relative">
                     {/* Línea de tiempo visual */}

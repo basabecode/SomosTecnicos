@@ -85,6 +85,12 @@ export default function CustomerLayoutClient({
   const router = useRouter()
   const { user, logout } = useAuth()
 
+  // Título de página activa basado en pathname
+  const activeItem = sidebarItems.find(
+    item => pathname === item.href || pathname.startsWith(item.href + '/')
+  )
+  const pageTitle = activeItem?.title ?? 'Portal Cliente'
+
   // Datos del usuario
   const userData = {
     name: user ? `${user.nombre} ${user.apellido || ''}`.trim() : 'Usuario',
@@ -138,7 +144,7 @@ export default function CustomerLayoutClient({
         <div className="flex flex-col flex-1 overflow-hidden pb-16 md:pb-0">
           {/* Header */}
           <UnifiedHeader
-            title="Portal Cliente"
+            title={pageTitle}
             userName={userData.name}
             userEmail={userData.email}
             userInitials={userData.initials}
@@ -149,7 +155,7 @@ export default function CustomerLayoutClient({
             rightContent={
               <Button
                 onClick={() => router.push('/customer/request')}
-                className="hidden md:flex bg-[#991B1B] hover:bg-[#7F1D1D] text-white"
+                className="hidden md:flex bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Nueva Solicitud

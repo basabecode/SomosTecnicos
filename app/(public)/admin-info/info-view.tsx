@@ -69,7 +69,7 @@ export default function InfoView() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           >
-            ¿Cómo usar <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A50034] to-[#ff4d6d] animate-gradient-x">SomosTécnicos</span>?
+            ¿Cómo usar <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff4d6d] animate-gradient-x">SomosTécnicos</span>?
           </motion.h1>
 
           <motion.p
@@ -87,7 +87,7 @@ export default function InfoView() {
             transition={{ delay: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-           <Button size="lg" className="bg-[#A50034] hover:bg-[#8a002b] text-white rounded-full px-8 shadow-lg shadow-red-900/20 active-tap group h-12 text-base">
+           <Button size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 shadow-lg shadow-red-900/20 active-tap group h-12 text-base">
              <Link href="/" className="flex items-center gap-2">
                Comenzar Ahora <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
              </Link>
@@ -122,7 +122,7 @@ export default function InfoView() {
                   value="clients"
                   className="rounded-xl py-4 data-[state=active]:bg-white data-[state=active]:shadow-lg transition-all duration-300 flex flex-col items-center gap-2"
                 >
-                  <Users className={`w-6 h-6 ${activeTab === 'clients' ? 'text-[#A50034]' : 'text-gray-400'}`} />
+                  <Users className={`w-6 h-6 ${activeTab === 'clients' ? 'text-primary' : 'text-gray-400'}`} />
                   <span className="font-semibold">Clientes</span>
                 </TabsTrigger>
                 <TabsTrigger
@@ -146,7 +146,7 @@ export default function InfoView() {
                 <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
                   <div className="space-y-8">
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-100 text-[#A50034] flex items-center justify-center font-bold text-xl">1</div>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-100 text-primary flex items-center justify-center font-bold text-xl">1</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Solicitud Inteligente</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -155,7 +155,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-[#A50034] flex items-center justify-center font-bold text-xl">2</div>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">2</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Asignación Automática</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -164,7 +164,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-[#A50034] flex items-center justify-center font-bold text-xl">3</div>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">3</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Garantía y Pago Seguro</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -175,7 +175,7 @@ export default function InfoView() {
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                      <BrainCircuit className="w-8 h-8 text-[#A50034]" />
+                      <BrainCircuit className="w-8 h-8 text-primary" />
                       <h4 className="font-bold text-lg">Validación de Usuario</h4>
                     </div>
                     <ul className="space-y-4">
@@ -352,7 +352,7 @@ export default function InfoView() {
               ].map((keyword, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-[#A50034] hover:text-white transition-colors cursor-default"
+                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-primary hover:text-white transition-colors cursor-default"
                 >
                   {keyword}
                 </span>

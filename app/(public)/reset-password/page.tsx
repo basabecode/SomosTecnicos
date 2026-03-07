@@ -144,7 +144,7 @@ function ResetPasswordContent() {
           </Link>
 
           {/* LADO IZQUIERDO - BRANDING */}
-          <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-[#A50034] to-[#2C3E50] overflow-hidden">
+          <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-primary to-[#2C3E50] overflow-hidden">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
 
@@ -207,7 +207,7 @@ function ResetPasswordContent() {
           {/* LADO DERECHO / MÓVIL MAIN */}
           <div className="flex flex-col bg-white overflow-y-auto">
             {/* HEADER MÓVIL */}
-            <div className="md:hidden bg-[#A50034] py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
+            <div className="md:hidden bg-primary py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
               <div className="flex items-center gap-3 mb-3">
                 <Image
                   src="/img-3d/logo_modificado.jpeg"
@@ -228,7 +228,7 @@ function ResetPasswordContent() {
                 {validating ? (
                   /* VALIDANDO TOKEN */
                   <div className="text-center space-y-6">
-                    <Loader2 className="w-12 h-12 animate-spin text-[#A50034] mx-auto" />
+                    <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
                     <p className="text-[#6B7280] text-base">Verificando enlace...</p>
                   </div>
                 ) : !tokenValid ? (
@@ -248,7 +248,7 @@ function ResetPasswordContent() {
                     </div>
 
                     <Link href="/forgot-password" className="block">
-                      <Button className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl">
+                      <Button className="w-full h-[54px] bg-primary hover:bg-primary/90 text-white font-semibold text-[17px] rounded-xl">
                         Solicitar Nuevo Enlace
                       </Button>
                     </Link>
@@ -273,7 +273,7 @@ function ResetPasswordContent() {
                     </div>
 
                     <Link href="/login" className="block">
-                      <Button className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl">
+                      <Button className="w-full h-[54px] bg-primary hover:bg-primary/90 text-white font-semibold text-[17px] rounded-xl">
                         Ir al Login
                       </Button>
                     </Link>
@@ -311,7 +311,7 @@ function ResetPasswordContent() {
                             }}
                             required
                             disabled={loading}
-                            className="h-[52px] pl-12 pr-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-[#A50034]/20 focus:border-[#A50034]"
+                            className="h-[52px] pl-12 pr-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                           <button
                             type="button"
@@ -348,7 +348,7 @@ function ResetPasswordContent() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                             disabled={loading}
-                            className="h-[52px] pl-12 pr-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-[#A50034]/20 focus:border-[#A50034]"
+                            className="h-[52px] pl-12 pr-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                           <button
                             type="button"
@@ -375,7 +375,7 @@ function ResetPasswordContent() {
                       <Button
                         type="submit"
                         disabled={loading || !newPassword || !confirmPassword || newPassword !== confirmPassword}
-                        className="w-full h-[54px] bg-[#A50034] hover:bg-[#8B1538] text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
+                        className="w-full h-[54px] bg-primary hover:bg-primary/90 text-white font-semibold text-[17px] rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
@@ -404,7 +404,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#A50034]" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     }>
       <ResetPasswordContent />

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withAuth, AuthenticatedUser } from '@/lib/auth'
 import { ORDER_STATES, USER_ROLES } from '@/lib/constants'
+import { isValidTransition } from '@/lib/state-machine'
 import { getCostoVisitaTecnica } from '@/lib/order-utils'
 
 // PATCH /api/orders/[id]/approve - Aprobar o Rechazar Cotización (cliente)

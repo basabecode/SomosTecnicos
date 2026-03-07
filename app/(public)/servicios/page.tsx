@@ -80,7 +80,7 @@ export default function ServiciosPage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href="/#formulario"
-                className="inline-flex items-center justify-center gap-2 bg-[#A50034] hover:bg-[#c0003d] text-white font-semibold px-8 py-4 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-semibold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicitar Servicio
@@ -107,7 +107,7 @@ export default function ServiciosPage() {
                 <Link
                   key={servicio.slug}
                   href={servicio.canonicalPath}
-                  className="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-[#A50034]/30 transition-all overflow-hidden"
+                  className="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-primary/30 transition-all overflow-hidden"
                 >
                   <div className="relative h-48 bg-white overflow-hidden">
                     <Image
@@ -119,13 +119,13 @@ export default function ServiciosPage() {
                     />
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-[#2C3E50] text-lg mb-2 group-hover:text-[#A50034] transition-colors">
+                    <h3 className="font-bold text-[#2C3E50] text-lg mb-2 group-hover:text-primary transition-colors">
                       {servicio.h1}
                     </h3>
                     <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
                       {servicio.description}
                     </p>
-                    <span className="inline-flex items-center gap-1 text-[#A50034] font-semibold text-sm mt-4">
+                    <span className="inline-flex items-center gap-1 text-primary font-semibold text-sm mt-4">
                       Ver servicio <ChevronRight className="w-4 h-4" />
                     </span>
                   </div>
@@ -136,7 +136,7 @@ export default function ServiciosPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-16 bg-[#A50034] text-white">
+        <section className="py-16 bg-primary text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
               ¿No encuentras tu servicio? Llámanos
@@ -147,7 +147,7 @@ export default function ServiciosPage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 href="/#formulario"
-                className="inline-flex items-center justify-center gap-2 bg-white text-[#A50034] hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-white text-primary hover:bg-gray-100 font-bold px-8 py-4 rounded-lg transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicitar Servicio

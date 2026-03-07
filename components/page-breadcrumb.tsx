@@ -87,7 +87,7 @@ export default function PageBreadcrumb({
                     isFirst && showHomeIcon ? 'gap-1.5' : '',
                     isDark
                       ? 'text-gray-400 hover:text-white'
-                      : 'text-gray-500 hover:text-[#A50034]',
+                      : 'text-gray-500 hover:text-primary',
                   )}
                 >
                   {isFirst && showHomeIcon && (
