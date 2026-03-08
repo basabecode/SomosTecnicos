@@ -17,26 +17,60 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Headers de seguridad y rendimiento para todas las rutas
+        // Headers de seguridad para todas las rutas
         source: '/(.*)',
         headers: [
-          // Compresión: indicar al navegador que acepte Gzip y Brotli
-          {
-            key: 'Accept-Encoding',
-            value: 'br, gzip, deflate',
-          },
-          // Seguridad XSS
+          // Previene que el navegador infiera el tipo MIME (anti-sniffing)
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
+          // Evita que el sitio sea embebido en iframes externos (clickjacking)
           {
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
+            value: 'DENY',
           },
+          // No enviar el referrer completo a terceros
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
+          },
+          // Fuerza HTTPS durante 1 año, incluye subdominios
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+          // Restringe acceso a APIs del navegador que la app no usa
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()',
+          },
+          // Content Security Policy: define fuentes permitidas de contenido.
+          // 'unsafe-inline' en script-src y style-src es requerido por Next.js
+          // (scripts de hidratación y Tailwind inline styles).
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              // Next.js requiere 'unsafe-inline' para scripts de hidratación del DOM
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              // Tailwind y estilos inline del framework requieren 'unsafe-inline'
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // Google Fonts
+              "font-src 'self' https://fonts.gstatic.com",
+              // Imágenes locales y data URIs (íconos SVG inline)
+              "img-src 'self' data: blob:",
+              // API calls solo al propio dominio
+              "connect-src 'self'",
+              // Bloquea <object> y <embed> (vectores de ataque obsoletos)
+              "object-src 'none'",
+              // Bloquea iframes de dominio externo (refuerza X-Frame-Options)
+              "frame-ancestors 'none'",
+              // Evita inyección de base href
+              "base-uri 'self'",
+              // Formularios solo al propio dominio
+              "form-action 'self'",
+            ].join('; '),
           },
         ],
       },

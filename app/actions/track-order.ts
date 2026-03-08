@@ -3,14 +3,23 @@
 import { prisma } from '@/lib/prisma'
 
 export async function trackOrder(orderNumber: string) {
-  if (!orderNumber || orderNumber.trim().length < 3) {
+  const trimmed = typeof orderNumber === 'string' ? orderNumber.trim() : ''
+
+  if (trimmed.length < 3) {
     return { success: false, error: 'Por favor ingrese un número de orden válido' }
+  }
+  if (trimmed.length > 50) {
+    return { success: false, error: 'Número de orden demasiado largo' }
+  }
+  // Solo letras, dígitos, guiones y guiones bajos (formato estándar de órdenes)
+  if (!/^[a-zA-Z0-9\-_]+$/.test(trimmed)) {
+    return { success: false, error: 'El número de orden contiene caracteres no válidos' }
   }
 
   try {
     // Intentar buscar por orderNumber
     let order = await prisma.order.findUnique({
-      where: { orderNumber: orderNumber.trim() },
+      where: { orderNumber: trimmed },
       select: {
         id: true,
         orderNumber: true,
