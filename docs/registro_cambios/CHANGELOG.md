@@ -106,6 +106,20 @@ Ver historial de commits para cambios anteriores a enero 2026.
 
 ---
 
+## [2.2.1] - 08 de marzo de 2026
+
+### ♻️ Convenciones Tailwind actualizadas
+
+- ✅ Refactor global de clases legacy: `flex-shrink-0` → `shrink-0`
+- ✅ Estandarización de utilidades de ancho mínimo: `min-w-[20px]` → `min-w-5`
+- ✅ Ajuste de consistencia para evitar errores de convención en revisiones futuras
+
+### 📌 Nota operativa
+
+- Se documentó la regla en `CLAUDE.md` para mantener memoria del equipo y evitar regresiones de estilo.
+
+---
+
 ## 🚀 Próximas Características Planificadas
 
 - [ ] Migración de base de datos para campo `documentosUrl`
@@ -116,4 +130,4 @@ Ver historial de commits para cambios anteriores a enero 2026.
 
 ---
 
-**Última actualización**: 10 de enero de 2026
+**Última actualización**: 08 de marzo de 2026

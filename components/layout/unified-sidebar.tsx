@@ -62,15 +62,18 @@ export function UnifiedSidebar({
       )}
     >
       {/* Logo */}
-      <div className="flex items-center justify-center px-5 py-6">
-        <Image
-          src="/img-3d/somos_tecnicos.png"
-          alt="SomosTécnicos"
-          width={120}
-          height={48}
-          className="h-12 w-auto object-contain"
-          priority
-        />
+      <div className="flex items-center justify-center px-4 py-5 border-b border-gray-100">
+        <div className="relative w-52 h-16">
+          <Image
+            src="/img-3d/diseño-Logos-sinFondo.png"
+            alt="SomosTécnicos"
+            fill
+            className="object-contain object-center"
+            quality={100}
+            sizes="208px"
+            priority
+          />
+        </div>
       </div>
 
       {/* Perfil de Usuario */}
@@ -104,7 +107,7 @@ export function UnifiedSidebar({
 
       {/* Navegación */}
       <nav className="flex-1 px-5 py-2 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
+        {navItems.map(item => {
           const active = isActive(item.href)
           return (
             <Link
@@ -117,10 +120,10 @@ export function UnifiedSidebar({
                   : 'text-gray-700 hover:bg-gray-50'
               )}
             >
-              <item.icon size={20} className="flex-shrink-0" />
+              <item.icon size={20} className="shrink-0" />
               <span className="flex-1">{item.title}</span>
               {item.badge && (
-                <span className="flex items-center justify-center min-w-[20px] h-5 px-2 text-xs font-medium text-white bg-primary rounded-full">
+                <span className="flex items-center justify-center min-w-5 h-5 px-2 text-xs font-medium text-white bg-primary rounded-full">
                   {item.badge}
                 </span>
               )}
@@ -135,10 +138,13 @@ export function UnifiedSidebar({
           onClick={onLogout}
           className="flex items-center gap-3 w-full px-5 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200"
         >
-          <LogOut size={20} className="flex-shrink-0" />
+          <LogOut size={20} className="shrink-0" />
           <span>Cerrar Sesión</span>
         </button>
       </div>
     </div>
   )
 }
+
+
+

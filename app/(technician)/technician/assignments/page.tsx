@@ -185,7 +185,7 @@ export default function TechnicianAssignmentsPage() {
 
   if (loading && assignments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center justify-center min-h-100">
         <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
         <p className="text-muted-foreground">Cargando asignaciones...</p>
       </div>
@@ -221,7 +221,7 @@ export default function TechnicianAssignmentsPage() {
             </div>
             <div className="flex gap-2 w-full md:w-auto">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-[160px] h-9 text-sm">
+                <SelectTrigger className="w-full md:w-40 h-9 text-sm">
                     <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -305,7 +305,7 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="flex-1 min-w-[100px]"
+                      className="flex-1 min-w-25"
                       onClick={() => openDetailDialog(assignment)}
                     >
                       <FileText className="w-4 h-4 mr-1.5" />
@@ -315,7 +315,7 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[100px] text-green-700 hover:bg-green-50"
+                      className="flex-1 min-w-25 text-green-700 hover:bg-green-50"
                       asChild
                     >
                       <a href={`tel:${assignment.telefono?.replace(/\s+/g, '')}`}>
@@ -327,7 +327,7 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[100px] text-green-600 hover:bg-green-50"
+                      className="flex-1 min-w-25 text-green-600 hover:bg-green-50"
                       asChild
                     >
                       <a
@@ -343,7 +343,7 @@ export default function TechnicianAssignmentsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 min-w-[100px]"
+                      className="flex-1 min-w-25"
                       asChild
                     >
                        <a

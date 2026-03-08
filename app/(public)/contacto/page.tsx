@@ -212,9 +212,9 @@ export default function ContactoPage() {
               {zones.map((zone) => (
                 <span
                   key={zone}
-                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm hover:bg-primary hover:text-white hover:border-primary transition-colors duration-200 cursor-default min-h-[44px]"
+                  className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm hover:bg-primary hover:text-white hover:border-primary transition-colors duration-200 cursor-default min-h-11"
                 >
-                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
                   {zone}
                 </span>
               ))}
@@ -234,3 +234,4 @@ export default function ContactoPage() {
     </>
   )
 }
+

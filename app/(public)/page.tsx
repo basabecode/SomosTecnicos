@@ -65,7 +65,8 @@ export default function HomePage() {
               '@context': 'https://schema.org',
               '@type': 'LocalBusiness',
               name: 'SomosTécnicos',
-              image: 'https://somostecnicos.com/img-3d/somos_tecnicos.png',
+              image:
+                'https://somostecnicos.com/img-3d/diseño-Logos-sinFondo.png',
               '@id': 'https://somostecnicos.com',
               url: 'https://somostecnicos.com',
               telephone: '+573003094854',
@@ -297,7 +298,7 @@ export default function HomePage() {
                   </div>
                   <Link
                     href="/blog"
-                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline flex-shrink-0"
+                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline shrink-0"
                   >
                     Ver todos <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -377,3 +378,5 @@ export default function HomePage() {
     </SuppressHydrationWarning>
   )
 }
+
+

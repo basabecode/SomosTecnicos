@@ -151,7 +151,7 @@ export default function ReportsPage() {
       {/* Quick Stats - Scrollable on mobile */}
       <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
         {quickStats.map((stat, index) => (
-          <Card key={index} className="min-w-[200px] md:min-w-0 snap-start flex-shrink-0">
+          <Card key={index} className="min-w-50 md:min-w-0 snap-start shrink-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
@@ -172,7 +172,7 @@ export default function ReportsPage() {
           {reportTypes.map((report, index) => (
             <Card
               key={index}
-              className="group hover:shadow-md transition-shadow min-w-[260px] md:min-w-0 snap-start flex-shrink-0"
+              className="group hover:shadow-md transition-shadow min-w-65 md:min-w-0 snap-start shrink-0"
             >
               <CardHeader>
                 <div className="flex items-start space-x-4">
@@ -201,3 +201,4 @@ export default function ReportsPage() {
     </div>
   )
 }
+

@@ -41,7 +41,7 @@ export function UrgentOrderBanner({ order, onAssign, onViewDetails }: UrgentOrde
 
       <div className="relative flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
         {/* Icon con animación */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-stamp-red/10">
             <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-stamp-red animate-pulse" />
           </div>
@@ -66,7 +66,7 @@ export function UrgentOrderBanner({ order, onAssign, onViewDetails }: UrgentOrde
             </div>
 
             {/* Tiempo transcurrido */}
-            <div className="flex items-center gap-1.5 sm:gap-2 text-stamp-red flex-shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-stamp-red shrink-0">
               <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="text-xs sm:text-small font-[600] whitespace-nowrap">
                 {timeElapsed}
@@ -77,12 +77,12 @@ export function UrgentOrderBanner({ order, onAssign, onViewDetails }: UrgentOrde
           {/* Detalles */}
           <div className="space-y-2 mb-3 sm:mb-4">
             <div className="flex items-center gap-2 text-text-secondary">
-              <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+              <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
               <span className="text-xs sm:text-small truncate">{order.cliente}</span>
             </div>
 
             <div className="flex items-start gap-2 text-text-secondary">
-              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0 mt-0.5" />
+              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 mt-0.5" />
               <span className="text-xs sm:text-small break-words">
                 {order.direccion}, {order.distrito}
               </span>
@@ -116,3 +116,4 @@ export function UrgentOrderBanner({ order, onAssign, onViewDetails }: UrgentOrde
     </div>
   )
 }
+

@@ -146,7 +146,7 @@ export default function InfoView() {
                 <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
                   <div className="space-y-8">
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-100 text-primary flex items-center justify-center font-bold text-xl">1</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-red-100 text-primary flex items-center justify-center font-bold text-xl">1</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Solicitud Inteligente</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -155,7 +155,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">2</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">2</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Asignación Automática</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -164,7 +164,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">3</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-red-50 text-primary flex items-center justify-center font-bold text-xl">3</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Garantía y Pago Seguro</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -204,7 +204,7 @@ export default function InfoView() {
                  <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
                   <div className="space-y-8">
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">1</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">1</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Registro Profesional</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -213,7 +213,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">2</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">2</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Recepción de Leads</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -222,7 +222,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">3</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#2C3E50]/10 text-[#2C3E50] flex items-center justify-center font-bold text-xl">3</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Gestión de Ganancias</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -267,7 +267,7 @@ export default function InfoView() {
                  <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up">
                   <div className="space-y-8">
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xl">1</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xl">1</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Monitoreo Global</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -276,7 +276,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl">2</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl">2</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Validación de Documentos</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -285,7 +285,7 @@ export default function InfoView() {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl">3</div>
+                      <div className="shrink-0 w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl">3</div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Analítica de Negocio</h3>
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -374,3 +374,4 @@ export default function InfoView() {
     </div>
   )
 }
+

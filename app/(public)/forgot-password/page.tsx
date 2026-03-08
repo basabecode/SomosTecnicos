@@ -77,8 +77,8 @@ export default function ForgotPasswordPage() {
 
           {/* LADO IZQUIERDO - BRANDING */}
           <div className="hidden md:flex flex-col relative bg-gradient-to-br from-[#8B1538] via-primary to-[#2C3E50] overflow-hidden">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-150 h-150 bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-150 h-150 bg-black/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
 
             <div className="relative z-10 flex flex-col h-full px-8 lg:px-16 py-6 lg:py-8 justify-between">
               <div className="space-y-4 lg:space-y-6">
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
                     "Válido por 1 hora para tu protección"
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-1">
                         <CheckCircle2 className="w-4 h-4 text-white" />
                       </div>
                       <p className="text-white/90 text-sm lg:text-base">{item}</p>
@@ -142,7 +142,7 @@ export default function ForgotPasswordPage() {
             <div className="md:hidden bg-primary py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
               <div className="flex items-center gap-3 mb-3">
                 <Image
-                  src="/img-3d/logo modificado.jpeg"
+                  src="/img-3d/logo_modificado.jpeg"
                   alt="SomosTécnicos"
                   width={48}
                   height={48}
@@ -155,7 +155,7 @@ export default function ForgotPasswordPage() {
 
             {/* CONTENEDOR FORMULARIO */}
             <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 w-full">
-              <div className="w-full max-w-[400px] lg:max-w-[450px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="w-full max-w-100 lg:max-w-[450px] animate-in fade-in slide-in-from-bottom-4 duration-500">
 
                 {success ? (
                   /* MENSAJE DE ÉXITO */
@@ -217,7 +217,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             disabled={loading}
-                            className="h-[52px] pl-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            className="h-13 pl-12 bg-white border border-[#E5E7EB] rounded-xl text-base focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                         </div>
                       </div>

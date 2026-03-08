@@ -64,7 +64,7 @@ export default function NotificationsPage() {
             >
               No leídas
               {notifications.filter(n => !n.read).length > 0 && (
-                 <Badge className="ml-2 bg-primary text-white border-none h-5 px-1.5 min-w-[20px] justify-center">
+                 <Badge className="ml-2 bg-primary text-white border-none h-5 px-1.5 min-w-5 justify-center">
                     {notifications.filter(n => !n.read).length}
                  </Badge>
               )}
@@ -170,3 +170,4 @@ export default function NotificationsPage() {
     </div>
   )
 }
+

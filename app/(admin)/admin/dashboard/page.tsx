@@ -225,7 +225,7 @@ function SystemAlerts() {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                     <Icon
-                      className={`h-5 w-5 flex-shrink-0 ${getIconColor(alert.type)}`}
+                      className={`h-5 w-5 shrink-0 ${getIconColor(alert.type)}`}
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-gray-900">
@@ -317,3 +317,4 @@ export default function AdminDashboard() {
     </ProtectedRoute>
   )
 }
+

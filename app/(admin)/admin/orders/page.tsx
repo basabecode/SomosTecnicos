@@ -118,6 +118,7 @@ const urgencyLabels = {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [urgencyFilter, setUrgencyFilter] = useState<string>('all')
@@ -145,6 +146,7 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true)
+      setError('')
       const token = localStorage.getItem('accessToken')
 
       const params = new URLSearchParams({
@@ -168,77 +170,18 @@ export default function OrdersPage() {
         setTotalPages(data.data.pagination.totalPages)
         setTotalItems(data.data.pagination.totalItems)
       } else {
-        // Datos mock si la API no responde
-        const mockOrders: Order[] = [
-          {
-            id: '1',
-            numeroOrden: 'ORD-001',
-            nombre: 'María García',
-            telefono: '+573001234567',
-            email: 'maria@email.com',
-            ciudad: 'Bogotá',
-            direccion: 'Calle 123 #45-67',
-            tipoElectrodomestico: 'nevera',
-            tipoServicio: 'reparacion',
-            estado: 'pendiente',
-            urgencia: 'alta',
-            createdAt: new Date().toISOString(),
-            assignments: [],
-            costoEstimado: 150000,
-          },
-          {
-            id: '2',
-            numeroOrden: 'ORD-002',
-            nombre: 'Carlos López',
-            telefono: '+573007654321',
-            email: 'carlos@email.com',
-            ciudad: 'Medellín',
-            direccion: 'Carrera 456 #78-90',
-            tipoElectrodomestico: 'lavadora',
-            tipoServicio: 'mantenimiento',
-            estado: 'en_proceso',
-            urgencia: 'media',
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-            assignments: [{
-              estado: 'asignado',
-              technician: {
-                id: 1,
-                nombre: 'Juan Pérez',
-              },
-            }],
-            costoEstimado: 120000,
-          },
-          {
-            id: '3',
-            numeroOrden: 'ORD-003',
-            nombre: 'Ana Rodríguez',
-            telefono: '+573009876543',
-            email: 'ana@email.com',
-            ciudad: 'Cali',
-            direccion: 'Avenida 789 #12-34',
-            tipoElectrodomestico: 'estufa',
-            tipoServicio: 'instalacion',
-            estado: 'completado',
-            urgencia: 'baja',
-            createdAt: new Date(Date.now() - 7200000).toISOString(),
-            assignments: [{
-              estado: 'completado',
-              technician: {
-                id: 2,
-                nombre: 'María García',
-              },
-            }],
-            costoEstimado: 200000,
-            costoFinal: 180000,
-          },
-        ]
-
-        setOrders(mockOrders)
+        const errorBody = await response.json().catch(() => null)
+        setError(errorBody?.error || 'No se pudieron cargar las órdenes.')
+        setOrders([])
         setTotalPages(1)
-        setTotalItems(mockOrders.length)
+        setTotalItems(0)
       }
     } catch (error) {
       console.error('Error fetching orders:', error)
+      setError('Error de conexión al cargar las órdenes.')
+      setOrders([])
+      setTotalPages(1)
+      setTotalItems(0)
     } finally {
       setLoading(false)
     }
@@ -389,6 +332,11 @@ export default function OrdersPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0 md:p-6">
+            {error && (
+              <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                {error}
+              </div>
+            )}
             {loading ? (
               <div className="space-y-4 p-4">
                 {[...Array(5)].map((_, i) => (

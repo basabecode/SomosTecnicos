@@ -29,6 +29,11 @@ export const defaultSender = {
 }
 
 // URL base de la aplicación
-// Prioridad: 1. Variable explícita, 2. URL de Vercel (construida), 3. Localhost confiable
-export const appUrl = process.env.NEXT_PUBLIC_APP_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+// Prioridad: 1) Variable explícita 2) URL de Vercel 3) Localhost (solo dev) 4) dominio productivo
+export const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
+      : 'https://somostecnicos.com')

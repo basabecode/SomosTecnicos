@@ -98,7 +98,7 @@ export function MetricCard({
         {/* Icono - Mobile: 48px, Desktop: 52px */}
         <div
           className={cn(
-            'flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0 ml-3',
+            'flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-lg shrink-0 ml-3',
             iconColorClasses[iconColor]
           )}
         >
@@ -130,3 +130,4 @@ export function MetricGrid({ children, className }: MetricGridProps) {
     </div>
   )
 }
+

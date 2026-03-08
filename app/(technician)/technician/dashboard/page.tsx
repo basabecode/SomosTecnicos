@@ -225,7 +225,7 @@ export default function TechnicianDashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center justify-center min-h-100">
         <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
         <p className="text-muted-foreground">Cargando tu panel de trabajo...</p>
       </div>
@@ -234,7 +234,7 @@ export default function TechnicianDashboard() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
+      <div className="flex flex-col items-center justify-center min-h-100 p-6 text-center">
         <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
         <h3 className="text-xl font-bold text-gray-900 mb-2">Atención requerida</h3>
         <p className="text-gray-600 max-w-md mb-6">{error}</p>
@@ -295,7 +295,7 @@ export default function TechnicianDashboard() {
                   technician?.status === 'ocupado' ? 'En servicio' : 'En pausa'
                 }
              </span>
-             <Button size="icon" variant="ghost" className="h-7 w-7 sm:h-6 sm:w-6 flex-shrink-0" onClick={fetchAssignments}>
+             <Button size="icon" variant="ghost" className="h-7 w-7 sm:h-6 sm:w-6 shrink-0" onClick={fetchAssignments}>
                <RefreshCw className="h-3 w-3" />
              </Button>
            </div>
@@ -533,9 +533,11 @@ export default function TechnicianDashboard() {
                 </Link>
               </Button>
 
-              <Button className="w-full justify-start" variant="outline" onClick={() => toast({ title: 'Próximamente', description: 'La función de reportar incidencias estará disponible pronto.' })}>
+              <Button className="w-full justify-start" variant="outline" asChild>
+                <Link href="/technician/messages">
                 <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
-                Reportar Incidencia
+                Reportar Incidencia (Soporte)
+                </Link>
               </Button>
             </div>
           </CardContent>

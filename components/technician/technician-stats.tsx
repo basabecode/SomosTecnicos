@@ -97,7 +97,7 @@ export function TechnicianStatsCards() {
     return (
       <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+          <Card key={i} className="min-w-40 md:min-w-0 snap-start shrink-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="h-4 w-24 bg-muted animate-pulse rounded"></div>
               <div className="h-4 w-4 bg-muted animate-pulse rounded"></div>
@@ -142,7 +142,7 @@ export function TechnicianStatsCards() {
 
       <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
         {/* Pendientes */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Pendientes</CardTitle>
             <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-500" />
@@ -156,7 +156,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* En Progreso */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">
               En Progreso
@@ -172,7 +172,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Completados */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Completados</CardTitle>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
@@ -184,7 +184,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Zona */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Zona</CardTitle>
             <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />
@@ -198,7 +198,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Calificación */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Calificación</CardTitle>
             <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-500" />
@@ -212,7 +212,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Total Completados */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Total</CardTitle>
             <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
@@ -224,7 +224,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Completados Semana */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Esta Semana</CardTitle>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500" />
@@ -236,7 +236,7 @@ export function TechnicianStatsCards() {
         </Card>
 
         {/* Completados Mes */}
-        <Card className="min-w-[160px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-40 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs sm:text-sm font-medium">Este Mes</CardTitle>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />
@@ -250,3 +250,4 @@ export function TechnicianStatsCards() {
     </div>
   )
 }
+

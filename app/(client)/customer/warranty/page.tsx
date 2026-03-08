@@ -205,7 +205,7 @@ export default function WarrantyPage() {
 
   if (loading) {
       return (
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center justify-center min-h-100">
             <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
             <p className="text-muted-foreground">Cargando garantías...</p>
           </div>
@@ -608,7 +608,7 @@ export default function WarrantyPage() {
                   placeholder="Describe detalladamente qué problema está presentando el electrodoméstico. ¿Es el mismo problema que se reparó anteriormente?"
                   value={claimDescription}
                   onChange={e => setClaimDescription(e.target.value)}
-                  className="min-h-[100px] mt-2"
+                  className="min-h-25 mt-2"
                 />
               </div>
 

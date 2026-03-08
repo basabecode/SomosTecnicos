@@ -185,7 +185,7 @@ export default function CustomerHistory() {
 
   if (loading) {
       return (
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center justify-center min-h-100">
             <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
             <p className="text-muted-foreground">Cargando historial...</p>
           </div>

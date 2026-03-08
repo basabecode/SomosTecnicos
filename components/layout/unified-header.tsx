@@ -131,7 +131,7 @@ export function UnifiedHeader({
                 key={index}
                 onClick={item.onClick}
                 className={cn(
-                  'min-h-[44px]', // Tap target mínimo
+                  'min-h-11', // Tap target mínimo
                   item.variant === 'danger' && 'text-red-600 focus:text-red-600'
                 )}
               >
@@ -145,7 +145,7 @@ export function UnifiedHeader({
             {/* Cerrar Sesión */}
             <DropdownMenuItem
               onClick={onLogout}
-              className="text-red-600 focus:text-red-600 min-h-[44px]"
+              className="text-red-600 focus:text-red-600 min-h-11"
             >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar Sesión</span>

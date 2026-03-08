@@ -319,7 +319,7 @@ import { useToast } from '@/hooks/use-toast'
                     placeholder="Ej: La lavadora no centrifuga bien, hace ruido extraño y deja la ropa muy húmeda..."
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    className="min-h-[100px] mt-2"
+                    className="min-h-25 mt-2"
                     required
                   />
                 </div>

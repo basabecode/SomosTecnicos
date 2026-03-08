@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from './auth-context'
+import { toast } from '@/hooks/use-toast'
 
 interface Notification {
   id: number
@@ -56,12 +57,35 @@ function playNotificationSound() {
   }
 }
 
+function showBrowserNotification(title: string, body: string) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return
+  if (Notification.permission !== 'granted') return
+
+  try {
+    const n = new Notification(title, {
+      body,
+      icon: '/favicon-32x32.png',
+      badge: '/favicon-32x32.png',
+      tag: 'somostecnicos-live-notification',
+      silent: false,
+    })
+
+    n.onclick = () => {
+      window.focus()
+      n.close()
+    }
+  } catch {
+    // Ignorar errores del navegador
+  }
+}
+
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
+  const lastToastAtRef = useRef<number>(0)
 
   const fetchNotifications = useCallback(async () => {
     if (!isAuthenticated) return
@@ -160,14 +184,40 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             // Sincronizar el contador de no leídas con el estado real del servidor
             setUnreadCount(data.unreadCount ?? 0)
           } else if (data.type === 'new_notifications' && Array.isArray(data.notifications)) {
+            const incoming = data.notifications as Notification[]
+
             // Agregar las nuevas notificaciones al inicio de la lista
             setNotifications(prev => {
               const existingIds = new Set(prev.map(n => n.id))
-              const newOnes = data.notifications.filter((n: Notification) => !existingIds.has(n.id))
+              const newOnes = incoming.filter((n: Notification) => !existingIds.has(n.id))
               return newOnes.length > 0 ? [...newOnes, ...prev] : prev
             })
-            setUnreadCount(prev => prev + (data.count ?? data.notifications.length))
-            playNotificationSound()
+            const newItems = incoming.length
+            if (newItems > 0) {
+              setUnreadCount(prev => prev + (data.count ?? newItems))
+              playNotificationSound()
+
+              const latest = incoming[0]
+              if (document.hidden) {
+                showBrowserNotification(
+                  latest?.asunto || 'Nueva notificación',
+                  latest?.mensaje || `Tienes ${newItems} notificación(es) nueva(s).`
+                )
+              } else {
+                const now = Date.now()
+                // Evitar spam de toasts cuando llegan múltiples eventos en ráfaga
+                if (now - lastToastAtRef.current > 2500) {
+                  toast({
+                    title: latest?.asunto || 'Nueva notificación',
+                    description:
+                      newItems > 1
+                        ? `Recibiste ${newItems} notificaciones nuevas.`
+                        : latest?.mensaje || 'Tienes una notificación nueva.',
+                  })
+                  lastToastAtRef.current = now
+                }
+              }
+            }
           }
         } catch {
           // Evento malformado — ignorar

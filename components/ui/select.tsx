@@ -121,7 +121,7 @@ function SelectItem({
         // Mobile optimized: min-height 44px for better tap target
         "focus:bg-accent focus:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground",
         "relative flex w-full cursor-default items-center gap-2",
-        "rounded-sm py-3 pr-8 pl-3 text-base min-h-[44px]",
+        "rounded-sm py-3 pr-8 pl-3 text-base min-h-11",
         "outline-hidden select-none",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

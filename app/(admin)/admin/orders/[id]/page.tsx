@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ProtectedRoute } from '@/contexts/auth-context'
+import { useToast } from '@/hooks/use-toast'
 import {
   Card,
   CardContent,
@@ -147,8 +148,10 @@ const urgencyLabels = {
 
 export default function OrderDetailPage() {
   const params = useParams()
+  const { toast } = useToast()
   const [order, setOrder] = useState<OrderDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [updatingStatus, setUpdatingStatus] = useState(false)
   const [newStatus, setNewStatus] = useState('')
   const [statusNotes, setStatusNotes] = useState('')
@@ -162,6 +165,7 @@ export default function OrderDetailPage() {
   const fetchOrderDetail = async (orderId: string) => {
     try {
       setLoading(true)
+      setError('')
       const token = localStorage.getItem('accessToken')
 
       const response = await fetch(`/api/orders/${orderId}`, {
@@ -172,69 +176,64 @@ export default function OrderDetailPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setOrder(data.data)
-        setNewStatus(data.data.estado)
-      } else {
-        // Mock data para demostración
-        const mockOrder: OrderDetail = {
-          id: orderId,
-          numeroOrden: `ORD-${orderId.padStart(3, '0')}`,
-          nombre: 'María García Rodríguez',
-          telefono: '+573001234567',
-          email: 'maria.garcia@email.com',
-          ciudad: 'Bogotá',
-          direccion: 'Calle 123 #45-67, Apartamento 302, Chapinero',
-          tipoElectrodomestico: 'nevera',
-          tipoServicio: 'reparacion',
-          estado: 'en_proceso',
-          urgencia: 'alta',
-          descripcionProblema:
-            'La nevera no enfría correctamente. Hace ruidos extraños y se escucha como si el motor trabajara de más. El problema comenzó hace 3 días.',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          updatedAt: new Date().toISOString(),
-          assignments: [{
-            id: 1,
-            assignedAt: new Date(Date.now() - 43200000).toISOString(),
+        const raw = data?.data
+        const mapped: OrderDetail = {
+          id: raw.id,
+          numeroOrden: raw.numeroOrden || raw.orderNumber || raw.id,
+          nombre: raw.nombre,
+          telefono: raw.telefono,
+          email: raw.email,
+          ciudad: raw.ciudad,
+          direccion: raw.direccion,
+          tipoElectrodomestico: raw.tipoElectrodomestico,
+          tipoServicio: raw.tipoServicio,
+          estado: raw.estado,
+          urgencia: raw.urgencia,
+          descripcionProblema: raw.descripcionProblema || '',
+          createdAt: raw.createdAt,
+          updatedAt: raw.updatedAt,
+          assignments: (raw.assignments || []).map((assignment: any) => ({
+            id: assignment.id,
+            assignedAt:
+              assignment.assignedAt ||
+              assignment.fechaAsignacion ||
+              assignment.createdAt ||
+              raw.updatedAt,
             technician: {
-              id: 1,
-              nombre: 'Juan Carlos Pérez',
-              telefono: '+573005551234',
-              especialidades: ['nevera', 'lavadora', 'estufa'],
+              id: assignment.technician?.id,
+              nombre: assignment.technician?.nombre || 'Técnico',
+              telefono: assignment.technician?.telefono || '',
+              especialidades: Array.isArray(assignment.technician?.especialidades)
+                ? assignment.technician.especialidades
+                : [],
             },
-          }],
-          costoEstimado: 180000,
-          fechaVisita: '2024-01-15',
-          horaVisita: '14:00',
-          notasInternas:
-            'Cliente prefiere horarios de tarde. Apartamento en segundo piso.',
-          observacionesTecnico:
-            'Problema con el termostato. Requiere repuesto específico para modelo Samsung.',
-          estatusHistorial: [
-            {
-              estado: 'pendiente',
-              fecha: new Date(Date.now() - 86400000).toISOString(),
-              usuario: 'Sistema',
-              notas: 'Orden creada automáticamente',
-            },
-            {
-              estado: 'asignado',
-              fecha: new Date(Date.now() - 43200000).toISOString(),
-              usuario: 'Admin',
-              notas: 'Asignado a Juan Carlos Pérez por especialidad en neveras',
-            },
-            {
-              estado: 'en_proceso',
-              fecha: new Date(Date.now() - 3600000).toISOString(),
-              usuario: 'Juan Carlos Pérez',
-              notas: 'Iniciando diagnóstico en sitio',
-            },
-          ],
+          })),
+          costoEstimado: raw.costoEstimado ? Number(raw.costoEstimado) : undefined,
+          costoFinal: raw.costoFinal ? Number(raw.costoFinal) : undefined,
+          fechaVisita: raw.fechaPreferida || undefined,
+          horaVisita: raw.horario || undefined,
+          notasInternas: raw.comentarios || undefined,
+          estatusHistorial: Array.isArray(raw.history)
+            ? raw.history.map((h: any) => ({
+                estado: h.estadoNuevo || h.estado || raw.estado,
+                fecha: h.createdAt || raw.updatedAt,
+                usuario: h.changedBy || 'Sistema',
+                notas: h.notas || undefined,
+              }))
+            : undefined,
         }
-        setOrder(mockOrder)
-        setNewStatus(mockOrder.estado)
+
+        setOrder(mapped)
+        setNewStatus(mapped.estado)
+      } else {
+        const errorData = await response.json().catch(() => null)
+        setError(errorData?.error || 'No se pudo cargar el detalle de la orden.')
+        setOrder(null)
       }
     } catch (error) {
       console.error('Error fetching order:', error)
+      setError('Error de conexión al cargar el detalle de la orden.')
+      setOrder(null)
     } finally {
       setLoading(false)
     }
@@ -260,41 +259,23 @@ export default function OrderDetailPage() {
       })
 
       if (response.ok) {
-        // Actualizar orden localmente
-        setOrder(prev =>
-          prev
-            ? {
-                ...prev,
-                estado: newStatus,
-                updatedAt: new Date().toISOString(),
-                estatusHistorial: [
-                  ...(prev.estatusHistorial || []),
-                  {
-                    estado: newStatus,
-                    fecha: new Date().toISOString(),
-                    usuario: 'Admin',
-                    notas: statusNotes || undefined,
-                  },
-                ],
-              }
-            : null
-        )
+        await fetchOrderDetail(order.id)
         setStatusNotes('')
       } else {
-        // Mock update para demostración
-        setOrder(prev =>
-          prev
-            ? {
-                ...prev,
-                estado: newStatus,
-                updatedAt: new Date().toISOString(),
-              }
-            : null
-        )
-        setStatusNotes('')
+        const errorData = await response.json().catch(() => null)
+        toast({
+          title: 'Error actualizando estado',
+          description: errorData?.error || 'No se pudo actualizar el estado.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Error updating status:', error)
+      toast({
+        title: 'Error de conexión',
+        description: 'No se pudo actualizar el estado. Intenta nuevamente.',
+        variant: 'destructive',
+      })
     } finally {
       setUpdatingStatus(false)
     }
@@ -357,7 +338,7 @@ export default function OrderDetailPage() {
         <div className="text-center py-8">
           <h2 className="text-2xl font-bold">Orden no encontrada</h2>
           <p className="text-muted-foreground">
-            La orden solicitada no existe o no tienes permisos para verla.
+            {error || 'La orden solicitada no existe o no tienes permisos para verla.'}
           </p>
           <Button asChild className="mt-4">
             <Link href="/admin/orders">
@@ -445,7 +426,7 @@ export default function OrderDetailPage() {
                     Email
                   </label>
                   <p className="flex items-center text-sm break-all">
-                    <Mail className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <Mail className="mr-2 h-4 w-4 shrink-0" />
                     <span className="truncate">{order.email}</span>
                   </p>
                 </div>
@@ -773,7 +754,7 @@ export default function OrderDetailPage() {
                   return (
                     <div key={index} className="flex items-start space-x-3">
                       <div
-                        className={`p-2 rounded-full flex-shrink-0 ${
+                        className={`p-2 rounded-full shrink-0 ${
                           statusColors[
                             historial.estado as keyof typeof statusColors
                           ]

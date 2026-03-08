@@ -140,7 +140,7 @@ export default function TechniciansReport() {
         </h2>
         <div className="flex items-center space-x-2">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-30">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

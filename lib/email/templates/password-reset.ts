@@ -7,12 +7,14 @@ interface PasswordResetEmailParams {
   userName: string
   resetLink: string
   expiresInHours: number
+  brandLogoUrl?: string
 }
 
 export function getPasswordResetEmailHTML({
   userName,
   resetLink,
-  expiresInHours
+  expiresInHours,
+  brandLogoUrl
 }: PasswordResetEmailParams): string {
   return `
 <!DOCTYPE html>
@@ -32,6 +34,14 @@ export function getPasswordResetEmailHTML({
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #A50034 0%, #8B1538 50%, #2C3E50 100%); padding: 40px 30px; text-align: center;">
+              ${brandLogoUrl ? `
+              <img
+                src="${brandLogoUrl}"
+                alt="SomosTécnicos"
+                width="220"
+                style="display: block; margin: 0 auto 18px auto; max-width: 220px; height: auto;"
+              />
+              ` : ''}
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
                 SomosTécnicos
               </h1>

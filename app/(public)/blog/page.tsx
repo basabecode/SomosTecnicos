@@ -121,7 +121,7 @@ export default function BlogPage() {
 
                   {post.relatedServiceLabel && (
                     <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
-                      <Wrench className="w-3 h-3 flex-shrink-0" />
+                      <Wrench className="w-3 h-3 shrink-0" />
                       <span className="truncate">{post.relatedServiceLabel}</span>
                     </div>
                   )}

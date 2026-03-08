@@ -9,6 +9,7 @@ interface PasswordChangedEmailParams {
   changeTime: string
   ipAddress?: string
   userAgent?: string
+  brandLogoUrl?: string
 }
 
 export function getPasswordChangedEmailHTML({
@@ -16,7 +17,8 @@ export function getPasswordChangedEmailHTML({
   changeDate,
   changeTime,
   ipAddress,
-  userAgent
+  userAgent,
+  brandLogoUrl
 }: PasswordChangedEmailParams): string {
   return `
 <!DOCTYPE html>
@@ -36,6 +38,14 @@ export function getPasswordChangedEmailHTML({
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); padding: 40px 30px; text-align: center;">
+              ${brandLogoUrl ? `
+              <img
+                src="${brandLogoUrl}"
+                alt="SomosTécnicos"
+                width="220"
+                style="display: block; margin: 0 auto 18px auto; max-width: 220px; height: auto;"
+              />
+              ` : ''}
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
                 SomosTécnicos
               </h1>

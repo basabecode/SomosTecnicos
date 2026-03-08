@@ -162,7 +162,7 @@ export function NextJobCard({ assignment, onNavigate, onCall, onStart, onPause, 
         <div className="space-y-4 mb-6">
            {/* Cliente */}
            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-assigned-blue/10 flex items-center justify-center text-assigned-blue font-bold text-sm">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-assigned-blue/10 flex items-center justify-center text-assigned-blue font-bold text-sm">
                  {assignment.cliente.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
               </div>
               <div className="min-w-0 flex-1">
@@ -286,3 +286,4 @@ export function NextJobCard({ assignment, onNavigate, onCall, onStart, onPause, 
     </div>
   )
 }
+

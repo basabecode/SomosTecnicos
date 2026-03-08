@@ -40,6 +40,64 @@ export interface AuthRequest extends NextRequest {
 }
 
 // =============================================
+// AUTH BYPASS (SOLO TESTING)
+// =============================================
+
+function isAuthBypassEnabled(): boolean {
+  return (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.AUTH_BYPASS_FOR_TESTS === 'true'
+  )
+}
+
+function getBypassUserFromRequest(request: NextRequest): AuthenticatedUser | null {
+  if (!isAuthBypassEnabled()) return null
+
+  const mode = (process.env.AUTH_BYPASS_MODE || 'header').toLowerCase()
+  const bypassHeader = request.headers.get('x-test-bypass')
+  const shouldBypass = mode === 'always' || bypassHeader === '1' || bypassHeader === 'true'
+  if (!shouldBypass) return null
+
+  const roleFromHeader = request.headers.get('x-test-role')?.trim()
+  const roleFromEnv = process.env.AUTH_BYPASS_ROLE?.trim()
+  const role = roleFromHeader || roleFromEnv || USER_ROLES.ADMIN
+
+  const idFromHeader = request.headers.get('x-test-user-id')
+  const idFromEnv = process.env.AUTH_BYPASS_USER_ID
+  const parsedId = Number(idFromHeader || idFromEnv || '1')
+  const id = Number.isFinite(parsedId) && parsedId > 0 ? Math.trunc(parsedId) : 1
+
+  const email =
+    request.headers.get('x-test-email') ||
+    process.env.AUTH_BYPASS_EMAIL ||
+    `test.${role}@somostecnicos.local`
+
+  const username =
+    request.headers.get('x-test-username') ||
+    process.env.AUTH_BYPASS_USERNAME ||
+    `test_${role}`
+
+  const nombre =
+    request.headers.get('x-test-name') ||
+    process.env.AUTH_BYPASS_NAME ||
+    'Test User'
+
+  // En este proyecto, técnicos/admins viven bajo userType "admin".
+  const userType: 'admin' | 'customer' =
+    role === USER_ROLES.CUSTOMER ? 'customer' : 'admin'
+
+  return {
+    id,
+    username,
+    email,
+    nombre,
+    role,
+    activo: true,
+    userType,
+  }
+}
+
+// =============================================
 // CONFIGURACIÓN JWT
 // =============================================
 
@@ -341,6 +399,15 @@ export async function authenticateRequest(request: NextRequest): Promise<{
   error?: string
 }> {
   try {
+    // Bypass explícito solo para testing local/staging no productivo
+    const bypassUser = getBypassUserFromRequest(request)
+    if (bypassUser) {
+      return {
+        authenticated: true,
+        user: bypassUser
+      }
+    }
+
     // Extraer token
     const token = extractToken(request)
     if (!token) {

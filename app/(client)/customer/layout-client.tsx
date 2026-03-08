@@ -170,7 +170,7 @@ export default function CustomerLayoutClient({
                       <span className="sr-only">Abrir menú</span>
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="left" className="p-0 w-[240px]">
+                  <SheetContent side="left" className="p-0 w-60">
                     <SidebarContent />
                   </SheetContent>
                 </Sheet>

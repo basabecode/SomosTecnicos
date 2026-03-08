@@ -175,7 +175,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {section.tips && section.tips.length > 0 && (
                   <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-3">
-                      <Lightbulb className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <Lightbulb className="w-4 h-4 text-green-600 shrink-0" />
                       <span className="text-sm font-semibold text-green-800">
                         Consejos prácticos
                       </span>
@@ -183,7 +183,7 @@ export default async function BlogPostPage({ params }: Props) {
                     <ul className="space-y-2">
                       {section.tips.map((tip, k) => (
                         <li key={k} className="flex items-start gap-2 text-sm text-green-900">
-                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
                           {tip}
                         </li>
                       ))}
@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {section.warning && (
                   <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                       <p className="text-sm text-amber-900">{section.warning}</p>
                     </div>
                   </div>
@@ -205,7 +205,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {section.highlight && (
                   <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start gap-2">
-                      <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                       <p className="text-sm text-blue-900 font-medium">{section.highlight}</p>
                     </div>
                   </div>
@@ -278,7 +278,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <Link
                   key={rp.slug}
                   href={`/blog/${rp.slug}`}
-                  className="group bg-white rounded-xl border border-[#E8EAED] overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col max-w-[320px] justify-self-center sm:justify-self-start w-full"
+                  className="group bg-white rounded-xl border border-[#E8EAED] overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col max-w-80 justify-self-center sm:justify-self-start w-full"
                 >
                   {/* Imagen — formato vertical, máximo ancho bloqueado para no ser gigante */}
                   <div className="relative w-full aspect-[3/4] bg-white overflow-hidden border-b border-[#E8EAED]">
@@ -311,7 +311,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4
                           bg-white border border-[#E8EAED] rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+              <Phone className="w-5 h-5 text-primary shrink-0" />
               <p className="text-sm text-slate-700">
                 <strong>¿Necesitas un técnico en Cali?</strong>{' '}
                 Llamamos en menos de 10 minutos.
@@ -319,7 +319,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
             <a
               href="tel:+573003094854"
-              className="flex-shrink-0 bg-primary text-white text-sm font-semibold
+              className="shrink-0 bg-primary text-white text-sm font-semibold
                          px-5 py-2.5 rounded-full hover:bg-primary/80 transition-colors"
             >
               Llamar ahora

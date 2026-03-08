@@ -82,7 +82,7 @@ export default function BrandsSlider({
             {duplicatedBrands.map((brand, index) => (
               <div
                 key={`${brand.name}-${index}`}
-                className="flex-shrink-0 w-28 h-16 flex items-center justify-center group"
+                className="shrink-0 w-28 h-16 flex items-center justify-center group"
               >
                 {imageErrors[brand.name] || !brand.logo ? (
                   // Fallback to text logo más compacto
@@ -109,3 +109,4 @@ export default function BrandsSlider({
     </section>
   )
 }
+

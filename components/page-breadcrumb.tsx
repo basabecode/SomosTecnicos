@@ -42,7 +42,7 @@ export default function PageBreadcrumb({
         // Texto base
         'text-sm',
         // Asegurar altura mínima táctil en mobile
-        'min-h-[44px] sm:min-h-0',
+        'min-h-11 sm:min-h-0',
         className,
       )}
     >
@@ -57,7 +57,7 @@ export default function PageBreadcrumb({
               {!isFirst && (
                 <ChevronRight
                   className={cn(
-                    'w-3.5 h-3.5 flex-shrink-0',
+                    'w-3.5 h-3.5 shrink-0',
                     isDark ? 'text-gray-600' : 'text-gray-400',
                   )}
                   aria-hidden="true"
@@ -82,7 +82,7 @@ export default function PageBreadcrumb({
                   className={cn(
                     // Tamaño mínimo táctil en mobile
                     'inline-flex items-center gap-1',
-                    'min-h-[44px] sm:min-h-0 py-1',
+                    'min-h-11 sm:min-h-0 py-1',
                     'transition-colors duration-200',
                     isFirst && showHomeIcon ? 'gap-1.5' : '',
                     isDark
@@ -91,9 +91,9 @@ export default function PageBreadcrumb({
                   )}
                 >
                   {isFirst && showHomeIcon && (
-                    <Home className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                    <Home className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                   )}
-                  <span className="truncate max-w-[120px] sm:max-w-xs">{item.label}</span>
+                  <span className="truncate max-w-30 sm:max-w-xs">{item.label}</span>
                 </Link>
               )}
             </li>
@@ -103,3 +103,4 @@ export default function PageBreadcrumb({
     </nav>
   )
 }
+

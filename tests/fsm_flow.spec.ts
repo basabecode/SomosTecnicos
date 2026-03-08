@@ -1,7 +1,34 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
 // Configure serial mode so steps run in order and share state
 test.describe.configure({ mode: 'serial' });
+
+async function loginIfNeeded(
+  page: Page,
+  email: string,
+  password: string,
+  expectedPathRegex: RegExp
+) {
+  const onLogin = /\/login/.test(page.url())
+  if (!onLogin) return
+
+  const emailInput = page
+    .locator('input[type="email"], input[id="email"], input[placeholder*="ejemplo"]')
+    .first()
+
+  const passwordInput = page.locator('input[type="password"]').first()
+  const loginButton = page.getByRole('button', { name: /Ingresar/i }).first()
+
+  const hasLoginForm = await emailInput.isVisible({ timeout: 5000 }).catch(() => false)
+  if (!hasLoginForm) return
+
+  await emailInput.fill(email)
+  await passwordInput.fill(password)
+  await loginButton.click()
+
+  await page.waitForURL(expectedPathRegex, { timeout: 15000 })
+}
 
 test.describe('FSM Flow - General Rehearsal', () => {
 
@@ -24,27 +51,12 @@ test.describe('FSM Flow - General Rehearsal', () => {
 
     // Check if we are already logged in or need to log in
     await page.waitForLoadState('networkidle');
-    const emailInput = page.getByPlaceholder('ejemplo@correo.com');
-    const isLoginPageVisible = await emailInput.isVisible({ timeout: 5000 }).catch(() => false);
-
-    if (isLoginPageVisible) {
-        console.log('[TEST] Login form detected. Filling credentials...');
-        await emailInput.fill('cliente.demo@somostecnicos.com');
-        await page.getByPlaceholder('••••••••').fill(process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!');
-        await page.getByRole('button', { name: 'Ingresar' }).click();
-
-        // Wait for navigation to complete
-        // Wait for navigation to complete matching dashboard
-        console.log('[TEST] Waiting for redirect to dashboard...');
-        try {
-            await page.waitForURL(/\/customer\/dashboard/, { timeout: 10000 });
-        } catch (e) {
-            console.log('[TEST] Redirect timed out. Attempting manual navigation fallback...');
-            await page.goto('/customer/dashboard');
-        }
-    } else {
-        console.log('[TEST] Already logged in, skipping login form.');
-    }
+    await loginIfNeeded(
+      page,
+      'cliente.demo@somostecnicos.com',
+      process.env.DEMO_CLIENT_PASSWORD || 'ChangeMe2026!',
+      /\/customer\/dashboard/
+    )
 
     // Verify we're on dashboard
     await expect(page).toHaveURL(/\/customer\/dashboard/, { timeout: 15000 });
@@ -107,11 +119,12 @@ test.describe('FSM Flow - General Rehearsal', () => {
     // Admin Login
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
-     if (await page.getByPlaceholder('ejemplo@correo.com').isVisible()) {
-        await page.getByPlaceholder('ejemplo@correo.com').fill('admin.demo@somostecnicos.com');
-        await page.getByPlaceholder('••••••••').fill(process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!');
-        await page.getByRole('button', { name: 'Ingresar' }).click();
-    }
+    await loginIfNeeded(
+      page,
+      'admin.demo@somostecnicos.com',
+      process.env.DEMO_ADMIN_PASSWORD || 'ChangeMe2026!',
+      /\/admin\/dashboard/
+    )
     await expect(page).toHaveURL(/\/admin\/dashboard/);
 
     // Go to Orders
@@ -122,11 +135,12 @@ test.describe('FSM Flow - General Rehearsal', () => {
     // Tech Login
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
-     if (await page.getByPlaceholder('ejemplo@correo.com').isVisible()) {
-        await page.getByPlaceholder('ejemplo@correo.com').fill('tecnico.demo@somostecnicos.com');
-        await page.getByPlaceholder('••••••••').fill(process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!');
-        await page.getByRole('button', { name: 'Ingresar' }).click();
-    }
+    await loginIfNeeded(
+      page,
+      'tecnico.demo@somostecnicos.com',
+      process.env.DEMO_TECH_PASSWORD || 'ChangeMe2026!',
+      /\/technician\/dashboard/
+    )
     await expect(page).toHaveURL(/\/technician\/dashboard/);
 
     // Verify "Iniciar" button exists (We added this!) and click it

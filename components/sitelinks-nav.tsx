@@ -107,7 +107,7 @@ export default function SitelinksNav() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-primary transition-colors"
+                        className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-primary transition-colors"
                         aria-hidden="true"
                       >
                         <path
@@ -142,7 +142,7 @@ export default function SitelinksNav() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-primary transition-colors"
+                        className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-primary transition-colors"
                         aria-hidden="true"
                       >
                         <path
@@ -168,3 +168,4 @@ export default function SitelinksNav() {
     </>
   )
 }
+

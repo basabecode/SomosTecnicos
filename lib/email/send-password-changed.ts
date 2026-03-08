@@ -3,7 +3,7 @@
  * Servicio para enviar emails de confirmación de cambio de contraseña
  */
 
-import { apiInstance, brevo, defaultSender } from './brevo-client'
+import { apiInstance, brevo, defaultSender, appUrl } from './brevo-client'
 import {
   getPasswordChangedEmailHTML,
   getPasswordChangedEmailText
@@ -35,6 +35,7 @@ export async function sendPasswordChangedEmail({
       minute: '2-digit',
       second: '2-digit'
     })
+    const brandLogoUrl = `${appUrl}/img-3d/logo-email.png`
 
     // Preparar el contenido del email
     const htmlContent = getPasswordChangedEmailHTML({
@@ -42,7 +43,8 @@ export async function sendPasswordChangedEmail({
       changeDate,
       changeTime,
       ipAddress,
-      userAgent
+      userAgent,
+      brandLogoUrl
     })
 
     const textContent = getPasswordChangedEmailText({
@@ -79,3 +81,5 @@ export async function sendPasswordChangedEmail({
     }
   }
 }
+
+

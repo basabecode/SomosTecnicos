@@ -116,12 +116,12 @@ export default function OrderTrackingDashboard() {
           >
             {searchResult.found ? (
               <CheckCircle
-                className="text-[#27AE60] flex-shrink-0 mt-0.5"
+                className="text-[#27AE60] shrink-0 mt-0.5"
                 size={18}
               />
             ) : (
               <XCircle
-                className="text-[#E74C3C] flex-shrink-0 mt-0.5"
+                className="text-[#E74C3C] shrink-0 mt-0.5"
                 size={18}
               />
             )}
@@ -163,3 +163,4 @@ export default function OrderTrackingDashboard() {
     </Card>
   )
 }
+

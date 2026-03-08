@@ -149,7 +149,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                 { icon: CheckCircle, label: '30 días', sub: 'Garantía' },
               ].map(({ icon: Icon, label, sub }) => (
                 <div key={sub} className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-2.5 border border-[#E8EAED]">
-                  <Icon className="w-4 h-4 text-primary flex-shrink-0" />
+                  <Icon className="w-4 h-4 text-primary shrink-0" />
                   <div>
                     <p className="text-slate-900 font-semibold text-sm leading-none">{label}</p>
                     <p className="text-slate-400 text-xs mt-0.5">{sub}</p>
@@ -172,7 +172,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
               <ul className="space-y-3">
                 {combo.failures.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <Wrench className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <Wrench className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <span className="text-sm text-slate-700 leading-relaxed">{f}</span>
                   </li>
                 ))}
@@ -202,7 +202,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                   <span className="text-slate-600">{marcaData.priceRange}</span>
                 </div>
                 <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <p className="text-sm text-amber-900">{marcaData.warrantyNote}</p>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                   { step: '4', title: '30 días de garantía', desc: 'La reparación queda garantizada. Si el mismo problema regresa, lo atendemos sin costo.' },
                 ].map(({ step, title, desc }) => (
                   <li key={step} className="flex items-start gap-4">
-                    <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
                       <span className="text-white text-xs font-bold">{step}</span>
                     </div>
                     <div>
@@ -238,7 +238,7 @@ export default async function ServicioMarcaPage({ params }: Props) {
                 className="flex items-start gap-4 bg-white rounded-xl border border-[#E8EAED] p-5
                            hover:shadow-md hover:border-slate-300 transition-all group"
               >
-                <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 </div>
                 <div>

@@ -328,7 +328,7 @@ export default function TrabajaConNosotrosPage() {
               </h1>
 
               {/* Description */}
-              <p className="text-center text-[0.9375rem] text-gray-400 leading-relaxed mb-7 max-w-[540px] mx-auto">
+              <p className="text-center text-[0.9375rem] text-gray-400 leading-relaxed mb-7 max-w-135 mx-auto">
                 ¿Eres técnico experto en reparación? Únete, recibe órdenes de clientes reales, gestiona tu agenda desde el celular y cobra de forma segura — sin depender de nadie.
               </p>
 

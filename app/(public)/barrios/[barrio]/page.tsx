@@ -116,7 +116,7 @@ export default async function BarrioPage({ params }: Props) {
             </nav>
 
             <div className="flex items-center gap-2 mb-3">
-              <MapPin className="w-5 h-5 text-red-300 flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-red-300 shrink-0" />
               <span className="text-red-200 text-sm">{barrio.zone}</span>
             </div>
 
@@ -135,7 +135,7 @@ export default async function BarrioPage({ params }: Props) {
                 { icon: CheckCircle, label: '30 días', sublabel: 'Garantía en reparaciones' },
               ].map(({ icon: Icon, label, sublabel }) => (
                 <div key={sublabel} className="flex items-center gap-2.5 bg-white/10 rounded-xl px-4 py-3">
-                  <Icon className="w-4 h-4 text-red-200 flex-shrink-0" />
+                  <Icon className="w-4 h-4 text-red-200 shrink-0" />
                   <div>
                     <p className="text-white font-semibold text-sm leading-none">{label}</p>
                     <p className="text-red-300 text-xs mt-0.5">{sublabel}</p>
@@ -161,7 +161,7 @@ export default async function BarrioPage({ params }: Props) {
               <ul className="space-y-2">
                 {barrio.topServices.map((srv) => (
                   <li key={srv} className="flex items-center gap-2 text-sm text-slate-700">
-                    <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
                     {srv}
                   </li>
                 ))}
@@ -181,7 +181,7 @@ export default async function BarrioPage({ params }: Props) {
                     className="flex items-center gap-3 p-3 rounded-lg border border-[#E8EAED]
                                hover:border-primary hover:bg-red-50/30 transition-all group"
                   >
-                    <Wrench className="w-4 h-4 text-slate-400 group-hover:text-primary flex-shrink-0" />
+                    <Wrench className="w-4 h-4 text-slate-400 group-hover:text-primary shrink-0" />
                     <span className="text-sm font-medium text-slate-700 group-hover:text-primary transition-colors">
                       {servicio.h1}
                     </span>
@@ -267,7 +267,7 @@ export default async function BarrioPage({ params }: Props) {
                       href={`/barrios/${b.slug}`}
                       className="flex items-center gap-2 text-sm text-primary hover:underline"
                     >
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                      <MapPin className="w-3 h-3 shrink-0" />
                       {b.name}
                     </Link>
                   </li>

@@ -84,7 +84,7 @@ export function TechnicianCard({
       <div className="workshop-card p-2.5 sm:p-3 hover:shadow-md transition-all duration-fast">
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Avatar con estado */}
-          <div className="relative flex-shrink-0">
+          <div className="relative shrink-0">
             <Avatar className={`h-8 w-8 sm:h-10 sm:w-10 border-2 ${status.borderColor} ${status.pulse ? 'animate-pulse' : ''}`}>
               <AvatarImage src={technician.foto} alt={technician.nombre} />
               <AvatarFallback className="bg-surface-overlay text-label-ink font-[600] text-xs sm:text-sm">
@@ -105,7 +105,7 @@ export function TechnicianCard({
           </div>
 
           {/* Estado badge */}
-          <Badge variant="outline" className={`text-[10px] sm:text-tiny ${status.textColor} border-current flex-shrink-0`}>
+          <Badge variant="outline" className={`text-[10px] sm:text-tiny ${status.textColor} border-current shrink-0`}>
             {status.label}
           </Badge>
         </div>
@@ -118,7 +118,7 @@ export function TechnicianCard({
       {/* Header */}
       <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
         {/* Avatar con estado */}
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <Avatar className={`h-12 w-12 sm:h-16 sm:w-16 border-3 ${status.borderColor} ${status.pulse ? 'animate-pulse' : ''}`}>
             <AvatarImage src={technician.foto} alt={technician.nombre} />
             <AvatarFallback className="bg-surface-overlay text-label-ink font-[700] text-sm sm:text-lg">
@@ -134,7 +134,7 @@ export function TechnicianCard({
             {technician.nombre}
           </h3>
           <div className="flex items-center gap-1.5 sm:gap-2 text-text-secondary mb-2">
-            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
             <span className="text-xs sm:text-small truncate">{technician.zona}</span>
           </div>
           <Badge className={`${status.textColor} border-current text-[10px] sm:text-xs`} variant="outline">
@@ -223,3 +223,4 @@ export function TechnicianCard({
     </div>
   )
 }
+

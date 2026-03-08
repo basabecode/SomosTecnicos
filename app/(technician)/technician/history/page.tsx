@@ -179,7 +179,7 @@ export default function TechnicianHistoryPage() {
 
       {/* Stats Cards - Scrollable on mobile, Grid on desktop */}
       <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 scrollbar-hide snap-x">
-        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-60 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Trabajos Completados
@@ -194,7 +194,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-60 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Calificación Promedio
@@ -218,7 +218,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-60 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Ingresos Totales
@@ -235,7 +235,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[240px] md:min-w-0 snap-start flex-shrink-0">
+        <Card className="min-w-60 md:min-w-0 snap-start shrink-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Horas Trabajadas
@@ -286,7 +286,7 @@ export default function TechnicianHistoryPage() {
 
       {/* Performance Summary - Scrollable on mobile */}
       <div className="flex overflow-x-auto pb-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 scrollbar-hide">
-        <Card className="min-w-[300px] md:min-w-0">
+        <Card className="min-w-75 md:min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5" />
@@ -317,7 +317,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[300px] md:min-w-0">
+        <Card className="min-w-75 md:min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Award className="w-5 h-5" />
@@ -339,7 +339,7 @@ export default function TechnicianHistoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-[300px] md:min-w-0">
+        <Card className="min-w-75 md:min-w-0">
           <CardHeader>
             <CardTitle>Tipos de Servicio</CardTitle>
           </CardHeader>

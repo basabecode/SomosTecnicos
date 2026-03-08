@@ -238,7 +238,7 @@ function NotificationToast({
       <CardContent className="p-4">
         <div className="flex items-start space-x-3">
           {/* Icono principal */}
-          <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
+          <div className="shrink-0 mt-0.5">{getIcon()}</div>
 
           {/* Contenido */}
           <div className="flex-1 min-w-0">

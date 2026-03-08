@@ -64,7 +64,7 @@ export default function BarriosPage() {
                            hover:shadow-md hover:border-slate-300 transition-all duration-200"
               >
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
                     <MapPin className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0">

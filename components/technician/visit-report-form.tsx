@@ -265,10 +265,10 @@ export function VisitReportForm({
               {/* Alerta contextual */}
               {resultado && (
                 <div className={`flex items-center gap-2 p-3 text-sm rounded-md border ${resultadoConfig[resultado]?.color || ''}`}>
-                  {resultado === 'no_reparable' && <AlertTriangle className="h-4 w-4 flex-shrink-0" />}
-                  {resultado === 'pendiente_repuesto' && <Package className="h-4 w-4 flex-shrink-0" />}
-                  {resultado === 'reparado' && <Wrench className="h-4 w-4 flex-shrink-0" />}
-                  {resultado === 'revisado' && <Search className="h-4 w-4 flex-shrink-0" />}
+                  {resultado === 'no_reparable' && <AlertTriangle className="h-4 w-4 shrink-0" />}
+                  {resultado === 'pendiente_repuesto' && <Package className="h-4 w-4 shrink-0" />}
+                  {resultado === 'reparado' && <Wrench className="h-4 w-4 shrink-0" />}
+                  {resultado === 'revisado' && <Search className="h-4 w-4 shrink-0" />}
                   <span>
                     {resultado === 'revisado' && 'El cliente recibirá el diagnóstico y la cotización para aprobar.'}
                     {resultado === 'reparado' && 'Excelente. Documente lo que se reparó y el costo final.'}
@@ -515,3 +515,4 @@ export function VisitReportForm({
     </div>
   )
 }
+

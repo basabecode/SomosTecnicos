@@ -354,11 +354,13 @@ export default function Header() {
               aria-label="SomosTécnicos — Ir al inicio"
             >
               <Image
-                src="/img-3d/logotipo_somostecnicos_nuevo_sin_fondo.png"
+                src="/img-3d/diseño-Logos-sinFondo.png"
                 alt="SomosTécnicos"
-                width={150}
-                height={50}
-                className="h-10 w-auto object-contain"
+                width={220}
+                height={64}
+                className="h-8 sm:h-9 md:h-10 lg:h-11 w-auto object-contain"
+                quality={100}
+                sizes="(max-width: 640px) 120px, (max-width: 768px) 140px, (max-width: 1024px) 160px, 180px"
                 priority
               />
             </Link>
@@ -442,7 +444,7 @@ export default function Header() {
                                   }
                                   className="group/item flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-red-50 transition-colors duration-150"
                                 >
-                                  <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center flex-shrink-0 transition-colors duration-150">
+                                  <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center shrink-0 transition-colors duration-150">
                                     <Icon
                                       size={13}
                                       className="text-slate-400 group-hover/item:text-primary transition-colors"
@@ -476,7 +478,7 @@ export default function Header() {
                                       }
                                       className="group/item flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-red-50 transition-colors duration-150"
                                     >
-                                      <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center flex-shrink-0 transition-colors duration-150">
+                                      <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center shrink-0 transition-colors duration-150">
                                         <Icon
                                           size={13}
                                           className="text-slate-400 group-hover/item:text-primary transition-colors"
@@ -507,7 +509,7 @@ export default function Header() {
                         <Link
                           href="/servicios"
                           onClick={() => setIsServicesDropdownOpen(false)}
-                          className="flex items-center gap-1.5 bg-white text-primary text-[12px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors flex-shrink-0"
+                          className="flex items-center gap-1.5 bg-white text-primary text-[12px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors shrink-0"
                         >
                           Ver todos <ArrowRight size={12} />
                         </Link>
@@ -569,11 +571,13 @@ export default function Header() {
             {/* Cabecera del panel */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <Image
-                src="/img-3d/logotipo_somostecnicos_nuevo_sin_fondo.png"
+                src="/img-3d/diseño-Logos-sinFondo.png"
                 alt="SomosTécnicos"
-                width={120}
-                height={40}
-                className="h-8 w-auto object-contain"
+                width={170}
+                height={50}
+                className="h-7 sm:h-8 w-auto object-contain"
+                quality={100}
+                sizes="(max-width: 640px) 110px, 130px"
               />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -625,7 +629,7 @@ export default function Header() {
                         >
                           <Icon
                             size={14}
-                            className="flex-shrink-0 text-slate-400"
+                            className="shrink-0 text-slate-400"
                           />
                           {servicio.label}
                         </Link>
@@ -774,3 +778,6 @@ export default function Header() {
     </>
   )
 }
+
+
+

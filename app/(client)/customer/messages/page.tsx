@@ -773,7 +773,7 @@ export default function CustomerMessages() {
 
       {/* New Message Dialog */}
       <Dialog open={isNewMessageOpen} onOpenChange={setIsNewMessageOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Nuevo Mensaje</DialogTitle>
             <DialogDescription>
@@ -816,7 +816,7 @@ export default function CustomerMessages() {
                 <Label>Mensaje</Label>
                 <Textarea
                    placeholder="Describe tu consulta..."
-                   className="min-h-[100px]"
+                   className="min-h-25"
                    value={newMsgContent}
                    onChange={e => setNewMsgContent(e.target.value)}
                 />

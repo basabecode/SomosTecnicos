@@ -6,6 +6,57 @@
 import { apiInstance, brevo, defaultSender } from './email/brevo-client'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+const BRAND_LOGO_URL = `${APP_URL}/img-3d/logo-email.png`
+
+function renderBrandedEmailTemplate(params: {
+  title: string
+  subtitle?: string
+  content: string
+  accentColor?: string
+  footerText?: string
+}): string {
+  const {
+    title,
+    subtitle,
+    content,
+    accentColor = '#A50034',
+    footerText = '© 2026 SomosTécnicos - Servicio Técnico Profesional'
+  } = params
+
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${title} - SomosTécnicos</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #334155; background-color: #F3F4F6; margin: 0; padding: 24px 0; }
+        .container { max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E7EB; }
+        .header { background: linear-gradient(135deg, ${accentColor} 0%, #1F2937 100%); color: #ffffff; text-align: center; padding: 28px 24px; }
+        .header img { display: block; margin: 0 auto 14px auto; max-width: 220px; height: auto; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 8px 0 0 0; opacity: 0.95; font-size: 14px; }
+        .content { padding: 30px 26px; font-size: 15px; }
+        .card { background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid ${accentColor}; border-radius: 8px; padding: 16px; margin: 18px 0; }
+        .button { display: inline-block; background: ${accentColor}; color: #ffffff !important; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600; }
+        .footer { text-align: center; padding: 18px; font-size: 12px; color: #6B7280; background: #F9FAFB; border-top: 1px solid #E5E7EB; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <img src="${BRAND_LOGO_URL}" alt="SomosTécnicos" />
+          <h1>${title}</h1>
+          ${subtitle ? `<p>${subtitle}</p>` : ''}
+        </div>
+        <div class="content">${content}</div>
+        <div class="footer">${footerText}</div>
+      </div>
+    </body>
+    </html>
+  `
+}
 
 // =============================================
 // TIPOS
@@ -42,72 +93,28 @@ interface NotificationResult {
  * Plantilla HTML para nueva orden
  */
 function getNewOrderTemplate(data: OrderEmailData): string {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Nueva Orden de Servicio - SomosTécnicos</title>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-            .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-            .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
-            .header-icon { font-size: 40px; margin-bottom: 10px; }
-            .content { padding: 40px 30px; }
-            .order-card { background: #f8f9fa; padding: 25px; margin: 20px 0; border-radius: 8px; border: 1px solid #e9ecef; }
-            .order-number { color: #A50034; font-size: 24px; font-weight: bold; display: block; margin-top: 5px; }
-            .details-list p { margin: 8px 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-            .details-list p:last-child { border-bottom: none; }
-            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
-            .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
-            .help-text { font-size: 14px; color: #666; margin-top: 30px; text-align: center; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <div class="header-icon">✅</div>
-                <h1 style="margin: 0; font-size: 24px;">Confirmación de Servicio</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">SomosTécnicos</p>
-            </div>
+  return renderBrandedEmailTemplate({
+    title: 'Confirmacion de Servicio',
+    subtitle: `Orden #${data.orderNumber}`,
+    content: `
+      <p>Hola <strong>${data.customerName}</strong>,</p>
+      <p>Hemos recibido tu solicitud correctamente. Un tecnico especializado revisara tu caso en breve.</p>
 
-            <div class="content">
-                <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${data.customerName},</h2>
-                <p>Hemos recibido tu solicitud correctamente. Un técnico especializado revisará tu caso en breve.</p>
+      <div class="card">
+        <p style="margin:0 0 8px 0;"><strong>Servicio:</strong> ${data.serviceType}</p>
+        <p style="margin:0 0 8px 0;"><strong>Electrodomestico:</strong> ${data.applianceType}</p>
+        <p style="margin:0 0 8px 0;"><strong>Fecha Preferida:</strong> ${data.preferredDate}</p>
+        <p style="margin:0;"><strong>Direccion:</strong> ${data.address}</p>
+      </div>
 
-                <div class="order-card">
-                    <span style="font-size: 12px; text-transform: uppercase; color: #666; letter-spacing: 1px;">Número de Orden</span>
-                    <span class="order-number">${data.orderNumber}</span>
-
-                    <div class="details-list" style="margin-top: 20px;">
-                        <p><strong>Servicio:</strong> ${data.serviceType}</p>
-                        <p><strong>Electrodoméstico:</strong> ${data.applianceType}</p>
-                        <p><strong>Fecha Preferida:</strong> ${data.preferredDate}</p>
-                        <p><strong>Dirección:</strong> ${data.address}</p>
-                    </div>
-                </div>
-
-                <div style="text-align: center;">
-                    <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
-                        Seguir mi Orden
-                    </a>
-                </div>
-
-                <div class="help-text">
-                    <p><strong>¿Necesitas ayuda?</strong><br>
-                    Llámanos al: <strong>(+57) 3003094854</strong><br>
-                    Email: <strong>soporte@somostecnicos.com</strong></p>
-                </div>
-            </div>
-
-            <div class="footer">
-                <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
-                <p>Este es un email automático, por favor no responder directamente.</p>
-            </div>
-        </div>
-    </body>
-    </html>
-  `
+      <p style="text-align:center; margin-top: 22px;">
+        <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">Seguir mi Orden</a>
+      </p>
+      <p style="font-size: 13px; color:#6B7280; text-align:center; margin-top:20px;">
+        Soporte: (+57) 3003094854 | soporte@somostecnicos.com
+      </p>
+    `
+  })
 }
 
 /**
@@ -124,68 +131,30 @@ function getStatusUpdateTemplate(data: OrderEmailData): string {
 
   const statusMessage = statusMessages[data.status as keyof typeof statusMessages] || 'Estado actualizado'
 
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Actualización de Orden - SomosTécnicos</title>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-            .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-            .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
-            .header-icon { font-size: 40px; margin-bottom: 10px; }
-            .content { padding: 40px 30px; }
-            .status-card { background: #fff5f5; padding: 25px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #A50034; }
-            .technician-card { background: #f8f9fa; padding: 20px; margin-top: 20px; border-radius: 8px; border: 1px solid #e9ecef; }
-            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
-            .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <div class="header-icon">📢</div>
-                <h1 style="margin: 0; font-size: 24px;">Actualización de Estado</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">Orden #${data.orderNumber}</p>
-            </div>
+  return renderBrandedEmailTemplate({
+    title: 'Actualizacion de Estado',
+    subtitle: `Orden #${data.orderNumber}`,
+    content: `
+      <p>Hola <strong>${data.customerName}</strong>,</p>
+      <div class="card">
+        <p style="margin: 0 0 8px 0;"><strong>${statusMessage}</strong></p>
+        <p style="margin: 0;">El estado de tu orden cambio a <strong>${data.status}</strong>.</p>
+        ${data.notes ? `<p style="margin: 10px 0 0 0; font-style: italic;">"${data.notes}"</p>` : ''}
+      </div>
 
-            <div class="content">
-                <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${data.customerName},</h2>
+      ${data.technicianName ? `
+      <div class="card">
+        <p style="margin:0 0 8px 0;"><strong>Tecnico:</strong> ${data.technicianName}</p>
+        <p style="margin:0 0 8px 0;"><strong>Telefono:</strong> ${data.technicianPhone || 'No disponible'}</p>
+        ${data.estimatedCost ? `<p style="margin:0;"><strong>Costo Estimado:</strong> $${data.estimatedCost.toLocaleString()}</p>` : ''}
+      </div>
+      ` : ''}
 
-                <div class="status-card">
-                    <h3 style="margin: 0 0 10px 0; color: #A50034;">${statusMessage}</h3>
-                    <p style="margin: 0;">El estado de tu orden ha cambiado a: <strong>${data.status}</strong></p>
-                    ${data.notes ? `<p style="margin-top: 10px; font-style: italic;">"${data.notes}"</p>` : ''}
-                </div>
-
-                ${data.technicianName ? `
-                <div class="technician-card">
-                    <h4 style="margin: 0 0 10px 0;">Datos del Técnico Asignado</h4>
-                    <p style="margin: 5px 0;"><strong>Nombre:</strong> ${data.technicianName}</p>
-                    <p style="margin: 5px 0;"><strong>Teléfono:</strong> ${data.technicianPhone}</p>
-                    ${data.estimatedCost ? `<p style="margin: 5px 0;"><strong>Costo Estimado:</strong> $${data.estimatedCost.toLocaleString()}</p>` : ''}
-                </div>
-                ` : ''}
-
-                <div style="text-align: center;">
-                    <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">
-                        Ver Detalles Completos
-                    </a>
-                </div>
-
-                <p style="text-align: center; font-size: 14px; color: #666; margin-top: 30px;">
-                    ¿Tienes dudas? Llámanos al <strong>(+57) 3003094854</strong>
-                </p>
-            </div>
-
-            <div class="footer">
-                <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
-            </div>
-        </div>
-    </body>
-    </html>
-  `
+      <p style="text-align:center; margin-top: 22px;">
+        <a href="${APP_URL}/seguimiento?order=${data.orderNumber}" class="button">Ver Detalles</a>
+      </p>
+    `
+  })
 }
 
 // =============================================
@@ -255,17 +224,10 @@ export async function sendSimpleEmail(
   try {
     const sendSmtpEmail = new brevo.SendSmtpEmail()
     sendSmtpEmail.subject = subject
-    sendSmtpEmail.htmlContent = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-          <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px;">
-            <h2 style="color: #A50034; text-align: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 20px;">🔧 SomosTécnicos</h2>
-            <p style="font-size: 16px; line-height: 1.6; color: #333;">${message}</p>
-            <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 12px; color: #999;">
-              <p>© 2026 SomosTécnicos - Servicio Técnico de Electrodomésticos</p>
-            </div>
-          </div>
-        </div>
-      `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: subject,
+      content: `<p>${message}</p>`
+    })
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: to }]
 
@@ -294,71 +256,24 @@ export async function sendTechnicianApplicationReceivedEmail(
   try {
     const sendSmtpEmail = new brevo.SendSmtpEmail()
     sendSmtpEmail.subject = '✅ Solicitud Recibida - SomosTécnicos'
-    sendSmtpEmail.htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Solicitud Recibida - SomosTécnicos</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-                .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; position: relative; overflow: hidden; }
-                .header-circle { width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-                .content { padding: 40px 30px; }
-                .info-box { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 8px; border: 1px solid #e9ecef; }
-                .steps { margin: 0; padding: 0; list-style: none; }
-                .step-item { display: flex; margin-bottom: 15px; }
-                .step-number { background: #A50034; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 15px; flex-shrink: 0; margin-top: 2px; }
-                .contact-box { text-align: center; border-top: 1px solid #eee; margin-top: 30px; padding-top: 30px; color: #666; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; background: #f4f4f4; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <div class="header-circle">�</div>
-                    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Solicitud Recibida</h1>
-                    <p style="margin: 5px 0 0 0; opacity: 0.9;">Gracias por postularte a SomosTécnicos</p>
-                </div>
-
-                <div class="content">
-                    <h2 style="margin-top: 0; color: #1a1a1a;">¡Hola ${applicantName}!</h2>
-                    <p style="color: #4a4a4a; font-size: 16px;">Hemos recibido tus documentos y datos correctamente. Tu solicitud para unirte a nuestro equipo está en proceso.</p>
-
-                    <div class="info-box">
-                        <h3 style="margin-top: 0; color: #A50034; font-size: 18px; margin-bottom: 20px;">�️ Próximos Pasos</h3>
-                        <div class="steps">
-                            <div class="step-item">
-                                <div class="step-number">1</div>
-                                <div><strong>Revisión:</strong> Evaluaremos tu perfil en 24-48 horas.</div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">2</div>
-                                <div><strong>Validación:</strong> Verificaremos tus antecedentes y certificaciones.</div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">3</div>
-                                <div><strong>Respuesta:</strong> Te enviaremos un email con la decisión final.</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="contact-box">
-                        <p style="margin-bottom: 5px;"><strong>¿Tienes alguna pregunta?</strong></p>
-                        <p style="margin: 5px 0;">Email: <a href="mailto:soporte@somostecnicos.com" style="color: #A50034; text-decoration: none;">soporte@somostecnicos.com</a></p>
-                        <p style="margin: 5px 0;">Teléfono: <strong>(+57) 3003094854</strong></p>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <p>© 2026 SomosTécnicos - Red de Profesionales</p>
-                    <p>Bogotá, Colombia</p>
-                </div>
-            </div>
-        </body>
-        </html>
-      `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: 'Solicitud Recibida',
+      subtitle: 'Gracias por postularte a SomosTécnicos',
+      content: `
+        <p>Hola <strong>${applicantName}</strong>,</p>
+        <p>Hemos recibido tus documentos y datos correctamente. Tu solicitud esta en proceso.</p>
+        <div class="card">
+          <p style="margin:0 0 8px 0;"><strong>Proximos pasos:</strong></p>
+          <p style="margin:0 0 6px 0;">1. Revision de perfil (24-48 horas).</p>
+          <p style="margin:0 0 6px 0;">2. Validacion de antecedentes y certificaciones.</p>
+          <p style="margin:0;">3. Te enviaremos un correo con la decision final.</p>
+        </div>
+        <p style="font-size:13px; color:#6B7280;">
+          Soporte: soporte@somostecnicos.com | (+57) 3003094854
+        </p>
+      `,
+      footerText: '© 2026 SomosTécnicos - Red de Profesionales'
+    })
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: applicantEmail, name: applicantName }]
 
@@ -391,76 +306,24 @@ export async function sendTechnicianApprovedEmail(
     sendSmtpEmail.subject = '🎉 Solicitud Aprobada - Bienvenido a SomosTécnicos'
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: technicianEmail, name: technicianName }]
-    sendSmtpEmail.htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Solicitud Aprobada - SomosTécnicos</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-                .header { background: #A50034; color: white; padding: 30px 20px; text-align: center; }
-                .header-icon { font-size: 40px; margin-bottom: 10px; }
-                .content { padding: 40px 30px; }
-                .credentials-card { background: #f3f4f6; padding: 25px; margin: 20px 0; border-radius: 8px; border: 1px solid #e5e7eb; border-left: 4px solid #A50034; }
-                .warning-card { background: #fffbeb; padding: 15px; margin: 20px 0; border-radius: 8px; border: 1px solid #fcd34d; color: #92400e; font-size: 14px; }
-                .step-list { margin: 0; padding: 0; list-style: none; }
-                .step-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
-                .step-list li:before { content: "✓"; color: #A50034; position: absolute; left: 0; font-weight: bold; }
-                .button { background: #A50034; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 20px; font-weight: bold; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f4f4f4; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <div class="header-icon">🎉</div>
-                    <h1 style="margin: 0; font-size: 24px;">Confirmación de Aprobación</h1>
-                    <p style="margin: 5px 0 0 0; opacity: 0.9;">¡Bienvenido al Equipo de SomosTécnicos!</p>
-                </div>
-
-                <div class="content">
-                    <h2 style="margin-top: 0; color: #1a1a1a;">Hola ${technicianName},</h2>
-                    <p>Nos complace informarte que tu solicitud para unirte a <strong>SomosTécnicos</strong> ha sido aprobada exitosamente.</p>
-
-                    <p>A partir de ahora eres parte de nuestra red de profesionales de confianza.</p>
-
-                    <div class="credentials-card">
-                        <h3 style="margin-top: 0; color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">🔑 Tus Credenciales de Acceso</h3>
-                        <p style="margin: 10px 0 5px;"><strong>Usuario / Email:</strong></p>
-                        <p style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin: 0;">${username}</p>
-
-                        <p style="margin: 15px 0 5px;"><strong>Contraseña Temporal:</strong></p>
-                        <p style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin: 0; font-family: monospace; font-size: 16px;">${tempPassword}</p>
-                    </div>
-
-                    <div class="warning-card">
-                        <strong>⚠️ Importante:</strong> Por motivos de seguridad, el sistema te pedirá cambiar tu contraseña al iniciar sesión por primera vez.
-                    </div>
-
-                    <h3 style="color: #A50034;">🚀 Próximos Pasos</h3>
-                    <ul class="step-list">
-                        <li>Ingresa al panel de técnicos con tus credenciales.</li>
-                        <li>Configura tu disponibilidad en el calendario.</li>
-                        <li>Mantente atento a las notificaciones de nuevos servicios en tu zona.</li>
-                    </ul>
-
-                    <div style="text-align: center;">
-                        <a href="${APP_URL}/login" class="button">
-                            Iniciar Sesión en el Portal
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <p>© 2026 SomosTécnicos - Red de Profesionales</p>
-                    <p>Si tienes problemas para acceder, contacta a soporte@somostecnicos.com</p>
-                </div>
-            </div>
-        </body>
-        </html>
-    `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: 'Solicitud Aprobada',
+      subtitle: 'Bienvenido al equipo de SomosTécnicos',
+      content: `
+        <p>Hola <strong>${technicianName}</strong>, tu solicitud fue aprobada exitosamente.</p>
+        <div class="card">
+          <p style="margin:0 0 8px 0;"><strong>Usuario / Email:</strong> ${username}</p>
+          <p style="margin:0;"><strong>Contrasena temporal:</strong> ${tempPassword}</p>
+        </div>
+        <div class="card" style="border-left-color:#D97706; background:#FFFBEB;">
+          <p style="margin:0;"><strong>Importante:</strong> debes cambiar esta contrasena al primer inicio de sesion.</p>
+        </div>
+        <p style="text-align:center; margin-top:22px;">
+          <a href="${APP_URL}/login" class="button">Iniciar Sesion</a>
+        </p>
+      `,
+      footerText: '© 2026 SomosTécnicos - Red de Profesionales'
+    })
 
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
@@ -501,93 +364,28 @@ export async function sendNewTechnicianApplicationNotification(
     sendSmtpEmail.subject = '🆕 Nueva Solicitud de Técnico - Requiere Revisión'
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: adminEmail }]
-    sendSmtpEmail.htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Nueva Solicitud de Técnico</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
-                .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-                .header { background: #111827; color: white; padding: 25px; text-align: center; }
-                .content { padding: 30px; }
-                .data-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin: 20px 0; }
-                .data-row { display: flex; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; }
-                .data-row:last-child { border-bottom: none; }
-                .data-label { width: 140px; font-weight: bold; color: #666; }
-                .data-value { flex: 1; color: #333; }
-                .section-title { color: #A50034; border-bottom: 2px solid #A50034; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; font-size: 16px; }
-                .button { background: #A50034; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 10px; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; background: #f4f4f4; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1 style="margin: 0; font-size: 22px;">Nueva Solicitud Recibida</h1>
-                    <p style="margin: 5px 0 0 0; color: #9ca3af; font-size: 14px;">Panel Administrativo SomosTécnicos</p>
-                </div>
-
-                <div class="content">
-                    <p><strong>Atención Admin:</strong> Se ha registrado una nueva postulación para técnico.</p>
-
-                    <h3 class="section-title">👤 Información del Solicitante</h3>
-                    <div class="data-card">
-                        <div class="data-row">
-                            <span class="data-label">Nombre:</span>
-                            <span class="data-value">${applicationData.nombre} ${applicationData.apellido}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Cédula:</span>
-                            <span class="data-value">${applicationData.cedula}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Email:</span>
-                            <span class="data-value"><a href="mailto:${applicationData.email}">${applicationData.email}</a></span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Teléfono:</span>
-                            <span class="data-value">${applicationData.telefono}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Ciudad:</span>
-                            <span class="data-value">${applicationData.ciudad}</span>
-                        </div>
-                    </div>
-
-                    <h3 class="section-title">🛠️ Perfil Profesional</h3>
-                    <div class="data-card">
-                        <div class="data-row">
-                            <span class="data-label">Especialidades:</span>
-                            <span class="data-value">${especialidadesText}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Zona Preferida:</span>
-                            <span class="data-value">${applicationData.zonaPreferida}</span>
-                        </div>
-                        ${applicationData.experienciaAnios ? `
-                        <div class="data-row">
-                            <span class="data-label">Experiencia:</span>
-                            <span class="data-value">${applicationData.experienciaAnios} Años</span>
-                        </div>
-                        ` : ''}
-                    </div>
-
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="${APP_URL}/admin/applications" class="button">
-                            Revisar en el Panel
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <p>© 2026 Admin Panel - SomosTécnicos</p>
-                </div>
-            </div>
-        </body>
-        </html>
-      `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: 'Nueva Solicitud de Tecnico',
+      subtitle: 'Panel administrativo',
+      content: `
+        <p>Se registro una nueva postulacion para tecnico.</p>
+        <div class="card">
+          <p style="margin:0 0 6px 0;"><strong>Nombre:</strong> ${applicationData.nombre} ${applicationData.apellido}</p>
+          <p style="margin:0 0 6px 0;"><strong>Cedula:</strong> ${applicationData.cedula}</p>
+          <p style="margin:0 0 6px 0;"><strong>Email:</strong> ${applicationData.email}</p>
+          <p style="margin:0 0 6px 0;"><strong>Telefono:</strong> ${applicationData.telefono}</p>
+          <p style="margin:0 0 6px 0;"><strong>Ciudad:</strong> ${applicationData.ciudad}</p>
+          <p style="margin:0 0 6px 0;"><strong>Especialidades:</strong> ${especialidadesText}</p>
+          <p style="margin:0;"><strong>Zona Preferida:</strong> ${applicationData.zonaPreferida}</p>
+          ${applicationData.experienciaAnios ? `<p style="margin:6px 0 0 0;"><strong>Experiencia:</strong> ${applicationData.experienciaAnios} anios</p>` : ''}
+        </div>
+        <p style="text-align:center; margin-top:22px;">
+          <a href="${APP_URL}/admin/applications" class="button">Revisar en el Panel</a>
+        </p>
+      `,
+      accentColor: '#111827',
+      footerText: '© 2026 Admin Panel - SomosTécnicos'
+    })
 
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
@@ -623,57 +421,23 @@ export async function sendTechnicianAssignmentEmail(data: {
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: data.technicianEmail, name: data.technicianName }]
 
-    sendSmtpEmail.htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-          <meta charset="utf-8">
-          <style>
-              body { font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; }
-              .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; border-top: 5px solid #A50034; }
-              .header { text-align: center; margin-bottom: 20px; }
-              .details { background-color: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #eee; }
-              .label { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; }
-              .value { margin-bottom: 10px; font-size: 16px; }
-              .button { display: inline-block; background-color: #A50034; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin-top: 20px; text-align: center; }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="header">
-                  <h2>Nueva Orden Asignada</h2>
-                  <p>Hola ${data.technicianName}, se te ha asignado un nuevo servicio.</p>
-              </div>
-
-              <div class="details">
-                  <div class="label">Orden</div>
-                  <div class="value">#${data.orderNumber}</div>
-
-                  <div class="label">Cliente</div>
-                  <div class="value">${data.customerName}</div>
-
-                  <div class="label">Dirección</div>
-                  <div class="value">${data.address}</div>
-
-                  <div class="label">Equipo</div>
-                  <div class="value">${data.appliance}</div>
-
-                  <div class="label">Fecha Programada</div>
-                  <div class="value">${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</div>
-
-                  ${data.notes ? `
-                  <div class="label">Notas Internas</div>
-                  <div class="value">${data.notes}</div>
-                  ` : ''}
-              </div>
-
-              <div style="text-align: center;">
-                  <a href="${APP_URL}/technician/orders/${data.orderNumber}" class="button">Ver Detalles</a>
-              </div>
-          </div>
-      </body>
-      </html>
-    `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: 'Nueva Orden Asignada',
+      subtitle: `Orden #${data.orderNumber}`,
+      content: `
+        <p>Hola <strong>${data.technicianName}</strong>, se te asigno un nuevo servicio.</p>
+        <div class="card">
+          <p style="margin:0 0 8px 0;"><strong>Cliente:</strong> ${data.customerName}</p>
+          <p style="margin:0 0 8px 0;"><strong>Direccion:</strong> ${data.address}</p>
+          <p style="margin:0 0 8px 0;"><strong>Equipo:</strong> ${data.appliance}</p>
+          <p style="margin:0;"><strong>Fecha Programada:</strong> ${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</p>
+          ${data.notes ? `<p style="margin:8px 0 0 0;"><strong>Notas:</strong> ${data.notes}</p>` : ''}
+        </div>
+        <p style="text-align:center; margin-top:22px;">
+          <a href="${APP_URL}/technician/orders/${data.orderNumber}" class="button">Ver Detalles</a>
+        </p>
+      `
+    })
 
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
     return { success: true, messageId: result.body.messageId }
@@ -701,39 +465,21 @@ export async function sendCustomerAssignmentEmail(data: {
     sendSmtpEmail.sender = defaultSender
     sendSmtpEmail.to = [{ email: data.customerEmail, name: data.customerName }]
 
-    sendSmtpEmail.htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-          <meta charset="utf-8">
-          <style>
-              body { font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; }
-              .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; border-top: 5px solid #A50034; }
-              .header { text-align: center; margin-bottom: 20px; }
-              .technician-card { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="header">
-                  <h2>¡Técnico en Camino!</h2>
-                  <p>Hola ${data.customerName}, hemos asignado un profesional para revisar tu ${data.appliance}.</p>
-              </div>
-
-              <div class="technician-card">
-                  <h3>Datos del Técnico</h3>
-                  <p><strong>Nombre:</strong> ${data.technicianName}</p>
-                  <p><strong>Teléfono:</strong> ${data.technicianPhone}</p>
-                  <p><strong>Fecha Programada:</strong> ${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</p>
-              </div>
-
-              <p style="text-align: center; font-size: 14px; color: #666;">
-                  Si tienes alguna duda, puedes contactar directamente al técnico o a nuestro soporte.
-              </p>
-          </div>
-      </body>
-      </html>
-    `
+    sendSmtpEmail.htmlContent = renderBrandedEmailTemplate({
+      title: 'Tecnico Asignado',
+      subtitle: `Orden #${data.orderNumber}`,
+      content: `
+        <p>Hola <strong>${data.customerName}</strong>, ya asignamos un profesional para revisar tu ${data.appliance}.</p>
+        <div class="card">
+          <p style="margin:0 0 8px 0;"><strong>Tecnico:</strong> ${data.technicianName}</p>
+          <p style="margin:0 0 8px 0;"><strong>Telefono:</strong> ${data.technicianPhone}</p>
+          <p style="margin:0;"><strong>Fecha Programada:</strong> ${data.scheduledDate ? new Date(data.scheduledDate).toLocaleString() : 'Por coordinar'}</p>
+        </div>
+        <p style="font-size:13px; color:#6B7280; text-align:center;">
+          Si tienes dudas, contacta directamente al tecnico o a nuestro soporte.
+        </p>
+      `
+    })
 
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail)
     return { success: true, messageId: result.body.messageId }
@@ -760,3 +506,5 @@ export function validateEmailConfig(): { isValid: boolean; errors: string[] } {
     errors
   }
 }
+
+

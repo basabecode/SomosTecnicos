@@ -216,3 +216,116 @@ Activa este skill siempre que el usuario pida:
 ```
 
 ```
+
+# ============================================================
+
+# Arquitectura de Comunicación en Tiempo Real
+
+## Stack de Comunicación
+
+- **Notificaciones en tiempo real**: Server-Sent Events (SSE) — NO WebSockets
+- **Endpoint SSE**: `app/api/notifications/stream/route.ts` — debe usar `export const runtime = 'edge'`
+- **Estado global frontend**: `contexts/notification-context.tsx`
+- **Dispatcher de eventos**: `lib/services/notification.service.ts` — usar siempre `sendNotification()`, nunca escribir directo a la tabla `Notification`
+- **Cola de jobs**: `lib/queue.ts` — emails y operaciones pesadas van aquí, nunca síncronos en Route Handler
+
+## Reglas de Eventos
+
+- Toda transición de estado de orden dispara notificación al actor correcto (no solo al admin)
+- `NotificationService.create()` después de cada transición exitosa
+- El SSE stream debe hacer cleanup con `req.signal.addEventListener('abort')`
+- Skills de referencia: `.claude/skills/eda-architect/SKILL.md` y `.claude/skills/realtime-gateway/SKILL.md`
+
+# ============================================================
+
+# Sistema de Colores — Tokens CSS
+
+## Dos capas de tokens que NO deben mezclarse
+
+| Capa | Prefijo | Archivo | Uso |
+|------|---------|---------|-----|
+| Tailwind / shadcn | `--background`, `--primary`, `--border`… | `app/globals.css` | Componentes shadcn/ui, clases `bg-primary` |
+| Corporativo ST | `--st-*` | `styles/tokens.css` | Marca, estados de orden, colores semánticos propios |
+| Workshop | `--workshop-*`, `--pending-amber`… | `styles/tokens.css` | Design system físico del taller |
+
+## Tokens corporativos clave
+
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `--st-primary` | `#a50034` | Rojo marca — CTAs principales |
+| `--st-primary-hover` | `#8a0029` | Hover de CTAs |
+| `--st-success` | `#27ae60` | Confirmaciones |
+| `--st-warning` | `#f39c12` | Advertencias |
+| `--st-error` | `#e74c3c` | Errores (antes `--accent`) |
+| `--st-status-pending` | alias `--pending-amber` | Órdenes pendientes |
+| `--st-status-active` | alias `--assigned-blue` | Órdenes activas |
+| `--st-status-completed` | alias `--completed-green` | Órdenes completadas |
+| `--st-status-cancelled` | alias `--steel-frame` | Órdenes canceladas |
+
+## Reglas de color
+
+- **Nunca** usar hex hardcodeados (`#a50034`) en componentes — usar `var(--st-primary)` o `bg-primary`
+- **Nunca** usar sintaxis arbitraria de Tailwind para colores de marca (`bg-[#A50034]`)
+- Componentes shadcn usan `bg-primary` — que apunta al rojo corporativo via oklch en `globals.css`
+- Empty states inline prohibidos — usar `<EmptyState />` de `components/domain/empty-state.tsx`
+
+# ============================================================
+
+# QA Funcional — Dead UI
+
+## Skill disponible
+
+`.claude/skills/functional-qa/SKILL.md` — Auditoría funcional de los 3 portales
+
+## Reglas de implementación
+
+- **Nunca** dejar `onClick={() => {}}` o handlers con solo `console.log`
+- **Siempre** manejar error además del éxito (`toast.error()` en catch)
+- **Siempre** deshabilitar botones durante operaciones (`disabled={isLoading}`)
+- Botones destructivos requieren confirmación (dialog/alert antes de ejecutar)
+- Formularios requieren estado de loading en submit y reset post-éxito
+
+## Estado actual del proyecto — Issues de diseño
+
+# ============================================================
+
+# Convenciones Tailwind (memoria de proyecto)
+
+## Regla de compatibilidad
+
+- Usar `shrink-0` en lugar de `flex-shrink-0`.
+- Usar `grow` en lugar de `flex-grow`.
+- Evitar `min-w-[20px]` cuando existe utilidad nativa; usar `min-w-5`.
+- Preferir utilidades de escala nativa cuando el valor coincide exactamente.
+
+## Mapeos frecuentes
+
+- `w-[240px]` -> `w-60`
+- `w-[120px]` -> `w-30`
+- `min-h-[44px]` -> `min-h-11`
+- `min-w-[160px]` -> `min-w-40`
+- `min-w-[200px]` -> `min-w-50`
+- `min-w-[240px]` -> `min-w-60`
+- `min-w-[300px]` -> `min-w-75`
+- `max-w-[120px]` -> `max-w-30`
+- `w-[180px]` -> `w-45`
+- `w-[600px]` -> `w-150`
+- `min-w-[100px]` -> `min-w-25`
+- `min-w-[260px]` -> `min-w-65`
+- `min-h-[100px]` -> `min-h-25`
+- `min-h-[320px]` -> `min-h-80`
+- `min-h-[380px]` -> `min-h-95`
+- `min-h-[400px]` -> `min-h-100`
+- `min-h-[420px]` -> `min-h-105`
+- `max-w-[320px]` -> `max-w-80`
+- `max-w-[400px]` -> `max-w-100`
+- `max-w-[500px]` -> `max-w-125`
+- `max-w-[540px]` -> `max-w-135`
+- `max-h-[120px]` -> `max-h-30`
+- `max-h-[540px]` -> `max-h-135`
+- `max-h-[600px]` -> `max-h-150`
+
+## Motivo
+
+- Mantener consistencia con la convención actual de Tailwind del proyecto.
+- Reducir clases legacy y arbitrarias innecesarias para evitar errores de revisión.

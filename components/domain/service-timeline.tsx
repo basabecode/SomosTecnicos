@@ -171,7 +171,7 @@ export function ServiceTimeline({ currentStep, order, visitReport }: ServiceTime
               <div key={step.id} className="relative flex gap-4">
                 {/* Status Indicator (Simple Dot) */}
                 <div className={cn(
-                  "relative z-10 flex-shrink-0 w-6 h-6 rounded-full border-[3px] box-content bg-white",
+                  "relative z-10 shrink-0 w-6 h-6 rounded-full border-[3px] box-content bg-white",
                   status === 'completed' && "border-primary bg-primary w-2.5 h-2.5 mt-1.5 mx-[5px]", // Filled dot for completed
                   status === 'current' && "border-primary w-3 h-3 mt-1 mr-[1px] ml-[1px]", // Ring for current
                   status === 'upcoming' && "border-gray-200 w-2.5 h-2.5 mt-1.5 mx-[5px]" // Grey dot for upcoming
@@ -288,3 +288,4 @@ export function ServiceTimeline({ currentStep, order, visitReport }: ServiceTime
     </div>
   )
 }
+

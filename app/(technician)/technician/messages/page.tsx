@@ -625,7 +625,7 @@ export default function TechnicianMessages() {
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     placeholder="Escribe un mensaje..."
-                    className="min-h-[50px] max-h-[120px] resize-none"
+                    className="min-h-[50px] max-h-30 resize-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
@@ -662,7 +662,7 @@ export default function TechnicianMessages() {
 
       {/* New Conversation Dialog */}
       <Dialog open={isNewConvOpen} onOpenChange={setIsNewConvOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Nueva Conversación</DialogTitle>
             <DialogDescription>
@@ -755,7 +755,7 @@ export default function TechnicianMessages() {
                 value={newConvData.content}
                 onChange={e => setNewConvData({...newConvData, content: e.target.value})}
                 placeholder="Escribe tu mensaje aquí..."
-                className="sm:col-span-3 min-h-[100px]"
+                className="sm:col-span-3 min-h-25"
               />
             </div>
           </div>

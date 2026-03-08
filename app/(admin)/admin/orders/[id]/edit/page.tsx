@@ -188,7 +188,7 @@ export default function EditOrderPage() {
 
   if (loading) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-[400px]">
+      <div className="p-8 flex justify-center items-center min-h-100">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Cargando información...</p>
