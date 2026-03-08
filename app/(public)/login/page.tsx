@@ -1,12 +1,12 @@
-﻿/**
+/**
  * Login - SomosTécnicos
- * Rediseño: Precision Workshop — panel oscuro + formulario quirúrgico
+ * Acceso unificado: el sistema detecta el tipo de usuario por correo
  */
 
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +15,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Eye,
   EyeOff,
-  Wrench,
   AlertCircle,
   Loader2,
   Home,
@@ -23,10 +22,8 @@ import {
   Lock,
   ArrowRight,
   ArrowLeft,
-  Edit2,
-  XCircle,
-  Users,
   CheckCircle2,
+  XCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -40,14 +37,15 @@ export default function LoginPage() {
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [forgotEmail, setForgotEmail] = useState('')
   const [forgotLoading, setForgotLoading] = useState(false)
   const [forgotSuccess, setForgotSuccess] = useState(false)
   const [forgotError, setForgotError] = useState('')
+
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, isAuthenticated, login: authLogin } = useAuth()
 
   useEffect(() => {
@@ -116,12 +114,6 @@ export default function LoginPage() {
     const result = await authLogin(email, password)
 
     if (result.success && result.user) {
-      // Redirection is handled by useEffect when isAuthenticated becomes true
-      // But we can also redirect here for immediate feedback if needed,
-      // essentially relying on state update spread is safer.
-      // However, useAuth handles state update, so we just wait for useEffect or do manual push.
-      // For smoother UX, let's let useEffect handle it or push here to match legacy logic.
-
       const userRole = result.user.role || 'admin'
       let dashboardUrl = '/admin/dashboard'
 
@@ -147,11 +139,13 @@ export default function LoginPage() {
           dashboardUrl = '/admin/dashboard'
       }
 
-      router.push(dashboardUrl) // Use router.push instead of window.location.href for SPA feel
+      const redirectParam = searchParams.get('redirect')
+      const destination =
+        redirectParam && redirectParam.startsWith('/') ? redirectParam : dashboardUrl
+      router.push(destination)
     } else {
       setError(
-        result.error ||
-          'Credenciales incorrectas. Verifica tu correo y contraseña.'
+        result.error || 'Credenciales incorrectas. Verifica tu correo y contraseña.'
       )
       setLoading(false)
     }
@@ -201,17 +195,17 @@ export default function LoginPage() {
 
         {/* Contenido */}
         <div className="relative z-10 flex flex-col h-full px-10 xl:px-14 py-10">
-          {/* Logo — contenedor unificado estilo píldora */}
+          {/* Logo */}
           <div className="mb-12">
             <div className="inline-flex items-center bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.25)] border border-white/10 overflow-hidden px-4 py-2">
-              <div className="relative h-10 w-44">
+              <div className="relative h-8 w-36">
                 <Image
                   src="/img-3d/diseño-Logos-sinFondo.png"
                   alt="SomosTécnicos"
                   fill
                   className="object-contain object-center"
                   quality={100}
-                  sizes="176px"
+                  sizes="144px"
                   priority
                 />
               </div>
@@ -234,16 +228,8 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Foto — ocupa todo el espacio restante con proporción controlada */}
+          {/* Foto */}
           <div className="flex-1 flex flex-col min-h-0">
-            {/*
-              min-h ajustado por breakpoint para mantener una proporción visual
-              coherente sin que la imagen se elongue demasiado en pantallas altas.
-              - md (~768px): mínimo 320px
-              - lg (~1024px): mínimo 380px
-              - xl (~1280px): mínimo 420px
-              El max-h evita que crezca demasiado en monitores 2K/4K.
-            */}
             <div
               className="
                 relative
@@ -254,9 +240,7 @@ export default function LoginPage() {
                 shadow-[0_0_40px_rgba(0,0,0,0.4)]
               "
             >
-              {/* Gradiente inferior — integra la imagen al fondo de la tarjeta */}
               <div className="absolute inset-0 bg-linear-to-t from-[#2d1420]/80 via-[#2d1420]/10 to-transparent z-10 pointer-events-none" />
-              {/* Gradiente lateral izquierdo sutil */}
               <div className="absolute inset-0 bg-linear-to-r from-[#2d1420]/25 via-transparent to-transparent z-10 pointer-events-none" />
 
               <Image
@@ -268,7 +252,6 @@ export default function LoginPage() {
                 sizes="(max-width: 768px) 0vw, (max-width: 1024px) 42vw, (max-width: 1280px) 42vw, 45vw"
               />
 
-              {/* Caption limpio — solo texto, sin stats */}
               <div className="absolute bottom-0 left-0 right-0 px-5 py-4 z-20">
                 <p className="text-white font-semibold text-sm leading-snug">
                   Confianza y Calidad
@@ -281,7 +264,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Divisor rojo — umbral de acceso */}
         <div className="absolute right-0 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-st-primary/40 to-transparent" />
       </div>
 
@@ -289,24 +271,26 @@ export default function LoginPage() {
           PANEL DERECHO — Espacio del formulario
       ══════════════════════════════════════════ */}
       <div className="flex-1 flex flex-col bg-white overflow-y-auto">
-        {/* Header móvil (< md) */}
-        <div className="md:hidden relative bg-[#2d1420] px-6 pt-14 pb-8 text-center">
-          <div className="absolute inset-0 bg-linear-to-br from-[#2d1420] via-[#3d1a2a] to-[#2d1420] pointer-events-none" />
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Logo píldora — móvil */}
-            <div className="inline-flex items-center bg-white rounded-xl shadow-[0_2px_16px_rgba(0,0,0,0.3)] overflow-hidden px-3 py-2 mb-2">
-              <div className="relative h-6 w-28">
-                <Image
-                  src="/img-3d/diseño-Logos-sinFondo.png"
-                  alt="SomosTécnicos"
-                  fill
-                  className="object-contain object-center"
-                  quality={100}
-                  sizes="112px"
-                />
+        {/* Header móvil */}
+        <div className="md:hidden relative bg-[#2d1420] px-6 pt-safe-top pb-8 text-center">
+          <div className="pt-10">
+            <div className="absolute inset-0 bg-linear-to-br from-[#2d1420] via-[#3d1a2a] to-[#2d1420] pointer-events-none" />
+            <div className="relative z-10 flex flex-col items-center">
+              {/* Logo móvil — proporción ajustada */}
+              <div className="inline-flex items-center bg-white rounded-xl shadow-[0_2px_16px_rgba(0,0,0,0.3)] overflow-hidden px-3 py-1.5 mb-2">
+                <div className="relative h-7 w-28">
+                  <Image
+                    src="/img-3d/diseño-Logos-sinFondo.png"
+                    alt="SomosTécnicos"
+                    fill
+                    className="object-contain object-center"
+                    quality={100}
+                    sizes="112px"
+                  />
+                </div>
               </div>
+              <p className="text-gray-400 text-xs mt-1">Portal de acceso</p>
             </div>
-            <p className="text-gray-400 text-sm">Portal de acceso</p>
           </div>
         </div>
 
@@ -365,10 +349,7 @@ export default function LoginPage() {
                     </Button>
                   </div>
                 ) : (
-                  <form
-                    onSubmit={handleForgotPasswordSubmit}
-                    className="space-y-5"
-                  >
+                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-5">
                     <div className="space-y-1.5">
                       <Label
                         htmlFor="forgot-email"
@@ -413,8 +394,7 @@ export default function LoginPage() {
                         </>
                       ) : (
                         <>
-                          Enviar instrucciones{' '}
-                          <ArrowRight className="ml-2 h-4 w-4" />
+                          Enviar instrucciones <ArrowRight className="ml-2 h-4 w-4" />
                         </>
                       )}
                     </Button>
@@ -444,30 +424,19 @@ export default function LoginPage() {
                     Iniciar sesión
                   </h1>
                   <p className="text-gray-500 text-sm">
-                    Ingresa tus credenciales para continuar
+                    Ingresa tu correo y contraseña para continuar
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {/* Campo email */}
                   <div className="space-y-1.5">
-                    <div className="flex justify-between items-center">
-                      <Label
-                        htmlFor="email"
-                        className="text-xs font-semibold text-gray-500 uppercase tracking-wide"
-                      >
-                        Correo Electrónico
-                      </Label>
-                      {email && !isEditingEmail && (
-                        <button
-                          type="button"
-                          onClick={() => setIsEditingEmail(true)}
-                          className="text-xs text-st-primary font-medium flex items-center gap-1 hover:underline"
-                        >
-                          <Edit2 className="w-3 h-3" /> Cambiar
-                        </button>
-                      )}
-                    </div>
+                    <Label
+                      htmlFor="email"
+                      className="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+                    >
+                      Correo Electrónico
+                    </Label>
                     <div className="relative">
                       <Mail
                         className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none ${emailError ? 'text-red-400' : 'text-gray-400'}`}
@@ -482,7 +451,6 @@ export default function LoginPage() {
                         value={email}
                         onChange={e => {
                           setEmail(e.target.value)
-                          setIsEditingEmail(true)
                           if (emailError) setEmailError('')
                         }}
                         required
@@ -535,11 +503,7 @@ export default function LoginPage() {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                        aria-label={
-                          showPassword
-                            ? 'Ocultar contraseña'
-                            : 'Mostrar contraseña'
-                        }
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -614,17 +578,11 @@ export default function LoginPage() {
             {/* Footer legal */}
             <div className="mt-10 pt-6 border-t border-gray-100">
               <div className="flex justify-center gap-5 text-xs text-gray-400">
-                <TermsLink
-                  className="hover:text-gray-600 transition-colors"
-                  showIcon={false}
-                >
+                <TermsLink className="hover:text-gray-600 transition-colors" showIcon={false}>
                   Términos
                 </TermsLink>
                 <span aria-hidden="true">·</span>
-                <TermsLink
-                  className="hover:text-gray-600 transition-colors"
-                  showIcon={false}
-                >
+                <TermsLink className="hover:text-gray-600 transition-colors" showIcon={false}>
                   Privacidad
                 </TermsLink>
               </div>
@@ -648,7 +606,6 @@ export default function LoginPage() {
             className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 duration-300"
             onClick={e => e.stopPropagation()}
           >
-            {/* Cabecera */}
             <div className="bg-[#1a0a0f] px-6 py-5 text-center">
               <h2 className="text-xl font-bold text-white font-display mb-1">
                 Únete a SomosTécnicos
@@ -658,7 +615,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Opciones */}
             <div className="p-5 space-y-3">
               <Link
                 href="/register/customer"
@@ -666,15 +622,11 @@ export default function LoginPage() {
                 onClick={() => setIsRegisterModalOpen(false)}
               >
                 <div className="p-2.5 bg-st-primary/10 rounded-lg group-hover:bg-st-primary transition-colors shrink-0">
-                  <Users className="w-5 h-5 text-st-primary group-hover:text-white" />
+                  <Mail className="w-5 h-5 text-st-primary group-hover:text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm">
-                    Soy Cliente
-                  </p>
-                  <p className="text-gray-400 text-xs">
-                    Solicita servicios técnicos expertos
-                  </p>
+                  <p className="font-semibold text-gray-900 text-sm">Soy Cliente</p>
+                  <p className="text-gray-400 text-xs">Solicita servicios técnicos expertos</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-st-primary group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
@@ -685,21 +637,16 @@ export default function LoginPage() {
                 onClick={() => setIsRegisterModalOpen(false)}
               >
                 <div className="p-2.5 bg-gray-100 rounded-lg group-hover:bg-[#2C3E50] transition-colors shrink-0">
-                  <Wrench className="w-5 h-5 text-gray-600 group-hover:text-white" />
+                  <Lock className="w-5 h-5 text-gray-600 group-hover:text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm">
-                    Soy Técnico
-                  </p>
-                  <p className="text-gray-400 text-xs">
-                    Únete a nuestra red de profesionales
-                  </p>
+                  <p className="font-semibold text-gray-900 text-sm">Soy Técnico</p>
+                  <p className="text-gray-400 text-xs">Únete a nuestra red de profesionales</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             </div>
 
-            {/* Footer modal */}
             <div className="px-5 pb-5 text-center">
               <button
                 onClick={() => setIsRegisterModalOpen(false)}

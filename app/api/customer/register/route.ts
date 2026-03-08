@@ -30,12 +30,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verificar si el email ya existe
-    const existingCustomer = await prisma.customer.findUnique({
-      where: { email },
-    })
+    // Verificar si el email ya existe en Customer o AdminUser
+    const [existingCustomer, existingAdmin] = await Promise.all([
+      prisma.customer.findUnique({ where: { email } }),
+      prisma.adminUser.findUnique({ where: { email } }),
+    ])
 
-    if (existingCustomer) {
+    if (existingCustomer || existingAdmin) {
       return NextResponse.json(
         { success: false, error: 'Este email ya está registrado' },
         { status: 400 }

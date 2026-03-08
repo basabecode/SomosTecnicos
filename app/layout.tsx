@@ -1,13 +1,14 @@
 import type React from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
 import { Outfit, Plus_Jakarta_Sans } from 'next/font/google'
 import { ClientAuthProvider } from '@/components/client-auth-provider'
-import { ThemeProvider } from '@/components/theme-provider'
 import { NotificationProvider as InternalToastProvider } from '@/components/notifications/notification-system-simple'
 import { NotificationProvider } from '@/contexts/notification-context'
 import { Toaster } from '@/components/ui/toaster'
 import { TermsEnforcer } from '@/components/terms-enforcer'
+import { OfflineBanner } from '@/components/pwa/offline-banner'
+import { InstallBanner } from '@/components/pwa/install-banner'
 import './globals.css'
 
 // Tipografía distintiva para SomosTécnicos
@@ -25,10 +26,30 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+// Viewport separado del metadata (Next.js 15 requiere export independiente)
+// viewport-fit=cover es crítico para que la PWA ocupe pantalla completa en iOS con notch
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#a50034',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://somostecnicos.com'),
   alternates: {
     canonical: '/',
+  },
+  // PWA
+  applicationName: 'SomosTécnicos',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'SomosTécnicos',
+  },
+  formatDetection: {
+    telephone: false,
   },
   title: {
     default: 'SomosTécnicos | Servicio Técnico a Domicilio en Cali',
@@ -90,14 +111,18 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   manifest: '/site.webmanifest',
+  // Color de la barra del navegador / status bar en Android y PWA
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   icons: {
     icon: [
-      { url: '/img-3d/favicon-st-metalizado.png', sizes: '1024x1024', type: 'image/png' },
       { url: '/favicon.ico' },
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
       { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/img-3d/favicon-st-metalizado.png', sizes: '1024x1024', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
@@ -118,6 +143,8 @@ export default function RootLayout({
         className={`${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`}
         suppressHydrationWarning={true}
       >
+        <OfflineBanner />
+        <InstallBanner />
         <ClientAuthProvider>
           <NotificationProvider>
             <InternalToastProvider>

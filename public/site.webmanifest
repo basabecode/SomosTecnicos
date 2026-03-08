@@ -1,21 +1,67 @@
 {
   "name": "SomosTécnicos",
   "short_name": "SomosTécnicos",
-  "description": "Servicio técnico profesional a domicilio",
+  "description": "Solicita y gestiona servicios técnicos a domicilio",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#A50034",
+  "orientation": "portrait",
+  "background_color": "#1a0a0f",
+  "theme_color": "#a50034",
+  "lang": "es",
+  "scope": "/",
   "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img-3d/favicon-st-metalizado.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Iniciar sesión",
+      "short_name": "Acceder",
+      "description": "Inicia sesión en tu cuenta",
+      "url": "/login",
+      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Solicitar servicio",
+      "short_name": "Servicio",
+      "description": "Solicita un servicio técnico",
+      "url": "/",
+      "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["business", "utilities"]
 }

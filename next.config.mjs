@@ -1,3 +1,5 @@
+import withPWA from '@ducanh2912/next-pwa'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -64,4 +66,62 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  // Deshabilitado en desarrollo para no interferir con hot reload
+  disable: process.env.NODE_ENV === 'development',
+  // Estrategias de caché offline
+  runtimeCaching: [
+    {
+      // API routes — network first, fallback a caché si no hay conexión
+      urlPattern: /^\/api\//,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'api-cache',
+        networkTimeoutSeconds: 10,
+        expiration: {
+          maxEntries: 64,
+          maxAgeSeconds: 24 * 60 * 60, // 24h
+        },
+      },
+    },
+    {
+      // Imágenes locales del proyecto — cache first (no cambian frecuentemente)
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico|avif)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'image-cache',
+        expiration: {
+          maxEntries: 64,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+        },
+      },
+    },
+    {
+      // Google Fonts — stale while revalidate
+      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 año
+        },
+      },
+    },
+    {
+      // Assets estáticos de Next.js (JS/CSS con hash) — cache first
+      urlPattern: /^\/_next\/static\//,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'next-static',
+        expiration: {
+          maxEntries: 128,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+        },
+      },
+    },
+  ],
+})(nextConfig)
