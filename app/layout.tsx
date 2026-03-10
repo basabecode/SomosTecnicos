@@ -36,8 +36,11 @@ export const viewport: Viewport = {
   themeColor: '#a50034',
 }
 
+const envUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://somostecnicos.com'
+const cleanBaseUrl = envUrl.replace(/^https?:\/\/(www\.)?/, 'https://')
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://somostecnicos.com'),
+  metadataBase: new URL(cleanBaseUrl),
   alternates: {
     canonical: '/',
   },

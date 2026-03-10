@@ -5,7 +5,9 @@ import { BARRIOS_LIST } from '@/lib/seo/barrios-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Dominio canónico principal (debe coincidir con el dominio real del servidor)
-  const baseUrl = 'https://somostecnicos.com'
+  // Forzamos estrictamente la eliminación de 'www.' para evitar problemas de indexación en GSC
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://somostecnicos.com'
+  const baseUrl = envUrl.replace(/^https?:\/\/(www\.)?/, 'https://')
 
   // Fechas de última modificación real del contenido estático
   const today = new Date('2026-03-04')
