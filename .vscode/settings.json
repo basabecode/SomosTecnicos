@@ -20,5 +20,6 @@
     "fs",
     "http",
     "net"
-  ]
+  ],
+  "css.lint.unknownAtRules": "ignore"
 }
