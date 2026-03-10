@@ -356,11 +356,11 @@ export default function Header() {
               <Image
                 src="/img-3d/diseño-Logos-sinFondo.png"
                 alt="SomosTécnicos"
-                width={220}
-                height={64}
-                className="h-8 sm:h-9 md:h-10 lg:h-11 w-auto object-contain"
+                width={160}
+                height={48}
+                className="h-6 sm:h-7 md:h-8 lg:h-9 w-auto object-contain"
                 quality={100}
-                sizes="(max-width: 640px) 120px, (max-width: 768px) 140px, (max-width: 1024px) 160px, 180px"
+                sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, (max-width: 1024px) 140px, 160px"
                 priority
               />
             </Link>
@@ -573,11 +573,11 @@ export default function Header() {
               <Image
                 src="/img-3d/diseño-Logos-sinFondo.png"
                 alt="SomosTécnicos"
-                width={170}
-                height={50}
-                className="h-7 sm:h-8 w-auto object-contain"
+                width={140}
+                height={40}
+                className="h-6 sm:h-7 w-auto object-contain"
                 quality={100}
-                sizes="(max-width: 640px) 110px, 130px"
+                sizes="(max-width: 640px) 90px, 110px"
               />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
