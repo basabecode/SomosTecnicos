@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Plano de ubicacion de camaras en casa</title>
+  <desc id="desc">Plano cenital de casa con cobertura de camaras en puerta principal, patio y sala.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="60" y="70" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="700" fill="#0f172a">Donde colocar camaras de seguridad en casa</text>
+  <text x="60" y="112" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#334155">Cobertura estrategica sin puntos ciegos</text>
+
+  <rect x="70" y="150" width="1060" height="420" rx="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+
+  <rect x="110" y="190" width="280" height="170" rx="12" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="130" y="225" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Entrada principal</text>
+  <rect x="318" y="250" width="56" height="90" fill="#e2e8f0"/>
+
+  <rect x="430" y="190" width="300" height="170" rx="12" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="450" y="225" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Sala de estar</text>
+
+  <rect x="770" y="190" width="320" height="170" rx="12" fill="#ecfeff" stroke="#67e8f9"/>
+  <text x="790" y="225" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Patio / Jardin</text>
+
+  <rect x="110" y="390" width="980" height="140" rx="12" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="130" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Pasillo y escaleras</text>
+
+  <circle cx="220" cy="250" r="14" fill="#1d4ed8"/>
+  <path d="M220 250 L340 250 L285 325 Z" fill="#60a5fa" opacity="0.45"/>
+
+  <circle cx="565" cy="250" r="14" fill="#0f766e"/>
+  <path d="M565 250 L690 300 L525 335 Z" fill="#2dd4bf" opacity="0.4"/>
+
+  <circle cx="930" cy="250" r="14" fill="#ea580c"/>
+  <path d="M930 250 L1080 305 L860 340 Z" fill="#fb923c" opacity="0.4"/>
+
+  <circle cx="290" cy="430" r="14" fill="#7c3aed"/>
+  <path d="M290 430 L500 430 L420 510 Z" fill="#a78bfa" opacity="0.45"/>
+
+  <rect x="70" y="585" width="1060" height="30" rx="10" fill="#0f172a"/>
+  <text x="600" y="606" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#ffffff">Exterior: camara bala | Interior: camara domo | Pasillos: formato vertical 9:16</text>
+</svg>

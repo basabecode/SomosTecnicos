@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Habitos para cuidar electrodomesticos</title>
+  <desc id="desc">Ilustracion de electrodomesticos con iconos de habitos de cuidado diario.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1020" cy="510" r="190" fill="#86efac" opacity="0.2"/>
+  <rect x="720" y="210" width="140" height="230" rx="14" fill="#e5e7eb"/>
+  <rect x="885" y="180" width="210" height="260" rx="18" fill="#d1d5db"/>
+  <circle cx="990" cy="295" r="68" fill="#9ca3af"/>
+  <circle cx="990" cy="295" r="44" fill="#e5e7eb"/>
+  <rect x="770" y="140" width="40" height="40" rx="10" fill="#22c55e"/>
+  <path d="M782 160 l10 10 l18 -20" stroke="#052e16" stroke-width="6" fill="none"/>
+  <rect x="130" y="155" width="545" height="58" rx="10" fill="#15803d" opacity="0.4"/>
+  <text x="130" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700" fill="#ffffff">7 habitos simples</text>
+  <text x="130" y="268" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" fill="#ffffff">para alargar la vida</text>
+  <text x="130" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" fill="#ffffff">de tus equipos</text>
+  <text x="130" y="390" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#bbf7d0">Nevera, lavadora y estufa</text>
+  <text x="130" y="436" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#bbf7d0">con menos fallas y menor consumo</text>
+  <rect x="130" y="460" width="340" height="56" rx="12" fill="#86efac"/>
+  <text x="164" y="497" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#14532d">Consejos de tecnico</text>
+</svg>

@@ -41,8 +41,6 @@ export default function PageBreadcrumb({
         'flex items-center flex-wrap gap-x-1 gap-y-0.5',
         // Texto base
         'text-sm',
-        // Asegurar altura mínima táctil en mobile
-        'min-h-11 sm:min-h-0',
         className,
       )}
     >

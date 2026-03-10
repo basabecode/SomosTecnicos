@@ -96,27 +96,38 @@ export default async function BlogPostPage({ params }: Props) {
                 ]}
               />
 
-              {/* Meta */}
-              <div className="flex flex-wrap items-center gap-3 mb-5">
-                <span
-                  className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                    CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
-                  }`}
-                >
-                  {post.categoryLabel}
-                </span>
-                <span className="flex items-center gap-1.5 text-sm text-slate-500">
-                  <Clock className="w-4 h-4" />
-                  {post.readTime} min de lectura
-                </span>
-                <span className="text-slate-300 hidden sm:inline">•</span>
-                <time dateTime={post.publishedAt} className="text-sm text-slate-500 w-full sm:w-auto mt-2 sm:mt-0">
-                  {new Date(post.publishedAt).toLocaleDateString('es-CO', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
+              {/* Meta y Autor */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+                    <span className="text-slate-600 font-bold text-sm tracking-tighter">ST</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">Equipo SomosTécnicos</p>
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[13px] text-slate-500 mt-0.5">
+                      <span
+                        className={`font-semibold px-2 py-0.5 rounded-full text-[11px] uppercase tracking-wider ${
+                          CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {post.categoryLabel}
+                      </span>
+                      <span className="hidden sm:inline text-slate-300">•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {post.readTime} min
+                      </span>
+                      <span className="hidden sm:inline text-slate-300">•</span>
+                      <time dateTime={post.publishedAt}>
+                        {new Date(post.publishedAt).toLocaleDateString('es-CO', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Título y extracto */}
@@ -153,11 +164,52 @@ export default async function BlogPostPage({ params }: Props) {
         <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-3xl mx-auto">
             {/* Contenido principal centrado mediante el wrapper mx-auto */}
-            <div className="bg-white rounded-xl border border-[#E8EAED] p-6 sm:p-10">
+            <div className="bg-white rounded-xl border border-[#E8EAED] p-6 sm:p-10 shadow-sm">
 
-            {post.sections.map((section, i) => (
-              <section key={i} className="mb-8 last:mb-0">
-                <h2 className="text-xl font-bold text-slate-900 mb-4 leading-snug">
+              {/* Tabla de contenidos */}
+              <div className="mb-10 bg-[#F8F9FA] rounded-xl p-6 sm:px-8 border border-[#E8EAED]">
+                <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-primary rounded-full shrink-0"></span>
+                  En este artículo
+                </h2>
+                <ul className="space-y-3">
+                  {post.sections.map((section, i) => {
+                    const sectionId = section.heading.toLowerCase().replace(/[^a-záéíóúñ0-9]+/g, '-')
+                    return (
+                      <li key={i}>
+                        <a
+                          href={`#${sectionId}`}
+                          className="text-[15px] font-medium text-slate-600 hover:text-primary transition-colors flex items-start gap-2.5 group"
+                        >
+                          <span className="text-primary/50 text-sm mt-px group-hover:text-primary transition-colors">
+                            {(i + 1).toString().padStart(2, '0')}.
+                          </span>
+                          {section.heading}
+                        </a>
+                      </li>
+                    )
+                  })}
+                  {post.faqs && post.faqs.length > 0 && (
+                     <li>
+                        <a
+                          href="#preguntas-frecuentes"
+                          className="text-[15px] font-medium text-slate-600 hover:text-primary transition-colors flex items-start gap-2.5 group"
+                        >
+                          <span className="text-primary/50 text-sm mt-px group-hover:text-primary transition-colors">
+                            FAQ.
+                          </span>
+                          Preguntas frecuentes
+                        </a>
+                      </li>
+                  )}
+                </ul>
+              </div>
+
+            {post.sections.map((section, i) => {
+              const sectionId = section.heading.toLowerCase().replace(/[^a-záéíóúñ0-9]+/g, '-')
+              return (
+              <section key={i} id={sectionId} className="mb-10 last:mb-0 scroll-mt-24">
+                <h2 className="text-2xl font-bold text-slate-900 mb-5 leading-snug border-l-4 border-primary pl-4">
                   {section.heading}
                 </h2>
 
@@ -211,11 +263,12 @@ export default async function BlogPostPage({ params }: Props) {
                   </div>
                 )}
               </section>
-            ))}
+              )
+            })}
 
             {/* FAQ section */}
             {post.faqs && post.faqs.length > 0 && (
-              <section className="mt-10 pt-8 border-t border-[#E8EAED]">
+              <section id="preguntas-frecuentes" className="mt-12 pt-10 border-t border-[#E8EAED] scroll-mt-24">
                 <h2 className="text-xl font-bold text-slate-900 mb-6">
                   Preguntas frecuentes
                 </h2>

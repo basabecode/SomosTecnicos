@@ -2,6 +2,9 @@ import withPWA from '@ducanh2912/next-pwa'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Declaramos turbopack vacío para silenciar el conflicto con la config webpack
+  // que inyecta internamente el plugin @ducanh2912/next-pwa en Next.js 16
+  turbopack: {},
   images: {
     unoptimized: false,
     // Formatos modernos: WebP primero, luego AVIF para máxima compatibilidad y compresión

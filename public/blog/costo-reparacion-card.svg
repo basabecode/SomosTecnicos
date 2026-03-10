@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Costo de reparar electrodomesticos</title>
+  <desc id="desc">Ilustracion de tecnico con calculadora y presupuesto de reparacion.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3f1d0d"/>
+      <stop offset="100%" stop-color="#9a3412"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="930" cy="150" r="170" fill="#fdba74" opacity="0.2"/>
+  <rect x="760" y="160" width="250" height="330" rx="20" fill="#ffedd5"/>
+  <rect x="795" y="210" width="180" height="32" rx="8" fill="#fb923c"/>
+  <rect x="795" y="265" width="180" height="20" rx="8" fill="#fdba74"/>
+  <rect x="795" y="300" width="180" height="20" rx="8" fill="#fdba74"/>
+  <rect x="795" y="335" width="180" height="20" rx="8" fill="#fdba74"/>
+  <text x="820" y="410" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700" fill="#9a3412">$</text>
+  <text x="130" y="190" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700" fill="#ffffff">Cuanto cuesta</text>
+  <text x="130" y="260" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700" fill="#ffffff">reparar un</text>
+  <text x="130" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700" fill="#ffffff">electrodomestico</text>
+  <text x="130" y="386" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#ffedd5">Guia de precios y factores reales</text>
+  <text x="130" y="434" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#ffedd5">para decidir bien en Cali</text>
+  <rect x="130" y="458" width="300" height="56" rx="12" fill="#fdba74"/>
+  <text x="162" y="496" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#7c2d12">Presupuesto claro</text>
+</svg>
