@@ -36,7 +36,7 @@ export default function HeroSection() {
       <div className="hidden lg:block absolute inset-0 z-0 bg-[#4a0418]">
         <div className="relative h-full w-full mx-auto">
           <Image
-            src="/hero/casa-moderna2.png"
+            src="/hero/casa-moderna2.avif"
             alt="Smart Home Background"
             fill
             className="object-contain object-right"
@@ -53,7 +53,7 @@ export default function HeroSection() {
       {/* ═══════════════════════════════════════════════════════ */}
       <div className="lg:hidden absolute inset-0 z-0">
         <Image
-          src="/hero/hero_mobil.jpeg"
+          src="/hero/hero_mobil.avif"
           alt="Técnico y cliente - SomosTécnicos"
           fill
           className="object-cover object-top"

@@ -64,8 +64,8 @@ function showBrowserNotification(title: string, body: string) {
   try {
     const n = new Notification(title, {
       body,
-      icon: '/favicon-32x32.png',
-      badge: '/favicon-32x32.png',
+      icon: '/favicon-32x32.avif',
+      badge: '/favicon-32x32.avif',
       tag: 'somostecnicos-live-notification',
       silent: false,
     })

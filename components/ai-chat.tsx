@@ -463,7 +463,7 @@ export default function AIChat({ className }: AIChatProps) {
             <div className="flex items-center gap-2.5">
               <div className="relative shrink-0">
                 <Image
-                  src="/img-3d/logo_modificado.jpeg"
+                  src="/img-3d/logo_modificado.avif"
                   alt="SomosTécnicos"
                   width={36} height={36}
                   className="rounded-full object-contain bg-white p-0.5 ring-2 ring-primary/40"

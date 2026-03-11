@@ -169,7 +169,7 @@ export default function FAQ() {
           <div className="hidden lg:block lg:col-span-5 self-stretch">
             <div className="relative w-full h-full min-h-[30rem] rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm">
               <Image
-                src="/img-3d/tecnico_whatsapp.png"
+                src="/img-3d/tecnico_whatsapp.avif"
                 alt="Técnico SomosTécnicos"
                 fill
                 className="object-contain object-bottom p-6"

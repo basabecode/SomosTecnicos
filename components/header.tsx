@@ -354,7 +354,7 @@ export default function Header() {
               aria-label="SomosTécnicos — Ir al inicio"
             >
               <Image
-                src="/img-3d/diseño-Logos-sinFondo.png"
+                src="/img-3d/diseño-Logos-sinFondo.avif"
                 alt="SomosTécnicos"
                 width={160}
                 height={48}
@@ -571,7 +571,7 @@ export default function Header() {
             {/* Cabecera del panel */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <Image
-                src="/img-3d/diseño-Logos-sinFondo.png"
+                src="/img-3d/diseño-Logos-sinFondo.avif"
                 alt="SomosTécnicos"
                 width={140}
                 height={40}

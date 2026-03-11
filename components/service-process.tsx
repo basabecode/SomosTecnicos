@@ -234,7 +234,7 @@ export default function ServiceProcess() {
               className="relative w-full h-full min-h-120 rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm"
             >
               <Image
-                src="/img-3d/moto-roja.jpg"
+                src="/img-3d/moto-roja.avif"
                 alt="Técnico de SomosTécnicos en moto, listo para servicio a domicilio en Cali"
                 fill
                 className="object-contain object-center p-6"

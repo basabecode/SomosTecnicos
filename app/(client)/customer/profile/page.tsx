@@ -165,7 +165,7 @@ export default function CustomerProfile() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src="/placeholder-user.jpg" />
+                    <AvatarImage src="/placeholders/placeholder-user.avif" />
                     <AvatarFallback className="text-xl">
                       {`${formData.nombre?.[0] || ''}${
                         formData.apellido?.[0] || ''

@@ -6,7 +6,7 @@
 import { apiInstance, brevo, defaultSender } from './email/brevo-client'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-const BRAND_LOGO_URL = `${APP_URL}/img-3d/logo-email.png`
+const BRAND_LOGO_URL = `${APP_URL}/img-3d/logo-email.avif`
 
 function renderBrandedEmailTemplate(params: {
   title: string

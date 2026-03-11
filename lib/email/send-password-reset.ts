@@ -24,7 +24,7 @@ export async function sendPasswordResetEmail({
     // Construir el enlace de recuperación
     const resetLink = `${appUrl}/reset-password?token=${resetToken}`
     const expiresInHours = 1
-    const brandLogoUrl = `${appUrl}/img-3d/logo-email.png`
+    const brandLogoUrl = `${appUrl}/img-3d/logo-email.avif`
 
     // Preparar el contenido del email
     const htmlContent = getPasswordResetEmailHTML({

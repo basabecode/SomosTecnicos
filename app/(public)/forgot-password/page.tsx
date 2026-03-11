@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
               <div className="space-y-4 lg:space-y-6">
                 <div className="flex items-center gap-4">
                   <Image
-                    src="/img-3d/logo_modificado.jpeg"
+                    src="/img-3d/logo_modificado.avif"
                     alt="SomosTécnicos"
                     width={70}
                     height={70}
@@ -142,7 +142,7 @@ export default function ForgotPasswordPage() {
             <div className="md:hidden bg-primary py-8 px-6 pt-16 flex flex-col items-center justify-center text-center relative shadow-md">
               <div className="flex items-center gap-3 mb-3">
                 <Image
-                  src="/img-3d/logo_modificado.jpeg"
+                  src="/img-3d/logo_modificado.avif"
                   alt="SomosTécnicos"
                   width={48}
                   height={48}

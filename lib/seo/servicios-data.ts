@@ -35,7 +35,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en neveras a domicilio en Cali. Reparamos LG, Samsung, Mabe, Haceb. No enfría, gotea, hace ruido. Garantía 30 días. Llámanos al +57 300 3094854.',
     keywords: ['reparación neveras cali', 'arreglo nevera cali', 'técnico neveras cali', 'nevera no enfría cali', 'servicio técnico nevera cali', 'reparar nevera a domicilio cali'],
     canonicalPath: '/servicios/reparacion-neveras-cali',
-    heroImage: '/hero-servicios/servicio-tecnico-neveras-nevecones-lg.png',
+    heroImage: '/hero-servicios/servicio-tecnico-neveras-nevecones-lg.avif',
     heroImageAlt: 'Técnico reparando nevera LG en Cali',
     description: 'Servicio técnico especializado en reparación y mantenimiento de neveras y nevecones a domicilio en Cali y sus alrededores. Atendemos todas las marcas con técnicos certificados y garantía incluida.',
     problems: [
@@ -76,7 +76,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en lavadoras en Cali. Carga frontal y superior. No gira, no drena, vibra, no enciende. LG, Samsung, Whirlpool. Garantía incluida. Servicio a domicilio.',
     keywords: ['reparación lavadoras cali', 'técnico lavadoras cali', 'lavadora no gira cali', 'arreglo lavadora cali', 'lavadora no drena cali', 'servicio técnico lavadora cali'],
     canonicalPath: '/servicios/reparacion-lavadoras-cali',
-    heroImage: '/hero-servicios/lavadora_lg_1.png',
+    heroImage: '/hero-servicios/lavadora_lg_1.avif',
     heroImageAlt: 'Técnico reparando lavadora en Cali',
     description: 'Reparamos lavadoras de carga frontal y superior de todas las marcas a domicilio en Cali. Técnicos certificados con experiencia en diagnóstico y reparación de fallas eléctricas y mecánicas.',
     problems: [
@@ -117,7 +117,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en secadoras en Cali. A gas y eléctricas. No calienta, no gira, hace ruido. LG, Samsung, Whirlpool. Servicio a domicilio con garantía de 30 días.',
     keywords: ['reparación secadoras cali', 'técnico secadoras cali', 'secadora no calienta cali', 'arreglo secadora cali', 'secadora no gira cali'],
     canonicalPath: '/servicios/reparacion-secadoras-cali',
-    heroImage: '/hero-servicios/secadora-lg-2.png',
+    heroImage: '/hero-servicios/secadora-lg-2.avif',
     heroImageAlt: 'Técnico reparando secadora en Cali',
     description: 'Reparamos secadoras a gas y eléctricas de todas las marcas a domicilio en Cali. Diagnóstico rápido y reparación el mismo día en la mayoría de casos.',
     problems: [
@@ -158,7 +158,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en estufas y hornos en Cali. Llama baja, quemador no prende, olor a gas, horno no calienta. Mabe, Haceb, Challenger. Diagnóstico a domicilio.',
     keywords: ['reparación estufas cali', 'arreglo estufa gas cali', 'técnico estufas cali', 'reparación hornos cali', 'estufa no prende cali', 'servicio técnico estufas cali'],
     canonicalPath: '/servicios/reparacion-estufas-hornos-cali',
-    heroImage: '/hero-servicios/estufa-de-empotrar-challenger-alpha-gris-y-negro-582x512cm-de-gas-natural-con-cuatro-quemadores_2.png',
+    heroImage: '/hero-servicios/estufa-de-empotrar-challenger-alpha-gris-y-negro-582x512cm-de-gas-natural-con-cuatro-quemadores_2.avif',
     heroImageAlt: 'Técnico reparando estufa empotrable en Cali',
     description: 'Servicio técnico en estufas a gas, eléctricas y de inducción, y hornos de empotrar en Cali. Diagnóstico y reparación segura con técnicos certificados en gas y electricidad.',
     problems: [
@@ -199,7 +199,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en calentadores en Cali. De paso y acumulación. No calienta agua, se apaga, fuga, explosiones al encender. Challenger, Haceb. Garantía incluida.',
     keywords: ['reparación calentadores cali', 'técnico calentadores cali', 'calentador no calienta agua cali', 'arreglo calentador gas cali', 'instalación calentador cali', 'calentador paso cali'],
     canonicalPath: '/servicios/reparacion-calentadores-cali',
-    heroImage: '/hero-servicios/calentador-bosch.png',
+    heroImage: '/hero-servicios/calentador-bosch.avif',
     heroImageAlt: 'Técnico reparando calentador de paso en Cali',
     description: 'Reparamos e instalamos calentadores de paso y de acumulación a gas y eléctricos en Cali. Técnicos certificados para diagnóstico seguro y reparaciones con garantía.',
     problems: [
@@ -240,7 +240,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en televisores en Cali. LED, LCD, Smart TV, 4K. Pantalla negra, no enciende, imagen distorsionada, sin WiFi. LG, Samsung, Sony. Servicio a domicilio.',
     keywords: ['reparación televisores cali', 'arreglo tv cali', 'técnico televisores cali', 'tv pantalla negra cali', 'reparar smart tv cali', 'técnico tv led cali'],
     canonicalPath: '/servicios/reparacion-televisores-cali',
-    heroImage: '/hero-servicios/televisor-oled-lg.png',
+    heroImage: '/hero-servicios/televisor-oled-lg.avif',
     heroImageAlt: 'Técnico reparando televisor LED en Cali',
     description: 'Reparamos televisores LED, LCD, OLED y Smart TV de todas las marcas a domicilio en Cali. Diagnóstico de tarjetas electrónicas, pantallas, backlights y sistemas de conectividad.',
     problems: [
@@ -281,7 +281,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Electricista certificado a domicilio en Cali. Cortocircuitos, tableros, cableado, instalaciones, breakers. Schneider, Legrand. Presupuesto sin costo. Atención urgente.',
     keywords: ['electricista cali', 'electricista a domicilio cali', 'instalaciones eléctricas cali', 'tablero eléctrico cali', 'cortocircuito cali', 'electricista certificado cali'],
     canonicalPath: '/servicios/electricista-a-domicilio-cali',
-    heroImage: '/especialistas/electricista2.jpg',
+    heroImage: '/especialistas/electricista2.avif',
     heroImageAlt: 'Electricista certificado realizando instalación eléctrica en Cali',
     description: 'Electricistas certificados a domicilio en Cali para instalaciones eléctricas residenciales y comerciales, reparación de tableros, cableado y mantenimiento preventivo. Cumplimos el Reglamento Técnico de Instalaciones Eléctricas RETIE.',
     problems: [
@@ -322,7 +322,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Técnico en computadores en Cali. PC lentos, virus, pantalla azul, formateo, WiFi, impresoras. HP, Dell, Lenovo, Apple. Servicio a domicilio en Cali.',
     keywords: ['técnico computadores cali', 'reparación pc cali', 'técnico portátiles cali', 'formateo computador cali', 'redes wifi cali', 'soporte técnico computadores cali'],
     canonicalPath: '/servicios/tecnico-computadores-redes-cali',
-    heroImage: '/hero-servicios/redes-computaciones.png',
+    heroImage: '/hero-servicios/redes-computaciones.avif',
     heroImageAlt: 'Técnico reparando computador portátil en Cali',
     description: 'Soporte técnico en computadores de escritorio, portátiles y redes a domicilio en Cali. Reparación de hardware, eliminación de virus, formateo, configuración de redes WiFi e impresoras.',
     problems: [
@@ -363,7 +363,7 @@ export const SERVICIOS_DATA: Record<string, ServicioSEOData> = {
     metaDescription: 'Instalación y mantenimiento de cámaras CCTV, alarmas y control de acceso en Cali. Hikvision, Dahua, ZKTeco. Monitoreo desde tu celular. Diagnóstico gratis.',
     keywords: ['cámaras seguridad cali', 'instalación CCTV cali', 'alarmas cali', 'control de acceso cali', 'sistema de seguridad cali', 'cámaras vigilancia cali'],
     canonicalPath: '/servicios/camaras-seguridad-alarmas-cali',
-    heroImage: '/hero-servicios/nvr-camaras-seguridad.png',
+    heroImage: '/hero-servicios/nvr-camaras-seguridad.avif',
     heroImageAlt: 'Instalación de cámaras de seguridad CCTV en Cali',
     description: 'Instalación, configuración y mantenimiento de sistemas de seguridad electrónica en Cali: cámaras CCTV, alarmas perimetrales, control de acceso y citofones. Monitoreo remoto desde su celular.',
     problems: [

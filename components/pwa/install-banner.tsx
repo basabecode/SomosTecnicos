@@ -99,7 +99,7 @@ export function InstallBanner() {
     <div className={`shrink-0 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center justify-center overflow-hidden ${size === 'sm' ? 'h-11 w-24 p-1.5' : 'h-14 w-32 p-2'}`}>
       <div className="relative w-full h-full">
         <Image
-          src="/img-3d/diseño-Logos-sinFondo.png"
+          src="/img-3d/diseño-Logos-sinFondo.avif"
           alt="SomosTécnicos"
           fill
           className="object-contain object-center"

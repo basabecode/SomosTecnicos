@@ -36,7 +36,7 @@ export default function RegisterPage() {
         <div className="text-center mb-12 md:mb-16">
           <div className="flex justify-center mb-6">
             <Image
-              src="/img-3d/logo_modificado.jpeg"
+              src="/img-3d/logo_modificado.avif"
               alt="SomosTécnicos"
               width={80}
               height={80}

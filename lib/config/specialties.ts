@@ -27,55 +27,55 @@ export const SPECIALTIES_CONFIG: Record<string, SpecialtyConfig> = {
       {
         id: APPLIANCE_TYPES.NEVERA,
         label: 'Nevera / Nevecon',
-        image: '/electrodomesticos/nevecon lg1.jpg',
+        image: '/electrodomesticos/nevecon lg1.avif',
         description: 'Reparación y mantenimiento de refrigeración'
       },
       {
         id: APPLIANCE_TYPES.LAVADORA,
         label: 'Lavadora',
-        image: '/electrodomesticos/lavadora carga superior lg.jpg',
+        image: '/electrodomesticos/lavadora carga superior lg.avif',
         description: 'Carga frontal y superior'
       },
       {
         id: APPLIANCE_TYPES.SECADORA,
         label: 'Secadora',
-        image: '/electrodomesticos/lavadora blanca lg1.jpg',
+        image: '/electrodomesticos/lavadora blanca lg1.avif',
         description: 'Secadoras a gas y eléctricas'
       },
       {
         id: APPLIANCE_TYPES.ESTUFA,
         label: 'Estufa / Horno',
-        image: '/electrodomesticos/estufa empotrar 1.jpg',
+        image: '/electrodomesticos/estufa empotrar 1.avif',
         description: 'Estufas de empotrar y hornos'
       },
       {
         id: APPLIANCE_TYPES.CALENTADOR,
         label: 'Calentador',
-        image: '/electrodomesticos/calentador challenger.jpg',
+        image: '/electrodomesticos/calentador challenger.avif',
         description: 'Calentadores de paso y acumulación'
       },
       {
         id: 'televisor',
         label: 'Televisor',
-        image: '/electrodomesticos/tv lg uhd.jpg',
+        image: '/electrodomesticos/tv lg uhd.avif',
         description: 'LED, LCD, Smart TV y 4K'
       },
       {
         id: APPLIANCE_TYPES.ELECTRICISTA,
         label: 'Electricista',
-        image: '/especialistas/electricista2.jpg',
+        image: '/especialistas/electricista2.avif',
         description: 'Cableado, tableros e iluminación'
       },
       {
         id: APPLIANCE_TYPES.TECNICO_SISTEMAS,
         label: 'Computación y Redes',
-        image: '/especialistas/computacion_redes2.jpg',
+        image: '/especialistas/computacion_redes2.avif',
         description: 'PC, Portátiles, WiFi e Impresoras'
       },
       {
         id: APPLIANCE_TYPES.TECNICO_SEGURIDAD,
         label: 'Seguridad Electrónica',
-        image: '/especialistas/seguridad_electronica3.png',
+        image: '/especialistas/seguridad_electronica3.avif',
         description: 'Cámaras, Alarmas y Control de Acceso'
       }
     ],

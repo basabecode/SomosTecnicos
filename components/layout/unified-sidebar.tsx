@@ -65,7 +65,7 @@ export function UnifiedSidebar({
       <div className="flex items-center justify-center px-4 py-5 border-b border-gray-100">
         <div className="relative w-52 h-16">
           <Image
-            src="/img-3d/diseño-Logos-sinFondo.png"
+            src="/img-3d/diseño-Logos-sinFondo.avif"
             alt="SomosTécnicos"
             fill
             className="object-contain object-center"

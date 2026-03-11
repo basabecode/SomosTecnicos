@@ -35,7 +35,7 @@ export async function sendPasswordChangedEmail({
       minute: '2-digit',
       second: '2-digit'
     })
-    const brandLogoUrl = `${appUrl}/img-3d/logo-email.png`
+    const brandLogoUrl = `${appUrl}/img-3d/logo-email.avif`
 
     // Preparar el contenido del email
     const htmlContent = getPasswordChangedEmailHTML({

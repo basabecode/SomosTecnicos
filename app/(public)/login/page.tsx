@@ -200,7 +200,7 @@ export default function LoginPage() {
             <div className="inline-flex items-center bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.25)] border border-white/10 overflow-hidden px-4 py-2">
               <div className="relative h-8 w-36">
                 <Image
-                  src="/img-3d/diseño-Logos-sinFondo.png"
+                  src="/img-3d/diseño-Logos-sinFondo.avif"
                   alt="SomosTécnicos"
                   fill
                   className="object-contain object-center"
@@ -244,7 +244,7 @@ export default function LoginPage() {
               <div className="absolute inset-0 bg-linear-to-r from-[#2d1420]/25 via-transparent to-transparent z-10 pointer-events-none" />
 
               <Image
-                src="/img-3d/tecnico_saludando_cliente1.jpeg"
+                src="/img-3d/tecnico_saludando_cliente1.avif"
                 alt="Técnico certificado SomosTécnicos"
                 fill
                 className="object-cover object-[center_15%]"
@@ -280,7 +280,7 @@ export default function LoginPage() {
               <div className="inline-flex items-center bg-white rounded-xl shadow-[0_2px_16px_rgba(0,0,0,0.3)] overflow-hidden px-3 py-1.5 mb-2">
                 <div className="relative h-7 w-28">
                   <Image
-                    src="/img-3d/diseño-Logos-sinFondo.png"
+                    src="/img-3d/diseño-Logos-sinFondo.avif"
                     alt="SomosTécnicos"
                     fill
                     className="object-contain object-center"

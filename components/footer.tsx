@@ -50,7 +50,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="mb-3">
               <Image
-                src="/img-3d/diseño-Logos-sinFondo.png"
+                src="/img-3d/diseño-Logos-sinFondo.avif"
                 alt="SomosTécnicos"
                 width={150}
                 height={50}

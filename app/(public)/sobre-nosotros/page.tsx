@@ -45,7 +45,7 @@ const organizationSchema = {
   name: 'SomosTécnicos',
   url: 'https://somostecnicos.com',
   '@id': 'https://somostecnicos.com/#organization',
-  logo: 'https://somostecnicos.com/img-3d/diseño-Logos-sinFondo.png',
+  logo: 'https://somostecnicos.com/img-3d/diseño-Logos-sinFondo.avif',
   description:
     'Empresa de servicio técnico a domicilio en Cali, Colombia. Reparación de electrodomésticos, electricidad, computación y seguridad electrónica con más de 5 años de experiencia.',
   foundingDate: '2021',
@@ -200,7 +200,7 @@ export default function SobreNosotrosPage() {
               <div className="py-16 px-4 sm:px-6 lg:px-8 flex justify-center items-center bg-white lg:bg-transparent border-t-2 border-primary lg:border-t-0">
                 <div className="relative w-full max-w-125 aspect-video flex items-center justify-center">
                   <Image
-                    src="/img-3d/diseño-Logos-sinFondo.png"
+                    src="/img-3d/diseño-Logos-sinFondo.avif"
                     alt="SomosTécnicos - Servicio técnico a domicilio en Cali"
                     fill
                     className="object-contain"

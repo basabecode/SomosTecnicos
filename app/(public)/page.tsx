@@ -66,7 +66,7 @@ export default function HomePage() {
               '@type': 'LocalBusiness',
               name: 'SomosTécnicos',
               image:
-                'https://somostecnicos.com/img-3d/diseño-Logos-sinFondo.png',
+                'https://somostecnicos.com/img-3d/diseño-Logos-sinFondo.avif',
               '@id': 'https://somostecnicos.com',
               url: 'https://somostecnicos.com',
               telephone: '+573003094854',
@@ -171,7 +171,7 @@ export default function HomePage() {
               name: 'Servicio Técnico Profesional en su Hogar | SomosTécnicos',
               description:
                 'Expertos en soluciones técnicas integrales a domicilio para lavadoras, neveras, calentadores y más.',
-              thumbnailUrl: 'https://somostecnicos.com/video/postal-video.png',
+              thumbnailUrl: 'https://somostecnicos.com/video/postal-video.avif',
               uploadDate: '2026-02-23T08:00:00+00:00',
               contentUrl:
                 'https://somostecnicos.com/video/video_reparacion_ok.mp4',

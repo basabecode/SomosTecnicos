@@ -113,7 +113,7 @@ export default function ServiceTypes() {
               style={{ opacity: isVideoLoaded ? 0 : 1 }}
             >
               <Image
-                src="/video/postal-video.png"
+                src="/video/postal-video.avif"
                 alt="Técnico reparando electrodoméstico en el hogar"
                 fill
                 priority

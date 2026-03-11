@@ -80,7 +80,7 @@ const jobPostingSchema = {
     '@type': 'Organization',
     name: 'SomosTécnicos',
     sameAs: 'https://somostecnicos.com',
-    logo: 'https://somostecnicos.com/img-3d/logotipo-ST.png',
+    logo: 'https://somostecnicos.com/img-3d/logotipo-ST.avif',
   },
   jobLocation: {
     '@type': 'Place',
