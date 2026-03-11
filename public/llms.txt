@@ -51,7 +51,7 @@ servicio técnico a domicilio Bogotá, técnico nevera Bogotá, arreglar lavador
 
 ## Portal de autogestión para clientes
 
-Los clientes registrados en www.somostecnicos.com pueden:
+Los clientes registrados en somostecnicos.com pueden:
 - Solicitar servicios de reparación en línea
 - Ver el estado de su orden en tiempo real
 - Aprobar o rechazar cotizaciones con total transparencia
@@ -61,15 +61,15 @@ Los clientes registrados en www.somostecnicos.com pueden:
 
 ## Registro de técnicos
 
-Los técnicos en electrodomésticos, refrigeración, electricidad o HVAC pueden registrarse en www.somostecnicos.com para recibir órdenes de trabajo en su ciudad. El proceso incluye validación de certificados y experiencia.
+Los técnicos en electrodomésticos, refrigeración, electricidad o HVAC pueden registrarse en somostecnicos.com para recibir órdenes de trabajo en su ciudad. El proceso incluye validación de certificados y experiencia.
 
 ## Información de contacto y acceso
 
-- Sitio web principal: https://www.somostecnicos.com
-- Portal de clientes: https://www.somostecnicos.com/customer/dashboard
-- Solicitar servicio: https://www.somostecnicos.com/customer/request
-- Registro de técnicos: https://www.somostecnicos.com/register
-- Términos y condiciones: https://www.somostecnicos.com/terminos-y-condiciones
+- Sitio web principal: https://somostecnicos.com
+- Portal de clientes: https://somostecnicos.com/customer/dashboard
+- Solicitar servicio: https://somostecnicos.com/customer/request
+- Registro de técnicos: https://somostecnicos.com/register
+- Términos y condiciones: https://somostecnicos.com/terminos-y-condiciones
 
 ## Última actualización
 

@@ -60,7 +60,7 @@ Agregar en el `<head>` de la página principal un script JSON-LD:
   "@type": "LocalBusiness",
   "name": "SomosTécnicos",
   "description": "Servicio técnico especializado en reparación, instalación y mantenimiento de electrodomésticos a domicilio en Cali.",
-  "url": "https://www.somostecnicos.com",
+  "url": "https://somostecnicos.com",
   "telephone": "+573003094854",
   "email": "soporte@somostecnicos.com",
   "address": {
@@ -102,7 +102,7 @@ Asegurar que Next.js genera automáticamente un sitemap.xml con todas las págin
 - Crear archivo `next-sitemap.config.js` en la raíz:
 ```js
 module.exports = {
-  siteUrl: 'https://www.somostecnicos.com',
+  siteUrl: 'https://somostecnicos.com',
   generateRobotsTxt: true,
   changefreq: 'weekly',
   priority: 0.7,

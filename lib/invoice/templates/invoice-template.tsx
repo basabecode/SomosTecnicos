@@ -471,7 +471,7 @@ export const InvoiceTemplate: React.FC<{ invoice: InvoiceData }> = ({
             Gracias por confiar en SomosTécnicos - Su satisfacción es nuestra prioridad
           </Text>
           <Text style={styles.footerText}>
-            www.somostecnicos.com | WhatsApp: +57 300 123 4567
+            somostecnicos.com | WhatsApp: +57 300 123 4567
           </Text>
           <Text style={styles.footerText}>
             Este documento es una representación impresa de una factura electrónica

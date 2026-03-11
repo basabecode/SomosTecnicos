@@ -28,8 +28,8 @@ En la sección **"Environment Variables"** de tu proyecto en Vercel, agrega esta
 | `DIRECT_URL` | Conexión directa a Neon (para migraciones) | Neon Dashboard → Connection string → Direct |
 | `JWT_SECRET` | Clave para firmar tokens JWT | `openssl rand -base64 32` |
 | `NEXTAUTH_SECRET` | Clave para sesiones | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | URL pública del deploy | `https://tu-proyecto.vercel.app` |
-| `NEXT_PUBLIC_APP_URL` | URL pública (igual a NEXTAUTH_URL) | `https://tu-proyecto.vercel.app` |
+| `NEXTAUTH_URL` | URL principal del sitio web | `https://somostecnicos.com` (¡SIN www!) |
+| `NEXT_PUBLIC_APP_URL` | URL principal del sitio web | `https://somostecnicos.com` (¡SIN www!) |
 
 ### 📧 Email (para envío de notificaciones)
 
