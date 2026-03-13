@@ -16,6 +16,11 @@
       "sourceType": "github",
       "computedHash": "b268ce58564e55cea8dd0513222f68cf8cfefde6ed625b1842e1d1c73d23795b"
     },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "computedHash": "25872a21881a950edc3db1f3329664d60405d539660ce05b3265db2de06a7dfd"
+    },
     "programmatic-seo": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -50,6 +55,11 @@
       "source": "agricidaniel/claude-seo",
       "sourceType": "github",
       "computedHash": "e51facd96affe8001eec6ee8b3824dd8c9e98f67133d6b4132d7b7311966b85b"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "57f470f512f45bdac598e302bc72fd62bf2b649fc7fad032efe97720149cde4d"
     },
     "threejs-animation": {
       "source": "cloudai-x/threejs-skills",

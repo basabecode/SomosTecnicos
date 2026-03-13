@@ -190,10 +190,10 @@ export default function ContactoPage() {
               </p>
               <Link
                 href="/#formulario"
-                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-bold px-10 py-4 rounded-lg transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/80 text-white font-bold px-10 py-4 rounded-lg transition-colors min-h-14"
               >
                 <MessageCircle className="w-5 h-5" />
-                Solicitar Servicio Ahora
+                Agendar servicio
               </Link>
             </div>
           </div>
