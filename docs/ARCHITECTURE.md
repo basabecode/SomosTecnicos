@@ -1,7 +1,7 @@
 # 🏗️ Arquitectura del Proyecto — SomosTécnicos FSM
 
-> **Última actualización:** 2026-03-04
-> **Versión:** Next.js 16.1.6 · React 19 · Tailwind CSS v4 · Prisma 6 · PostgreSQL
+> **Última actualización:** 2026-03-12
+> **Versión:** Next.js 15 · React 19 · Tailwind CSS v4 · Prisma 6 · PostgreSQL (Neon) · Redis (Upstash)
 
 ---
 
@@ -108,7 +108,26 @@ somostecnicos_FSM/
 │   ├── idempotency.ts            # Prevención de duplicados en operaciones críticas
 │   ├── design-system.ts          # Tokens y clases del design system (TS)
 │   ├── chat-logic.ts             # Lógica del asistente IA (clasificación)
-│   ├── seo/                      # Utilidades SEO (metadata, schema, keywords)
+│   ├── seo/                      # Utilidades SEO — estructura modular
+│   │   ├── blog-data.ts          # Barrel re-export de ./blog/index (8 líneas)
+│   │   ├── blog/                 # Blog modular por área temática (13 archivos)
+│   │   │   ├── types.ts          # Interfaces: BlogPost, BlogSection, BlogFaq, BlogCluster
+│   │   │   ├── clusters.ts       # BLOG_CLUSTERS — 8 clústeres temáticos
+│   │   │   ├── index.ts          # BLOG_POSTS (Record), BLOG_POSTS_LIST, getRelatedBlogPosts
+│   │   │   ├── neveras.ts        # 6 posts — reparación de neveras
+│   │   │   ├── lavadoras.ts      # 10 posts — reparación de lavadoras
+│   │   │   ├── televisores.ts    # 5 posts — reparación de televisores
+│   │   │   ├── seguridad.ts      # 5 posts — cámaras y seguridad electrónica
+│   │   │   ├── general.ts        # 4 posts — contenido general
+│   │   │   ├── calentadores.ts   # 6 posts — calentadores de paso y acumulación
+│   │   │   ├── secadoras.ts      # 5 posts — reparación de secadoras
+│   │   │   ├── estufas.ts        # 5 posts — reparación de estufas y hornos
+│   │   │   ├── redes.ts          # 5 posts — redes y WiFi
+│   │   │   └── electricidad.ts   # 5 posts — electricidad residencial
+│   │   ├── barrios-data.ts       # Datos de barrios de Cali (SEO programático)
+│   │   ├── marcas-data.ts        # Datos de marcas por especialidad
+│   │   ├── servicios-data.ts     # Datos de servicios (slugs, metadata)
+│   │   └── schema-builders.ts    # Constructores JSON-LD (LocalBusiness, FAQ, etc.)
 │   ├── email/                    # Templates de email (React Email)
 │   ├── invoice/                  # Generación de facturas PDF
 │   └── services/                 # Servicios de dominio de negocio
@@ -136,9 +155,26 @@ somostecnicos_FSM/
 │   ├── ARCHITECTURE.md           # ← este archivo
 │   └── ...
 │
-├── public/                       # Assets estáticos
-│   ├── img-3d/                   # Imágenes 3D y renders del sitio
-│   └── icons/, logos/
+├── public/                       # Assets estáticos (~127 archivos, todos en AVIF/SVG)
+│   ├── hero/                     # Hero section: casa-moderna2.avif (desktop), hero_mobil.avif
+│   ├── blog/                     # Imágenes de blog por categoría (AVIF 1200×675)
+│   │   ├── seguridad/            # 7 imágenes — cámaras y alarmas
+│   │   └── televisores/          # 5 imágenes — televisores
+│   ├── electrodomesticos/        # 8 imágenes AVIF de equipos (nevera, lavadora, etc.)
+│   ├── especialistas/            # 4 imágenes AVIF de técnicos
+│   ├── hero-servicios/           # 13 imágenes AVIF para heroes de páginas de servicio
+│   ├── img-3d/                   # 8 imágenes 3D/renders del sitio
+│   ├── icons/                    # 5 iconos PWA (PNG: 192, 512, apple-touch, 16, 32)
+│   ├── logos/                    # 40+ logos SVG de marcas (LG, Samsung, Hikvision, etc.)
+│   ├── video/                    # 3 archivos: postal-video.avif, video_animado_tecnico.mp4,
+│   │   │                         #             video_reparacion_ok.mp4
+│   ├── seo/                      # og-image.jpg para Open Graph
+│   ├── placeholders/             # placeholder-user.avif
+│   ├── robots.txt                # Reglas de crawling
+│   ├── llms.txt                  # Instrucciones para crawlers de IA (GEO)
+│   ├── favicon.ico
+│   ├── site.webmanifest          # PWA manifest
+│   └── sw.js                     # Service worker (Workbox)
 │
 ├── middleware.ts                 # Middleware global Next.js (auth, redirects)
 ├── next.config.mjs               # Configuración Next.js (imágenes, headers)
@@ -150,16 +186,28 @@ somostecnicos_FSM/
 
 ## 🎨 Sistema de Diseño
 
-### Design Tokens (`styles/tokens.css`)
+### Design Tokens — Dos capas que NO deben mezclarse
+
+**Capa 1 — Tailwind/shadcn** (`app/globals.css`): `--background`, `--primary`, `--border`...
+Usar con clases Tailwind: `bg-primary`, `text-foreground`, etc.
+
+**Capa 2 — Corporativo ST** (`styles/tokens.css`): prefijo `--st-*` y `--workshop-*`
 
 | Token | Valor | Uso |
 |---|---|---|
-| `--stamp-red` / `#A50034` | Rojo institucional | CTAs, acentos, highlights |
-| `--label-ink` / `#2C3E50` | Azul oscuro | Texto primario, nav |
-| `--tool-orange` / `#FF6B6B` | Naranja/salmón | Badges, alertas |
-| `--safe-green` / `#27AE60` | Verde | Botón "Solicitar Servicio" |
-| `--bg-paper` / `#F8F6F3` | Beige cálido | Fondos de sección |
-| Hero oscuro | `#1a0a0f` | Fondo hero páginas internas |
+| `--st-primary` | `#a50034` | Rojo marca — CTAs principales |
+| `--st-primary-hover` | `#8a0029` | Hover de CTAs |
+| `--st-success` | `#27ae60` | Confirmaciones |
+| `--st-warning` | `#f39c12` | Advertencias |
+| `--st-error` | `#e74c3c` | Errores |
+| `--st-status-pending` | alias `--pending-amber` | Órdenes pendientes |
+| `--st-status-active` | alias `--assigned-blue` | Órdenes activas |
+| `--st-status-completed` | alias `--completed-green` | Órdenes completadas |
+| `--st-status-cancelled` | alias `--steel-frame` | Órdenes canceladas |
+| Hero desktop fondo | `#4a0418` | Fondo split del hero homepage |
+| Hero dark páginas internas | `#1a1a2e` | Fondo hero en páginas de servicio |
+
+> **Regla:** Nunca usar hex hardcodeados en componentes. Usar `var(--st-primary)` o `bg-primary`.
 
 ### Tipografía
 
@@ -244,13 +292,35 @@ Protege rutas privadas según rol. Las rutas en `(public)` son abiertas. El midd
 
 ## 🔄 Estado de Órdenes (FSM)
 
+**12 estados totales** implementados en `lib/state-machine.ts`.
+Usar siempre `isValidTransition(from, to)` antes de actualizar estado en BD.
+
 ```
-PENDING → ASSIGNED → IN_PROGRESS → COMPLETED
-    ↓         ↓            ↓
-CANCELLED  CANCELLED   CANCELLED
+pendiente → asignado → en_camino → revisado → cotizado → en_proceso
+                                                                 ↓
+                                              esperando_repuestos → reparado → entregado → completado
+
+Ramas de salida (desde casi cualquier estado):
+  → cancelado
+  → reagendado
 ```
 
-Implementado en `lib/state-machine.ts`. Las transiciones están validadas en el servidor antes de persistir en BD.
+| Estado | Descripción |
+|---|---|
+| `pendiente` | Solicitud enviada por el cliente, sin técnico asignado |
+| `asignado` | Técnico asignado, pendiente de desplazamiento |
+| `en_camino` | Técnico en ruta hacia el domicilio |
+| `revisado` | Técnico llegó e inspeccionó el equipo |
+| `cotizado` | Técnico envió cotización al cliente |
+| `en_proceso` | Cliente aprobó cotización, reparación en curso |
+| `esperando_repuestos` | Reparación pausada por falta de repuestos |
+| `reparado` | Equipo reparado, pendiente de entrega/prueba |
+| `entregado` | Entregado al cliente, en período de garantía |
+| `completado` | Servicio finalizado y confirmado |
+| `cancelado` | Orden cancelada (rama de salida) |
+| `reagendado` | Visita reprogramada (rama de salida) |
+
+Implementado en `lib/state-machine.ts`. Todas las transiciones se validan en el servidor antes de persistir en BD.
 
 ---
 
@@ -284,7 +354,7 @@ El `header.tsx` es el componente más complejo del portal:
 - **Click-outside:** `useEffect` con `mousedown` event para cerrar el dropdown.
 - **Timeout de cierre:** 200ms — evita cierre prematuro al transitar entre trigger y panel.
 
-### Secciones del Megamenú
+### Secciones del Megamenú Servicios
 
 ```
 ┌─────────────────────────────────┐
@@ -300,6 +370,23 @@ El `header.tsx` es el componente más complejo del portal:
 ├────────────────┴────────────────┤
 │ [CTA: ¿No encuentras tu serv?]  │
 └─────────────────────────────────┘
+```
+
+### Secciones del Megamenú Blog (categorías)
+
+- **Desktop:** Dropdown con categorías de blog (clústeres) en hover.
+- **Mobile:** Acordeón colapsable con lista de categorías.
+- Sincroniza con `?tema=` en la URL del listado de blog (`/blog?tema=neveras`).
+
+```
+┌────────────────────────────────┐
+│ BLOG — Temas                   │
+├────────────────────────────────┤
+│ • Neveras  • Televisores       │
+│ • Lavadoras • Calentadores     │
+│ • Secadoras • Redes            │
+│ • Estufas  • Electricidad      │
+└────────────────────────────────┘
 ```
 
 ---
@@ -389,30 +476,76 @@ La lógica de clasificación está en `lib/chat-logic.ts`. El componente es `'us
 
 ---
 
-## 📊 SEO Programático
+## 📊 SEO Programático y Blog
 
-Dos tipos de páginas generadas dinámicamente para SEO:
+### Páginas generadas dinámicamente
 
 1. **`/servicios/[slug]`** — una página por tipo de servicio (ej: `reparacion-neveras-cali`)
 2. **`/barrios/[slug]`** — una página por barrio de Cali cubierto
+3. **`/servicios/[slug]/[marca]`** — páginas por servicio + marca (ej: `reparacion-neveras-cali/lg`)
 
-Ambas usan `generateStaticParams()` para pre-renderizado estático y `generateMetadata()` para meta-tags dinámicas. Los slugs y datos base están en `lib/constants.ts`.
+Todas usan `generateStaticParams()` + `generateMetadata()`. Datos en `lib/seo/`.
+
+### Blog — Estructura modular (2026-03-12)
+
+**51 posts** distribuidos en 9 archivos temáticos bajo `lib/seo/blog/`:
+
+| Clúster | Archivo | Posts |
+|---|---|---|
+| Neveras | `neveras.ts` | 6 |
+| Lavadoras | `lavadoras.ts` | 10 |
+| Televisores | `televisores.ts` | 5 |
+| Seguridad | `seguridad.ts` | 5 |
+| General | `general.ts` | 4 |
+| Calentadores | `calentadores.ts` | 6 |
+| Secadoras | `secadoras.ts` | 5 |
+| Estufas | `estufas.ts` | 5 |
+| Redes | `redes.ts` | 5 |
+| Electricidad | `electricidad.ts` | 5 |
+
+El `blog-data.ts` en la raíz de `lib/seo/` es un **barrel re-export** de `./blog/index` (8 líneas).
+El filtro de categoría se sincroniza con `?tema=` en la URL.
+
+### Contenido editorial de blog
+
+Archivos markdown fuente en `docs/contenido-blogs-md/`:
+`BLOG-CONTENIDO-{NEVERA,LAVADORAS,TELEVISORES,SECADORAS,ESTUFAS,CALENTADORES-ADICIONALES,REDES,ELECTRICIDAD}.md`
+
+### Prompts para assets visuales
+
+- `docs/PROMPTS-IMAGENES-BLOG.md` — Prompts fotorrealistas por post (formato AVIF 1200×675)
+- `docs/PROMPTS-VIDEOS-BLOG.md` — Prompts de video (Hero Loop, Showcase, Reels, Drone fly-through)
 
 ---
 
-## 🔄 Historial de Cambios Recientes (2026-03-04)
+## 🔄 Historial de Cambios Recientes
 
-### Mejoras de Diseño Aplicadas
+### 2026-03-12 — Blog modular + Assets AVIF + SEO técnico
+
+| Área | Cambio |
+|---|---|
+| `lib/seo/blog/` | Refactor modular completo: `blog-data.ts` reducido a barrel re-export; contenido dividido en 9 archivos temáticos + `types.ts`, `clusters.ts`, `index.ts` |
+| `lib/seo/blog/*.ts` | 5 archivos nuevos: `secadoras.ts`, `estufas.ts`, `redes.ts`, `electricidad.ts`, `calentadores.ts` (expandido a 6 posts) |
+| `components/header.tsx` | Megamenú blog por categorías (desktop dropdown + mobile acordeón); filtro URL `?tema=` |
+| `app/(public)/blog/blog-client.tsx` | Sincronización de filtro activo con `?tema=` en URL |
+| `app/(public)/blog/[slug]/page.tsx` | Mejoras SEO en página de artículo individual |
+| Imágenes públicas | Migración completa a formato AVIF |
+| `public/robots.txt` | Reglas actualizadas sin www |
+| `public/llms.txt` | Añadido para GEO (AI crawler accessibility) |
+| `public/sw.js` | Service worker actualizado |
+| `docs/PROMPTS-IMAGENES-BLOG.md` | Prompts fotorrealistas para imágenes de blog (NUEVO) |
+| `docs/PROMPTS-VIDEOS-BLOG.md` | Prompts de video para hero section y redes sociales (NUEVO) |
+| Canonicals | Enforced `https://somostecnicos.com` (sin www) en sitemap y layout |
+
+### 2026-03-04 — Mejoras de Diseño
 
 | Componente | Cambio |
 |---|---|
-| `footer.tsx` | Consistencia tipográfica: h4 "Contacto" usa `text-sm uppercase tracking-widest` (igual que nav/servicios). Grid `sm:grid-cols-2` para mobile |
-| `service-process.tsx` | `pt-8` en cards para que el badge numérico `-top-4` no se corte. Imagen usa `aspect-ratio` en lugar de `h-[px]` fija |
-| `service-types.tsx` | `min-h` en lugar de `h-fixed` para el contenedor principal |
-| `app/(public)/page.tsx` | Cards blog: `h-48` estándar + excerpt con `line-clamp-2` |
-| `contacto/page.tsx` | Hero con gradientes decorativos (consistente con sobre-nosotros). Badges de zonas con hover red |
-| `sobre-nosotros/page.tsx` | Hero con gradientes decorativos. Cards de valores con hover interactivo |
-| `styles/globals.css` | Animación `animate-scroll` global (brands slider); `.img-safe`, `.text-clamp-2/3`, prevención zoom iOS, `.page-hero-dark` |
-| `app/globals.css` | Agrega `animate-scroll`, `.img-safe`, `.text-clamp-2/3`, iOS font-size fix |
-| `brands-slider.tsx` | Eliminado `<style jsx>` — usa la animación del CSS global |
-| `header.tsx` | **Fix hover megamenú Servicios:** Panel usa `pt-2` (sin gap) + timeout 200ms |
+| `footer.tsx` | Consistencia tipográfica + grid `sm:grid-cols-2` para mobile |
+| `service-process.tsx` | Badge numérico: `pt-8` para evitar corte; `aspect-ratio` en imagen |
+| `app/(public)/page.tsx` | Cards blog: `h-48` + excerpt `line-clamp-2` |
+| `contacto/page.tsx` | Hero con gradientes decorativos |
+| `sobre-nosotros/page.tsx` | Cards de valores con hover interactivo |
+| `styles/globals.css` | `animate-scroll`, `.img-safe`, `.text-clamp-2/3`, iOS font-size fix |
+| `brands-slider.tsx` | Eliminado `<style jsx>` — usa animación CSS global |
+| `header.tsx` | Fix hover megamenú Servicios: `pt-2` sin gap + timeout 200ms |

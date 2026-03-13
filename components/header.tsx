@@ -20,6 +20,7 @@ import {
   Monitor,
   Camera,
   ArrowRight,
+  BookOpen,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -29,7 +30,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 
 interface HeaderUser {
@@ -43,69 +43,106 @@ interface ProfileResponse {
   user: HeaderUser
 }
 
-interface ServicioNavItem {
+interface NavItem {
   label: string
   slug: string
   icon: React.ElementType
 }
 
-interface ServicioNavGroup {
+interface NavGroup {
   category: string
-  items: ServicioNavItem[]
+  items: NavItem[]
 }
 
-const SERVICIOS_GROUPS: ServicioNavGroup[] = [
+// ─── Datos de Servicios ────────────────────────────────────────────────────
+const SERVICIOS_GROUPS: NavGroup[] = [
   {
     category: 'Línea Blanca',
     items: [
-      { label: 'Neveras', slug: 'reparacion-neveras-cali', icon: Thermometer },
-      {
-        label: 'Lavadoras',
-        slug: 'reparacion-lavadoras-cali',
-        icon: WashingMachine,
-      },
-      { label: 'Secadoras', slug: 'reparacion-secadoras-cali', icon: Wind },
-      {
-        label: 'Estufas y Hornos',
-        slug: 'reparacion-estufas-hornos-cali',
-        icon: Flame,
-      },
-      {
-        label: 'Calentadores',
-        slug: 'reparacion-calentadores-cali',
-        icon: Droplets,
-      },
+      { label: 'Neveras',          slug: 'reparacion-neveras-cali',          icon: Thermometer  },
+      { label: 'Lavadoras',        slug: 'reparacion-lavadoras-cali',        icon: WashingMachine },
+      { label: 'Secadoras',        slug: 'reparacion-secadoras-cali',        icon: Wind         },
+      { label: 'Estufas y Hornos', slug: 'reparacion-estufas-hornos-cali',   icon: Flame        },
+      { label: 'Calentadores',     slug: 'reparacion-calentadores-cali',     icon: Droplets     },
     ],
   },
   {
     category: 'Electrónica',
     items: [
-      { label: 'Televisores', slug: 'reparacion-televisores-cali', icon: Tv },
-      {
-        label: 'Computadores y Redes',
-        slug: 'tecnico-computadores-redes-cali',
-        icon: Monitor,
-      },
+      { label: 'Televisores',         slug: 'reparacion-televisores-cali',    icon: Tv      },
+      { label: 'Computadores y Redes',slug: 'tecnico-computadores-redes-cali',icon: Monitor },
     ],
   },
   {
     category: 'Instalaciones',
     items: [
-      {
-        label: 'Electricista',
-        slug: 'electricista-a-domicilio-cali',
-        icon: Zap,
-      },
-      {
-        label: 'Cámaras y Alarmas',
-        slug: 'camaras-seguridad-alarmas-cali',
-        icon: Camera,
-      },
+      { label: 'Electricista',     slug: 'electricista-a-domicilio-cali',   icon: Zap    },
+      { label: 'Cámaras y Alarmas',slug: 'camaras-seguridad-alarmas-cali',  icon: Camera },
     ],
   },
 ]
 
-const SERVICIOS_NAV: ServicioNavItem[] = SERVICIOS_GROUPS.flatMap(g => g.items)
+const SERVICIOS_NAV: NavItem[] = SERVICIOS_GROUPS.flatMap(g => g.items)
+
+// ─── Datos de Blog ─────────────────────────────────────────────────────────
+const BLOG_GROUPS: NavGroup[] = [
+  {
+    category: 'Electrodomésticos',
+    items: [
+      { label: 'Neveras',          slug: 'neveras',       icon: Thermometer   },
+      { label: 'Lavadoras',        slug: 'lavadoras',     icon: WashingMachine },
+      { label: 'Secadoras',        slug: 'secadoras',     icon: Wind          },
+      { label: 'Estufas y Hornos', slug: 'estufas-hornos',icon: Flame         },
+      { label: 'Calentadores',     slug: 'calentadores',  icon: Droplets      },
+    ],
+  },
+  {
+    category: 'Tecnología',
+    items: [
+      { label: 'Televisores',  slug: 'televisores',  icon: Tv      },
+      { label: 'Computadores', slug: 'computadores', icon: Monitor },
+    ],
+  },
+  {
+    category: 'Hogar',
+    items: [
+      { label: 'Electricidad', slug: 'electricidad', icon: Zap    },
+      { label: 'Seguridad',    slug: 'seguridad',    icon: Camera },
+    ],
+  },
+]
+
+const BLOG_NAV: NavItem[] = BLOG_GROUPS.flatMap(g => g.items)
+
+// ─── Componentes auxiliares ────────────────────────────────────────────────
+
+/** Un ítem dentro de cualquiera de los dos paneles dropdown */
+function DropdownNavItem({
+  icon: Icon,
+  label,
+  href,
+  onClick,
+}: {
+  icon: React.ElementType
+  label: string
+  href: string
+  onClick: () => void
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="group/item flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-red-50 transition-colors duration-150"
+    >
+      <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center shrink-0 transition-colors duration-150">
+        <Icon size={13} className="text-slate-400 group-hover/item:text-primary transition-colors" />
+      </div>
+      <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-primary transition-colors leading-tight">
+        {label}
+      </span>
+    </Link>
+  )
+}
 
 /** Nav link con subrayado animado desde la izquierda */
 function NavLink({
@@ -129,38 +166,41 @@ function NavLink({
   )
 }
 
+// ──────────────────────────────────────────────────────────────────────────
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled]               = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen]   = useState(false)
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false)
-  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false)
-  const [user, setUser] = useState<HeaderUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isMobileBlogOpen, setIsMobileBlogOpen]   = useState(false)
+  /** Cuál de los dos paneles desktop está abierto (null = ninguno) */
+  const [openDropdown, setOpenDropdown]           = useState<'services' | 'blog' | null>(null)
+  const [user, setUser]                           = useState<HeaderUser | null>(null)
+  const [isLoading, setIsLoading]                 = useState(true)
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
 
-  const servicesDropdownRef = useRef<HTMLDivElement>(null)
-  const servicesButtonRef = useRef<HTMLButtonElement>(null)
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // ── Helpers de hover unificados ──────────────────────────────────────────
+  const openMenu = (menu: 'services' | 'blog') => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+    setOpenDropdown(menu)
+  }
+
+  const scheduleClose = () => {
+    hoverTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 200)
+  }
+
+  const cancelClose = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+  }
+
+  const closeDropdown = () => setOpenDropdown(null)
+
+  // ── Efectos ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        servicesDropdownRef.current &&
-        !servicesDropdownRef.current.contains(event.target as Node) &&
-        servicesButtonRef.current &&
-        !servicesButtonRef.current.contains(event.target as Node)
-      ) {
-        setIsServicesDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   useEffect(() => {
@@ -190,12 +230,10 @@ export default function Header() {
     checkAuth()
   }, [])
 
+  // ── Auth ─────────────────────────────────────────────────────────────────
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-      setIsMobileMenuOpen(false)
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    setIsMobileMenuOpen(false)
   }
 
   const handleNavClick = (id: string) => {
@@ -217,46 +255,16 @@ export default function Header() {
   const getDashboardUrl = () => {
     if (!user) return '/login'
     switch (user.role) {
-      case 'admin':
-        return '/admin/dashboard'
-      case 'manager':
-        return '/manager/dashboard'
-      case 'technician':
-        return '/technician/dashboard'
-      case 'customer':
-        return '/customer/dashboard'
-      default:
-        return '/admin/dashboard'
+      case 'admin':      return '/admin/dashboard'
+      case 'manager':    return '/manager/dashboard'
+      case 'technician': return '/technician/dashboard'
+      case 'customer':   return '/customer/dashboard'
+      default:           return '/admin/dashboard'
     }
-  }
-
-  const handleServicesMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-    setIsServicesDropdownOpen(true)
-  }
-
-  const handleServicesMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(
-      () => setIsServicesDropdownOpen(false),
-      200
-    )
-  }
-
-  const handleDropdownMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-  }
-
-  const handleDropdownMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(
-      () => setIsServicesDropdownOpen(false),
-      200
-    )
   }
 
   const renderAuthSection = () => {
-    if (isLoading) {
-      return <div className="w-20 h-8 bg-slate-100 animate-pulse rounded-lg" />
-    }
+    if (isLoading) return <div className="w-20 h-8 bg-slate-100 animate-pulse rounded-lg" />
 
     if (user) {
       return (
@@ -300,12 +308,8 @@ export default function Header() {
                 href="/register/customer"
                 className="flex flex-col items-start text-left px-2.5 py-2 rounded-lg cursor-pointer mb-1 border border-transparent hover:border-red-100 hover:bg-red-50 transition-all duration-150 focus:bg-red-50"
               >
-                <span className="font-semibold text-[13px] text-slate-900 leading-none">
-                  Soy Cliente
-                </span>
-                <span className="text-xs text-slate-500 mt-0.5">
-                  Solicita servicios técnicos
-                </span>
+                <span className="font-semibold text-[13px] text-slate-900 leading-none">Soy Cliente</span>
+                <span className="text-xs text-slate-500 mt-0.5">Solicita servicios técnicos</span>
               </Link>
             </DropdownMenuItem>
             <div className="my-1 mx-2 border-t border-slate-200" />
@@ -314,12 +318,8 @@ export default function Header() {
                 href="/register/technician"
                 className="flex flex-col items-start text-left px-2.5 py-2 rounded-lg cursor-pointer border border-transparent hover:border-emerald-100 hover:bg-emerald-50 transition-all duration-150 focus:bg-emerald-50"
               >
-                <span className="font-semibold text-[13px] text-slate-900 leading-none">
-                  Soy Técnico
-                </span>
-                <span className="text-xs text-slate-500 mt-0.5">
-                  Únete y ofrece tus servicios
-                </span>
+                <span className="font-semibold text-[13px] text-slate-900 leading-none">Soy Técnico</span>
+                <span className="text-xs text-slate-500 mt-0.5">Únete y ofrece tus servicios</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -336,6 +336,7 @@ export default function Header() {
     )
   }
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
       <header
@@ -347,6 +348,7 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
+
             {/* Logo */}
             <Link
               href="/"
@@ -369,149 +371,72 @@ export default function Header() {
             <nav className="hidden lg:flex items-center gap-1">
               <NavLink href="/">Inicio</NavLink>
 
-              {/* Servicios con dropdown */}
+              {/* ── Dropdown: Servicios ─────────────────────────────────── */}
               <div
                 className="relative"
-                onMouseEnter={handleServicesMouseEnter}
-                onMouseLeave={handleServicesMouseLeave}
+                onMouseEnter={() => openMenu('services')}
+                onMouseLeave={scheduleClose}
               >
                 <button
-                  ref={servicesButtonRef}
-                  onClick={() => setIsServicesDropdownOpen(prev => !prev)}
+                  onClick={() => setOpenDropdown(prev => prev === 'services' ? null : 'services')}
                   className="group relative flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors duration-200 rounded-md"
-                  aria-expanded={isServicesDropdownOpen}
+                  aria-expanded={openDropdown === 'services'}
                   aria-haspopup="true"
                 >
                   Servicios
                   <ChevronDown
                     size={14}
                     className={`text-slate-400 group-hover:text-primary transition-all duration-200 ${
-                      isServicesDropdownOpen ? 'rotate-180 text-primary' : ''
+                      openDropdown === 'services' ? 'rotate-180 text-primary' : ''
                     }`}
                   />
                   <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
                 </button>
 
-                {isServicesDropdownOpen && (
+                {openDropdown === 'services' && (
                   <div
-                    ref={servicesDropdownRef}
-                    onMouseEnter={handleDropdownMouseEnter}
-                    onMouseLeave={handleDropdownMouseLeave}
-                    className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px]"
+                    onMouseEnter={cancelClose}
+                    onMouseLeave={scheduleClose}
+                    className="absolute top-full left-0 pt-2 w-60"
                     style={{ zIndex: 60 }}
                   >
                     <div
-                      className="bg-white rounded-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-                      style={{
-                        boxShadow:
-                          '0 20px 60px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06)',
-                        border: '1px solid rgba(0,0,0,0.07)',
-                      }}
+                      className="bg-white rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
+                      style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.07)' }}
                     >
-                      {/* Accent line */}
-                      <div className="h-0.5 bg-gradient-to-r from-primary via-[#c9003f] to-primary" />
+                      <div className="h-0.5 bg-gradient-to-r from-primary to-[#c9003f]" />
 
-                      {/* Panel header */}
-                      <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-slate-50">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                          Servicios en Cali
-                        </p>
-                        <Link
-                          href="/servicios"
-                          onClick={() => setIsServicesDropdownOpen(false)}
-                          className="flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
-                        >
-                          Ver todos <ArrowRight size={10} />
-                        </Link>
-                      </div>
-
-                      {/* Grid de servicios */}
-                      <div className="px-4 py-3 grid grid-cols-2 gap-x-3">
-                        {/* Columna izquierda — Línea Blanca */}
-                        <div>
-                          <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-2 px-2">
-                            {SERVICIOS_GROUPS[0].category}
+                      {SERVICIOS_GROUPS.map((group, i) => (
+                        <div key={group.category} className={i > 0 ? 'border-t border-slate-100' : ''}>
+                          <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-slate-400 px-3 pt-2.5 pb-1">
+                            {group.category}
                           </p>
-                          <div className="flex flex-col gap-0.5">
-                            {SERVICIOS_GROUPS[0].items.map(servicio => {
-                              const Icon = servicio.icon
+                          <div className="px-2 pb-2">
+                            {group.items.map(item => {
+                              const Icon = item.icon
                               return (
                                 <Link
-                                  key={servicio.slug}
-                                  href={`/servicios/${servicio.slug}`}
-                                  onClick={() =>
-                                    setIsServicesDropdownOpen(false)
-                                  }
-                                  className="group/item flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-red-50 transition-colors duration-150"
+                                  key={item.slug}
+                                  href={`/servicios/${item.slug}`}
+                                  onClick={closeDropdown}
+                                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] font-medium text-slate-700 hover:text-primary hover:bg-red-50 transition-colors duration-150 group/item"
                                 >
-                                  <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center shrink-0 transition-colors duration-150">
-                                    <Icon
-                                      size={13}
-                                      className="text-slate-400 group-hover/item:text-primary transition-colors"
-                                    />
-                                  </div>
-                                  <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-primary transition-colors leading-tight">
-                                    {servicio.label}
-                                  </span>
+                                  <Icon size={13} className="text-slate-400 group-hover/item:text-primary shrink-0 transition-colors" />
+                                  {item.label}
                                 </Link>
                               )
                             })}
                           </div>
                         </div>
+                      ))}
 
-                        {/* Columna derecha — Electrónica + Instalaciones */}
-                        <div className="flex flex-col gap-4">
-                          {SERVICIOS_GROUPS.slice(1).map(group => (
-                            <div key={group.category}>
-                              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-2 px-2">
-                                {group.category}
-                              </p>
-                              <div className="flex flex-col gap-0.5">
-                                {group.items.map(servicio => {
-                                  const Icon = servicio.icon
-                                  return (
-                                    <Link
-                                      key={servicio.slug}
-                                      href={`/servicios/${servicio.slug}`}
-                                      onClick={() =>
-                                        setIsServicesDropdownOpen(false)
-                                      }
-                                      className="group/item flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-red-50 transition-colors duration-150"
-                                    >
-                                      <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover/item:bg-red-100 flex items-center justify-center shrink-0 transition-colors duration-150">
-                                        <Icon
-                                          size={13}
-                                          className="text-slate-400 group-hover/item:text-primary transition-colors"
-                                        />
-                                      </div>
-                                      <span className="text-[13px] font-medium text-slate-700 group-hover/item:text-primary transition-colors leading-tight">
-                                        {servicio.label}
-                                      </span>
-                                    </Link>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* CTA footer */}
-                      <div className="mx-4 mb-4 bg-gradient-to-r from-primary to-[#c9003f] rounded-xl px-4 py-3 flex items-center justify-between">
-                        <div>
-                          <p className="text-white text-[13px] font-semibold leading-tight">
-                            ¿No encuentras tu servicio?
-                          </p>
-                          <p className="text-red-200 text-[11px] mt-0.5">
-                            Ver el catálogo completo
-                          </p>
-                        </div>
+                      <div className="border-t border-slate-100 px-3 py-2">
                         <Link
                           href="/servicios"
-                          onClick={() => setIsServicesDropdownOpen(false)}
-                          className="flex items-center gap-1.5 bg-white text-primary text-[12px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors shrink-0"
+                          onClick={closeDropdown}
+                          className="flex items-center gap-1 text-[12px] font-semibold text-primary hover:underline"
                         >
-                          Ver todos <ArrowRight size={12} />
+                          Ver todos los servicios <ArrowRight size={11} />
                         </Link>
                       </div>
                     </div>
@@ -528,12 +453,83 @@ export default function Header() {
                 <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
               </button>
 
+              {/* ── Dropdown: Blog ──────────────────────────────────────── */}
+              <div
+                className="relative"
+                onMouseEnter={() => openMenu('blog')}
+                onMouseLeave={scheduleClose}
+              >
+                <button
+                  onClick={() => setOpenDropdown(prev => prev === 'blog' ? null : 'blog')}
+                  className="group relative flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors duration-200 rounded-md"
+                  aria-expanded={openDropdown === 'blog'}
+                  aria-haspopup="true"
+                >
+                  Blog
+                  <ChevronDown
+                    size={14}
+                    className={`text-slate-400 group-hover:text-primary transition-all duration-200 ${
+                      openDropdown === 'blog' ? 'rotate-180 text-primary' : ''
+                    }`}
+                  />
+                  <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
+                </button>
+
+                {openDropdown === 'blog' && (
+                  <div
+                    onMouseEnter={cancelClose}
+                    onMouseLeave={scheduleClose}
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-64"
+                    style={{ zIndex: 60 }}
+                  >
+                    <div
+                      className="bg-white rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
+                      style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.07)' }}
+                    >
+                      <div className="h-0.5 bg-gradient-to-r from-primary to-[#c9003f]" />
+
+                      {BLOG_GROUPS.map((group, i) => (
+                        <div key={group.category} className={i > 0 ? 'border-t border-slate-100' : ''}>
+                          <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-slate-400 px-3 pt-2.5 pb-1">
+                            {group.category}
+                          </p>
+                          <div className="px-2 pb-2">
+                            {group.items.map(item => {
+                              const Icon = item.icon
+                              return (
+                                <Link
+                                  key={item.slug}
+                                  href={`/blog?tema=${item.slug}`}
+                                  onClick={closeDropdown}
+                                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[13px] font-medium text-slate-700 hover:text-primary hover:bg-red-50 transition-colors duration-150 group/item"
+                                >
+                                  <Icon size={13} className="text-slate-400 group-hover/item:text-primary shrink-0 transition-colors" />
+                                  {item.label}
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="border-t border-slate-100 px-3 py-2">
+                        <Link
+                          href="/blog"
+                          onClick={closeDropdown}
+                          className="flex items-center gap-1 text-[12px] font-semibold text-primary hover:underline"
+                        >
+                          Ver todos los artículos <ArrowRight size={11} />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <NavLink href="/contacto">Contacto</NavLink>
 
-              {/* Divisor */}
               <div className="w-px h-5 bg-slate-200 mx-2" />
 
-              {/* CTA principal */}
               <button
                 onClick={() => scrollToSection('formulario')}
                 className="flex items-center gap-1.5 bg-[#27AE60] hover:bg-[#1e9e52] text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all duration-200 mr-1"
@@ -545,7 +541,7 @@ export default function Header() {
               {renderAuthSection()}
             </nav>
 
-            {/* Botón hamburguesa mobile */}
+            {/* Hamburguesa mobile */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors duration-200"
@@ -557,18 +553,16 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile menu — panel deslizante desde la derecha */}
+      {/* ── Mobile menu ───────────────────────────────────────────────────── */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          {/* Panel */}
           <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl flex flex-col overflow-y-auto animate-in slide-in-from-right duration-250">
-            {/* Cabecera del panel */}
+            {/* Cabecera */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <Image
                 src="/img-3d/diseño-Logos-sinFondo.avif"
@@ -587,7 +581,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Navegación */}
             <nav className="flex-1 px-4 py-4 flex flex-col gap-1">
               <Link
                 href="/"
@@ -597,7 +590,7 @@ export default function Header() {
                 Inicio
               </Link>
 
-              {/* Servicios — acordeón */}
+              {/* Servicios acordeón */}
               <div>
                 <button
                   onClick={() => setIsMobileServicesOpen(prev => !prev)}
@@ -607,40 +600,29 @@ export default function Header() {
                   <span>Servicios</span>
                   <ChevronDown
                     size={15}
-                    className={`text-slate-400 transition-transform duration-200 ${
-                      isMobileServicesOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`text-slate-400 transition-transform duration-200 ${isMobileServicesOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
 
                 {isMobileServicesOpen && (
                   <div className="mt-1 ml-3 pl-3 border-l-2 border-red-100 flex flex-col gap-0.5">
-                    {SERVICIOS_NAV.map(servicio => {
-                      const Icon = servicio.icon
+                    {SERVICIOS_NAV.map(item => {
+                      const Icon = item.icon
                       return (
                         <Link
-                          key={servicio.slug}
-                          href={`/servicios/${servicio.slug}`}
-                          onClick={() => {
-                            setIsMobileServicesOpen(false)
-                            setIsMobileMenuOpen(false)
-                          }}
+                          key={item.slug}
+                          href={`/servicios/${item.slug}`}
+                          onClick={() => { setIsMobileServicesOpen(false); setIsMobileMenuOpen(false) }}
                           className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-600 hover:text-primary hover:bg-red-50 rounded-lg transition-colors"
                         >
-                          <Icon
-                            size={14}
-                            className="shrink-0 text-slate-400"
-                          />
-                          {servicio.label}
+                          <Icon size={14} className="shrink-0 text-slate-400" />
+                          {item.label}
                         </Link>
                       )
                     })}
                     <Link
                       href="/servicios"
-                      onClick={() => {
-                        setIsMobileServicesOpen(false)
-                        setIsMobileMenuOpen(false)
-                      }}
+                      onClick={() => { setIsMobileServicesOpen(false); setIsMobileMenuOpen(false) }}
                       className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-primary hover:bg-red-50 rounded-lg transition-colors mt-1"
                     >
                       <ArrowRight size={13} /> Ver todos los servicios
@@ -656,6 +638,47 @@ export default function Header() {
                 Seguimiento de Orden
               </button>
 
+              {/* Blog acordeón */}
+              <div>
+                <button
+                  onClick={() => setIsMobileBlogOpen(prev => !prev)}
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-primary hover:bg-red-50 rounded-xl transition-colors"
+                  aria-expanded={isMobileBlogOpen}
+                >
+                  <span>Blog</span>
+                  <ChevronDown
+                    size={15}
+                    className={`text-slate-400 transition-transform duration-200 ${isMobileBlogOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+
+                {isMobileBlogOpen && (
+                  <div className="mt-1 ml-3 pl-3 border-l-2 border-red-100 flex flex-col gap-0.5">
+                    {BLOG_NAV.map(item => {
+                      const Icon = item.icon
+                      return (
+                        <Link
+                          key={item.slug}
+                          href={`/blog?tema=${item.slug}`}
+                          onClick={() => { setIsMobileBlogOpen(false); setIsMobileMenuOpen(false) }}
+                          className="flex items-center gap-2.5 px-2 py-2 text-sm text-slate-600 hover:text-primary hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Icon size={14} className="shrink-0 text-slate-400" />
+                          {item.label}
+                        </Link>
+                      )
+                    })}
+                    <Link
+                      href="/blog"
+                      onClick={() => { setIsMobileBlogOpen(false); setIsMobileMenuOpen(false) }}
+                      className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-primary hover:bg-red-50 rounded-lg transition-colors mt-1"
+                    >
+                      <ArrowRight size={13} /> Ver todos los artículos
+                    </Link>
+                  </div>
+                )}
+              </div>
+
               <Link
                 href="/contacto"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -664,13 +687,9 @@ export default function Header() {
                 Contacto
               </Link>
 
-              {/* CTA */}
               <div className="pt-2">
                 <button
-                  onClick={() => {
-                    scrollToSection('formulario')
-                    setIsMobileMenuOpen(false)
-                  }}
+                  onClick={() => { scrollToSection('formulario'); setIsMobileMenuOpen(false) }}
                   className="w-full flex items-center justify-center gap-2 bg-[#27AE60] hover:bg-[#1e9e52] text-white text-sm font-semibold py-3 rounded-xl transition-colors shadow-sm"
                 >
                   Solicitar Servicio <ArrowRight size={15} />
@@ -678,7 +697,7 @@ export default function Header() {
               </div>
             </nav>
 
-            {/* Auth section */}
+            {/* Auth section mobile */}
             <div className="px-4 pb-6 pt-4 border-t border-slate-100">
               {isLoading ? (
                 <div className="h-10 bg-slate-100 animate-pulse rounded-xl" />
@@ -693,12 +712,8 @@ export default function Header() {
                       <User size={16} className="text-primary" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">
-                        {user.nombre}
-                      </div>
-                      <div className="text-xs text-slate-500 capitalize">
-                        {user.role}
-                      </div>
+                      <div className="text-sm font-semibold text-slate-900">{user.nombre}</div>
+                      <div className="text-xs text-slate-500 capitalize">{user.role}</div>
                     </div>
                   </Link>
                   <button
@@ -722,12 +737,8 @@ export default function Header() {
                       <Users size={15} className="text-primary" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-900">
-                        Soy Cliente
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        Solicita servicios técnicos
-                      </div>
+                      <div className="text-sm font-medium text-slate-900">Soy Cliente</div>
+                      <div className="text-xs text-slate-500">Solicita servicios técnicos</div>
                     </div>
                   </Link>
                   <Link
@@ -739,12 +750,8 @@ export default function Header() {
                       <Wrench size={15} className="text-green-600" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-900">
-                        Soy Técnico
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        Únete al equipo
-                      </div>
+                      <div className="text-sm font-medium text-slate-900">Soy Técnico</div>
+                      <div className="text-xs text-slate-500">Únete al equipo</div>
                     </div>
                   </Link>
                   <div className="relative my-1">
@@ -752,9 +759,7 @@ export default function Header() {
                       <div className="w-full border-t border-slate-100" />
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-white px-2 text-xs text-slate-400">
-                        o
-                      </span>
+                      <span className="bg-white px-2 text-xs text-slate-400">o</span>
                     </div>
                   </div>
                   <Link
@@ -778,6 +783,3 @@ export default function Header() {
     </>
   )
 }
-
-
-

@@ -2,10 +2,17 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Clock, AlertTriangle, Lightbulb, Info, Wrench, Phone } from 'lucide-react'
+import {
+  Clock,
+  AlertTriangle,
+  Lightbulb,
+  Info,
+  Wrench,
+  Phone,
+} from 'lucide-react'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
-import { BLOG_POSTS } from '@/lib/seo/blog-data'
+import { BLOG_POSTS, getRelatedBlogPosts } from '@/lib/seo/blog-data'
 import { buildBlogPostJsonLd } from '@/lib/seo/schema-builders'
 import PageBreadcrumb from '@/components/page-breadcrumb'
 
@@ -16,7 +23,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return Object.keys(BLOG_POSTS).map((slug) => ({ slug }))
+  return Object.keys(BLOG_POSTS).map(slug => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -64,10 +71,8 @@ export default async function BlogPostPage({ params }: Props) {
 
   const schemas = buildBlogPostJsonLd(post)
 
-  // Related posts (same category, excluding current)
-  const related = Object.values(BLOG_POSTS)
-    .filter((p) => p.slug !== post.slug && p.category === post.category)
-    .slice(0, 3) // Mostramos 3 para un grid balanceado
+  // Related posts (same cluster first, fallback same category)
+  const related = getRelatedBlogPosts(post.slug, 3)
 
   return (
     <>
@@ -99,15 +104,22 @@ export default async function BlogPostPage({ params }: Props) {
               {/* Meta y Autor */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
-                    <span className="text-slate-600 font-bold text-sm tracking-tighter">ST</span>
-                  </div>
+                  <Image
+                    src="/img-3d/logo_modificado.avif"
+                    alt="Logo SomosTécnicos"
+                    width={44}
+                    height={44}
+                    className="w-11 h-11 object-cover rounded-full shrink-0 border border-slate-200"
+                  />
                   <div>
-                    <p className="text-sm font-bold text-slate-900">Equipo SomosTécnicos</p>
+                    <p className="text-sm font-bold text-slate-900">
+                      Equipo SomosTécnicos
+                    </p>
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[13px] text-slate-500 mt-0.5">
                       <span
                         className={`font-semibold px-2 py-0.5 rounded-full text-[11px] uppercase tracking-wider ${
-                          CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
+                          CATEGORY_COLORS[post.category] ??
+                          'bg-slate-100 text-slate-600'
                         }`}
                       >
                         {post.categoryLabel}
@@ -119,11 +131,14 @@ export default async function BlogPostPage({ params }: Props) {
                       </span>
                       <span className="hidden sm:inline text-slate-300">•</span>
                       <time dateTime={post.publishedAt}>
-                        {new Date(post.publishedAt).toLocaleDateString('es-CO', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        {new Date(post.publishedAt).toLocaleDateString(
+                          'es-CO',
+                          {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          }
+                        )}
                       </time>
                     </div>
                   </div>
@@ -165,7 +180,6 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="max-w-3xl mx-auto">
             {/* Contenido principal centrado mediante el wrapper mx-auto */}
             <div className="bg-white rounded-xl border border-[#E8EAED] p-6 sm:p-10 shadow-sm">
-
               {/* Tabla de contenidos */}
               <div className="mb-10 bg-[#F8F9FA] rounded-xl p-6 sm:px-8 border border-[#E8EAED]">
                 <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -174,7 +188,9 @@ export default async function BlogPostPage({ params }: Props) {
                 </h2>
                 <ul className="space-y-3">
                   {post.sections.map((section, i) => {
-                    const sectionId = section.heading.toLowerCase().replace(/[^a-záéíóúñ0-9]+/g, '-')
+                    const sectionId = section.heading
+                      .toLowerCase()
+                      .replace(/[^a-záéíóúñ0-9]+/g, '-')
                     return (
                       <li key={i}>
                         <a
@@ -190,132 +206,158 @@ export default async function BlogPostPage({ params }: Props) {
                     )
                   })}
                   {post.faqs && post.faqs.length > 0 && (
-                     <li>
-                        <a
-                          href="#preguntas-frecuentes"
-                          className="text-[15px] font-medium text-slate-600 hover:text-primary transition-colors flex items-start gap-2.5 group"
-                        >
-                          <span className="text-primary/50 text-sm mt-px group-hover:text-primary transition-colors">
-                            FAQ.
-                          </span>
-                          Preguntas frecuentes
-                        </a>
-                      </li>
+                    <li>
+                      <a
+                        href="#preguntas-frecuentes"
+                        className="text-[15px] font-medium text-slate-600 hover:text-primary transition-colors flex items-start gap-2.5 group"
+                      >
+                        <span className="text-primary/50 text-sm mt-px group-hover:text-primary transition-colors">
+                          FAQ.
+                        </span>
+                        Preguntas frecuentes
+                      </a>
+                    </li>
                   )}
                 </ul>
               </div>
 
-            {post.sections.map((section, i) => {
-              const sectionId = section.heading.toLowerCase().replace(/[^a-záéíóúñ0-9]+/g, '-')
-              return (
-              <section key={i} id={sectionId} className="mb-10 last:mb-0 scroll-mt-24">
-                <h2 className="text-2xl font-bold text-slate-900 mb-5 leading-snug border-l-4 border-primary pl-4">
-                  {section.heading}
-                </h2>
-
-                {section.paragraphs.map((p, j) => (
-                  <p
-                    key={j}
-                    className="text-slate-700 leading-relaxed mb-4 last:mb-0"
-                    dangerouslySetInnerHTML={{
-                      __html: p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'),
-                    }}
-                  />
-                ))}
-
-                {/* Tips box */}
-                {section.tips && section.tips.length > 0 && (
-                  <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Lightbulb className="w-4 h-4 text-green-600 shrink-0" />
-                      <span className="text-sm font-semibold text-green-800">
-                        Consejos prácticos
-                      </span>
-                    </div>
-                    <ul className="space-y-2">
-                      {section.tips.map((tip, k) => (
-                        <li key={k} className="flex items-start gap-2 text-sm text-green-900">
-                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                          {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Warning box */}
-                {section.warning && (
-                  <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <p className="text-sm text-amber-900">{section.warning}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Highlight / dato clave */}
-                {section.highlight && (
-                  <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start gap-2">
-                      <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                      <p className="text-sm text-blue-900 font-medium">{section.highlight}</p>
-                    </div>
-                  </div>
-                )}
-              </section>
-              )
-            })}
-
-            {/* FAQ section */}
-            {post.faqs && post.faqs.length > 0 && (
-              <section id="preguntas-frecuentes" className="mt-12 pt-10 border-t border-[#E8EAED] scroll-mt-24">
-                <h2 className="text-xl font-bold text-slate-900 mb-6">
-                  Preguntas frecuentes
-                </h2>
-                <div className="space-y-5">
-                  {post.faqs.map((faq, i) => (
-                    <div key={i} className="border border-[#E8EAED] rounded-lg p-5">
-                      <h3 className="text-[15px] font-semibold text-slate-900 mb-2">
-                        {faq.q}
-                      </h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* CTA in-article */}
-            {post.relatedServiceSlug && (
-              <div className="mt-10 bg-primary rounded-xl p-6 text-white text-center">
-                <div className="flex justify-center mb-3">
-                  <Wrench className="w-6 h-6 text-red-200" />
-                </div>
-                <p className="font-semibold mb-1">{post.relatedServiceLabel}</p>
-                <p className="text-red-200 text-sm mb-4">
-                  Técnicos certificados a domicilio en Cali. El mismo día.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <a
-                    href="https://wa.me/573003094854?text=Hola,%20necesito%20un%20técnico%20a%20domicilio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-primary
-                               font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-red-50 transition-colors"
+              {post.sections.map((section, i) => {
+                const sectionId = section.heading
+                  .toLowerCase()
+                  .replace(/[^a-záéíóúñ0-9]+/g, '-')
+                return (
+                  <section
+                    key={i}
+                    id={sectionId}
+                    className="mb-10 last:mb-0 scroll-mt-24"
                   >
-                    WhatsApp
-                  </a>
-                  <Link
-                    href={`/servicios/${post.relatedServiceSlug}`}
-                    className="inline-flex items-center justify-center gap-2 border border-white/40
+                    <h2 className="text-2xl font-bold text-slate-900 mb-5 leading-snug border-l-4 border-primary pl-4">
+                      {section.heading}
+                    </h2>
+
+                    {section.paragraphs.map((p, j) => (
+                      <p
+                        key={j}
+                        className="text-slate-700 leading-relaxed mb-4 last:mb-0"
+                        dangerouslySetInnerHTML={{
+                          __html: p.replace(
+                            /\*\*(.+?)\*\*/g,
+                            '<strong>$1</strong>'
+                          ),
+                        }}
+                      />
+                    ))}
+
+                    {/* Tips box */}
+                    {section.tips && section.tips.length > 0 && (
+                      <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Lightbulb className="w-4 h-4 text-green-600 shrink-0" />
+                          <span className="text-sm font-semibold text-green-800">
+                            Consejos prácticos
+                          </span>
+                        </div>
+                        <ul className="space-y-2">
+                          {section.tips.map((tip, k) => (
+                            <li
+                              key={k}
+                              className="flex items-start gap-2 text-sm text-green-900"
+                            >
+                              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Warning box */}
+                    {section.warning && (
+                      <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                          <p className="text-sm text-amber-900">
+                            {section.warning}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Highlight / dato clave */}
+                    {section.highlight && (
+                      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start gap-2">
+                          <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                          <p className="text-sm text-blue-900 font-medium">
+                            {section.highlight}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                )
+              })}
+
+              {/* FAQ section */}
+              {post.faqs && post.faqs.length > 0 && (
+                <section
+                  id="preguntas-frecuentes"
+                  className="mt-12 pt-10 border-t border-[#E8EAED] scroll-mt-24"
+                >
+                  <h2 className="text-xl font-bold text-slate-900 mb-6">
+                    Preguntas frecuentes
+                  </h2>
+                  <div className="space-y-5">
+                    {post.faqs.map((faq, i) => (
+                      <div
+                        key={i}
+                        className="border border-[#E8EAED] rounded-lg p-5"
+                      >
+                        <h3 className="text-[15px] font-semibold text-slate-900 mb-2">
+                          {faq.q}
+                        </h3>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* CTA in-article */}
+              {post.relatedServiceSlug && (
+                <div className="mt-10 bg-primary rounded-xl p-6 text-white text-center">
+                  <div className="flex justify-center mb-3">
+                    <Wrench className="w-6 h-6 text-red-200" />
+                  </div>
+                  <p className="font-semibold mb-1">
+                    {post.relatedServiceLabel}
+                  </p>
+                  <p className="text-red-200 text-sm mb-4">
+                    Técnicos certificados a domicilio en Cali. El mismo día.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a
+                      href="https://wa.me/573003094854?text=Hola,%20necesito%20un%20técnico%20a%20domicilio"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-white text-primary
+                               font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-red-50 transition-colors"
+                    >
+                      WhatsApp
+                    </a>
+                    <Link
+                      href={`/servicios/${post.relatedServiceSlug}`}
+                      className="inline-flex items-center justify-center gap-2 border border-white/40
                                text-white font-semibold px-5 py-2.5 rounded-full text-sm
                                hover:bg-white/10 transition-colors"
-                  >
-                    Ver servicio
-                  </Link>
+                    >
+                      Ver servicio
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
         </article>
@@ -327,14 +369,14 @@ export default async function BlogPostPage({ params }: Props) {
               Artículos relacionados
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {related.map((rp) => (
+              {related.map(rp => (
                 <Link
                   key={rp.slug}
                   href={`/blog/${rp.slug}`}
                   className="group bg-white rounded-xl border border-[#E8EAED] overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col max-w-80 justify-self-center sm:justify-self-start w-full"
                 >
                   {/* Imagen — formato vertical, máximo ancho bloqueado para no ser gigante */}
-                  <div className="relative w-full aspect-[3/4] bg-white overflow-hidden border-b border-[#E8EAED]">
+                  <div className="relative w-full aspect-3/4 bg-white overflow-hidden border-b border-[#E8EAED]">
                     <Image
                       src={rp.cardImage ?? rp.heroImage}
                       alt={rp.cardImageAlt ?? rp.heroImageAlt}
@@ -346,10 +388,14 @@ export default async function BlogPostPage({ params }: Props) {
                   <div className="p-4 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Clock className="w-3 h-3 text-slate-400" />
-                      <span className="text-xs text-slate-400">{rp.readTime} min</span>
+                      <span className="text-xs text-slate-400">
+                        {rp.readTime} min
+                      </span>
                     </div>
-                    <p className="text-sm font-semibold text-slate-900 leading-snug
-                                  group-hover:text-primary transition-colors line-clamp-3">
+                    <p
+                      className="text-sm font-semibold text-slate-900 leading-snug
+                                  group-hover:text-primary transition-colors line-clamp-3"
+                    >
                       {rp.title}
                     </p>
                   </div>
@@ -361,13 +407,15 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Phone CTA strip */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4
-                          bg-white border border-[#E8EAED] rounded-xl p-6 shadow-sm">
+          <div
+            className="flex flex-col sm:flex-row items-center justify-between gap-4
+                          bg-white border border-[#E8EAED] rounded-xl p-6 shadow-sm"
+          >
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-primary shrink-0" />
               <p className="text-sm text-slate-700">
-                <strong>¿Necesitas un técnico en Cali?</strong>{' '}
-                Llamamos en menos de 10 minutos.
+                <strong>¿Necesitas un técnico en Cali?</strong> Llamamos en
+                menos de 10 minutos.
               </p>
             </div>
             <a

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Clock,
   Wrench,
@@ -20,20 +21,87 @@ import {
   LayoutGrid,
   Search,
 } from 'lucide-react'
-import { BlogPost } from '@/lib/seo/blog-data'
+import {
+  BLOG_CLUSTERS,
+  BLOG_CLUSTER_BY_SLUG,
+  BlogPost,
+} from '@/lib/seo/blog-data'
 
-// ── Filtros por área/servicio ──────────────────────────────────────────────
-const FILTERS = [
-  { id: 'all', label: 'Todos', icon: LayoutGrid },
-  { id: 'reparacion-neveras-cali', label: 'Neveras', icon: Thermometer },
-  { id: 'reparacion-lavadoras-cali', label: 'Lavadoras', icon: WashingMachine },
-  { id: 'reparacion-secadoras-cali', label: 'Secadoras', icon: Wind },
-  { id: 'reparacion-estufas-hornos-cali', label: 'Estufas y Hornos', icon: Flame },
-  { id: 'reparacion-calentadores-cali', label: 'Calentadores', icon: Droplets },
-  { id: 'reparacion-televisores-cali', label: 'Televisores', icon: Tv },
-  { id: 'tecnico-computadores-redes-cali', label: 'Computadores', icon: Monitor },
-  { id: 'electricista-a-domicilio-cali', label: 'Electricidad', icon: Zap },
-  { id: 'camaras-seguridad-alarmas-cali', label: 'Seguridad', icon: Camera },
+type TopicKind = 'all' | 'cluster' | 'service'
+interface TopicOption {
+  id: string
+  label: string
+  icon: React.ElementType
+  kind: TopicKind
+  value?: string
+}
+
+// ── Navegación única por tema (sin duplicar UI) ────────────────────────────
+const TOPIC_OPTIONS: TopicOption[] = [
+  { id: 'all', label: 'Todos', icon: LayoutGrid, kind: 'all' },
+  {
+    id: 'neveras',
+    label: 'Neveras',
+    icon: Thermometer,
+    kind: 'cluster',
+    value: 'neveras',
+  },
+  {
+    id: 'televisores',
+    label: 'Televisores',
+    icon: Tv,
+    kind: 'cluster',
+    value: 'televisores',
+  },
+  {
+    id: 'lavadoras',
+    label: 'Lavadoras',
+    icon: WashingMachine,
+    kind: 'service',
+    value: 'reparacion-lavadoras-cali',
+  },
+  {
+    id: 'secadoras',
+    label: 'Secadoras',
+    icon: Wind,
+    kind: 'service',
+    value: 'reparacion-secadoras-cali',
+  },
+  {
+    id: 'estufas-hornos',
+    label: 'Estufas y Hornos',
+    icon: Flame,
+    kind: 'service',
+    value: 'reparacion-estufas-hornos-cali',
+  },
+  {
+    id: 'calentadores',
+    label: 'Calentadores',
+    icon: Droplets,
+    kind: 'service',
+    value: 'reparacion-calentadores-cali',
+  },
+  {
+    id: 'computadores',
+    label: 'Computadores',
+    icon: Monitor,
+    kind: 'service',
+    value: 'tecnico-computadores-redes-cali',
+  },
+  {
+    id: 'electricidad',
+    label: 'Electricidad',
+    icon: Zap,
+    kind: 'service',
+    value: 'electricista-a-domicilio-cali',
+  },
+  {
+    id: 'seguridad',
+    label: 'Seguridad',
+    icon: Camera,
+    kind: 'service',
+    value: 'camaras-seguridad-alarmas-cali',
+  },
 ]
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -50,16 +118,36 @@ interface Props {
 }
 
 export default function BlogClient({ posts }: Props) {
-  const [activeFilter, setActiveFilter] = useState('all')
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [activeTopic, setActiveTopic] = useState('all')
   const [search, setSearch] = useState('')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+
+  useEffect(() => {
+    const queryTopic = searchParams.get('tema')
+    if (!queryTopic) {
+      setActiveTopic('all')
+      return
+    }
+    const isValidTopic = TOPIC_OPTIONS.some(t => t.id === queryTopic)
+    setActiveTopic(isValidTopic ? queryTopic : 'all')
+  }, [searchParams])
 
   // Filtrado + búsqueda
   const filtered = useMemo(() => {
     let result = posts
 
-    if (activeFilter !== 'all') {
-      result = result.filter(p => p.relatedServiceSlug === activeFilter)
+    if (activeTopic !== 'all') {
+      const currentTopic = TOPIC_OPTIONS.find(t => t.id === activeTopic)
+      if (currentTopic?.kind === 'cluster' && currentTopic.value) {
+        result = result.filter(
+          p => BLOG_CLUSTER_BY_SLUG[p.slug] === currentTopic.value
+        )
+      } else if (currentTopic?.kind === 'service' && currentTopic.value) {
+        result = result.filter(p => p.relatedServiceSlug === currentTopic.value)
+      }
     }
 
     if (search.trim()) {
@@ -73,15 +161,24 @@ export default function BlogClient({ posts }: Props) {
     }
 
     return result
-  }, [posts, activeFilter, search])
+  }, [posts, activeTopic, search])
 
   // Posts visibles según paginación progresiva
   const visible = filtered.slice(0, visibleCount)
   const hasMore = visibleCount < filtered.length
 
-  const handleFilterChange = (id: string) => {
-    setActiveFilter(id)
+  const handleTopicChange = (id: string) => {
+    setActiveTopic(id)
     setVisibleCount(PAGE_SIZE) // Resetear al cambiar filtro
+
+    const params = new URLSearchParams(searchParams.toString())
+    if (id === 'all') {
+      params.delete('tema')
+    } else {
+      params.set('tema', id)
+    }
+    const query = params.toString()
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +188,6 @@ export default function BlogClient({ posts }: Props) {
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-
       {/* ── Barra de búsqueda — full width en móvil ─────────────── */}
       <div className="relative mb-5">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -110,19 +206,31 @@ export default function BlogClient({ posts }: Props) {
       {/* ── Chips de filtro — scroll horizontal en móvil ─────────── */}
       <div className="relative mb-8">
         {/* Gradiente difuminado al final para indicar scroll disponible */}
-        <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#F8F9FA] to-transparent pointer-events-none z-10 sm:hidden" />
-        <div className="flex gap-2 sm:gap-2.5 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 -mx-1 sm:mx-0 px-1 sm:px-0 sm:flex-wrap"
-             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {FILTERS.map(({ id, label, icon: Icon }) => {
-            const isActive = activeFilter === id
-            const count = id !== 'all' ? posts.filter(p => p.relatedServiceSlug === id).length : null
+        <div className="absolute right-0 top-0 bottom-2 w-8 bg-linear-to-l from-[#F8F9FA] to-transparent pointer-events-none z-10 sm:hidden" />
+        <div
+          className="flex gap-2 sm:gap-2.5 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 -mx-1 sm:mx-0 px-1 sm:px-0 sm:flex-wrap"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {TOPIC_OPTIONS.map(({ id, label, icon: Icon, kind, value }) => {
+            const isActive = activeTopic === id
+            let count: number | null = null
+
+            if (kind === 'cluster' && value) {
+              count =
+                BLOG_CLUSTERS[value]?.postSlugs.filter(slug =>
+                  Boolean(posts.find(p => p.slug === slug))
+                ).length ?? 0
+            } else if (kind === 'service' && value) {
+              count = posts.filter(p => p.relatedServiceSlug === value).length
+            }
+
             return (
               <button
                 key={id}
-                onClick={() => handleFilterChange(id)}
+                onClick={() => handleTopicChange(id)}
                 className={`inline-flex items-center gap-1.5 px-3.5 rounded-full whitespace-nowrap shrink-0
                             text-xs font-semibold border transition-all duration-200
-                            min-h-[40px] touch-manipulation
+                            min-h-10 touch-manipulation
                             focus:outline-none focus:ring-2 focus:ring-primary/30
                             ${
                               isActive
@@ -152,13 +260,18 @@ export default function BlogClient({ posts }: Props) {
           <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mb-4">
             <Search className="w-6 h-6 text-slate-400" />
           </div>
-          <p className="text-slate-700 font-semibold mb-1">No encontramos artículos</p>
+          <p className="text-slate-700 font-semibold mb-1">
+            No encontramos artículos
+          </p>
           <p className="text-slate-400 text-sm px-6">
             Prueba con otro filtro o revisa la ortografía de tu búsqueda.
           </p>
           <button
-            onClick={() => { setActiveFilter('all'); setSearch('') }}
-            className="mt-5 min-h-[44px] px-5 text-sm font-semibold text-primary
+            onClick={() => {
+              handleTopicChange('all')
+              setSearch('')
+            }}
+            className="mt-5 min-h-11 px-5 text-sm font-semibold text-primary
                        border border-primary/30 rounded-xl hover:bg-red-50 transition-colors"
           >
             Ver todos los artículos
@@ -167,10 +280,19 @@ export default function BlogClient({ posts }: Props) {
       ) : (
         <>
           {/* Ancla + Contador de resultados */}
-          <p id="blog-grid-top" className="text-xs text-slate-400 mb-5 scroll-mt-24">
+          <p
+            id="blog-grid-top"
+            className="text-xs text-slate-400 mb-5 scroll-mt-24"
+          >
             Mostrando{' '}
-            <span className="font-semibold text-slate-600">{visible.length}</span> de{' '}
-            <span className="font-semibold text-slate-600">{filtered.length}</span> artículos
+            <span className="font-semibold text-slate-600">
+              {visible.length}
+            </span>{' '}
+            de{' '}
+            <span className="font-semibold text-slate-600">
+              {filtered.length}
+            </span>{' '}
+            artículos
           </p>
 
           {/* ── Grid — 1 col móvil · 2 col tablet · 3 col desktop ── */}
@@ -199,7 +321,8 @@ export default function BlogClient({ posts }: Props) {
                   <div className="flex items-center gap-3 mb-3">
                     <span
                       className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                        CATEGORY_COLORS[post.category] ?? 'bg-slate-100 text-slate-600'
+                        CATEGORY_COLORS[post.category] ??
+                        'bg-slate-100 text-slate-600'
                       }`}
                     >
                       {post.categoryLabel}
@@ -224,7 +347,9 @@ export default function BlogClient({ posts }: Props) {
                   {post.relatedServiceLabel && (
                     <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
                       <Wrench className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{post.relatedServiceLabel}</span>
+                      <span className="truncate">
+                        {post.relatedServiceLabel}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -241,7 +366,7 @@ export default function BlogClient({ posts }: Props) {
                            bg-white border border-[#E8EAED]
                            hover:border-primary hover:text-primary text-slate-700
                            text-sm font-semibold px-6 py-3.5 rounded-xl
-                           min-h-[48px] touch-manipulation
+                           min-h-12 touch-manipulation
                            transition-all duration-200 hover:shadow-sm
                            focus:outline-none focus:ring-2 focus:ring-primary/30"
               >
@@ -257,13 +382,15 @@ export default function BlogClient({ posts }: Props) {
                 onClick={() => {
                   setVisibleCount(PAGE_SIZE)
                   // Scroll suave de vuelta al inicio de la sección
-                  document.getElementById('blog-grid-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  document
+                    .getElementById('blog-grid-top')
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2
                            bg-white border border-[#E8EAED]
                            hover:border-slate-400 hover:text-slate-700 text-slate-500
                            text-sm font-semibold px-6 py-3.5 rounded-xl
-                           min-h-[48px] touch-manipulation
+                           min-h-12 touch-manipulation
                            transition-all duration-200
                            focus:outline-none focus:ring-2 focus:ring-slate-300"
               >
