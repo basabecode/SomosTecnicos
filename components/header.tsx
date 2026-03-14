@@ -6,7 +6,6 @@ import {
   X,
   User,
   LogOut,
-  UserPlus,
   Users,
   Wrench,
   ChevronDown,
@@ -20,7 +19,6 @@ import {
   Monitor,
   Camera,
   ArrowRight,
-  BookOpen,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -294,7 +292,6 @@ export default function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-1.5 text-sm font-medium text-slate-700 border border-slate-200 px-3 py-2 rounded-lg hover:border-primary hover:text-primary transition-all duration-200">
-              <UserPlus size={15} />
               <span className="hidden sm:inline">Registrarse</span>
               <ChevronDown size={12} className="text-slate-400" />
             </button>
@@ -329,7 +326,6 @@ export default function Header() {
           href="/login"
           className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow"
         >
-          <User size={15} />
           <span className="hidden sm:inline">Iniciar Sesión</span>
         </Link>
       </div>
@@ -368,8 +364,9 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center">
               <NavLink href="/">Inicio</NavLink>
+              <span className="w-px h-4 bg-slate-200 mx-0.5 shrink-0" />
 
               {/* ── Dropdown: Servicios ─────────────────────────────────── */}
               <div
@@ -444,6 +441,8 @@ export default function Header() {
                 )}
               </div>
 
+              <span className="w-px h-4 bg-slate-200 mx-0.5 shrink-0" />
+
               {/* Seguimiento */}
               <button
                 onClick={() => handleNavClick('seguimiento')}
@@ -452,6 +451,7 @@ export default function Header() {
                 Seguimiento
                 <span className="absolute bottom-1 left-3 right-3 h-px bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
               </button>
+              <span className="w-px h-4 bg-slate-200 mx-0.5 shrink-0" />
 
               {/* ── Dropdown: Blog ──────────────────────────────────────── */}
               <div
@@ -526,6 +526,7 @@ export default function Header() {
                 )}
               </div>
 
+              <span className="w-px h-4 bg-slate-200 mx-0.5 shrink-0" />
               <NavLink href="/contacto">Contacto</NavLink>
 
               <div className="w-px h-5 bg-slate-200 mx-2" />
@@ -535,7 +536,7 @@ export default function Header() {
                 className="flex items-center gap-1.5 bg-[#27AE60] hover:bg-[#1e9e52] text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all duration-200 mr-1"
               >
                 Solicitar Servicio
-                <ArrowRight size={14} />
+
               </button>
 
               {renderAuthSection()}

@@ -666,3 +666,69 @@ public/blog/
     ├── nevera-hielo-escarcha.avif
     └── nevera-congelador-falla-circulacion.avif
 ```
+
+---
+
+## ÁREA 8 — Hero Mobile: Referencia de imagen existente
+
+> Prompt basado en la imagen actual `public/hero/hero_mobil.avif` — ilustración 3D de técnico y cliente en sala moderna. El objetivo es recrear la misma escena en estilo fotorrealista.
+
+---
+
+### `hero-mobil-fotorrealista.avif`
+
+**Alt:** Técnico de servicio saludando a cliente en sala moderna colombiana con caja de herramientas
+
+**Prompt (EN):**
+
+```
+Photorealistic editorial photograph. Vertical portrait format (9:16). A professional male technician in his late 20s, wearing a light blue collared work polo shirt and dark navy pants, dark brown shoes, and a black smartwatch on his left wrist. He carries a large black equipment backpack on his back and holds a gray metal toolbox in his right hand. He is shaking hands warmly with a Colombian woman in her 30s with curly brown hair, wearing a casual gray short-sleeve top and dark blue jeans with brown shoes. Both are standing in the center of a spacious, modern open-plan living room and kitchen. The woman is smiling and extending her right hand toward the technician; both have friendly, professional expressions. The handshake is the focal point of the image, centered in frame.
+
+Background: a bright, luxurious modern home interior with high ceilings, polished light gray tile floors, and a large gray area rug in the center. On the rug sits an oval wooden coffee table with a laptop/tablet open on it. Behind them: tall built-in white kitchen cabinetry with under-cabinet lighting, a cream-colored sectional sofa with neutral cushions, a white floor lamp on the left, and warm pendant lighting hanging from the right over a kitchen counter. Lush green potted plants are visible on the shelves and a small succulent on the coffee table. White sheer curtains cover a large window on the left allowing soft natural daylight in. Recessed LED ceiling lights plus LED strips along the ceiling edges create a warm ambient glow.
+
+Ceiling details: a white circular WiFi access point (UniFi-style, with soft blue LED ring) is mounted on the ceiling in the upper right, and a small dome security camera is visible in the upper left corner of the ceiling.
+
+Camera: Sony A7 IV, 35mm, f/2.8, natural indoor light enhanced by warm LED ceiling lighting. Color palette: crisp whites, warm neutrals, light grays, warm wood tones, light blue uniform, navy pants. No cartoon elements, no 3D render style, no CGI characters — fully photorealistic. No text, no watermarks, no HDR oversaturation, natural skin tones and facial expressions.
+```
+
+---
+
+## ÁREA 10 — Imágenes Hero para Web (Desktop & Mobile)
+
+> 3 prompts — Imágenes originales tipo Hero para usar en la página de inicio. Optimizadas para encuadres versátiles (recortables para panorámico *desktop* y vertical *móvil*), proyectando realismo fotográfico, arquitectura moderna e ingeniería para atraer e inspirar confianza a los clientes desde el primer segundo.
+
+---
+
+### 1. `hero-web-ingenieria-hogar.avif`
+
+**Alt:** Técnico profesional revisando planos e ingeniería en hogar arquitectónico moderno
+
+**Prompt (EN):**
+
+```
+Photorealistic editorial photograph. A highly professional male technician in a clean dark navy uniform standing in a stunning, modern architectural Colombian home with large floor-to-ceiling windows. He is holding a sleek digital tablet displaying engineering schematics, looking confident and reliable. The background shows a beautifully designed minimalist kitchen and living area, bathed in warm morning sunlight. Cinematic composition, wide angle with center focus to safely crop for both panoramic desktop and vertical mobile screens. High-end real estate and premium engineering vibe. Camera: Canon EOS R5, 24mm, f/4. Color palette: warm natural light, white, navy blue, wood accents. No text, no watermarks, no CGI glow, no cartoon elements.
+```
+
+---
+
+### 2. `hero-web-arquitectura-tecnologia.avif`
+
+**Alt:** Herramientas de precisión tecnológica sobre mármol en espacio de diseño arquitectónico
+
+**Prompt (EN):**
+
+```
+Photorealistic editorial architectural photograph. A sleek, modern premium kitchen and living space where high-tech engineering meets domestic life. In the foreground, a sophisticated, highly organized technician's toolkit with precision instruments rests on a polished white marble countertop. In the soft-focus background, a technician in a navy uniform is calmly working on an integrated smart appliance. Clean architectural lines, natural bright daylight, luxurious and trustworthy atmosphere. Framed to work beautifully on both desktop widescreen and mobile portrait layouts. Camera: Sony A7 IV, 35mm, f/2.8. Color palette: white, gray, chrome, warm wood, navy. No text, no watermarks, no artificial AI glows.
+```
+
+---
+
+### 3. `hero-web-confianza-premium.avif`
+
+**Alt:** Interacción de servicio técnico premium en entorno moderno de ingeniería y arquitectura
+
+**Prompt (EN):**
+
+```
+Photorealistic editorial photograph. Cinematic wide shot of a pristine, modern home environment emphasizing premium engineering and architecture. A skilled technician in a dark navy uniform is expertly making precision adjustments to a sophisticated stainless steel smart system. The composition uses leading architectural lines to draw the eye to the center, making it highly effective for website hero sections and instantly attracting clients with a sense of security, high tech, and modernity. Warm, inviting natural sunlight. Wide composition perfect for responsive web cropping (desktop 16:9 and mobile 9:16 safe zones). Camera: Nikon Z9, 35mm, f/2.8. Color palette: silver, navy, crisp white, warm sunlight. No text, no watermarks, no HDR oversaturation.
+```
