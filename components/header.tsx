@@ -198,16 +198,21 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+    }
   }, [])
 
   useEffect(() => {
+    const controller = new AbortController()
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('accessToken')
         if (token) {
           const response = await fetch('/api/auth/profile', {
             headers: { Authorization: `Bearer ${token}` },
+            signal: controller.signal,
           })
           if (response.ok) {
             const userData: ProfileResponse = await response.json()
@@ -218,14 +223,17 @@ export default function Header() {
           }
         }
       } catch (error) {
-        console.error('Error verificando autenticación:', error)
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Error verificando autenticación:', error)
+          localStorage.removeItem('accessToken')
+          localStorage.removeItem('refreshToken')
+        }
       } finally {
-        setIsLoading(false)
+        if (!controller.signal.aborted) setIsLoading(false)
       }
     }
     checkAuth()
+    return () => controller.abort()
   }, [])
 
   // ── Auth ─────────────────────────────────────────────────────────────────
