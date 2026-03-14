@@ -30,7 +30,7 @@ export default function HeroSection() {
           ════════════════════════════════════════════════════════ */}
       <div className="absolute inset-0 z-0 overflow-hidden hidden lg:block">
         <Image
-          src="/hero/img-realista-hero-desktop-2.png"
+          src="/hero/img-realista-hero-desktop-2.avif"
           alt="Técnico profesional y cliente en hogar moderno - SomosTécnicos"
           fill
           className="object-cover object-[55%_38%]"
@@ -47,7 +47,7 @@ export default function HeroSection() {
           ════════════════════════════════════════════════════════ */}
       <div className="lg:hidden absolute inset-0 z-0 overflow-hidden">
         <Image
-          src="/hero/hero_mobil.avif"
+          src="/hero/hero-movil-realista.avif"
           alt="Técnico y cliente - SomosTécnicos"
           fill
           className="object-cover object-top"
