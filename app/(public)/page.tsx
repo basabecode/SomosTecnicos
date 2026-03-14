@@ -1,8 +1,12 @@
-import dynamic from 'next/dynamic'
 import Header from '@/components/header'
 import HeroSection from '@/components/hero-section'
+import BrandsSlider from '@/components/brands-slider'
+import ServiceTypes from '@/components/service-types'
 import ServiceForm from '@/components/service-form'
+import ServiceProcess from '@/components/service-process'
+import FAQ from '@/components/faq'
 import Footer from '@/components/footer'
+import TechnicianCTA from '@/components/technician-cta'
 import ClientOnlyWidgets from '@/components/client-only-widgets'
 import { SuppressHydrationWarning } from '@/components/no-ssr'
 import { Metadata } from 'next'
@@ -12,14 +16,6 @@ import { BLOG_POSTS } from '@/lib/seo/blog-data'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Clock, ArrowRight } from 'lucide-react'
-
-// ── Componentes below-fold — carga diferida para no bloquear LCP ──
-// Mantienen SSR para que Google pueda indexar su contenido
-const BrandsSlider   = dynamic(() => import('@/components/brands-slider'))
-const ServiceTypes   = dynamic(() => import('@/components/service-types'))
-const ServiceProcess = dynamic(() => import('@/components/service-process'))
-const FAQ            = dynamic(() => import('@/components/faq'))
-const TechnicianCTA  = dynamic(() => import('@/components/technician-cta'))
 
 export const metadata: Metadata = {
   title:
