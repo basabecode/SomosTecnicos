@@ -154,6 +154,7 @@ Usa esta tabla para identificar qué skill leer según la tarea solicitada:
 | Contenido SEO, optimización de texto, keywords en contenido | seo-content          | .agents/skills/seo-content/SKILL.md          |
 | SEO local, geolocalización, Google Maps, ciudades           | seo-geo              | .agents/skills/seo-geo/SKILL.md              |
 | SEO técnico, crawling, indexación, sitemap, robots.txt      | seo-technical        | .agents/skills/seo-technical/SKILL.md        |
+| Canonicals, GSC errors, redirecciones, indexación páginas   | seo-technical-canonical | .agents/skills/seo-technical-canonical/SKILL.md |
 
 #### Infraestructura y Gestión (~/.claude/skills/)
 

@@ -142,6 +142,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      {/* Preloads LCP críticos — deben ir lo más arriba posible en <head> para
+          que el preload scanner del navegador los descubra antes que cualquier
+          recurso bloqueante. El atributo media asegura que cada dispositivo
+          sólo descargue la imagen que realmente va a usar. */}
+      <head>
+        {/* Hero mobile (< 1024 px) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/hero-movil-realista.png"
+          media="(max-width: 1023px)"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore — fetchpriority es atributo HTML válido, React lo soporta en v19
+          fetchpriority="high"
+        />
+        {/* Hero desktop (≥ 1024 px) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/img-realista-hero-desktop-2.png"
+          media="(min-width: 1024px)"
+          // @ts-ignore
+          fetchpriority="high"
+        />
+      </head>
       <body
         className={`${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`}
         suppressHydrationWarning={true}

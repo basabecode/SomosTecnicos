@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import {
   Menu,
   X,
@@ -22,13 +23,18 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { OrderTrackingModal } from '@/components/order-tracking-modal'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+
+// Lazy: sólo se carga cuando el usuario pulsa "Seguimiento"
+const OrderTrackingModal = dynamic(
+  () => import('@/components/order-tracking-modal').then(m => ({ default: m.OrderTrackingModal })),
+  { ssr: false }
+)
 
 interface HeaderUser {
   id: number | string
@@ -197,7 +203,8 @@ export default function Header() {
   // ── Efectos ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', handleScroll)
+    // passive:true evita que el listener bloquee el scroll del compositor (mejora TBT/FID)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
       window.removeEventListener('scroll', handleScroll)
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)

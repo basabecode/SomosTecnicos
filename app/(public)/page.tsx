@@ -1,14 +1,8 @@
+import dynamic from 'next/dynamic'
 import Header from '@/components/header'
 import HeroSection from '@/components/hero-section'
-import BrandsSlider from '@/components/brands-slider'
-import ServiceTypes from '@/components/service-types'
 import ServiceForm from '@/components/service-form'
-import ServiceProcess from '@/components/service-process'
-import FAQ from '@/components/faq'
 import Footer from '@/components/footer'
-import MobileOptimizations from '@/components/mobile-optimizations'
-import AiChat from '@/components/ai-chat'
-import SitelinksNav from '@/components/sitelinks-nav'
 import { SuppressHydrationWarning } from '@/components/no-ssr'
 import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
@@ -17,7 +11,19 @@ import { BLOG_POSTS } from '@/lib/seo/blog-data'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Clock, ArrowRight } from 'lucide-react'
-import TechnicianCTA from '@/components/technician-cta'
+
+// ── Componentes below-fold: se cargan después del hero para no bloquear LCP ──
+// Server components (ssr:true por defecto): mantienen contenido indexable por Google
+const BrandsSlider    = dynamic(() => import('@/components/brands-slider'))
+const ServiceTypes    = dynamic(() => import('@/components/service-types'))
+const ServiceProcess  = dynamic(() => import('@/components/service-process'))
+const FAQ             = dynamic(() => import('@/components/faq'))
+const TechnicianCTA   = dynamic(() => import('@/components/technician-cta'))
+
+// Client-only: no necesitan SSR (interactivos puros, sin contenido SEO)
+const AiChat             = dynamic(() => import('@/components/ai-chat'), { ssr: false })
+const MobileOptimizations = dynamic(() => import('@/components/mobile-optimizations'), { ssr: false })
+const SitelinksNav       = dynamic(() => import('@/components/sitelinks-nav'), { ssr: false })
 
 export const metadata: Metadata = {
   title:
