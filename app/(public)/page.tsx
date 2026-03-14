@@ -3,6 +3,7 @@ import Header from '@/components/header'
 import HeroSection from '@/components/hero-section'
 import ServiceForm from '@/components/service-form'
 import Footer from '@/components/footer'
+import ClientOnlyWidgets from '@/components/client-only-widgets'
 import { SuppressHydrationWarning } from '@/components/no-ssr'
 import { Metadata } from 'next'
 import { SPECIALTIES_CONFIG, SPECIALIST_BRANDS } from '@/lib/config/specialties'
@@ -12,18 +13,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Clock, ArrowRight } from 'lucide-react'
 
-// ── Componentes below-fold: se cargan después del hero para no bloquear LCP ──
-// Server components (ssr:true por defecto): mantienen contenido indexable por Google
-const BrandsSlider    = dynamic(() => import('@/components/brands-slider'))
-const ServiceTypes    = dynamic(() => import('@/components/service-types'))
-const ServiceProcess  = dynamic(() => import('@/components/service-process'))
-const FAQ             = dynamic(() => import('@/components/faq'))
-const TechnicianCTA   = dynamic(() => import('@/components/technician-cta'))
-
-// Client-only: no necesitan SSR (interactivos puros, sin contenido SEO)
-const AiChat             = dynamic(() => import('@/components/ai-chat'), { ssr: false })
-const MobileOptimizations = dynamic(() => import('@/components/mobile-optimizations'), { ssr: false })
-const SitelinksNav       = dynamic(() => import('@/components/sitelinks-nav'), { ssr: false })
+// ── Componentes below-fold — carga diferida para no bloquear LCP ──
+// Mantienen SSR para que Google pueda indexar su contenido
+const BrandsSlider   = dynamic(() => import('@/components/brands-slider'))
+const ServiceTypes   = dynamic(() => import('@/components/service-types'))
+const ServiceProcess = dynamic(() => import('@/components/service-process'))
+const FAQ            = dynamic(() => import('@/components/faq'))
+const TechnicianCTA  = dynamic(() => import('@/components/technician-cta'))
 
 export const metadata: Metadata = {
   title:
@@ -372,15 +368,12 @@ export default function HomePage() {
         {/* ── CTA técnicos 3D interactivo ───────────────────────────── */}
         <TechnicianCTA />
 
-        <SitelinksNav />
       </main>
       <Footer />
 
-      {/* Asistente Virtual IA */}
-      <AiChat />
-
-      {/* Optimizaciones Mobile - botones sticky y widget chat */}
-      <MobileOptimizations />
+      {/* Widgets client-only: AiChat, MobileOptimizations, SitelinksNav
+          Agrupados en un Client Component para poder usar ssr:false */}
+      <ClientOnlyWidgets />
     </SuppressHydrationWarning>
   )
 }
