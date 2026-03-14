@@ -47,7 +47,7 @@ export default function HeroSection() {
           ════════════════════════════════════════════════════════ */}
       <div className="lg:hidden absolute inset-0 z-0 overflow-hidden">
         <Image
-          src="/hero/hero-movil-realista.png"
+          src="/hero/hero_mobil.avif"
           alt="Técnico y cliente - SomosTécnicos"
           fill
           className="object-cover object-top"
