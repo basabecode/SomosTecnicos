@@ -20,7 +20,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative h-[88vh] min-h-[38rem] max-h-screen flex items-center overflow-hidden pt-16 md:pt-20 bg-black isolate"
+      className="relative h-[88vh] min-h-[38rem] max-h-screen flex items-center overflow-hidden pt-16 bg-black isolate"
     >
       {/* ════════════════════════════════════════════════════════
           DESKTOP: foto realista landscape — contenida sin desborde
@@ -30,7 +30,7 @@ export default function HeroSection() {
           src="/hero/img-realista-hero-desktop-2.png"
           alt="Técnico profesional y cliente en hogar moderno - SomosTécnicos"
           fill
-          className="object-cover object-[55%_45%]"
+          className="object-cover object-[55%_38%]"
           priority
           sizes="100vw"
           quality={85}
